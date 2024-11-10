@@ -1,0 +1,12 @@
+Docs are bad:
+
+- JSON field, specifically JSONB https://github.com/tiangolo/sqlmodel/discussions/696
+- Alembic migrations https://github.com/tiangolo/sqlmodel/issues/85 and https://testdriven.io/blog/fastapi-sqlmodel/
+- One-to-many relationships
+- Data validation https://github.com/tiangolo/sqlmodel/issues/52
+- Aggregate functions, like count
+- __tablename__, maybe as a function?
+- Created at https://github.com/tiangolo/sqlmodel/issues/252
+- Select on joined data
+- One-to-one and one-to-many at the same time
+- Comments on columns + tables https://github.com/tiangolo/sqlmodel/issues/492

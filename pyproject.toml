@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = ["sqlmodel>=0.0.22"]
 authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
 keywords = []
 urls = { "Repository" = "https://github.com/iloveitaly/activemodel" }

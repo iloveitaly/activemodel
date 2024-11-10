@@ -22,7 +22,7 @@ jobs:
       - run: uv sync
 
       - name: Make sure it runs
-        run: uv run ${{ github.event.repository.name }} --help
+        run: uv run python -c 'import ${{ github.event.repository.name }}'
 
       - name: Conventional Changelog Action
         id: changelog
