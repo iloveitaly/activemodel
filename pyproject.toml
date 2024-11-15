@@ -15,3 +15,8 @@ activemodel = "python_package_template:main"
 # https://github.com/astral-sh/uv/issues/5200
 [tool.uv]
 package = true
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.3",
+]
