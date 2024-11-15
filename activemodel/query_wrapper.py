@@ -1,6 +1,12 @@
-from typing import Generic
+from typing import Generic, TypeVar
 
-from activemodel.timestamps import compile_sql
+from sqlmodel.sql.expression import SelectOfScalar
+
+WrappedModelType = TypeVar("WrappedModelType")
+
+
+def compile_sql(target: SelectOfScalar):
+    return str(target.compile(get_engine().connect()))
 
 
 class QueryWrapper(Generic[WrappedModelType]):

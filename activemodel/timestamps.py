@@ -1,23 +1,9 @@
 from datetime import datetime
-from typing import TypeVar
 
 import sqlalchemy as sa
 
 # TODO raw sql https://github.com/tiangolo/sqlmodel/discussions/772
 from sqlmodel import Field
-from sqlmodel.sql.expression import SelectOfScalar
-
-from .database import get_engine
-
-# TODO Stripe-style prefixed ID? https://stackoverflow.com/questions/62400011/how-can-i-create-a-serial-id-with-as-a-string-with-common-prefix-ie-tag-1-tag
-
-
-def compile_sql(target: SelectOfScalar):
-    return str(target.compile(get_engine().connect()))
-
-
-WrappedModelType = TypeVar("WrappedModelType")
-
 
 # @classmethod
 # def select(cls):

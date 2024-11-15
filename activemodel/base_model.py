@@ -2,6 +2,10 @@ import json
 import typing as t
 
 import sqlalchemy as sa
+from sqlalchemy.orm import declared_attr
+from sqlmodel import SQLModel
+
+from activemodel.utils.camelcase import camel2snake
 
 from .query_wrapper import QueryWrapper
 
@@ -28,9 +32,9 @@ class BaseModel(SQLModel):
         pass
 
     # TODO snake case tables automatically
-    # @declared_attr
-    # def __tablename__(cls) -> str:
-    #     return cls.__name__.lower()
+    @declared_attr
+    def __tablename__(cls) -> str:
+        return camel2snake(cls.__name__)
 
     @classmethod
     def select(cls, *args):
