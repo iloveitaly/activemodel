@@ -1,12 +1,12 @@
 [project]
 name = "activemodel"
 version = "0.1.0"
-description = ""
+description = "Make SQLModel more like an a real ORM"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["sqlmodel>=0.0.22"]
 authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
-keywords = []
+keywords = ["sqlmodel", "orm", "activerecord", "activemodel", "sqlalchemy"]
 urls = { "Repository" = "https://github.com/iloveitaly/activemodel" }
 
 [project.scripts]
@@ -17,6 +17,4 @@ activemodel = "python_package_template:main"
 package = true
 
 [dependency-groups]
-dev = [
-    "pytest>=8.3.3",
-]
+dev = ["pytest>=8.3.3"]

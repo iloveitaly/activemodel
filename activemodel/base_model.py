@@ -34,6 +34,11 @@ class BaseModel(SQLModel):
     # TODO snake case tables automatically
     @declared_attr
     def __tablename__(cls) -> str:
+        """
+        Automatically generates the table name for the model by converting the class name from camel case to snake case.
+
+        By default, the class is lower cased which makes it harder to read.
+        """
         return camel2snake(cls.__name__)
 
     @classmethod
