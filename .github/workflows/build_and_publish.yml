@@ -37,7 +37,9 @@ jobs:
       - uses: jdx/mise-action@v2
       - run: uv sync
 
-      - name: Make sure it runs
+      # `uv run` prefix is required since the venv is not activated
+
+      - name: Make sure we can import the module
         run: uv run python -c 'import ${{ github.event.repository.name }}'
 
       - run: uv run pytest
