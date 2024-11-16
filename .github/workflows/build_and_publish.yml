@@ -16,6 +16,22 @@ env:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: postgres
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
@@ -24,7 +40,7 @@ jobs:
       - name: Make sure it runs
         run: uv run python -c 'import ${{ github.event.repository.name }}'
 
-      - run: pytest
+      - run: uv run pytest
 
       - name: Conventional Changelog Action
         id: changelog
