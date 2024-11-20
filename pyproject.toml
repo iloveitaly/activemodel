@@ -4,7 +4,10 @@ version = "0.2.0"
 description = "Make SQLModel more like an a real ORM"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["sqlmodel>=0.0.22"]
+dependencies = [
+    "pydash>=8.0.4",
+    "sqlmodel>=0.0.22",
+]
 authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
 keywords = ["sqlmodel", "orm", "activerecord", "activemodel", "sqlalchemy"]
 urls = { "Repository" = "https://github.com/iloveitaly/activemodel" }

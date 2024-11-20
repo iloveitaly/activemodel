@@ -12,3 +12,10 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 ## Related Projects
 
 * https://github.com/woofz/sqlmodel-basecrud
+
+## Inspiration
+
+* https://github.com/peterdresslar/fastapi-sqlmodel-alembic-pg
+* [Albemic instructions](https://github.com/fastapi/sqlmodel/pull/899/files)
+* https://github.com/fastapiutils/fastapi-utils/
+*

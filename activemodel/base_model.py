@@ -1,11 +1,10 @@
 import json
 import typing as t
 
+import pydash
 import sqlalchemy as sa
 from sqlalchemy.orm import declared_attr
-from sqlmodel import SQLModel
-
-from activemodel.utils.camelcase import camel2snake
+from sqlmodel import Session, SQLModel
 
 from .query_wrapper import QueryWrapper
 
@@ -17,7 +16,13 @@ class BaseModel(SQLModel):
     https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py
     """
 
-    # TODO implement delete
+    # TODO implement actually calling these hooks
+
+    def before_delete(self):
+        pass
+
+    def after_delete(self):
+        pass
 
     def before_save(self):
         pass
@@ -31,15 +36,19 @@ class BaseModel(SQLModel):
     def after_update(self):
         pass
 
-    # TODO snake case tables automatically
     @declared_attr
     def __tablename__(cls) -> str:
         """
         Automatically generates the table name for the model by converting the class name from camel case to snake case.
 
         By default, the class is lower cased which makes it harder to read.
+
+        Many snake_case libraries struggle with snake case for names like LLMCache, which is why we are using a more
+        complicated implementation from pydash.
+
+        https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
         """
-        return camel2snake(cls.__name__)
+        return pydash.strings.snake_case(cls.__name__)
 
     @classmethod
     def select(cls, *args):

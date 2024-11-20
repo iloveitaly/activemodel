@@ -10,3 +10,8 @@ Docs are bad:
 - Select on joined data
 - One-to-one and one-to-many at the same time
 - Comments on columns + tables https://github.com/tiangolo/sqlmodel/issues/492
+
+TODO
+
+- [ ] snake case for attributes https://github.com/sqlalchemy/sqlalchemy/issues/7149
+- [ ] foreign key names https://github.com/fastapi/sqlmodel/discussions/1213
