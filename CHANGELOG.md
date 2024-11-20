@@ -1,4 +1,13 @@
-# 0.2.0 (2024-11-16)
+# [0.3.0](https://github.com/iloveitaly/activemodel/compare/v0.2.0...v0.3.0) (2024-11-20)
+
+
+### Features
+
+* add inspiration section to README and update TODO ([b11fb09](https://github.com/iloveitaly/activemodel/commit/b11fb09eb95e338de7358ba070fac0e75eda9909))
+
+
+
+# [0.2.0](https://github.com/iloveitaly/activemodel/compare/193f839c9ace154e7aaa0a9770400031d0e67cd3...v0.2.0) (2024-11-16)
 
 
 ### Bug Fixes
