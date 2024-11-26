@@ -141,7 +141,8 @@ class BaseModel(SQLModel):
     #      errors. Dangerous when iterating on structure quickly
     # TODO can we pass the generic of the superclass in?
     @classmethod
-    def get(cls, *args: sa.BinaryExpression, **kwargs: t.Any):
+    # def get(cls, *args: sa.BinaryExpression, **kwargs: t.Any):
+    def get(cls, *args: t.Any, **kwargs: t.Any):
         """
         Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
         """
