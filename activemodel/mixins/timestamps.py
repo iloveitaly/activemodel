@@ -13,11 +13,11 @@ from sqlmodel import Field
 #             yield result
 
 
-class TimestampMixin:
+class TimestampsMixin:
     """
     Simple created at and updated at timestamps. Mix them into your model:
 
-    >>> class MyModel(TimestampMixin, SQLModel):
+    >>> class MyModel(TimestampsMixin, SQLModel):
     >>>    pass
 
     Originally pulled from: https://github.com/tiangolo/sqlmodel/issues/252
