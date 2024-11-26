@@ -1,10 +1,9 @@
 from datetime import datetime
 
 import sqlalchemy as sa
-
-# TODO raw sql https://github.com/tiangolo/sqlmodel/discussions/772
 from sqlmodel import Field
 
+# TODO raw sql https://github.com/tiangolo/sqlmodel/discussions/772
 # @classmethod
 # def select(cls):
 #     with get_session() as session:
