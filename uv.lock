@@ -11,6 +11,7 @@ version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "pydash" },
+    { name = "python-decouple-typed" },
     { name = "sqlmodel" },
 ]
 
@@ -22,6 +23,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "pydash", specifier = ">=8.0.4" },
+    { name = "python-decouple-typed", specifier = ">=3.11.0" },
     { name = "sqlmodel", specifier = ">=0.0.22" },
 ]
 
@@ -241,6 +243,14 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/8b/6c/62bbd536103af674e227c41a8f3dcd022d591f6eed5facb5a0f31ee33bbc/pytest-8.3.3.tar.gz", hash = "sha256:70b98107bd648308a7952b06e6ca9a50bc660be218d53c257cc1fc94fda10181", size = 1442487 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6b/77/7440a06a8ead44c7757a64362dd22df5760f9b12dc5f11b6188cd2fc27a0/pytest-8.3.3-py3-none-any.whl", hash = "sha256:a6853c7375b2663155079443d2e45de913a911a11d669df02a50814944db57b2", size = 342341 },
+]
+
+[[package]]
+name = "python-decouple-typed"
+version = "3.11.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9d/ca/fc5a6119146651cbfbb4aae333a2e6f69844161092c450b10e97064f5e75/python_decouple_typed-3.11.0-py3-none-any.whl", hash = "sha256:967665073aec7a861844e0d9d21768324d3d819311574702cf5be7403a18da58", size = 11440 },
 ]
 
 [[package]]
