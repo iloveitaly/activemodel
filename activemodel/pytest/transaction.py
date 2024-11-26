@@ -29,3 +29,23 @@ def database_reset_transaction():
             transaction.rollback()
             # TODO is this necessary?
             connection.close()
+
+
+# TODO unsure if this adds any value beyond the above approach
+# def database_reset_named_truncation():
+#     start_truncation_query = """
+#         BEGIN;
+#         SAVEPOINT test_truncation_savepoint;
+#     """
+
+#     raw_sql_exec(start_truncation_query)
+
+#     yield
+
+#     end_truncation_query = """
+#         ROLLBACK TO SAVEPOINT test_truncation_savepoint;
+#         RELEASE SAVEPOINT test_truncation_savepoint;
+#         ROLLBACK;
+#     """
+
+#     raw_sql_exec(end_truncation_query)
