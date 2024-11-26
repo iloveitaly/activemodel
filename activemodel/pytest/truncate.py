@@ -1,7 +1,6 @@
 from sqlmodel import SQLModel
 
-from activemodel import logger
-
+from ..logger import logger
 from ..session_manager import get_engine
 
 

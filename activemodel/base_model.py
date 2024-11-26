@@ -4,12 +4,29 @@ import typing as t
 import pydash
 import sqlalchemy as sa
 import sqlmodel as sm
-from sqlalchemy.orm import declared_attr
+from sqlalchemy import Connection, event
+from sqlalchemy.orm import Mapper, declared_attr
 from sqlmodel import Session, SQLModel, select
 from typeid import TypeID
 
+from .logger import logger
 from .query_wrapper import QueryWrapper
 from .session_manager import get_session
+
+
+# TODO this does not seem to work with the latest 2.9.x pydantic and sqlmodel
+# https://github.com/SE-Sustainability-OSS/ecodev-core/blob/main/ecodev_core/sqlmodel_utils.py
+class SQLModelWithValidation(SQLModel):
+    """
+    Helper class to ease validation in SQLModel classes with table=True
+    """
+
+    @classmethod
+    def create(cls, **kwargs):
+        """
+        Forces validation to take place, even for SQLModel classes with table=True
+        """
+        return cls(**cls.__bases__[0](**kwargs).model_dump())
 
 
 class BaseModel(SQLModel):
@@ -23,30 +40,52 @@ class BaseModel(SQLModel):
 
     # TODO implement actually calling these hooks
 
-    def before_delete(self):
-        pass
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
 
-    def after_delete(self):
-        pass
+        def event_wrapper(method_name: str):
+            def wrapper(mapper: Mapper, connection: Connection, target: BaseModel):
+                if hasattr(cls, method_name):
+                    method = getattr(cls, method_name)
 
-    def before_update(self):
-        pass
+                    if callable(method):
+                        arg_count = method.__code__.co_argcount
 
-    def after_update(self):
-        pass
+                        if arg_count == 1:  # Just self/cls
+                            method(target)
+                        elif arg_count == 2:  # Self, mapper
+                            method(target, mapper)
+                        elif arg_count == 3:  # Full signature
+                            method(target, mapper, connection)
+                        else:
+                            raise TypeError(
+                                f"Method {method_name} must accept either 1 to 3 arguments, got {arg_count}"
+                            )
+                    else:
+                        logger.warning(
+                            "SQLModel lifecycle hook found, but not callable hook_name=%s",
+                            method_name,
+                        )
 
-    def before_create(self):
-        pass
+            return wrapper
 
-    def after_create(self):
-        pass
+        event.listen(cls, "before_insert", event_wrapper("before_insert"))
+        event.listen(cls, "before_update", event_wrapper("before_update"))
 
-    def before_save(self):
-        pass
+        # before_save maps to two type of events
+        event.listen(cls, "before_insert", event_wrapper("before_save"))
+        event.listen(cls, "before_update", event_wrapper("before_save"))
 
-    def after_save(self):
-        pass
+        # now, let's handle after_* variants
+        event.listen(cls, "after_insert", event_wrapper("after_insert"))
+        event.listen(cls, "after_update", event_wrapper("after_update"))
 
+        # after_save maps to two type of events
+        event.listen(cls, "after_insert", event_wrapper("after_save"))
+        event.listen(cls, "after_update", event_wrapper("after_save"))
+
+    # TODO no type check decorator here
     @declared_attr
     def __tablename__(cls) -> str:
         """
@@ -74,19 +113,10 @@ class BaseModel(SQLModel):
                 # then add it to the new one (below)
                 old_session.expunge(self)
 
-            self.before_update()
-            self.before_save()
-
-            # breakpoint()
-            # self.before_save()
-
             session.add(self)
+            # NOTE very important method! This triggers sqlalchemy lifecycle hooks automatically
             session.commit()
             session.refresh(self)
-
-        self.after_update()
-        self.after_save()
-        # self.after_create()
 
         return self
 
