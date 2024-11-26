@@ -1,3 +1,23 @@
+# [0.4.0](https://github.com/iloveitaly/activemodel/compare/v0.3.0...v0.4.0) (2024-11-26)
+
+
+### Bug Fixes
+
+* update uv version to 0.5.4 ([1d77c39](https://github.com/iloveitaly/activemodel/commit/1d77c39e2234b98335e7206626dc2fdca0b34b79))
+
+
+### Features
+
+* add database truncation functionality for tests ([177abf9](https://github.com/iloveitaly/activemodel/commit/177abf91c8b25295cb93878433132302f8caffbc))
+* add FastAPISessionMaker for SQLAlchemy session management ([b80f045](https://github.com/iloveitaly/activemodel/commit/b80f045e52c908c7b1ae8721e42ee2796c8e85bc))
+* add mixins for timestamps and TypeID handling ([51a6128](https://github.com/iloveitaly/activemodel/commit/51a6128e6d0f45e5801821b99e399ae0bcfca624))
+* add python-decouple-typed as a dependency ([d495ad4](https://github.com/iloveitaly/activemodel/commit/d495ad419494c0c387a331a9d0ef4d112df83af7))
+* add typeid-python dependency to project requirements ([998762f](https://github.com/iloveitaly/activemodel/commit/998762fda8f62a078fc3a4afa8c09f5af323dcfb))
+* implement database reset methods for tests ([9cec29d](https://github.com/iloveitaly/activemodel/commit/9cec29d2ad89a871d4cbda2a6b8ad3a1ef50df6e))
+* lots of stuff :) ([0510d20](https://github.com/iloveitaly/activemodel/commit/0510d20a807829db4f6b454ee2915c32ecedb323))
+
+
+
 # [0.3.0](https://github.com/iloveitaly/activemodel/compare/v0.2.0...v0.3.0) (2024-11-20)
 
 
