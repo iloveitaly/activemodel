@@ -3,10 +3,13 @@ import typing as t
 
 import pydash
 import sqlalchemy as sa
+import sqlmodel as sm
 from sqlalchemy.orm import declared_attr
-from sqlmodel import Session, SQLModel
+from sqlmodel import Session, SQLModel, select
+from typeid import TypeID
 
 from .query_wrapper import QueryWrapper
+from .session_manager import get_session
 
 
 class BaseModel(SQLModel):
@@ -14,6 +17,8 @@ class BaseModel(SQLModel):
     Base model class to inherit from so we can hate python less
 
     https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py
+
+    {before,after} hooks are modeled after Rails.
     """
 
     # TODO implement actually calling these hooks
@@ -24,16 +29,22 @@ class BaseModel(SQLModel):
     def after_delete(self):
         pass
 
-    def before_save(self):
-        pass
-
-    def after_save(self):
-        pass
-
     def before_update(self):
         pass
 
     def after_update(self):
+        pass
+
+    def before_create(self):
+        pass
+
+    def after_create(self):
+        pass
+
+    def before_save(self):
+        pass
+
+    def after_save(self):
         pass
 
     @declared_attr
@@ -55,9 +66,8 @@ class BaseModel(SQLModel):
         return QueryWrapper[cls](cls, *args)
 
     def save(self):
-        old_session = Session.object_session(self)
         with get_session() as session:
-            if old_session:
+            if old_session := Session.object_session(self):
                 # I was running into an issue where the object was already
                 # associated with a session, but the session had been closed,
                 # to get around this, you need to remove it from the old one,
@@ -65,34 +75,36 @@ class BaseModel(SQLModel):
                 old_session.expunge(self)
 
             self.before_update()
+            self.before_save()
+
+            # breakpoint()
             # self.before_save()
 
             session.add(self)
             session.commit()
             session.refresh(self)
 
-            self.after_update()
-            # self.after_save()
+        self.after_update()
+        self.after_save()
+        # self.after_create()
 
-            return self
+        return self
 
-            # except IntegrityError:
-            #     log.quiet(f"{self} already exists in the database.")
-            #     session.rollback()
+        # except IntegrityError:
+        #     log.quiet(f"{self} already exists in the database.")
+        #     session.rollback()
 
     # TODO shouldn't this be handled by pydantic?
     def json(self, **kwargs):
         return json.dumps(self.dict(), default=str, **kwargs)
 
+    # TODO should move this to the wrapper
     @classmethod
-    def count(cls):
+    def count(cls) -> int:
         """
         Returns the number of records in the database.
         """
-        # TODO should move this to the wrapper
-        with get_session() as session:
-            query = sql.select(sql.func.count()).select_from(cls)
-            return session.exec(query).one()
+        return get_session().exec(sm.select(sm.func.count()).select_from(cls)).one()
 
     # TODO what's super dangerous here is you pass a kwarg which does not map to a specific
     #      field it will result in `True`, which will return all records, and not give you any typing
@@ -109,15 +121,17 @@ class BaseModel(SQLModel):
             # TODO id is hardcoded, not good! Need to dynamically pick the best uid field
             kwargs["id"] = args[0]
             args = []
+        elif len(args) == 1 and isinstance(args[0], TypeID):
+            kwargs["id"] = args[0]
+            args = []
 
-        statement = sql.select(cls).filter(*args).filter_by(**kwargs)
-        with get_session() as session:
-            return session.exec(statement).first()
+        statement = select(cls).filter(*args).filter_by(**kwargs)
+        return get_session().exec(statement).first()
 
     @classmethod
     def all(cls):
         with get_session() as session:
-            results = session.exec(sql.select(cls))
+            results = session.exec(sa.sql.select(cls))
 
             # TODO do we need this or can we just return results?
             for result in results:

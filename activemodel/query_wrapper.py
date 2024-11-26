@@ -1,15 +1,7 @@
-from typing import Generic, TypeVar
-
-from sqlmodel.sql.expression import SelectOfScalar
-
-WrappedModelType = TypeVar("WrappedModelType")
+import sqlmodel
 
 
-def compile_sql(target: SelectOfScalar):
-    return str(target.compile(get_engine().connect()))
-
-
-class QueryWrapper(Generic[WrappedModelType]):
+class QueryWrapper[T]:
     """
     Make it easy to run queries off of a model
     """
@@ -20,7 +12,7 @@ class QueryWrapper(Generic[WrappedModelType]):
 
         if args:
             # very naive, let's assume the args are specific select statements
-            self.target = sql.select(*args).select_from(cls)
+            self.target = sqlmodel.sql.select(*args).select_from(cls)
         else:
             self.target = sql.select(cls)
 
@@ -75,7 +67,7 @@ class QueryWrapper(Generic[WrappedModelType]):
 
     def sql(self):
         """
-        Output the raw SQL of the query
+        Output the raw SQL of the query for debugging
         """
 
         return compile_sql(self.target)
