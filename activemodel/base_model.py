@@ -1,5 +1,6 @@
 import json
 import typing as t
+from contextlib import contextmanager
 
 import pydash
 import sqlalchemy as sa
@@ -42,9 +43,19 @@ class BaseModel(SQLModel):
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
+        "Setup automatic sqlalchemy lifecycle events for the class"
+
         super().__init_subclass__(**kwargs)
 
         def event_wrapper(method_name: str):
+            """
+            This does smart heavy lifting for us to make sqlalchemy lifecycle events nicer to work with:
+
+            * Passes the target first to the lifecycle method, so it feels like an instance method
+            * Allows as little as a single positional argument, so methods can be simple
+            * Removes the need for decorators or anything fancy on the subclass
+            """
+
             def wrapper(mapper: Mapper, connection: Connection, target: BaseModel):
                 if hasattr(cls, method_name):
                     method = getattr(cls, method_name)
@@ -135,6 +146,41 @@ class BaseModel(SQLModel):
         Returns the number of records in the database.
         """
         return get_session().exec(sm.select(sm.func.count()).select_from(cls)).one()
+
+    # TODO throw an error if this field is set on the model
+    def is_new(self):
+        return not self._sa_instance_state.has_identity
+
+    @classmethod
+    def find_or_create_by(cls, **kwargs):
+        """
+        Find record or create it with the passed args if it doesn't exist.
+        """
+
+        result = cls.get(**kwargs)
+
+        if result:
+            return result
+
+        new_model = cls(**kwargs)
+        new_model.save()
+
+        return new_model
+
+    @classmethod
+    def find_or_initialize_by(cls, **kwargs):
+        """
+        Unfortunately, unlike ruby, python does not have a great lambda story. This makes writing convenience methods
+        like this a bit more difficult.
+        """
+
+        result = cls.get(**kwargs)
+
+        if result:
+            return result
+
+        new_model = cls(**kwargs)
+        return new_model
 
     # TODO what's super dangerous here is you pass a kwarg which does not map to a specific
     #      field it will result in `True`, which will return all records, and not give you any typing
