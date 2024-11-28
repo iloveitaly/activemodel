@@ -1,3 +1,12 @@
+# [0.5.0](https://github.com/iloveitaly/activemodel/compare/v0.4.0...v0.5.0) (2024-11-28)
+
+
+### Features
+
+* add methods for finding or creating records in model ([f1fd2f2](https://github.com/iloveitaly/activemodel/commit/f1fd2f2d65f182631b5df6a1ab20bf2f9a269607))
+
+
+
 # [0.4.0](https://github.com/iloveitaly/activemodel/compare/v0.3.0...v0.4.0) (2024-11-26)
 
 
