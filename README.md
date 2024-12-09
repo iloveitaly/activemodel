@@ -40,6 +40,7 @@ https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d
 ## Related Projects
 
 * https://github.com/woofz/sqlmodel-basecrud
+* https://github.com/0xthiagomartins/sqlmodel-controller
 
 ## Inspiration
 
