@@ -6,14 +6,14 @@ database environment when testing.
 import typing as t
 
 from decouple import config
-from sqlalchemy import Engine
+from sqlalchemy import Connection, Engine
 from sqlmodel import Session, create_engine
 
 
 class SessionManager:
     _instance: t.ClassVar[t.Optional["SessionManager"]] = None
 
-    session_connection: str
+    session_connection: Connection | None
 
     @classmethod
     def get_instance(cls, database_url: str | None = None) -> "SessionManager":

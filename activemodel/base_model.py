@@ -1,6 +1,5 @@
 import json
 import typing as t
-from contextlib import contextmanager
 
 import pydash
 import sqlalchemy as sa
@@ -101,6 +100,9 @@ class BaseModel(SQLModel):
     def __tablename__(cls) -> str:
         """
         Automatically generates the table name for the model by converting the class name from camel case to snake case.
+        This is the recommended format for table names:
+
+        https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names
 
         By default, the class is lower cased which makes it harder to read.
 

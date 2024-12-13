@@ -40,7 +40,7 @@ def database_reset_truncate():
             transaction = connection.begin()
 
             if table.name not in exception_tables:
-                logger.debug("truncating table=%s", table.name)
+                logger.debug(f"truncating table={table.name}")
                 connection.execute(table.delete())
 
             transaction.commit()
