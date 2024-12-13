@@ -9,6 +9,27 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 * Timestamp column mixins
 * Lifecycle hooks
 
+## Usage
+
+### TypeID
+
+```python
+import uuid
+
+from activemodel import BaseModel
+from activemodel.mixins import TimestampsMixin, TypeIDMixin
+from sqlmodel import Field, Relationship
+
+from .patient import Patient
+
+class Appointment(BaseModel, TimestampsMixin, TypeIDMixin("appointment"), table=True):
+    # NOTE uuid.UUID and not types.Uuid is used here
+    patient_id: uuid.UUID = Field(foreign_key="patient.id", nullable=False)
+    patient: Patient = Relationship()
+
+    location: str
+```
+
 ## Limitations
 
 ### Validation

@@ -15,3 +15,46 @@ TODO
 
 - [ ] snake case for attributes https://github.com/sqlalchemy/sqlalchemy/issues/7149
 - [ ] foreign key names https://github.com/fastapi/sqlmodel/discussions/1213
+
+
+find_or_create
+
+```
+    @staticmethod
+    def find_or_create_from_scrape(scrape: "Scrape", normalized_scrape_data: StoreScrape):
+        if menu := Menu.get(
+            digital_channel=normalized_scrape_data.digital_channel, channel_id=normalized_scrape_data.channel_id
+        ):
+            return menu
+
+        assert scrape.id
+        assert normalized_scrape_data.normalized_url
+        assert normalized_scrape_data.channel_id
+
+        menu = Menu(
+            originating_scrape_id=scrape.id,
+            name=normalized_scrape_data.name,
+            channel_id=normalized_scrape_data.channel_id,
+            url=normalized_scrape_data.normalized_url,
+        ).save()
+
+        return menu
+
+```
+
+clear engine
+
+```
+# def clear_engine():
+#     global _engine, _connection
+
+#     if _engine:
+#         _engine.dispose()
+#         _engine = None
+#         _connection = None
+```
+
+TODO
+
+https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633 comments on models, table and field comments
+https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#set-db-keys-naming-conventions there was another error around this as well
