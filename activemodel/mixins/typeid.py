@@ -5,13 +5,22 @@ from typeid import TypeID
 
 from activemodel.types.typeid import TypeIDType
 
+_prefixes = []
+
 
 def TypeIDMixin(prefix: str):
+    assert prefix
+    assert (
+        prefix not in _prefixes
+    ), f"prefix {prefix} already exists, pick a different one"
+
     class _TypeIDMixin:
         id: uuid.UUID = Field(
             sa_column=Column(TypeIDType(prefix), primary_key=True),
             default_factory=lambda: TypeID(prefix),
         )
+
+    _prefixes.append(prefix)
 
     return _TypeIDMixin
 
