@@ -1,4 +1,5 @@
 import pytest
+
 from activemodel.mixins import TypeIDMixin
 
 
