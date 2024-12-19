@@ -2,12 +2,13 @@ import json
 import typing as t
 
 import pydash
+from typeid import TypeID
+
 import sqlalchemy as sa
 import sqlmodel as sm
 from sqlalchemy import Connection, event
 from sqlalchemy.orm import Mapper, declared_attr
 from sqlmodel import Session, SQLModel, select
-from typeid import TypeID
 
 from .logger import logger
 from .query_wrapper import QueryWrapper
@@ -45,6 +46,12 @@ class BaseModel(SQLModel):
         "Setup automatic sqlalchemy lifecycle events for the class"
 
         super().__init_subclass__(**kwargs)
+
+        from sqlmodel._compat import set_config_value
+
+        # this enables field-level docstrings to be added to the pydanatic `description` field, which we then copy into
+        # sa args to it it persisted to the sql table comments
+        set_config_value(model=cls, parameter="use_attribute_docstrings", value=True)
 
         def event_wrapper(method_name: str):
             """
@@ -95,6 +102,9 @@ class BaseModel(SQLModel):
         event.listen(cls, "after_insert", event_wrapper("after_save"))
         event.listen(cls, "after_update", event_wrapper("after_save"))
 
+    # def foreign_key()
+    # table.id
+
     # TODO no type check decorator here
     @declared_attr
     def __tablename__(cls) -> str:
@@ -116,6 +126,15 @@ class BaseModel(SQLModel):
     @classmethod
     def select(cls, *args):
         return QueryWrapper[cls](cls, *args)
+
+    def delete(self):
+        with get_session() as session:
+            if old_session := Session.object_session(self):
+                old_session.expunge(self)
+
+            session.delete(self)
+            session.commit()
+            session.refresh(self)
 
     def save(self):
         with get_session() as session:
@@ -147,7 +166,8 @@ class BaseModel(SQLModel):
         """
         Returns the number of records in the database.
         """
-        return get_session().exec(sm.select(sm.func.count()).select_from(cls)).one()
+        with get_session() as session:
+            return session.exec(sm.select(sm.func.count()).select_from(cls)).one()
 
     # TODO throw an error if this field is set on the model
     def is_new(self):
@@ -205,12 +225,14 @@ class BaseModel(SQLModel):
             args = []
 
         statement = select(cls).filter(*args).filter_by(**kwargs)
-        return get_session().exec(statement).first()
+
+        with get_session() as session:
+            return session.exec(statement).first()
 
     @classmethod
     def all(cls):
         with get_session() as session:
-            results = session.exec(sa.sql.select(cls))
+            results = session.exec(sm.select(cls))
 
             # TODO do we need this or can we just return results?
             for result in results:
@@ -224,7 +246,7 @@ class BaseModel(SQLModel):
         Helpful for testing and console debugging.
         """
 
-        query = sql.select(cls).order_by(sql.func.random()).limit(1)
+        query = sm.select(cls).order_by(sa.sql.func.random()).limit(1)
 
         with get_session() as session:
             return session.exec(query).one()
