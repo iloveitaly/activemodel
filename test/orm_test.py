@@ -1,3 +1,7 @@
+"""
+Test core ORM functions
+"""
+
 from contextlib import contextmanager
 
 from activemodel import BaseModel, get_engine
@@ -19,21 +23,30 @@ def temporary_tables():
         )
 
 
-def test_list():
-    class TestRecord(
-        BaseModel, TimestampsMixin, TypeIDMixin("test_record"), table=True
-    ):
-        pass
+EXAMPLE_TABLE_PREFIX = "test_record"
 
+
+class ExampleRecord(
+    BaseModel, TimestampsMixin, TypeIDMixin(EXAMPLE_TABLE_PREFIX), table=True
+):
+    pass
+
+
+def test_list():
     with temporary_tables():
         # create 10 example records
         for i in range(10):
-            TestRecord().save()
+            ExampleRecord().save()
 
-        assert TestRecord.count() == 10
+        assert ExampleRecord.count() == 10
 
-        all_records = list(TestRecord.all())
+        all_records = list(ExampleRecord.all())
         assert len(all_records) == 10
 
         record = all_records[0]
-        assert isinstance(record, TestRecord)
+        assert isinstance(record, ExampleRecord)
+
+
+def test_foreign_key():
+    field = ExampleRecord.foreign_key()
+    assert field.sa_type.prefix == EXAMPLE_TABLE_PREFIX
