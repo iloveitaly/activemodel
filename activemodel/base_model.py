@@ -8,7 +8,7 @@ import sqlalchemy as sa
 import sqlmodel as sm
 from sqlalchemy import Connection, event
 from sqlalchemy.orm import Mapper, declared_attr
-from sqlmodel import Session, SQLModel, select
+from sqlmodel import Field, Session, SQLModel, select
 
 from .logger import logger
 from .query_wrapper import QueryWrapper
@@ -122,6 +122,19 @@ class BaseModel(SQLModel):
         https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
         """
         return pydash.strings.snake_case(cls.__name__)
+
+    @classmethod
+    def foreign_key(cls):
+        """
+        Returns a Field object referencing the foreign key of the model.
+        """
+
+        return Field(
+            # TODO id field is hard coded
+            sa_type=cls.model_fields["id"].sa_column.type,  # type: ignore
+            foreign_key=f"{cls.__tablename__}.id",
+            nullable=False,
+        )
 
     @classmethod
     def select(cls, *args):
