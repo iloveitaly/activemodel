@@ -1,4 +1,8 @@
 import os
+from contextlib import contextmanager
+
+from activemodel import get_engine
+from sqlmodel import SQLModel
 
 
 def database_url():
@@ -14,3 +18,15 @@ def database_url():
     # https://docs.sqlalchemy.org/en/20/core/engines.html#database-urls
     # without this, psycopg2 would be used, which is not intended!
     return url.replace("postgresql://", "postgresql+psycopg://")
+
+
+@contextmanager
+def temporary_tables():
+    SQLModel.metadata.create_all(get_engine())
+
+    try:
+        yield
+    finally:
+        SQLModel.metadata.drop_all(
+            bind=get_engine(),
+        )

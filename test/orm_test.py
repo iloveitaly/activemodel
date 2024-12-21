@@ -2,26 +2,11 @@
 Test core ORM functions
 """
 
-from contextlib import contextmanager
+from test.utils import temporary_tables
 
-from activemodel import BaseModel, get_engine
+from activemodel import BaseModel
 from activemodel.mixins.timestamps import TimestampsMixin
 from activemodel.mixins.typeid import TypeIDMixin
-from sqlmodel import SQLModel
-
-
-@contextmanager
-def temporary_tables():
-    SQLModel.metadata.create_all(get_engine())
-
-    try:
-        yield
-    finally:
-        SQLModel.metadata.drop_all(
-            # tables=[SQLModel.metadata.tables[AIVisitNote.__tablename__]],
-            bind=get_engine(),
-        )
-
 
 EXAMPLE_TABLE_PREFIX = "test_record"
 

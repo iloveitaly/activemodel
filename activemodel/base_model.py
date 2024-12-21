@@ -41,6 +41,8 @@ class BaseModel(SQLModel):
 
     # TODO implement actually calling these hooks
 
+    __table_args__ = None
+
     @classmethod
     def __init_subclass__(cls, **kwargs):
         "Setup automatic sqlalchemy lifecycle events for the class"
@@ -52,6 +54,8 @@ class BaseModel(SQLModel):
         # this enables field-level docstrings to be added to the pydanatic `description` field, which we then copy into
         # sa args to it it persisted to the sql table comments
         set_config_value(model=cls, parameter="use_attribute_docstrings", value=True)
+
+        cls._apply_class_doc()
 
         def event_wrapper(method_name: str):
             """
@@ -102,8 +106,24 @@ class BaseModel(SQLModel):
         event.listen(cls, "after_insert", event_wrapper("after_save"))
         event.listen(cls, "after_update", event_wrapper("after_save"))
 
-    # def foreign_key()
-    # table.id
+        # def foreign_key()
+        # table.id
+
+    @classmethod
+    def _apply_class_doc(cls):
+        "Pull the class-level docstring into a table comment"
+
+        doc = cls.__doc__.strip() if cls.__doc__ else None
+
+        if doc:
+            table_args = getattr(cls, "__table_args__", None)
+
+            if table_args is None:
+                cls.__table_args__ = {"comment": doc}
+            elif isinstance(table_args, dict):
+                table_args.setdefault("comment", doc)
+            else:
+                raise ValueError("Unexpected __table_args__ type")
 
     # TODO no type check decorator here
     @declared_attr
