@@ -10,8 +10,11 @@ permissions:
   contents: write
 
 env:
+  # avoid build failures due to flaky pypi
   PIP_DEFAULT_TIMEOUT: 60
   PIP_RETRIES: 5
+
+  DATABASE_HOST: localhost
 
 jobs:
   # release-please:
@@ -28,32 +31,17 @@ jobs:
 
   build-and-publish:
     runs-on: ubuntu-latest
-    services:
-      redis:
-        image: redis
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
-      postgres:
-        image: postgres
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_PASSWORD: postgres
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
+      - run: docker compose up -d --wait
       - run: uv sync
 
       # `uv run` prefix is required since the venv is not activated
 
       - name: Make sure we can import the module
         run: uv run python -c 'import ${{ github.event.repository.name }}'
-
+        
       - run: uv run pytest
 
       # - name: Conventional Changelog Action
