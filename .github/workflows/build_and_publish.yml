@@ -34,6 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
+      - run: direnv allow . && direnv export gha >> "$GITHUB_ENV"
       - run: docker compose up -d --wait
       - run: uv sync
 
@@ -41,7 +42,7 @@ jobs:
 
       - name: Make sure we can import the module
         run: uv run python -c 'import ${{ github.event.repository.name }}'
-        
+
       - run: uv run pytest
 
       # - name: Conventional Changelog Action
