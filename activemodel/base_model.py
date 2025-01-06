@@ -1,5 +1,6 @@
 import json
 import typing as t
+from uuid import UUID
 
 import pydash
 from typeid import TypeID
@@ -150,7 +151,7 @@ class BaseModel(SQLModel):
         """
 
         return Field(
-            # TODO id field is hard coded
+            # TODO id field is hard coded, should pick the PK field in case it's different
             sa_type=cls.model_fields["id"].sa_column.type,  # type: ignore
             foreign_key=f"{cls.__tablename__}.id",
             nullable=False,
@@ -248,13 +249,21 @@ class BaseModel(SQLModel):
         Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
         """
 
+        # TODO id is hardcoded, not good! Need to dynamically pick the best uid field
+        id_field_name = "id"
+
         # special case for getting by ID
         if len(args) == 1 and isinstance(args[0], int):
-            # TODO id is hardcoded, not good! Need to dynamically pick the best uid field
-            kwargs["id"] = args[0]
+            kwargs[id_field_name] = args[0]
             args = []
         elif len(args) == 1 and isinstance(args[0], TypeID):
-            kwargs["id"] = args[0]
+            kwargs[id_field_name] = args[0]
+            args = []
+        elif len(args) == 1 and isinstance(args[0], str):
+            kwargs[id_field_name] = args[0]
+            args = []
+        elif len(args) == 1 and isinstance(args[0], UUID):
+            kwargs[id_field_name] = args[0]
             args = []
 
         statement = select(cls).filter(*args).filter_by(**kwargs)

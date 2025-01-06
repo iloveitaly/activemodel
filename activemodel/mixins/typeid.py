@@ -1,10 +1,11 @@
 import uuid
 
-from sqlmodel import Column, Field
 from typeid import TypeID
 
 from activemodel.types.typeid import TypeIDType
+from sqlmodel import Column, Field
 
+# global list of prefixes to ensure uniqueness
 _prefixes = []
 
 
