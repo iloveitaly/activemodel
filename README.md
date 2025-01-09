@@ -11,6 +11,12 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 
 ## Usage
 
+### Example Queries
+
+* Conditional: `Scrape.select().where(Scrape.id < last_scraped.id).all()`
+* Equality: `MenuItem.select().where(MenuItem.menu_id == menu.id).all()`
+* `IN` example: `CanonicalMenuItem.select().where(col(CanonicalMenuItem.id).in_(canonized_ids)).all()`
+
 ### TypeID
 
 ```python
