@@ -62,22 +62,29 @@ def test_get_through_plain_uid():
         assert record is None
 
 
-# the wrapped test is probably overkill, but it's protecting against a weird edge case I was running into
+# the wrapped test is probably overkill, but it's protecting against a weird edge case I was running into with fastapi
+# rendering. A top-level object render worked fine, but rendering a list of SQLModel objects containing TypeID fields
+# would fail with 'Unable to serialize unknown type'
 class WrappedExample(PydanticBaseModel):
     example: ExampleWithId
 
 
-def test_render_typeid():
-    "ensure that pydantic models can render the type id"
+def test_render_typeid(create_and_wipe_database):
+    """
+    ensure that pydantic models can render the type id
 
-    with temporary_tables():
-        example = ExampleWithId().save()
+    `__pydantic_serializer__` seems to generate a serialization plan that gets passed to the underlying rust library
+    which actually renders the object. This is why grepping for various errors in the serialization process does not
+    yield any results.
+    """
 
-        assert example.model_dump()["id"] == str(example.id)
-        assert json.loads(example.model_dump_json())["id"] == str(example.id)
+    example = ExampleWithId().save()
 
-        wrapped_example = WrappedExample(example=example)
-        assert wrapped_example.model_dump()["example"]["id"] == str(example.id)
-        assert json.loads(wrapped_example.model_dump_json())["example"]["id"] == str(
-            example.id
-        )
+    assert example.model_dump()["id"] == str(example.id)
+    assert json.loads(example.model_dump_json())["id"] == str(example.id)
+
+    wrapped_example = WrappedExample(example=example)
+    assert wrapped_example.model_dump()["example"]["id"] == str(example.id)
+    assert json.loads(wrapped_example.model_dump_json())["example"]["id"] == str(
+        example.id
+    )

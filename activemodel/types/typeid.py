@@ -96,8 +96,23 @@ class TypeIDType(types.TypeDecorator):
     def __get_pydantic_core_schema__(
         cls, _core_schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
     ) -> CoreSchema:
+        """
+        This fixes the following error: 'Unable to serialize unknown type' by telling pydantic how to serialize this field.
+
+        Note that TypeIDType MUST be the type of the field in SQLModel otherwise you'll get serialization errors.
+        This is done automatically for the mixin but for any relationship fields you'll need to specify the type explicitly.
+
+        - https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88
+        - https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py
+        - https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14
+        - https://github.com/pydantic/pydantic/issues/10060
+        - https://github.com/fastapi/fastapi/discussions/10027
+        - https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50
+        """
+
         from_uuid_schema = core_schema.chain_schema(
             [
+                # TODO not sure how this is different from the UUID schema, should try it  out.
                 # core_schema.is_instance_schema(TypeID),
                 core_schema.uuid_schema(),
                 core_schema.no_info_plain_validator_function(TypeID.from_string),
@@ -106,14 +121,7 @@ class TypeIDType(types.TypeDecorator):
 
         return core_schema.json_or_python_schema(
             json_schema=from_uuid_schema,
-            python_schema=core_schema.union_schema(
-                [
-                    from_uuid_schema
-                    # core_schema.is_instance_schema(TypeID),
-                    # core_schema.str_schema(),
-                    # core_schema.no_info_plain_validator_function(TypeID.from_string),
-                ]
-            ),
+            python_schema=core_schema.union_schema([from_uuid_schema]),
             serialization=core_schema.plain_serializer_function_ser_schema(
                 lambda x: str(x)
             ),
