@@ -5,6 +5,10 @@ Lifted from: https://github.com/akhundMurad/typeid-python/blob/main/examples/sql
 from typing import Optional
 from uuid import UUID
 
+from pydantic import (
+    GetJsonSchemaHandler,
+)
+from pydantic_core import CoreSchema, core_schema
 from typeid import TypeID
 
 from sqlalchemy import types
@@ -87,3 +91,30 @@ class TypeIDType(types.TypeDecorator):
     #         return self
 
     #     return super().coerce_compared_value(op, value)
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, _core_schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> CoreSchema:
+        from_uuid_schema = core_schema.chain_schema(
+            [
+                # core_schema.is_instance_schema(TypeID),
+                core_schema.uuid_schema(),
+                core_schema.no_info_plain_validator_function(TypeID.from_string),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_uuid_schema,
+            python_schema=core_schema.union_schema(
+                [
+                    from_uuid_schema
+                    # core_schema.is_instance_schema(TypeID),
+                    # core_schema.str_schema(),
+                    # core_schema.no_info_plain_validator_function(TypeID.from_string),
+                ]
+            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda x: str(x)
+            ),
+        )

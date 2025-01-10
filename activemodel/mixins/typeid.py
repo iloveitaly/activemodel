@@ -1,5 +1,3 @@
-import uuid
-
 from typeid import TypeID
 
 from activemodel.types.typeid import TypeIDType
@@ -16,7 +14,7 @@ def TypeIDMixin(prefix: str):
     ), f"prefix {prefix} already exists, pick a different one"
 
     class _TypeIDMixin:
-        id: uuid.UUID = Field(
+        id: TypeIDType = Field(
             sa_column=Column(TypeIDType(prefix), primary_key=True),
             default_factory=lambda: TypeID(prefix),
         )

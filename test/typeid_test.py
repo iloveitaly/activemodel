@@ -1,4 +1,7 @@
+import json
+
 import pytest
+from pydantic import BaseModel as PydanticBaseModel
 from typeid import TypeID
 
 from test.utils import temporary_tables
@@ -26,7 +29,6 @@ class ExampleWithId(BaseModel, TypeIDMixin(TYPEID_PREFIX), table=True):
     pass
 
 
-# the UIDs stored in the DB are NOT the same as the
 def test_get_through_prefixed_uid():
     type_uid = TypeID(prefix=TYPEID_PREFIX)
 
@@ -58,3 +60,24 @@ def test_get_through_plain_uid():
     with temporary_tables():
         record = ExampleWithId.get(type_uid.uuid)
         assert record is None
+
+
+# the wrapped test is probably overkill, but it's protecting against a weird edge case I was running into
+class WrappedExample(PydanticBaseModel):
+    example: ExampleWithId
+
+
+def test_render_typeid():
+    "ensure that pydantic models can render the type id"
+
+    with temporary_tables():
+        example = ExampleWithId().save()
+
+        assert example.model_dump()["id"] == str(example.id)
+        assert json.loads(example.model_dump_json())["id"] == str(example.id)
+
+        wrapped_example = WrappedExample(example=example)
+        assert wrapped_example.model_dump()["example"]["id"] == str(example.id)
+        assert json.loads(wrapped_example.model_dump_json())["example"]["id"] == str(
+            example.id
+        )
