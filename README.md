@@ -19,21 +19,32 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 
 ### TypeID
 
+I'm a massive fan of Stripe-style prefixed UUIDs. [There's an excellent project](https://github.com/jetify-com/typeid)
+that defined a clear spec for these IDs. I've used the python implementation of this spec and developed a clean integration
+with SQLModel that plays well with fastapi as well.
+
+Here's an example of defining a relationship:
+
 ```python
 import uuid
 
 from activemodel import BaseModel
 from activemodel.mixins import TimestampsMixin, TypeIDMixin
+from activemodel.types import TypeIDType
 from sqlmodel import Field, Relationship
 
 from .patient import Patient
 
-class Appointment(BaseModel, TimestampsMixin, TypeIDMixin("appointment"), table=True):
-    # NOTE uuid.UUID and not types.Uuid is used here
-    patient_id: uuid.UUID = Field(foreign_key="patient.id", nullable=False)
-    patient: Patient = Relationship()
-
-    location: str
+class Appointment(
+    BaseModel,
+    # this adds an `id` field to the model with the correct type
+    TypeIDMixin("appointment"),
+    table=True
+):
+    # `foreign_key` is a activemodel-specific method to generate the right `Field` for the relationship
+    # TypeIDType is really important here for fastapi serialization
+    doctor_id: TypeIDType = Doctor.foreign_key()
+    doctor: Doctor = Relationship()
 ```
 
 ## Limitations
