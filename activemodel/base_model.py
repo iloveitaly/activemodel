@@ -168,7 +168,7 @@ class BaseModel(SQLModel):
 
             session.delete(self)
             session.commit()
-            session.refresh(self)
+            return True
 
     def save(self):
         with get_session() as session:
