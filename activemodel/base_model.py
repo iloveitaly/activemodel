@@ -145,16 +145,18 @@ class BaseModel(SQLModel):
         return pydash.strings.snake_case(cls.__name__)
 
     @classmethod
-    def foreign_key(cls):
+    def foreign_key(cls, **kwargs):
         """
         Returns a Field object referencing the foreign key of the model.
         """
+
+        field_options = {"nullable": False} | kwargs
 
         return Field(
             # TODO id field is hard coded, should pick the PK field in case it's different
             sa_type=cls.model_fields["id"].sa_column.type,  # type: ignore
             foreign_key=f"{cls.__tablename__}.id",
-            nullable=False,
+            **field_options,
         )
 
     @classmethod

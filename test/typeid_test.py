@@ -8,6 +8,8 @@ from test.utils import temporary_tables
 
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
+from activemodel.types.typeid import TypeIDType
+from sqlmodel import Relationship
 
 
 def test_enforces_unique_prefixes():
@@ -25,8 +27,13 @@ def test_no_empty_prefixes_test():
 TYPEID_PREFIX = "myid"
 
 
-class ExampleWithId(BaseModel, TypeIDMixin(TYPEID_PREFIX), table=True):
+class AnotherExample(BaseModel, TypeIDMixin("myotherid"), table=True):
     pass
+
+
+class ExampleWithId(BaseModel, TypeIDMixin(TYPEID_PREFIX), table=True):
+    another_example_id: TypeIDType = AnotherExample.foreign_key(nullable=True)
+    another_example: AnotherExample = Relationship()
 
 
 def test_get_through_prefixed_uid():
@@ -88,3 +95,10 @@ def test_render_typeid(create_and_wipe_database):
     assert json.loads(wrapped_example.model_dump_json())["example"]["id"] == str(
         example.id
     )
+
+
+def test_json_schema(create_and_wipe_database):
+    "json schema generation shouldn't be meaningfully different than json rendering, but let's check it anyway"
+
+    example = ExampleWithId().save()
+    example.model_json_schema()

@@ -55,6 +55,9 @@ class TypeIDType(types.TypeDecorator):
         This is run when a search query is built or ...
         """
 
+        if value is None:
+            return None
+
         if isinstance(value, UUID):
             # then it's a UUID class, such as UUID('01942886-7afc-7129-8f57-db09137ed002')
             return value
@@ -80,6 +83,9 @@ class TypeIDType(types.TypeDecorator):
         raise ValueError("Unexpected input type")
 
     def process_result_value(self, value, dialect):
+        if value is None:
+            return None
+
         return TypeID.from_uuid(value, self.prefix)
 
     # def coerce_compared_value(self, op, value):
