@@ -3,11 +3,31 @@ Class to make managing sessions with SQL Model easy. Also provides a common entr
 database environment when testing.
 """
 
+import json
 import typing as t
 
 from decouple import config
+from pydantic import BaseModel
+
 from sqlalchemy import Connection, Engine
 from sqlmodel import Session, create_engine
+
+
+def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str | None:
+    """
+    Pydantic models do not serialize to JSON by default. You'll get an error such as:
+
+    'TypeError: Object of type TranscriptEntry is not JSON serializable'
+    """
+
+    # TODO I bet this will fail on lists with mixed types
+
+    if isinstance(model, BaseModel):
+        return model.model_dump_json()
+    if isinstance(model, list):
+        return json.dumps([m.model_dump() for m in model])
+    else:
+        return json.dumps(model)
 
 
 class SessionManager:
@@ -35,6 +55,7 @@ class SessionManager:
         if not self._engine:
             self._engine = create_engine(
                 self._database_url,
+                json_serializer=_serialize_pydantic_model,
                 echo=config("ACTIVEMODEL_LOG_SQL", cast=bool, default=False),
                 # https://docs.sqlalchemy.org/en/20/core/pooling.html#disconnect-handling-pessimistic
                 pool_pre_ping=True,
