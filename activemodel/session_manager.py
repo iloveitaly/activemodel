@@ -18,6 +18,8 @@ def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str 
     Pydantic models do not serialize to JSON by default. You'll get an error such as:
 
     'TypeError: Object of type TranscriptEntry is not JSON serializable'
+
+    https://github.com/fastapi/sqlmodel/issues/63#issuecomment-2581016387
     """
 
     # TODO I bet this will fail on lists with mixed types
@@ -38,9 +40,9 @@ class SessionManager:
     @classmethod
     def get_instance(cls, database_url: str | None = None) -> "SessionManager":
         if cls._instance is None:
-            assert (
-                database_url is not None
-            ), "Database URL required for first initialization"
+            assert database_url is not None, (
+                "Database URL required for first initialization"
+            )
             cls._instance = cls(database_url)
 
         return cls._instance
