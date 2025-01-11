@@ -1,19 +1,17 @@
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
 
-TYPEID_PREFIX = "myid"
 
-
-class ExampleWithId(BaseModel, TypeIDMixin(TYPEID_PREFIX), table=True):
+class DeleteExampleWithId(BaseModel, TypeIDMixin("delete_test"), table=True):
     pass
 
 
 def test_delete(create_and_wipe_database):
-    example = ExampleWithId().save()
+    example = DeleteExampleWithId().save()
 
-    assert ExampleWithId.count() == 1
+    assert DeleteExampleWithId.count() == 1
 
     result = example.delete()
 
-    assert ExampleWithId.count() == 0
+    assert DeleteExampleWithId.count() == 0
     assert result is True
