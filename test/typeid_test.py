@@ -4,12 +4,10 @@ import pytest
 from pydantic import BaseModel as PydanticBaseModel
 from typeid import TypeID
 
+from test.models import TYPEID_PREFIX, ExampleWithId
 from test.utils import temporary_tables
 
-from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
-from activemodel.types.typeid import TypeIDType
-from sqlmodel import Relationship
 
 
 def test_enforces_unique_prefixes():
@@ -22,18 +20,6 @@ def test_enforces_unique_prefixes():
 def test_no_empty_prefixes_test():
     with pytest.raises(AssertionError):
         TypeIDMixin("")
-
-
-TYPEID_PREFIX = "myid"
-
-
-class AnotherExample(BaseModel, TypeIDMixin("myotherid"), table=True):
-    pass
-
-
-class ExampleWithId(BaseModel, TypeIDMixin(TYPEID_PREFIX), table=True):
-    another_example_id: TypeIDType = AnotherExample.foreign_key(nullable=True)
-    another_example: AnotherExample = Relationship()
 
 
 def test_get_through_prefixed_uid():
