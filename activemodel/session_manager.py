@@ -8,7 +8,6 @@ import typing as t
 
 from decouple import config
 from pydantic import BaseModel
-
 from sqlalchemy import Connection, Engine
 from sqlmodel import Session, create_engine
 
@@ -27,7 +26,13 @@ def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str 
     if isinstance(model, BaseModel):
         return model.model_dump_json()
     if isinstance(model, list):
-        return json.dumps([m.model_dump() for m in model])
+        # not everything in a list is a pydantic model
+        def dump_if_model(m):
+            if isinstance(m, BaseModel):
+                return m.model_dump()
+            return m
+
+        return json.dumps([dump_if_model(m) for m in model])
     else:
         return json.dumps(model)
 
