@@ -4,6 +4,7 @@ database environment when testing.
 """
 
 import contextlib
+import contextvars
 import json
 import typing as t
 
@@ -44,8 +45,6 @@ class SessionManager:
     session_connection: Connection | None
     "optionally specify a specific session connection to use for all get_session() calls, useful for testing"
 
-    session: Session | None
-
     @classmethod
     def get_instance(cls, database_url: str | None = None) -> "SessionManager":
         if cls._instance is None:
@@ -61,7 +60,6 @@ class SessionManager:
         self._engine = None
 
         self.session_connection = None
-        self.session = None
 
     # TODO why is this type not reimported?
     def get_engine(self) -> Engine:
@@ -78,12 +76,11 @@ class SessionManager:
         return self._engine
 
     def get_session(self):
-        if self.session:
+        if self._session_context:
 
             @contextlib.contextmanager
             def _fake():
-                assert self.session
-                yield self.session
+                yield self._session_context.get()
 
             return _fake()
 
@@ -99,14 +96,18 @@ class SessionManager:
         `session_connection`, restoring it to `None` at the end.
         """
 
+        self._session_context = contextvars.ContextVar[Session | None](
+            "session_context", default=None
+        )
+
         # Generate a new connection and set it as the session_connection
         with self.get_session() as session:
-            self.session = session
+            token = self._session_context.set(session)
 
             try:
                 yield
             finally:
-                self.session = None
+                self._session_context.reset(token)
 
 
 def init(database_url: str):
