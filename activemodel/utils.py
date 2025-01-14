@@ -1,6 +1,6 @@
 from sqlmodel.sql.expression import SelectOfScalar
 
-from activemodel import get_engine
+from .session_manager import get_engine, get_session
 
 
 def compile_sql(target: SelectOfScalar):

@@ -1,4 +1,7 @@
-import sqlmodel
+import sqlmodel as sm
+
+from .session_manager import get_session
+from .utils import compile_sql
 
 
 class QueryWrapper[T]:
@@ -12,9 +15,9 @@ class QueryWrapper[T]:
 
         if args:
             # very naive, let's assume the args are specific select statements
-            self.target = sqlmodel.sql.select(*args).select_from(cls)
+            self.target = sm.select(*args).select_from(cls)
         else:
-            self.target = sql.select(cls)
+            self.target = sm.select(cls)
 
     # TODO the .exec results should be handled in one shot
 
@@ -23,6 +26,7 @@ class QueryWrapper[T]:
             return session.exec(self.target).first()
 
     def one(self):
+        "requires exactly one result in the dataset"
         with get_session() as session:
             return session.exec(self.target).one()
 
