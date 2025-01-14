@@ -17,6 +17,11 @@ class PydanticJSONMixin:
 
             annotation = field_info.annotation
             origin = get_origin(annotation)
+
+            # e.g. `dict` or `dict[str, str]`, we don't want to do anything with these
+            if origin is dict:
+                continue
+
             annotation_args = get_args(annotation)
             is_top_level_list = origin is list
 
