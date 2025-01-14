@@ -3,6 +3,7 @@ Class to make managing sessions with SQL Model easy. Also provides a common entr
 database environment when testing.
 """
 
+import contextlib
 import json
 import typing as t
 
@@ -41,6 +42,9 @@ class SessionManager:
     _instance: t.ClassVar[t.Optional["SessionManager"]] = None
 
     session_connection: Connection | None
+    "optionally specify a specific session connection to use for all get_session() calls, useful for testing"
+
+    session: Session | None
 
     @classmethod
     def get_instance(cls, database_url: str | None = None) -> "SessionManager":
@@ -55,7 +59,9 @@ class SessionManager:
     def __init__(self, database_url: str):
         self._database_url = database_url
         self._engine = None
+
         self.session_connection = None
+        self.session = None
 
     # TODO why is this type not reimported?
     def get_engine(self) -> Engine:
@@ -72,10 +78,35 @@ class SessionManager:
         return self._engine
 
     def get_session(self):
+        if self.session:
+
+            @contextlib.contextmanager
+            def _fake():
+                assert self.session
+                yield self.session
+
+            return _fake()
+
         if self.session_connection:
             return Session(bind=self.session_connection)
 
         return Session(self.get_engine())
+
+    @contextlib.contextmanager
+    def global_session(self):
+        """
+        Context manager that generates a new session and sets it as the
+        `session_connection`, restoring it to `None` at the end.
+        """
+
+        # Generate a new connection and set it as the session_connection
+        with self.get_session() as session:
+            self.session = session
+
+            try:
+                yield
+            finally:
+                self.session = None
 
 
 def init(database_url: str):
@@ -88,3 +119,8 @@ def get_engine():
 
 def get_session():
     return SessionManager.get_instance().get_session()
+
+
+def global_session():
+    with SessionManager.get_instance().global_session():
+        yield

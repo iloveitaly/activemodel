@@ -4,10 +4,12 @@ By default, fast API does not handle converting JSONB to and from Pydantic model
 
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlmodel import Field
+from sqlmodel import Field, Session
 
 from activemodel import BaseModel
 from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
+from activemodel.session_manager import SessionManager
+from test.models import AnotherExample, ExampleWithComputedProperty
 
 
 class SubObject(PydanticBaseModel):
@@ -55,3 +57,25 @@ def test_json_serialization(create_and_wipe_database):
     assert fresh_example.optional_list_field
     assert isinstance(fresh_example.optional_list_field[0], SubObject)
     assert isinstance(fresh_example.unstructured_field, dict)
+
+
+def test_computed_serialization(create_and_wipe_database):
+    # count()s are a bit paranoid because I don't understand the sqlalchemy session model yet
+
+    with SessionManager.get_instance().global_session():
+        another_example = AnotherExample(note="test").save()
+
+        example = ExampleWithComputedProperty(
+            another_example_id=another_example.id,
+        ).save()
+
+        assert ExampleWithComputedProperty.count() == 1
+        assert AnotherExample.count() == 1
+
+        assert Session.object_session(another_example)
+        assert Session.object_session(example)
+
+        example.model_dump_json()
+
+    assert ExampleWithComputedProperty.count() == 1
+    assert AnotherExample.count() == 1

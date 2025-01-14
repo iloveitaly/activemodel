@@ -6,6 +6,12 @@ from sqlalchemy.orm import reconstructor
 
 
 class PydanticJSONMixin:
+    """
+    By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.
+
+    This mixin, combined with a custom serializer, fixes that issue.
+    """
+
     @reconstructor
     def init_on_load(self):
         # TODO do we need to inspect sa_type
