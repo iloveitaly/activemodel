@@ -6,13 +6,13 @@ from fastapi import Depends, FastAPI, Path, Request
 from fastapi.testclient import TestClient
 from starlette.testclient import TestClient
 
-from activemodel.session_manager import global_session
+from activemodel.session_manager import aglobal_session
 from activemodel.types.typeid import TypeIDType
 from test.models import AnotherExample, ExampleWithComputedProperty, ExampleWithId
 
 
 def fake_app():
-    api_app = FastAPI(dependencies=[Depends(global_session)])
+    api_app = FastAPI(dependencies=[Depends(aglobal_session)])
 
     @api_app.get("/typeid")
     async def index() -> ExampleWithId:
@@ -21,7 +21,11 @@ def fake_app():
     @api_app.get("/computed")
     async def computed():
         another_example = AnotherExample(note="hello").save()
-        return ExampleWithComputedProperty(another_example_id=another_example.id).save()
+        computed_example = ExampleWithComputedProperty(
+            another_example_id=another_example.id
+        ).save()
+        # computed_example.model_dump_json()
+        return computed_example
 
     @api_app.post("/example/{example_id}")
     async def get_record(

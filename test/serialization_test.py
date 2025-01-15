@@ -8,7 +8,7 @@ from sqlmodel import Field, Session
 
 from activemodel import BaseModel
 from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
-from activemodel.session_manager import SessionManager
+from activemodel.session_manager import global_session
 from test.models import AnotherExample, ExampleWithComputedProperty
 
 
@@ -62,7 +62,7 @@ def test_json_serialization(create_and_wipe_database):
 def test_computed_serialization(create_and_wipe_database):
     # count()s are a bit paranoid because I don't understand the sqlalchemy session model yet
 
-    with SessionManager.get_instance().global_session():
+    with global_session():
         another_example = AnotherExample(note="test").save()
 
         example = ExampleWithComputedProperty(
@@ -72,10 +72,14 @@ def test_computed_serialization(create_and_wipe_database):
         assert ExampleWithComputedProperty.count() == 1
         assert AnotherExample.count() == 1
 
+        # what if the query is done through our magic `select()` method
+        example_2 = list(ExampleWithComputedProperty.select().all())[0]
+
         assert Session.object_session(another_example)
         assert Session.object_session(example)
 
         example.model_dump_json()
+        example_2.model_dump_json()
 
     assert ExampleWithComputedProperty.count() == 1
     assert AnotherExample.count() == 1

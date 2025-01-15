@@ -76,11 +76,11 @@ class SessionManager:
         return self._engine
 
     def get_session(self):
-        if self._session_context:
+        if gsession := _session_context.get():
 
             @contextlib.contextmanager
             def _fake():
-                yield self._session_context.get()
+                yield gsession
 
             return _fake()
 
@@ -88,26 +88,6 @@ class SessionManager:
             return Session(bind=self.session_connection)
 
         return Session(self.get_engine())
-
-    @contextlib.contextmanager
-    def global_session(self):
-        """
-        Context manager that generates a new session and sets it as the
-        `session_connection`, restoring it to `None` at the end.
-        """
-
-        self._session_context = contextvars.ContextVar[Session | None](
-            "session_context", default=None
-        )
-
-        # Generate a new connection and set it as the session_connection
-        with self.get_session() as session:
-            token = self._session_context.set(session)
-
-            try:
-                yield
-            finally:
-                self._session_context.reset(token)
 
 
 def init(database_url: str):
@@ -122,6 +102,28 @@ def get_session():
     return SessionManager.get_instance().get_session()
 
 
+# contextvars must be at the top-level of a module! You will not get a warning if you don't do this.
+_session_context = contextvars.ContextVar[Session | None](
+    "session_context", default=None
+)
+
+
+@contextlib.contextmanager
 def global_session():
-    with SessionManager.get_instance().global_session():
-        yield
+    with SessionManager.get_instance().get_session() as s:
+        token = _session_context.set(s)
+
+        try:
+            yield
+        finally:
+            _session_context.reset(token)
+
+
+async def aglobal_session():
+    with SessionManager.get_instance().get_session() as s:
+        token = _session_context.set(s)
+
+        try:
+            yield
+        finally:
+            _session_context.reset(token)
