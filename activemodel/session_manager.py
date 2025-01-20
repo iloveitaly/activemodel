@@ -16,11 +16,14 @@ from sqlmodel import Session, create_engine
 
 def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str | None:
     """
-    Pydantic models do not serialize to JSON by default. You'll get an error such as:
+    Pydantic models do not serialize to JSON. You'll get an error such as:
 
     'TypeError: Object of type TranscriptEntry is not JSON serializable'
 
     https://github.com/fastapi/sqlmodel/issues/63#issuecomment-2581016387
+
+    This custom serializer is passed to the DB engine to properly serialize pydantic models to
+    JSON for storage in a JSONB column.
     """
 
     # TODO I bet this will fail on lists with mixed types
@@ -79,10 +82,10 @@ class SessionManager:
         if gsession := _session_context.get():
 
             @contextlib.contextmanager
-            def _fake():
+            def _reuse_session():
                 yield gsession
 
-            return _fake()
+            return _reuse_session()
 
         if self.session_connection:
             return Session(bind=self.session_connection)
