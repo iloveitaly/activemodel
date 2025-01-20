@@ -3,13 +3,12 @@ import typing as t
 from uuid import UUID
 
 import pydash
-from typeid import TypeID
-
 import sqlalchemy as sa
 import sqlmodel as sm
 from sqlalchemy import Connection, event
 from sqlalchemy.orm import Mapper, declared_attr
 from sqlmodel import Field, Session, SQLModel, select
+from typeid import TypeID
 
 from .logger import logger
 from .query_wrapper import QueryWrapper
@@ -203,10 +202,15 @@ class BaseModel(SQLModel):
         Returns the number of records in the database.
         """
         with get_session() as session:
-            return session.exec(sm.select(sm.func.count()).select_from(cls)).one()
+            return session.scalar(sm.select(sm.func.count()).select_from(cls))
+
+    # TODO got to be a better way to fwd these along...
+    @classmethod
+    def first(cls):
+        return cls.select().first()
 
     # TODO throw an error if this field is set on the model
-    def is_new(self):
+    def is_new(self) -> bool:
         return not self._sa_instance_state.has_identity
 
     @classmethod
