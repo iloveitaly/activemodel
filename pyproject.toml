@@ -30,3 +30,7 @@ dev = [
     "pydantic>=2.10.0",
     "fastapi[standard]>=0.115.6",
 ]
+
+[tool.ruff]
+extend-exclude = ["playground.py"]
+force-exclude = true
