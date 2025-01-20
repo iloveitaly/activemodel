@@ -1,7 +1,7 @@
+from sqlmodel import Column, Field
 from typeid import TypeID
 
 from activemodel.types.typeid import TypeIDType
-from sqlmodel import Column, Field
 
 # global list of prefixes to ensure uniqueness
 _prefixes = []
@@ -9,13 +9,13 @@ _prefixes = []
 
 def TypeIDMixin(prefix: str):
     assert prefix
-    assert (
-        prefix not in _prefixes
-    ), f"prefix {prefix} already exists, pick a different one"
+    assert prefix not in _prefixes, (
+        f"prefix {prefix} already exists, pick a different one"
+    )
 
     class _TypeIDMixin:
         id: TypeIDType = Field(
-            sa_column=Column(TypeIDType(prefix), primary_key=True),
+            sa_column=Column(TypeIDType(prefix), primary_key=True, nullable=False),
             default_factory=lambda: TypeID(prefix),
         )
 
