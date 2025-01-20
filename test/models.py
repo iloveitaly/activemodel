@@ -3,9 +3,18 @@ from sqlmodel import Field, Relationship
 
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
+from activemodel.mixins.timestamps import TimestampsMixin
 from activemodel.types.typeid import TypeIDType
 
 TYPEID_PREFIX = "myid"
+
+EXAMPLE_TABLE_PREFIX = "test_record"
+
+
+class ExampleRecord(
+    BaseModel, TimestampsMixin, TypeIDMixin(EXAMPLE_TABLE_PREFIX), table=True
+):
+    something: str | None
 
 
 class AnotherExample(BaseModel, TypeIDMixin("myotherid"), table=True):

@@ -2,20 +2,16 @@
 Test core ORM functions
 """
 
-from activemodel import BaseModel
-from activemodel.mixins.timestamps import TimestampsMixin
-from activemodel.mixins.typeid import TypeIDMixin
-
-EXAMPLE_TABLE_PREFIX = "test_record"
+from test.models import EXAMPLE_TABLE_PREFIX, AnotherExample, ExampleRecord
 
 
-class ExampleRecord(
-    BaseModel, TimestampsMixin, TypeIDMixin(EXAMPLE_TABLE_PREFIX), table=True
-):
-    something: str | None
+def test_empty_count(create_and_wipe_database):
+    assert ExampleRecord.count() == 0
 
 
 def test_all_and_count(create_and_wipe_database):
+    AnotherExample().save()
+
     records_to_create = 10
 
     # create 10 example records
@@ -44,3 +40,12 @@ def test_basic_query(create_and_wipe_database):
 
     query_as_str = str(query)
     result = query.first()
+
+
+def test_query_count(create_and_wipe_database):
+    AnotherExample().save()
+
+    example = ExampleRecord(something="hi").save()
+    count = ExampleRecord.select().where(ExampleRecord.something == "hi").count()
+
+    assert count == 1

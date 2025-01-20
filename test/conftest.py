@@ -1,8 +1,8 @@
 import pytest
+from sqlmodel import SQLModel
 
 import activemodel
 from activemodel.session_manager import get_engine
-from sqlmodel import SQLModel
 
 from .utils import database_url, temporary_tables
 
