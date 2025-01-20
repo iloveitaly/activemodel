@@ -9,10 +9,11 @@ from pydantic import (
     GetJsonSchemaHandler,
 )
 from pydantic_core import CoreSchema, core_schema
-from typeid import TypeID
-
 from sqlalchemy import types
 from sqlalchemy.util import generic_repr
+from typeid import TypeID
+
+from activemodel.errors import TypeIDValidationError
 
 
 class TypeIDType(types.TypeDecorator):
@@ -74,9 +75,15 @@ class TypeIDType(types.TypeDecorator):
         if isinstance(value, TypeID):
             # TODO in what case could this None prefix ever occur?
             if self.prefix is None:
-                assert value.prefix is None
+                if value.prefix is None:
+                    raise TypeIDValidationError(
+                        "Must have a valid prefix set on the class"
+                    )
             else:
-                assert value.prefix == self.prefix
+                if value.prefix != self.prefix:
+                    raise TypeIDValidationError(
+                        f"Expected '{self.prefix}' but got '{value.prefix}'"
+                    )
 
             return value.uuid
 
@@ -120,7 +127,7 @@ class TypeIDType(types.TypeDecorator):
             [
                 # TODO not sure how this is different from the UUID schema, should try it  out.
                 # core_schema.is_instance_schema(TypeID),
-                core_schema.uuid_schema(),
+                # core_schema.uuid_schema(),
                 core_schema.no_info_plain_validator_function(
                     TypeID.from_string,
                     json_schema_input_schema=core_schema.str_schema(),
@@ -162,6 +169,23 @@ class TypeIDType(types.TypeDecorator):
         Note that this method can return multiple types. A return value can be as simple as:
 
         {"type": "string"}
+
+        Or, you could return a more specific JSON schema type:
+
+        core_schema.uuid_schema()
+
+        The problem with using something like uuid_schema is the specifi patterns
+
+        https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153
         """
+
+        return {
+            "type": "string",
+            # TODO implement a more strict pattern in regex
+            #      https://github.com/jetify-com/typeid/blob/3d182feed5687c21bb5ab93d5f457ff96749b68b/spec/README.md?plain=1#L38
+            # "pattern": "^[0-9a-f]{24}$",
+            # "minLength": 24,
+            # "maxLength": 24,
+        }
 
         return core_schema.uuid_schema()
