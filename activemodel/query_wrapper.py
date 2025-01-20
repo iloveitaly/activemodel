@@ -1,15 +1,18 @@
 import sqlmodel as sm
+from sqlmodel.sql.expression import SelectOfScalar
 
 from .session_manager import get_session
 from .utils import compile_sql
 
 
-class QueryWrapper[T]:
+class QueryWrapper[T: sm.SQLModel]:
     """
     Make it easy to run queries off of a model
     """
 
-    def __init__(self, cls, *args) -> None:
+    target: SelectOfScalar[T]
+
+    def __init__(self, cls: T, *args) -> None:
         # TODO add generics here
         # self.target: SelectOfScalar[T] = sql.select(cls)
 
@@ -36,8 +39,14 @@ class QueryWrapper[T]:
             for row in result:
                 yield row
 
+    def count(self):
+        """
+        I did some basic tests
+        """
+        with get_session() as session:
+            return session.scalar(sm.select(sm.func.count()).select_from(self.target))
+
     def exec(self):
-        # TODO do we really need a unique session each time?
         with get_session() as session:
             return session.exec(self.target)
 
@@ -47,19 +56,20 @@ class QueryWrapper[T]:
 
     def __getattr__(self, name):
         """
-        This is called to retrieve the function to execute
+        This implements the magic that forwards function calls to sqlalchemy.
         """
 
         # TODO prefer methods defined in this class
+
         if not hasattr(self.target, name):
             return super().__getattribute__(name)
 
-        attr = getattr(self.target, name)
+        sqlalchemy_target = getattr(self.target, name)
 
-        if callable(attr):
+        if callable(sqlalchemy_target):
 
             def wrapper(*args, **kwargs):
-                result = attr(*args, **kwargs)
+                result = sqlalchemy_target(*args, **kwargs)
                 self.target = result
                 return self
 
