@@ -15,32 +15,18 @@ from .query_wrapper import QueryWrapper
 from .session_manager import get_session
 
 
-# TODO this does not seem to work with the latest 2.9.x pydantic and sqlmodel
-# https://github.com/SE-Sustainability-OSS/ecodev-core/blob/main/ecodev_core/sqlmodel_utils.py
-class SQLModelWithValidation(SQLModel):
-    """
-    Helper class to ease validation in SQLModel classes with table=True
-    """
-
-    @classmethod
-    def create(cls, **kwargs):
-        """
-        Forces validation to take place, even for SQLModel classes with table=True
-        """
-        return cls(**cls.__bases__[0](**kwargs).model_dump())
-
-
 class BaseModel(SQLModel):
     """
     Base model class to inherit from so we can hate python less
 
     https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py
 
-    {before,after} hooks are modeled after Rails.
+    - {before,after} lifecycle hooks are modeled after Rails.
+    - class docstrings are converd to table-level comments
+    - save(), delete(), select(), where(), and other easy methods you would expect
     """
 
-    # TODO implement actually calling these hooks
-
+    # this is used for table-level comments
     __table_args__ = None
 
     @classmethod
@@ -51,8 +37,8 @@ class BaseModel(SQLModel):
 
         from sqlmodel._compat import set_config_value
 
-        # this enables field-level docstrings to be added to the pydanatic `description` field, which we then copy into
-        # sa args to it it persisted to the sql table comments
+        # enables field-level docstrings on the pydanatic `description` field, which we then copy into
+        # sa_args, which is persisted to sql table comments
         set_config_value(model=cls, parameter="use_attribute_docstrings", value=True)
 
         cls._apply_class_doc()
@@ -111,7 +97,11 @@ class BaseModel(SQLModel):
 
     @classmethod
     def _apply_class_doc(cls):
-        "Pull the class-level docstring into a table comment"
+        """
+        Pull class-level docstring into a table comment.
+
+        This will help AI SQL writers like: https://github.com/iloveitaly/sql-ai-prompt-generator
+        """
 
         doc = cls.__doc__.strip() if cls.__doc__ else None
 
@@ -160,6 +150,7 @@ class BaseModel(SQLModel):
 
     @classmethod
     def select(cls, *args):
+        "create a query wrapper to easily run sqlmodel queries on this model"
         return QueryWrapper[cls](cls, *args)
 
     def delete(self):
@@ -248,8 +239,9 @@ class BaseModel(SQLModel):
     #      field it will result in `True`, which will return all records, and not give you any typing
     #      errors. Dangerous when iterating on structure quickly
     # TODO can we pass the generic of the superclass in?
-    @classmethod
+    # TODO can we type the method signature a bit better?
     # def get(cls, *args: sa.BinaryExpression, **kwargs: t.Any):
+    @classmethod
     def get(cls, *args: t.Any, **kwargs: t.Any):
         """
         Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
@@ -259,18 +251,9 @@ class BaseModel(SQLModel):
         id_field_name = "id"
 
         # special case for getting by ID
-        if len(args) == 1 and isinstance(args[0], int):
+        if len(args) == 1 and isinstance(args[0], (int, TypeID, str, UUID)):
             kwargs[id_field_name] = args[0]
-            args = []
-        elif len(args) == 1 and isinstance(args[0], TypeID):
-            kwargs[id_field_name] = args[0]
-            args = []
-        elif len(args) == 1 and isinstance(args[0], str):
-            kwargs[id_field_name] = args[0]
-            args = []
-        elif len(args) == 1 and isinstance(args[0], UUID):
-            kwargs[id_field_name] = args[0]
-            args = []
+            args = ()
 
         statement = select(cls).filter(*args).filter_by(**kwargs)
 
