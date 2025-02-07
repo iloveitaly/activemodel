@@ -9,7 +9,47 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 * Timestamp column mixins
 * Lifecycle hooks
 
+## Getting Started
+
+First, setup your DB:
+
+```python
+
+```
+
+Then, setup some models:
+
+```python
+from activemodel import BaseModel
+from activemodel.mixins import TimestampsMixin, TypeIDMixin
+
+class User(
+    BaseModel, TimestampsMixin, TypeIDMixin("user"), table=True
+):
+    a_field: str
+```
+
 ## Usage
+
+### Query Wrapper
+
+This tool is added to all `BaseModel`s and makes it easy to write SQL queries. Some examples:
+
+
+
+### Easy Database Sessions
+
+I hate the idea f 
+
+* Behavior should be intuitive and easy to understand. If you run `save()`, it should save, not stick the save in a transaction.
+* Don't worry about dead sessions. This makes it easy to lazy-load computed properties and largely eliminates the need to think about database sessions.
+
+There are a couple of thorny problems we need to solve for here:
+
+* In-memory fastapi servers are not the same as a uvicorn server, which is threaded *and* uses some sort of threadpool model for handling async requests. I don't claim to understand the entire implementation. For global DB session state (a) we can't use global variables (b) we can't use thread-local variables.
+* 
+
+https://github.com/tomwojcik/starlette-context
 
 ### Example Queries
 
