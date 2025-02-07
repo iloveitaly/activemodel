@@ -17,6 +17,9 @@ urls = { "Repository" = "https://github.com/iloveitaly/activemodel" }
 [project.scripts]
 activemodel = "python_package_template:main"
 
+[tool.setuptools.packages.find]
+exclude = ["playground", "tests"]
+
 # https://github.com/astral-sh/uv/issues/5200
 [tool.uv]
 package = true
