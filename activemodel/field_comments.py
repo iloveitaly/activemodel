@@ -9,6 +9,8 @@ from typing import Any, Type
 from pydantic_core import PydanticUndefined
 from sqlmodel.main import SQLModelMetaclass
 
+# this line is very important: it patches FieldInfo to support comments
+from . import field_info_patch  # noqa: F401
 from .utils import logger
 
 
