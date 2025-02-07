@@ -17,19 +17,31 @@ env:
   DATABASE_HOST: localhost
 
 jobs:
-  # release-please:
-  #   needs: [build]
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     release_created: ${{ steps.release.outputs.release_created }}
-  #   steps:
-  #     - uses: googleapis/release-please-action@main
-  #       id: release
-  #       with:
-  #         release-type: python
-  #         # token: ${{ secrets.GITHUB_TOKEN }}
+  release-please:
+    runs-on: ubuntu-latest
+    needs: [build]
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: python
+          # bump-minor-pre-major: true
+          # token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-publish:
+  publish:
+    runs-on: ubuntu-latest
+    needs: [release-please]
+    if: needs.release-please.outputs.release_created
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - run: direnv allow . && direnv export gha >> "$GITHUB_ENV"
+      - run: uv build
+      - run: uv publish --token ${{ secrets.PYPI_API_TOKEN }}
+
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,33 +54,4 @@ jobs:
 
       - name: Make sure we can import the module
         run: uv run python -c 'import ${{ github.event.repository.name }}'
-
       - run: uv run pytest
-
-      # - name: Conventional Changelog Action
-      #   id: changelog
-      #   uses: TriPSs/conventional-changelog-action@v6
-      #   with:
-      #     github-token: ${{ secrets.github_token }}
-      #     version-file: "./pyproject.toml"
-      #     version-path: "project.version"
-      #     fallback-version: "1.0.0"
-      #     output-file: "CHANGELOG.md"
-
-      # # NOTE must run after versioning otherwise the right version won't be pushed
-      # - name: Build distribution package
-      #   if: ${{ steps.changelog.outputs.skipped == 'false' }}
-      #   run: uv build
-
-      # - name: Publish to PyPI
-      #   if: ${{ steps.changelog.outputs.skipped == 'false' }}
-      #   # `gh secret set PYPI_API_TOKEN --app actions --body $PYPI_API_TOKEN`
-      #   run: uv publish --token ${{ secrets.PYPI_API_TOKEN }}
-
-      # - name: Github Release
-      #   if: ${{ steps.changelog.outputs.skipped == 'false' }}
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     # output options: https://github.com/TriPSs/conventional-changelog-action#outputs
-      #     body: ${{ steps.changelog.outputs.clean_changelog }}
-      #     tag_name: ${{ steps.changelog.outputs.tag }}
