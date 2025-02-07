@@ -5,9 +5,12 @@ on:
       - main
       - master
 
-# by default, permissions are read-only, read + write is required for git pushes
+# write permissions for release-please
 permissions:
   contents: write
+  pull-requests: write
+  packages: write
+  id-token: write
 
 env:
   # avoid build failures due to flaky pypi
