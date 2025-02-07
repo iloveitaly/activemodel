@@ -9,8 +9,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  packages: write
-  id-token: write
 
 env:
   # avoid build failures due to flaky pypi
@@ -31,7 +29,7 @@ jobs:
         with:
           release-type: python
           # bump-minor-pre-major: true
-          # token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PERSONAL_TOKEN }}
 
   publish:
     runs-on: ubuntu-latest
