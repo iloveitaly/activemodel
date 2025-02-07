@@ -14,7 +14,7 @@ EXAMPLE_TABLE_PREFIX = "test_record"
 class ExampleRecord(
     BaseModel, TimestampsMixin, TypeIDMixin(EXAMPLE_TABLE_PREFIX), table=True
 ):
-    something: str | None
+    something: str | None = None
 
 
 class AnotherExample(BaseModel, TypeIDMixin("myotherid"), table=True):

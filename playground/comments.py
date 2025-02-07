@@ -1,5 +1,6 @@
 from typing import Any, Type
 
+
 class BaseModel(SQLModel):
     """
     Base model class to inherit from so we can hate python less
@@ -23,8 +24,6 @@ class BaseModel(SQLModel):
                 field_obj.sa_column_kwargs["comment"] = description
 
             # field_obj.sa_column_kwargs = sa_kw
-
-class BaseModel(SQLModel, metaclass=DescriptionMeta):
 
 
 class ActiveModelMeta(SQLModelMetaclass):
