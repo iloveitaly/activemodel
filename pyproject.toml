@@ -32,6 +32,7 @@ dev = [
     "pytest>=8.3.3",
     "pydantic>=2.10.0",
     "fastapi[standard]>=0.115.6",
+    "alembic>=1.14.1",
 ]
 
 [tool.ruff]
