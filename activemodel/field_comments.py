@@ -10,7 +10,10 @@ from pydantic_core import PydanticUndefined
 from sqlmodel.main import SQLModelMetaclass
 
 # this line is very important: it patches FieldInfo to support comments
-from . import field_info_patch  # noqa: F401
+from . import (
+    field_info_patch,  # noqa: F401
+    get_column_from_field_patch,  # noqa: F401
+)
 from .utils import logger
 
 
@@ -38,45 +41,43 @@ class FieldDescriptionMeta(SQLModelMetaclass):
             if not field_description:
                 continue
 
-            if field_description:
-                # if you don't have a `Field()` definition tied to the field as a default, then sa_column_kwargs cannot
-                # be set. This is a limitation of the current implementation of SQLModel.
-                if hasattr(field, "sa_column_kwargs"):
-                    if field.sa_column_kwargs is not PydanticUndefined:
-                        field.sa_column_kwargs["comment"] = field_description
-                    else:
-                        field.sa_column_kwargs = {"comment": field_description}
+            has_column_definition = (
+                hasattr(field, "sa_column") and field.sa_column is not PydanticUndefined
+            )
 
-                    mutated_field = True
-                    continue
+            # if you don't have a `Field()` definition tied to the field as a default, then sa_column_kwargs cannot
+            # be set. This is a limitation of the current implementation of SQLModel.
+            if not has_column_definition and hasattr(field, "sa_column_kwargs"):
+                if field.sa_column_kwargs is not PydanticUndefined:
+                    field.sa_column_kwargs["comment"] = field_description
+                else:
+                    field.sa_column_kwargs = {"comment": field_description}
 
-                # if sa_column is set on the field definition, then we can set the comment on that directly
-                if (
-                    hasattr(field, "sa_column")
-                    and field.sa_column is not PydanticUndefined
-                    and not field.sa_column.comment
-                ):
-                    field.sa_column.comment = field_description
-                    mutated_field = True
-                    continue
+                mutated_field = True
+                continue
 
-                # object.__setattr__(
-                #     field, "sa_column_kwargs", {"comment": field_description}
-                # )
+            # if sa_column is set on the field definition, then we can set the comment on that directly
+            # also occurs when no `Field` is set (bare field with type annotation)
+            if has_column_definition and not field.sa_column.comment:
+                field.sa_column.comment = field_description
+                mutated_field = True
+                continue
 
-                logger.warning(
-                    "field comment found, but no sa_column_kwargs or sa_column found. %s",
-                    field_name,
-                )
+            logger.warning(
+                "field comment found, but no sa_column_kwargs or sa_column found. %s",
+                field_name,
+            )
 
-                # TODO not sure what I was thinking here?
-                # deal with attributes of new_class
-                # if hasattr(new_class, field_name):
-                #     column = getattr(new_class, field_name)
-                #     if hasattr(column, "comment") and not column.comment:
-                #         column.comment = desc
+            # breakpoint()
 
-                class_dict[field_name] = field
+            # TODO not sure what I was thinking here?
+            # deal with attributes of new_class
+            # if hasattr(new_class, field_name):
+            #     column = getattr(new_class, field_name)
+            #     if hasattr(column, "comment") and not column.comment:
+            #         column.comment = desc
+
+            class_dict[field_name] = field
 
         if not mutated_field:
             return class_with_docstrings

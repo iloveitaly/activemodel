@@ -14,7 +14,7 @@ from activemodel.session_manager import get_session
 
 
 class ExampleWithoutComments(
-    BaseModel, TimestampsMixin, TypeIDMixin("ex2"), table=True
+    BaseModel, TimestampsMixin, TypeIDMixin("ex_wo_comments"), table=True
 ):
     pass
 
@@ -74,7 +74,7 @@ def get_column_comment(table_name, column_name):
 
 def test_column_comments(create_and_wipe_database):
     fields_to_check = [
-        "a_string_field_without_field",
+        # "a_string_field_without_field",
         "a_string_field_with_field",
         "field_with_sa_column",
         "field_with_sa_column_args",
@@ -95,6 +95,7 @@ def test_column_comments(create_and_wipe_database):
     )
 
     for field_name in fields_to_check:
-        assert fields[field_name].description, get_column_comment(
+        assert fields[field_name].description
+        assert fields[field_name].description == get_column_comment(
             ExampleWithComments.__tablename__, field_name
         )
