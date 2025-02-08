@@ -1,15 +1,11 @@
 Docs are bad:
 
-- JSON field, specifically JSONB https://github.com/tiangolo/sqlmodel/discussions/696
-- Alembic migrations https://github.com/tiangolo/sqlmodel/issues/85 and https://testdriven.io/blog/fastapi-sqlmodel/
+- JSON field, specifically JSONB https://github.com/tiangolo/sqlmodel/discussions/696 and https://github.com/fastapi/sqlmodel/discussions/1105
 - One-to-many relationships
 - Data validation https://github.com/tiangolo/sqlmodel/issues/52
 - Aggregate functions, like count
-- __tablename__, maybe as a function?
-- Created at https://github.com/tiangolo/sqlmodel/issues/252
 - Select on joined data
 - One-to-one and one-to-many at the same time
-- Comments on columns + tables https://github.com/tiangolo/sqlmodel/issues/492
 
 TODO
 
@@ -53,8 +49,3 @@ clear engine
 #         _engine = None
 #         _connection = None
 ```
-
-TODO
-
-https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633 comments on models, table and field comments
-https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#set-db-keys-naming-conventions there was another error around this as well

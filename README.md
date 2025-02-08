@@ -46,6 +46,10 @@ class User(
 * Use your DB URL from the ENV
 * Target sqlalchemy metadata to the sqlmodel-generated metadata
 
+[Take a look at these scripts for an example of how to fully integrate Alembic into your development workflow.](https://github.com/iloveitaly/python-starter-template/blob/0af2c7e95217e34bde7357cc95be048900000e48/Justfile#L618-L712)
+
+Here's a diff from the bare `alembic init` from version `1.14.1`.
+
 ```diff
 diff --git i/test/migrations/alembic.ini w/test/migrations/alembic.ini
 index 0d07420..a63631c 100644
@@ -111,6 +115,11 @@ index fbc4b07..9dc78bb 100644
  
  # revision identifiers, used by Alembic.
 ```
+
+Here are some useful resources around Alembic + SQLModel:
+
+* https://github.com/fastapi/sqlmodel/issues/85
+* https://testdriven.io/blog/fastapi-sqlmodel/
 
 ### Query Wrapper
 
