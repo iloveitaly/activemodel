@@ -74,7 +74,7 @@ def get_column_comment(table_name, column_name):
 
 def test_column_comments(create_and_wipe_database):
     fields_to_check = [
-        # "a_string_field_without_field",
+        "a_string_field_without_field",
         "a_string_field_with_field",
         "field_with_sa_column",
         "field_with_sa_column_args",

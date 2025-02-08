@@ -10,13 +10,13 @@ from sqlalchemy.orm import Mapper, declared_attr
 from sqlmodel import Field, Session, SQLModel, select
 from typeid import TypeID
 
-from .field_comments import FieldDescriptionMeta
+from . import get_column_from_field_patch  # noqa: F401
 from .logger import logger
 from .query_wrapper import QueryWrapper
 from .session_manager import get_session
 
 
-class BaseModel(SQLModel, metaclass=FieldDescriptionMeta):
+class BaseModel(SQLModel):
     """
     Base model class to inherit from so we can hate python less
 

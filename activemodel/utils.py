@@ -53,3 +53,13 @@ def find_all_sqlmodels(module: ModuleType):
 
     logger.debug(f"Completed model import. Found {len(model_classes)} models")
     return model_classes
+
+
+def hash_function_code(func):
+    "get sha of a function to easily assert that it hasn't changed"
+
+    import hashlib
+    import inspect
+
+    source = inspect.getsource(func)
+    return hashlib.sha256(source.encode()).hexdigest()
