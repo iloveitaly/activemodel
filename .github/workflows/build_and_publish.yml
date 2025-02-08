@@ -6,9 +6,9 @@ on:
       - master
 
 # write permissions for release-please
-permissions:
-  contents: write
-  pull-requests: write
+# permissions:
+#   contents: write
+#   pull-requests: write
 
 env:
   # avoid build failures due to flaky pypi
