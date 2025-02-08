@@ -1,0 +1,12 @@
+diff --git i/migrations/script.py.mako w/migrations/script.py.mako
+index 6ce3351..9dc78bb 100644
+--- i/migrations/script.py.mako
++++ w/migrations/script.py.mako
+@@ -10,6 +10,7 @@ from typing import Sequence, Union
+ from alembic import op
+ import sqlalchemy as sa
+ import sqlmodel
++import activemodel
+ ${imports if imports else ""}
+ 
+ # revision identifiers, used by Alembic.

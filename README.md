@@ -24,12 +24,93 @@ from activemodel import BaseModel
 from activemodel.mixins import TimestampsMixin, TypeIDMixin
 
 class User(
-    BaseModel, TimestampsMixin, TypeIDMixin("user"), table=True
+    BaseModel,
+    # optionally, obviously
+    TimestampsMixin,
+    # you can use a different pk type, but why would you?
+    # put this mixin last otherwise `id` will not be the first column in the DB
+    TypeIDMixin("user"),
+    # wire this model into the DB, without this alembic will not generate a migration
+    table=True
 ):
     a_field: str
 ```
 
 ## Usage
+
+### Integrating Alembic
+
+`alembic init` will not work out of the box. You need to mutate a handful of files:
+
+* To import all of your models you want in your DB. [Here's my recommended way to do this.](https://github.com/iloveitaly/python-starter-template/blob/master/app/models/__init__.py)
+* Use your DB URL from the ENV
+* Target sqlalchemy metadata to the sqlmodel-generated metadata
+
+```diff
+diff --git i/test/migrations/alembic.ini w/test/migrations/alembic.ini
+index 0d07420..a63631c 100644
+--- i/test/migrations/alembic.ini
++++ w/test/migrations/alembic.ini
+@@ -3,13 +3,14 @@
+ [alembic]
+ # path to migration scripts
+ # Use forward slashes (/) also on windows to provide an os agnostic path
+-script_location = .
++script_location = migrations
+ 
+ # template used to generate migration file names; The default value is %%(rev)s_%%(slug)s
+ # Uncomment the line below if you want the files to be prepended with date and time
+ # see https://alembic.sqlalchemy.org/en/latest/tutorial.html#editing-the-ini-file
+ # for all available tokens
+ # file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s
++file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(rev)s_%%(slug)s
+ 
+ # sys.path path, will be prepended to sys.path if present.
+ # defaults to the current working directory.
+diff --git i/test/migrations/env.py w/test/migrations/env.py
+index 36112a3..a1e15c2 100644
+--- i/test/migrations/env.py
++++ w/test/migrations/env.py
+@@ -1,3 +1,6 @@
++# fmt: off
++# isort: off
++
+ from logging.config import fileConfig
+ 
+ from sqlalchemy import engine_from_config
+@@ -14,11 +17,17 @@ config = context.config
+ if config.config_file_name is not None:
+     fileConfig(config.config_file_name)
+ 
++from sqlmodel import SQLModel
++from test.models import *
++from test.utils import database_url
++
++config.set_main_option("sqlalchemy.url", database_url())
++
+ # add your model's MetaData object here
+ # for 'autogenerate' support
+ # from myapp import mymodel
+ # target_metadata = mymodel.Base.metadata
+-target_metadata = None
++target_metadata = SQLModel.metadata
+ 
+ # other values from the config, defined by the needs of env.py,
+ # can be acquired:
+diff --git i/test/migrations/script.py.mako w/test/migrations/script.py.mako
+index fbc4b07..9dc78bb 100644
+--- i/test/migrations/script.py.mako
++++ w/test/migrations/script.py.mako
+@@ -9,6 +9,8 @@ from typing import Sequence, Union
+ 
+ from alembic import op
+ import sqlalchemy as sa
++import sqlmodel
++import activemodel
+ ${imports if imports else ""}
+ 
+ # revision identifiers, used by Alembic.
+```
 
 ### Query Wrapper
 
