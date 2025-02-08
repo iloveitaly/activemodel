@@ -1,8 +1,12 @@
 import os
 from contextlib import contextmanager
 
+from sqlalchemy import text
+
 from activemodel import get_engine
 from sqlmodel import SQLModel
+
+from activemodel.session_manager import get_session
 
 
 def database_url():
@@ -20,6 +24,17 @@ def database_url():
     return url.replace("postgresql://", "postgresql+psycopg://")
 
 
+def drop_all_tables():
+    SQLModel.metadata.drop_all(
+        bind=get_engine(),
+    )
+
+    # also drop alembic_version, using a session wasn't working for some reason
+    with get_engine().connect() as conn:
+        conn.execute(text("DROP TABLE IF EXISTS alembic_version"))
+        conn.commit()
+
+
 @contextmanager
 def temporary_tables():
     SQLModel.metadata.create_all(get_engine())
@@ -27,6 +42,4 @@ def temporary_tables():
     try:
         yield
     finally:
-        SQLModel.metadata.drop_all(
-            bind=get_engine(),
-        )
+        drop_all_tables()

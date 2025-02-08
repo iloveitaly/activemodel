@@ -90,8 +90,18 @@ def test_column_comments(create_and_wipe_database):
     )
 
     assert (
-        fields["a_string_field_with_field"].description
-        == "a doc string for a string field with a field"
+        fields["field_with_sa_column"].description
+        == "a doc string for a string field with a field and a sa_column"
+    )
+
+    assert (
+        fields["field_with_sa_column_args"].description
+        == "a doc string for a string field with a field and a sa_column_kwargs"
+    )
+
+    assert (
+        fields["field_with_empty_sa_column_args"].description
+        == "a doc string for a string field with a field and an empty sa_column_kwargs"
     )
 
     for field_name in fields_to_check:

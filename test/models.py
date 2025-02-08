@@ -15,6 +15,7 @@ class ExampleRecord(
     BaseModel, TimestampsMixin, TypeIDMixin(EXAMPLE_TABLE_PREFIX), table=True
 ):
     something: str | None = None
+    another_with_index: str = Field(index=True)
 
 
 class AnotherExample(BaseModel, TypeIDMixin("myotherid"), table=True):
@@ -22,8 +23,13 @@ class AnotherExample(BaseModel, TypeIDMixin("myotherid"), table=True):
 
 
 class ExampleWithId(BaseModel, TypeIDMixin(TYPEID_PREFIX), table=True):
+    "example table with foreign keys"
+
     another_example_id: TypeIDType = AnotherExample.foreign_key(nullable=True)
     another_example: AnotherExample = Relationship()
+
+    example_record_id: TypeIDType = ExampleRecord.foreign_key(nullable=True)
+    example_record: ExampleRecord = Relationship()
 
 
 class ExampleWithComputedProperty(

@@ -1,16 +1,14 @@
 import pytest
-from sqlmodel import SQLModel
 
 import activemodel
-from activemodel.session_manager import get_engine
+from . import models  # noqa: F401
 
-from .utils import database_url, temporary_tables
+from .utils import database_url, drop_all_tables, temporary_tables
 
 activemodel.init(database_url())
 
-SQLModel.metadata.drop_all(
-    bind=get_engine(),
-)
+# start off by removing all of the tables
+drop_all_tables()
 
 
 @pytest.fixture(scope="function")

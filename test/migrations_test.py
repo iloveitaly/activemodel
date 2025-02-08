@@ -3,10 +3,19 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
+from sqlmodel import SQLModel
+
+from activemodel.session_manager import get_engine
+from sqlalchemy import inspect
 
 
 def test_migrations():
-    # TODO assert that no tables exist in the DB
+    # all of the tables should be loaded into the SQLModel metadata before running alembic
+    assert len(SQLModel.metadata.tables) >= 4
+
+    # if we create the tables before running alembic, it won't be picked up
+    inspector = inspect(get_engine())
+    assert not inspector.get_table_names(), "Expected no tables in the DB."
 
     test_root = Path(__file__).parent
     migrations_path = test_root / "migrations"
@@ -30,5 +39,7 @@ def test_migrations():
     with open(migration_path, "r") as f:
         migration_contents = f.read()
 
-    # Now you can perform assertions on migration_contents
-    assert "CREATE TABLE" in migration_contents
+    # ensure that the computed properties exist
+    assert "op.create_table('example_with_id'" in migration_contents
+    assert "op.f('example_with_id_example_record_id_fkey'))" in migration_contents
+    assert "name=op.f('example_with_id_another_example_id_fkey'))" in migration_contents
