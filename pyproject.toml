@@ -37,3 +37,8 @@ dev = [
 [tool.ruff]
 extend-exclude = ["playground.py"]
 force-exclude = true
+
+# https://github.com/astral-sh/uv/issues/9513
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
