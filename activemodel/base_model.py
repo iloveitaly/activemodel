@@ -7,13 +7,32 @@ import sqlalchemy as sa
 import sqlmodel as sm
 from sqlalchemy import Connection, event
 from sqlalchemy.orm import Mapper, declared_attr
-from sqlmodel import Field, Session, SQLModel, select
+from sqlmodel import Field, MetaData, Session, SQLModel, select
 from typeid import TypeID
 
+# NOTE: this patches a core method in sqlmodel to support db comments
 from . import get_column_from_field_patch  # noqa: F401
 from .logger import logger
 from .query_wrapper import QueryWrapper
 from .session_manager import get_session
+
+POSTGRES_INDEXES_NAMING_CONVENTION = {
+    "ix": "%(column_0_label)s_idx",
+    "uq": "%(table_name)s_%(column_0_name)s_key",
+    "ck": "%(table_name)s_%(constraint_name)s_check",
+    "fk": "%(table_name)s_%(column_0_name)s_fkey",
+    "pk": "%(table_name)s_pkey",
+}
+"""
+By default, the foreign key naming convention in sqlalchemy do not create unique identifiers when there are multiple
+foreign keys in a table. This naming convention is a workaround to fix this issue:
+
+- https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#set-db-keys-naming-conventions
+- https://github.com/fastapi/sqlmodel/discussions/1213
+- Implementation lifted from: https://github.com/AlexanderZharyuk/billing-service/blob/3c8aaf19ab7546b97cc4db76f60335edec9fc79d/src/models.py#L24
+"""
+
+SQLModel.metadata.naming_convention = POSTGRES_INDEXES_NAMING_CONVENTION
 
 
 class BaseModel(SQLModel):
@@ -25,6 +44,7 @@ class BaseModel(SQLModel):
     - {before,after} lifecycle hooks are modeled after Rails.
     - class docstrings are converd to table-level comments
     - save(), delete(), select(), where(), and other easy methods you would expect
+    - Fixes foreign key naming conventions
     """
 
     # this is used for table-level comments
