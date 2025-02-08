@@ -9,6 +9,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 env:
   # avoid build failures due to flaky pypi
