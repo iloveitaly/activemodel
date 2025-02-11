@@ -174,6 +174,11 @@ class BaseModel(SQLModel):
         "create a query wrapper to easily run sqlmodel queries on this model"
         return QueryWrapper[cls](cls, *args)
 
+    @classmethod
+    def where(cls, *args):
+        "convenience method to avoid having to write .select().where() in order to add conditions"
+        return cls.select().where(*args)
+
     def delete(self):
         with get_session() as session:
             if old_session := Session.object_session(self):
@@ -255,6 +260,20 @@ class BaseModel(SQLModel):
 
         new_model = cls(**kwargs)
         return new_model
+
+    # @classmethod
+    # def primary_key_field(cls):
+    #     """
+    #     Returns the primary key column of the model by inspecting SQLAlchemy field information.
+    #     """
+    #     pk_columns = list(cls.__table__.primary_key.columns)
+    #     if not pk_columns:
+    #         raise ValueError("No primary key defined for the model.")
+    #     if len(pk_columns) > 1:
+    #         raise ValueError(
+    #             "Multiple primary keys defined. This method supports only single primary key models."
+    #         )
+    #     return pk_columns[0]
 
     # TODO what's super dangerous here is you pass a kwarg which does not map to a specific
     #      field it will result in `True`, which will return all records, and not give you any typing

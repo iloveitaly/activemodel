@@ -29,6 +29,50 @@ def test_all_and_count(create_and_wipe_database):
     assert isinstance(record, ExampleRecord)
 
 
+def test_where_returns_expected(create_and_wipe_database):
+    # Create records with distinct "something" field values
+    ExampleRecord(something="hello").save()
+    ExampleRecord(something="world").save()
+    ExampleRecord(something="hello").save()
+
+    # Use the "where" convenience method to filter records
+    results = list(ExampleRecord.where(ExampleRecord.something == "hello").all())
+
+    # Expecting 2 records that match "hello"
+    assert len(results) == 2
+    for record in results:
+        assert record.something == "hello"
+
+
+def test_where_no_results(create_and_wipe_database):
+    # Create a record with a specific value
+    ExampleRecord(something="foo").save()
+
+    # Filter by a value that does not exist to get no results
+    result = ExampleRecord.where(ExampleRecord.something == "bar").first()
+    assert result is None
+
+
+def test_where_chaining(create_and_wipe_database):
+    # Save multiple records; using the same condition twice should be harmless
+    ExampleRecord(something="chain").save()
+    ExampleRecord(something="chain").save()
+    ExampleRecord(something="other").save()
+
+    # Chain where calls; in our implementation, chaining should work the same as a single call
+    query = (
+        ExampleRecord.where(ExampleRecord.something == "chain")
+        .where(ExampleRecord.something == "chain")
+        .all()
+    )
+    results = list(query)
+
+    # Expecting 2 records that match "chain" even after chaining the condition
+    assert len(results) == 2
+    for record in results:
+        assert record.something == "chain"
+
+
 def test_foreign_key():
     field = ExampleRecord.foreign_key()
     assert field.sa_type.prefix == EXAMPLE_TABLE_PREFIX
