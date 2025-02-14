@@ -45,6 +45,7 @@ class User(
 * To import all of your models you want in your DB. [Here's my recommended way to do this.](https://github.com/iloveitaly/python-starter-template/blob/master/app/models/__init__.py)
 * Use your DB URL from the ENV
 * Target sqlalchemy metadata to the sqlmodel-generated metadata
+* Most likely you'll want to add [alembic-postgresql-enum](https://pypi.org/project/alembic-postgresql-enum/) so migrations work properly
 
 [Take a look at these scripts for an example of how to fully integrate Alembic into your development workflow.](https://github.com/iloveitaly/python-starter-template/blob/0af2c7e95217e34bde7357cc95be048900000e48/Justfile#L618-L712)
 
@@ -146,6 +147,7 @@ https://github.com/tomwojcik/starlette-context
 * Conditional: `Scrape.select().where(Scrape.id < last_scraped.id).all()`
 * Equality: `MenuItem.select().where(MenuItem.menu_id == menu.id).all()`
 * `IN` example: `CanonicalMenuItem.select().where(col(CanonicalMenuItem.id).in_(canonized_ids)).all()`
+* Compound where query: `User.where((User.last_active_at != None) & (User.last_active_at > last_24_hours)).count()`
 
 ### TypeID
 

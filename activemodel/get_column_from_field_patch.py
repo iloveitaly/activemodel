@@ -6,6 +6,8 @@ Making sure these docstrings make their way to the DB schema is helpful for a bu
 This patch mutates a core sqlmodel function which translates pydantic FieldInfo objects into sqlalchemy Column objects. It adds the field description as a comment to the column.
 
 Note that FieldInfo *from pydantic* is used when a "bare" field is defined. This can be confusing, because when inspecting model fields, the class name looks exactly the same.
+
+Some ideas for this originally sourced from: https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633
 """
 
 from typing import (

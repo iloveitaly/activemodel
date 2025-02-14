@@ -204,10 +204,6 @@ class BaseModel(SQLModel):
 
         return self
 
-        # except IntegrityError:
-        #     log.quiet(f"{self} already exists in the database.")
-        #     session.rollback()
-
     # TODO shouldn't this be handled by pydantic?
     def json(self, **kwargs):
         return json.dumps(self.dict(), default=str, **kwargs)

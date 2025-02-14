@@ -87,6 +87,7 @@ class SessionManager:
 
             return _reuse_session()
 
+        # a connection can generate nested transactions
         if self.session_connection:
             return Session(bind=self.session_connection)
 
@@ -106,6 +107,8 @@ def get_session():
 
 
 # contextvars must be at the top-level of a module! You will not get a warning if you don't do this.
+# ContextVar is implemented in C, so it's very special and is both thread-safe and asyncio safe. This variable gives us
+# a place to persist a session to use globally across the application.
 _session_context = contextvars.ContextVar[Session | None](
     "session_context", default=None
 )
@@ -123,6 +126,17 @@ def global_session():
 
 
 async def aglobal_session():
+    """
+    Use this as a fastapi dependency to get a session that is shared across the request:
+
+    >>> APIRouter(
+    >>>     prefix="/internal/v1",
+    >>>     dependencies=[
+    >>>         Depends(aglobal_session),
+    >>>     ]
+    >>> )
+    """
+
     with SessionManager.get_instance().get_session() as s:
         token = _session_context.set(s)
 

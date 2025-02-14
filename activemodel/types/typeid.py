@@ -137,6 +137,7 @@ class TypeIDType(types.TypeDecorator):
 
         return core_schema.json_or_python_schema(
             json_schema=from_uuid_schema,
+            # TODO in the the future we could add more exact types
             # metadata=core_schema.str_schema(
             #     pattern="^[0-9a-f]{24}$",
             #     min_length=24,
