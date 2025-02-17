@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.8.0](https://github.com/iloveitaly/activemodel/compare/v0.7.0...v0.8.0) (2025-02-17)
+
+
+### Features
+
+* add BaseModel.where method and update test cases ([9fe4c5a](https://github.com/iloveitaly/activemodel/commit/9fe4c5af619690ffb6344cf5c74a2d4b2b46ef02))
+
+
+### Bug Fixes
+
+* yield session object in global_session function ([47b33cc](https://github.com/iloveitaly/activemodel/commit/47b33cc1aa66d6076363635191c297c52fcc3deb))
+
+
+### Documentation
+
+* update comments and README with additional examples and info ([209ee36](https://github.com/iloveitaly/activemodel/commit/209ee36a9df53f927cd9e5b2bb15b3a5776b34ce))
+
 ## [0.7.0](https://github.com/iloveitaly/activemodel/compare/v0.6.0...v0.7.0) (2025-02-08)
 
 
