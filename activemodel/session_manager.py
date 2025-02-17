@@ -120,7 +120,7 @@ def global_session():
         token = _session_context.set(s)
 
         try:
-            yield
+            yield s
         finally:
             _session_context.reset(token)
 
