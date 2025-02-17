@@ -1,12 +1,19 @@
 from activemodel import SessionManager
 
+from ..logger import logger
+
 
 def database_reset_transaction():
     """
     Wrap all database interactions for a given test in a nested transaction and roll it back after the test.
 
     >>> from activemodel.pytest import database_reset_transaction
-    >>> pytest.fixture(scope="function", autouse=True)(database_reset_transaction)
+    >>> database_reset_transaction = pytest.fixture(scope="function", autouse=True)(database_reset_transaction)
+
+    Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process, which should
+    use spawn, because the same session is not shared across processes. Note that using `fork` is dangerous.
+
+    In this case, you should use the truncate.
 
     References:
 
@@ -14,6 +21,9 @@ def database_reset_transaction():
     - https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/
     - https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77
     - https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46
+    - https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn
+
+    Using a named SAVEPOINT does not give us anything extra, so we are not using it.
     """
 
     engine = SessionManager.get_instance().get_engine()
@@ -21,31 +31,31 @@ def database_reset_transaction():
     with engine.begin() as connection:
         transaction = connection.begin_nested()
 
+        if SessionManager.get_instance().session_connection is not None:
+            logger.warning("session override already exists")
+            # TODO should we throw an exception here?
+
         SessionManager.get_instance().session_connection = connection
 
         try:
-            yield
+            with SessionManager.get_instance().get_session() as factory_session:
+                try:
+                    from factory.alchemy import SQLAlchemyModelFactory
+
+                    # Ensure that all factories use the same session
+                    for factory in SQLAlchemyModelFactory.__subclasses__():
+                        factory._meta.sqlalchemy_session = factory_session
+                        factory._meta.sqlalchemy_session_persistence = "commit"
+                except ImportError:
+                    pass
+
+                yield
         finally:
+            logger.debug("rolling back transaction")
+
             transaction.rollback()
-            # TODO is this necessary?
+
+            # TODO is this necessary? unclear
             connection.close()
 
-
-# TODO unsure if this adds any value beyond the above approach
-# def database_reset_named_truncation():
-#     start_truncation_query = """
-#         BEGIN;
-#         SAVEPOINT test_truncation_savepoint;
-#     """
-
-#     raw_sql_exec(start_truncation_query)
-
-#     yield
-
-#     end_truncation_query = """
-#         ROLLBACK TO SAVEPOINT test_truncation_savepoint;
-#         RELEASE SAVEPOINT test_truncation_savepoint;
-#         ROLLBACK;
-#     """
-
-#     raw_sql_exec(end_truncation_query)
+            SessionManager.get_instance().session_connection = None
