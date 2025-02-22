@@ -93,3 +93,7 @@ def test_query_count(create_and_wipe_database):
     count = ExampleRecord.select().where(ExampleRecord.something == "hi").count()
 
     assert count == 1
+
+
+def test_primary_key(create_and_wipe_database):
+    assert ExampleRecord.primary_key_field().name == "id"

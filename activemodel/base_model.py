@@ -157,7 +157,10 @@ class BaseModel(SQLModel):
     @classmethod
     def foreign_key(cls, **kwargs):
         """
-        Returns a Field object referencing the foreign key of the model.
+        Returns a `Field` object referencing the foreign key of the model.
+
+        >>> other_model_id: int
+        >>> other_model = OtherModel.foreign_key()
         """
 
         field_options = {"nullable": False} | kwargs
@@ -257,19 +260,26 @@ class BaseModel(SQLModel):
         new_model = cls(**kwargs)
         return new_model
 
-    # @classmethod
-    # def primary_key_field(cls):
-    #     """
-    #     Returns the primary key column of the model by inspecting SQLAlchemy field information.
-    #     """
-    #     pk_columns = list(cls.__table__.primary_key.columns)
-    #     if not pk_columns:
-    #         raise ValueError("No primary key defined for the model.")
-    #     if len(pk_columns) > 1:
-    #         raise ValueError(
-    #             "Multiple primary keys defined. This method supports only single primary key models."
-    #         )
-    #     return pk_columns[0]
+    @classmethod
+    def primary_key_field(cls):
+        """
+        Returns the primary key column of the model by inspecting SQLAlchemy field information.
+
+        >>> ExampleModel.primary_key_field().name
+        """
+        # TODO note_schema.__class__.__table__.primary_key
+
+        pk_columns = list(cls.__table__.primary_key.columns)
+
+        if not pk_columns:
+            raise ValueError("No primary key defined for the model.")
+
+        if len(pk_columns) > 1:
+            raise ValueError(
+                "Multiple primary keys defined. This method supports only single primary key models."
+            )
+
+        return pk_columns[0]
 
     # TODO what's super dangerous here is you pass a kwarg which does not map to a specific
     #      field it will result in `True`, which will return all records, and not give you any typing
