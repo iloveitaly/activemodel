@@ -38,21 +38,24 @@ def test_get_through_prefixed_uid_as_str():
         assert record is None
 
 
-def test_get_through_plain_uid_as_str():
+def test_get_through_plain_uid_as_str(create_and_wipe_database):
     type_uid = TypeID(prefix=TYPEID_PREFIX)
 
-    with temporary_tables():
-        # pass uid as string. Ex: '01942886-7afc-7129-8f57-db09137ed002'
-        record = ExampleWithId.get(str(type_uid.uuid))
-        assert record is None
+    # pass uid as string. Ex: '01942886-7afc-7129-8f57-db09137ed002'
+    record = ExampleWithId.get(str(type_uid.uuid))
+    assert record is None
 
 
-def test_get_through_plain_uid():
+def test_get_through_plain_uid(create_and_wipe_database):
     type_uid = TypeID(prefix=TYPEID_PREFIX)
 
-    with temporary_tables():
-        record = ExampleWithId.get(type_uid.uuid)
-        assert record is None
+    record = ExampleWithId.get(type_uid.uuid)
+    assert record is None
+
+
+def test_non_primary_typeid_key():
+    class NonPrimaryKeyExample(BaseModel, table=True):
+        something: str | None = None
 
 
 # the wrapped test is probably overkill, but it's protecting against a weird edge case I was running into with fastapi
