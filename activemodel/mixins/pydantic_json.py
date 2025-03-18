@@ -1,3 +1,7 @@
+"""
+https://github.com/fastapi/sqlmodel/issues/63
+"""
+
 from types import UnionType
 from typing import get_args, get_origin
 
@@ -9,11 +13,20 @@ class PydanticJSONMixin:
     """
     By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.
 
-    This mixin, combined with a custom serializer, fixes that issue.
+    This mixin, combined with a custom serializer (`_serialize_pydantic_model`), fixes that issue.
+
+    >>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
+    >>>    list_field: list[SubObject] = Field(sa_type=JSONB()
     """
 
     @reconstructor
-    def init_on_load(self):
+    def __transform_dict_to_pydantic__(self):
+        """
+        Transforms dictionary fields into Pydantic models upon loading.
+
+        - Reconstructor only runs once, when the object is loaded.
+        - We manually call this method on save(), etc to ensure the pydantic types are maintained
+        """
         # TODO do we need to inspect sa_type
         for field_name, field_info in self.model_fields.items():
             raw_value = getattr(self, field_name, None)

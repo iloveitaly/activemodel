@@ -9,6 +9,9 @@ from sqlalchemy import Connection, event
 from sqlalchemy.orm import Mapper, declared_attr
 from sqlmodel import Field, MetaData, Session, SQLModel, select
 from typeid import TypeID
+from inspect import isclass
+
+from activemodel.mixins.pydantic_json import PydanticJSONMixin
 
 # NOTE: this patches a core method in sqlmodel to support db comments
 from . import get_column_from_field_patch  # noqa: F401
@@ -204,6 +207,10 @@ class BaseModel(SQLModel):
             # NOTE very important method! This triggers sqlalchemy lifecycle hooks automatically
             session.commit()
             session.refresh(self)
+
+            # Only call the transform method if the class is a subclass of PydanticJSONMixin
+            if issubclass(self.__class__, PydanticJSONMixin):
+                self.__class__.__transform_dict_to_pydantic__(self)
 
         return self
 
