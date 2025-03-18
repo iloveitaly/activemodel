@@ -1,6 +1,6 @@
 [project]
 name = "activemodel"
-version = "0.7.0"
+version = "0.8.0"
 description = "Make SQLModel more like an a real ORM"
 readme = "README.md"
 requires-python = ">=3.10"
