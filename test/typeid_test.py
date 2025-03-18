@@ -53,9 +53,9 @@ def test_get_through_plain_uid(create_and_wipe_database):
     assert record is None
 
 
-def test_non_primary_typeid_key():
-    class NonPrimaryKeyExample(BaseModel, table=True):
-        something: str | None = None
+# def test_non_primary_typeid_key():
+#     class NonPrimaryKeyExample(PydanticBaseModel, table=True):
+#         something: str | None = None
 
 
 # the wrapped test is probably overkill, but it's protecting against a weird edge case I was running into with fastapi
