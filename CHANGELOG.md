@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.8.0](https://github.com/iloveitaly/activemodel/compare/v0.7.0...v0.8.0) (2025-03-18)
+
+
+### Features
+
+* add BaseModel.where method and update test cases ([9fe4c5a](https://github.com/iloveitaly/activemodel/commit/9fe4c5af619690ffb6344cf5c74a2d4b2b46ef02))
+* add primary_key_field ([947a410](https://github.com/iloveitaly/activemodel/commit/947a410766dd764e8ac5b3177152d2ff22cdb609))
+* log start of database transaction in tests ([ac90d6f](https://github.com/iloveitaly/activemodel/commit/ac90d6f18bb0a4cca68527dec9c55b4af1f6e851))
+* reload json fields when record is reloaded from db ([c013082](https://github.com/iloveitaly/activemodel/commit/c013082004bb3a93e81f00eb0c990833a9cae7e2))
+
+
+### Bug Fixes
+
+* yield session object in global_session function ([47b33cc](https://github.com/iloveitaly/activemodel/commit/47b33cc1aa66d6076363635191c297c52fcc3deb))
+
+
+### Documentation
+
+* add comments to clarify SessionManager use and config ([e73561b](https://github.com/iloveitaly/activemodel/commit/e73561b3d52e617a0f92da5cd93981ff429da16f))
+* update comments and README with additional examples and info ([209ee36](https://github.com/iloveitaly/activemodel/commit/209ee36a9df53f927cd9e5b2bb15b3a5776b34ce))
+* update README with setup instructions and SQLModel tips ([f2520b5](https://github.com/iloveitaly/activemodel/commit/f2520b5fa5d7c462e8f7a591b83d874239a34b8d))
+
 ## [0.7.0](https://github.com/iloveitaly/activemodel/compare/v0.6.0...v0.7.0) (2025-02-08)
 
 
