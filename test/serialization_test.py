@@ -17,24 +17,24 @@ class SubObject(PydanticBaseModel):
     value: int
 
 
-class ExampleWithJSON(
+class ExampleWithJSONB(
     BaseModel, PydanticJSONMixin, TypeIDMixin("json_test"), table=True
 ):
-    list_field: list[SubObject] = Field(sa_type=JSONB())
-    # list_with_generator: list[SubObject] = Field(sa_type=JSONB())
-    optional_list_field: list[SubObject] | None = Field(sa_type=JSONB(), default=None)
-    generic_list_field: list[dict] = Field(sa_type=JSONB())
-    object_field: SubObject = Field(sa_type=JSONB())
-    unstructured_field: dict = Field(sa_type=JSONB())
-    semi_structured_field: dict[str, str] = Field(sa_type=JSONB())
-    optional_object_field: SubObject | None = Field(sa_type=JSONB(), default=None)
+    list_field: list[SubObject] = Field(sa_type=JSONB)
+    # list_with_generator: list[SubObject] = Field(sa_type=JSONB)
+    optional_list_field: list[SubObject] | None = Field(sa_type=JSONB, default=None)
+    generic_list_field: list[dict] = Field(sa_type=JSONB)
+    object_field: SubObject = Field(sa_type=JSONB)
+    unstructured_field: dict = Field(sa_type=JSONB)
+    semi_structured_field: dict[str, str] = Field(sa_type=JSONB)
+    optional_object_field: SubObject | None = Field(sa_type=JSONB, default=None)
 
     normal_field: str | None = Field(default=None)
 
 
 def test_json_serialization(create_and_wipe_database):
     sub_object = SubObject(name="test", value=1)
-    example = ExampleWithJSON(
+    example = ExampleWithJSONB(
         list_field=[sub_object],
         # list_with_generator=(x for x in [sub_object]),
         generic_list_field=[{"one": "two", "three": 3, "four": [1, 2, 3]}],
@@ -46,7 +46,7 @@ def test_json_serialization(create_and_wipe_database):
         optional_object_field=sub_object,
     ).save()
 
-    fresh_example = ExampleWithJSON.get(example.id)
+    fresh_example = ExampleWithJSONB.get(example.id)
 
     assert fresh_example is not None
     assert isinstance(fresh_example.object_field, SubObject)
