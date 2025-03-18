@@ -44,6 +44,7 @@ def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str 
 
 class SessionManager:
     _instance: t.ClassVar[t.Optional["SessionManager"]] = None
+    "singleton instance of SessionManager"
 
     session_connection: Connection | None
     "optionally specify a specific session connection to use for all get_session() calls, useful for testing"
@@ -69,6 +70,7 @@ class SessionManager:
         if not self._engine:
             self._engine = create_engine(
                 self._database_url,
+                # NOTE very important! This enables pydantic models to be serialized for JSONB columns
                 json_serializer=_serialize_pydantic_model,
                 echo=config("ACTIVEMODEL_LOG_SQL", cast=bool, default=False),
                 # https://docs.sqlalchemy.org/en/20/core/pooling.html#disconnect-handling-pessimistic
@@ -95,6 +97,7 @@ class SessionManager:
 
 
 def init(database_url: str):
+    "configure activemodel to connect to a specific database"
     return SessionManager.get_instance(database_url)
 
 
