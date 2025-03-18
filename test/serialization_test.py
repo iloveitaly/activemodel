@@ -34,6 +34,7 @@ class ExampleWithJSONB(
 
 def test_json_serialization(create_and_wipe_database):
     sub_object = SubObject(name="test", value=1)
+
     example = ExampleWithJSONB(
         list_field=[sub_object],
         # list_with_generator=(x for x in [sub_object]),
@@ -45,6 +46,13 @@ def test_json_serialization(create_and_wipe_database):
         semi_structured_field={"one": "two", "three": "three"},
         optional_object_field=sub_object,
     ).save()
+
+    # make sure the types are preserved when saved
+    assert isinstance(example.list_field[0], SubObject)
+    assert example.optional_list_field
+    assert isinstance(example.optional_list_field[0], SubObject)
+    assert isinstance(example.object_field, SubObject)
+    assert isinstance(example.optional_object_field, SubObject)
 
     fresh_example = ExampleWithJSONB.get(example.id)
 
