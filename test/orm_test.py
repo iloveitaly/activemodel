@@ -97,3 +97,15 @@ def test_query_count(create_and_wipe_database):
 
 def test_primary_key(create_and_wipe_database):
     assert ExampleRecord.primary_key_field().name == "id"
+
+
+def test_get_non_pk(create_and_wipe_database):
+    # some paranoid checks here as I attempt to debug the issue
+    example = ExampleRecord(something="hi", another_with_index="key_123").save()
+
+    assert ExampleRecord.count() == 1
+
+    retrieved_example = ExampleRecord.find_or_create_by(another_with_index="key_123")
+
+    assert retrieved_example
+    assert retrieved_example.id == example.id
