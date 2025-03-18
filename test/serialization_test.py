@@ -54,6 +54,15 @@ def test_json_serialization(create_and_wipe_database):
     assert isinstance(example.object_field, SubObject)
     assert isinstance(example.optional_object_field, SubObject)
 
+    example.refresh()
+
+    # make sure the types are preserved when refreshed
+    assert isinstance(example.list_field[0], SubObject)
+    assert example.optional_list_field
+    assert isinstance(example.optional_list_field[0], SubObject)
+    assert isinstance(example.object_field, SubObject)
+    assert isinstance(example.optional_object_field, SubObject)
+
     fresh_example = ExampleWithJSONB.get(example.id)
 
     assert fresh_example is not None

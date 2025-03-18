@@ -214,6 +214,24 @@ class BaseModel(SQLModel):
 
         return self
 
+    def refresh(self):
+        "Refreshes an object from the database"
+
+        with get_session() as session:
+            if (
+                old_session := Session.object_session(self)
+            ) and old_session is not session:
+                old_session.expunge(self)
+
+            session.add(self)
+            session.refresh(self)
+
+            # Only call the transform method if the class is a subclass of PydanticJSONMixin
+            if issubclass(self.__class__, PydanticJSONMixin):
+                self.__class__.__transform_dict_to_pydantic__(self)
+
+        return self
+
     # TODO shouldn't this be handled by pydantic?
     def json(self, **kwargs):
         return json.dumps(self.dict(), default=str, **kwargs)

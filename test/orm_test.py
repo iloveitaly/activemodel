@@ -3,6 +3,7 @@ Test core ORM functions
 """
 
 from test.models import EXAMPLE_TABLE_PREFIX, AnotherExample, ExampleRecord
+from test.utils import temporary_tables
 
 
 def test_empty_count(create_and_wipe_database):
@@ -109,3 +110,17 @@ def test_get_non_pk(create_and_wipe_database):
 
     assert retrieved_example
     assert retrieved_example.id == example.id
+
+
+def test_database_refresh(create_and_wipe_database):
+    example = ExampleRecord(something="hi").save()
+    example_2 = ExampleRecord.get(example.id)
+
+    # now, let's update the "hi" on the 2nd example
+    example_2.something = "hello"
+    example_2.save()
+
+    # now let's refresh the first example
+    example.refresh()
+
+    assert example.something == "hello"
