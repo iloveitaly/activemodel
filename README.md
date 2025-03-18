@@ -14,10 +14,11 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 First, setup your DB:
 
 ```python
-
+import activemodel
+activemodel.init("sqlite:///database.db")
 ```
 
-Then, setup some models:
+Create models:
 
 ```python
 from activemodel import BaseModel
@@ -34,6 +35,38 @@ class User(
     table=True
 ):
     a_field: str
+```
+
+You'll need to create the models in the DB. Alembic is the best way to do it, but you can cheat as well:
+
+```python
+from sqlmodel import SQLModel
+
+SQLModel.metadata.create_all(get_engine())
+
+# now you can create a user!
+User(a_field="a").save()
+```
+
+Maybe you like JSON:
+
+```python
+from activemodel import BaseModel
+from pydantic import BaseModel as PydanticBaseModel
+from activemodel.mixins import PydanticJSONMixin, TypeIDMixin, TimestampsMixin
+
+class SubObject(PydanticBaseModel):
+    name: str
+    value: int
+
+class User(
+    BaseModel,
+    TimestampsMixin,
+    PydanticJSONMixin,
+    TypeIDMixin("user"),
+    table=True
+):
+    list_field: list[SubObject] = Field(sa_type=JSONB())
 ```
 
 ## Usage
@@ -149,6 +182,14 @@ https://github.com/tomwojcik/starlette-context
 * `IN` example: `CanonicalMenuItem.select().where(col(CanonicalMenuItem.id).in_(canonized_ids)).all()`
 * Compound where query: `User.where((User.last_active_at != None) & (User.last_active_at > last_24_hours)).count()`
 
+### SQLModel Internals
+
+SQLModel & SQLAlchemy are tricky. Here are some useful internal tricks:
+
+* `__sqlmodel_relationships__` is where any `RelationshipInfo` objects are stored. This is used to generate relationship fields on the object.
+* `ModelClass.relationship_name.property.local_columns` 
+* Get cached fields from a model `object_state(instance).dict.get(field_name)`
+
 ### TypeID
 
 I'm a massive fan of Stripe-style prefixed UUIDs. [There's an excellent project](https://github.com/jetify-com/typeid)
@@ -173,7 +214,7 @@ class Appointment(
     TypeIDMixin("appointment"),
     table=True
 ):
-    # `foreign_key` is a activemodel-specific method to generate the right `Field` for the relationship
+    # `foreign_key` is a activemodel method to generate the right `Field` for the relationship
     # TypeIDType is really important here for fastapi serialization
     doctor_id: TypeIDType = Doctor.foreign_key()
     doctor: Doctor = Relationship()
@@ -220,3 +261,7 @@ https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d
 * https://github.com/fastapi/full-stack-fastapi-template
 * https://github.com/DarylStark/my_data/
 * https://github.com/petrgazarov/FastAPI-app/tree/main/fastapi_app
+
+## Upstream Changes
+
+- [ ] https://github.com/fastapi/sqlmodel/pull/1293
