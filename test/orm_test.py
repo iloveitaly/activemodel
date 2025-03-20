@@ -2,8 +2,14 @@
 Test core ORM functions
 """
 
-from test.models import EXAMPLE_TABLE_PREFIX, AnotherExample, ExampleRecord
-from test.utils import temporary_tables
+import pytest
+from test.models import (
+    EXAMPLE_TABLE_PREFIX,
+    AnotherExample,
+    ExampleRecord,
+    ExampleWithId,
+)
+import sqlalchemy.exc
 
 
 def test_empty_count(create_and_wipe_database):
@@ -96,10 +102,6 @@ def test_query_count(create_and_wipe_database):
     assert count == 1
 
 
-def test_primary_key(create_and_wipe_database):
-    assert ExampleRecord.primary_key_field().name == "id"
-
-
 def test_get_non_pk(create_and_wipe_database):
     # some paranoid checks here as I attempt to debug the issue
     example = ExampleRecord(something="hi", another_with_index="key_123").save()
@@ -124,3 +126,34 @@ def test_database_refresh(create_and_wipe_database):
     example.refresh()
 
     assert example.something == "hello"
+
+
+def test_primary_key_column():
+    assert ExampleRecord.primary_key_column().name == "id"
+    assert ExampleWithId.primary_key_column().name == "id"
+
+
+def test_one_no_results(create_and_wipe_database):
+    record = ExampleRecord()
+    # do not save!
+
+    with pytest.raises(sqlalchemy.exc.NoResultFound):
+        ExampleRecord.one(record.id)
+
+
+def test_one_single_result(create_and_wipe_database):
+    example = ExampleRecord().save()
+    result = ExampleRecord.one(example.id)
+
+    assert result
+    assert isinstance(result, ExampleRecord)
+    assert result.id == example.id
+
+
+def test_one_multiple_results(create_and_wipe_database):
+    # not a pk, but should still throw an error
+    example = ExampleRecord(something="hi").save()
+    another_example = ExampleRecord(something="hi").save()
+
+    with pytest.raises(sqlalchemy.exc.MultipleResultsFound):
+        ExampleRecord.one(something="hi")

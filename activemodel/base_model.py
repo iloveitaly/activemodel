@@ -7,9 +7,8 @@ import sqlalchemy as sa
 import sqlmodel as sm
 from sqlalchemy import Connection, event
 from sqlalchemy.orm import Mapper, declared_attr
-from sqlmodel import Field, MetaData, Session, SQLModel, select
+from sqlmodel import Column, Field, Session, SQLModel, select
 from typeid import TypeID
-from inspect import isclass
 
 from activemodel.mixins.pydantic_json import PydanticJSONMixin
 
@@ -233,6 +232,7 @@ class BaseModel(SQLModel):
         return self
 
     # TODO shouldn't this be handled by pydantic?
+    # TODO where is this actually used? shoudl prob remove this
     def json(self, **kwargs):
         return json.dumps(self.dict(), default=str, **kwargs)
 
@@ -286,13 +286,15 @@ class BaseModel(SQLModel):
         return new_model
 
     @classmethod
-    def primary_key_field(cls):
+    def primary_key_column(cls) -> Column:
         """
         Returns the primary key column of the model by inspecting SQLAlchemy field information.
 
         >>> ExampleModel.primary_key_field().name
         """
+
         # TODO note_schema.__class__.__table__.primary_key
+        # TODO no reason why this couldn't be cached
 
         pk_columns = list(cls.__table__.primary_key.columns)
 
@@ -315,9 +317,8 @@ class BaseModel(SQLModel):
     @classmethod
     def get(cls, *args: t.Any, **kwargs: t.Any):
         """
-        Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+        Gets a single record (or None) from the database. Pass an PK ID or kwargs to filter by.
         """
-
         # TODO id is hardcoded, not good! Need to dynamically pick the best uid field
         id_field_name = "id"
 
@@ -332,7 +333,36 @@ class BaseModel(SQLModel):
             return session.exec(statement).first()
 
     @classmethod
+    def one(cls, *args: t.Any, **kwargs: t.Any):
+        """
+        Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+        """
+
+        args, kwargs = cls.__process_filter_args__(*args, **kwargs)
+        statement = select(cls).filter(*args).filter_by(**kwargs)
+
+        with get_session() as session:
+            return session.exec(statement).one()
+
+    @classmethod
+    def __process_filter_args__(cls, *args: t.Any, **kwargs: t.Any):
+        """
+        Helper method to process filter arguments and implement some nice DX for our devs.
+        """
+
+        id_field_name = cls.primary_key_column().name
+
+        # special case for getting by ID without having to specify the field name
+        # TODO should dynamically add new pk types based on column definition
+        if len(args) == 1 and isinstance(args[0], (int, TypeID, str, UUID)):
+            kwargs[id_field_name] = args[0]
+            args = ()
+
+        return args, kwargs
+
+    @classmethod
     def all(cls):
+        "get a generator for all records in the database"
         with get_session() as session:
             results = session.exec(sm.select(cls))
 
@@ -343,7 +373,7 @@ class BaseModel(SQLModel):
     @classmethod
     def sample(cls):
         """
-        Pick a random record from the database.
+        Pick a random record from the database. Raises if none exist.
 
         Helpful for testing and console debugging.
         """
