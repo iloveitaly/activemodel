@@ -1,5 +1,6 @@
 Docs are bad:
 
+- `another_example_id: TypeIDType = AnotherExample.foreign_key(nullable=True)` nullable should be able to be defined via types
 - JSON field, specifically JSONB https://github.com/tiangolo/sqlmodel/discussions/696 and https://github.com/fastapi/sqlmodel/discussions/1105
 - One-to-many relationships
 - Data validation https://github.com/tiangolo/sqlmodel/issues/52
@@ -9,8 +10,8 @@ Docs are bad:
 
 TODO
 
+- [ ] sessions in tests, they don't work right now
 - [ ] snake case for attributes https://github.com/sqlalchemy/sqlalchemy/issues/7149
-- [ ] foreign key names https://github.com/fastapi/sqlmodel/discussions/1213
 
 
 find_or_create

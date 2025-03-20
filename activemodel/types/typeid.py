@@ -188,5 +188,3 @@ class TypeIDType(types.TypeDecorator):
             # "minLength": 24,
             # "maxLength": 24,
         }
-
-        return core_schema.uuid_schema()

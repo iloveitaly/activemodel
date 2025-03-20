@@ -1,5 +1,5 @@
 from pydantic import computed_field
-from sqlmodel import Field, Relationship
+from sqlmodel import Column, Field, Integer, Relationship
 
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
