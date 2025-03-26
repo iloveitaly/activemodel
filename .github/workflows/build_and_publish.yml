@@ -43,8 +43,9 @@ jobs:
   matrix-test:
     strategy:
       matrix:
-        # macos-latest
         os: [ubuntu-latest]
+        # TODO test on macos-latest, does not have docker by default :/
+        # unfortunately, some of the typing stuff we use requires new python versions
         python-version: ["3.13", "3.12"]
     runs-on: ${{ matrix.os }}
     steps:
