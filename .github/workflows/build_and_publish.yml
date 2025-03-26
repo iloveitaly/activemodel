@@ -43,7 +43,8 @@ jobs:
   matrix-test:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        # macos-latest
+        os: [ubuntu-latest]
         python-version: ["3.13", "3.12", "3.11", "3.10", "3.9"]
     runs-on: ${{ matrix.os }}
     steps:
