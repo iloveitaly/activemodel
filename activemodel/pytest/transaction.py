@@ -28,7 +28,7 @@ def database_reset_transaction():
 
     engine = SessionManager.get_instance().get_engine()
 
-    logger.info("starting database transaction")
+    logger.info("starting global database transaction")
 
     with engine.begin() as connection:
         transaction = connection.begin_nested()
