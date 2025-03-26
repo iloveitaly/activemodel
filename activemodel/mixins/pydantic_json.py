@@ -10,7 +10,7 @@ from types import UnionType
 from typing import get_args, get_origin
 
 from pydantic import BaseModel as PydanticBaseModel
-from sqlalchemy.orm import reconstructor
+from sqlalchemy.orm import reconstructor, attributes
 
 
 class PydanticJSONMixin:
@@ -30,6 +30,8 @@ class PydanticJSONMixin:
 
         - Reconstructor only runs once, when the object is loaded.
         - We manually call this method on save(), etc to ensure the pydantic types are maintained
+        - `set_committed_value` sets Pydantic models as committed, avoiding `setattr` marking fields as modified
+          after loading from the database.
         """
         # TODO do we need to inspect sa_type
         for field_name, field_info in self.model_fields.items():
@@ -77,10 +79,9 @@ class PydanticJSONMixin:
                     model_cls, PydanticBaseModel
                 ):
                     parsed_value = [model_cls(**item) for item in raw_value]
-                    setattr(self, field_name, parsed_value)
-
+                    attributes.set_committed_value(self, field_name, parsed_value)
                 continue
 
             # single class
             if issubclass(model_cls, PydanticBaseModel):
-                setattr(self, field_name, model_cls(**raw_value))
+                attributes.set_committed_value(self, field_name, model_cls(**raw_value))
