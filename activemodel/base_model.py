@@ -4,10 +4,12 @@ from uuid import UUID
 
 import pydash
 import sqlalchemy as sa
+from sqlalchemy.orm.attributes import flag_modified as sa_flag_modified
+from sqlalchemy.orm.base import instance_state
 import sqlmodel as sm
 from sqlalchemy import Connection, event
 from sqlalchemy.orm import Mapper, declared_attr
-from sqlmodel import Column, Field, Session, SQLModel, select
+from sqlmodel import Column, Field, Session, SQLModel, inspect, select
 from typeid import TypeID
 
 from activemodel.mixins.pydantic_json import PydanticJSONMixin
@@ -253,6 +255,29 @@ class BaseModel(SQLModel):
     # TODO throw an error if this field is set on the model
     def is_new(self) -> bool:
         return not self._sa_instance_state.has_identity
+
+    def flag_modified(self, *args: str):
+        """
+        Flag one or more fields as modified. Useful for marking a field containing sub-objects as modified.
+
+        Will throw an error if an invalid field is passed.
+        """
+
+        assert len(args) > 0, "Must pass at least one field name"
+
+        for field_name in args:
+            if field_name not in self.__fields__:
+                raise ValueError(f"Field '{field_name}' does not exist in the model.")
+
+            # check if the field exists
+            sa_flag_modified(self, field_name)
+
+    def modified_fields(self) -> set[str]:
+        "set of fields that are modified"
+
+        insp = inspect(self)
+
+        return {attr.key for attr in insp.attrs if attr.history.has_changes()}
 
     @classmethod
     def find_or_create_by(cls, **kwargs):
