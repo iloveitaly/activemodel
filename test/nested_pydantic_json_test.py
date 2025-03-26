@@ -4,6 +4,7 @@ By default, fast API does not handle converting JSONB to and from Pydantic model
 
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm.base import instance_state
 from sqlmodel import Field, Session
 
 from activemodel import BaseModel
@@ -64,6 +65,9 @@ def test_json_serialization(create_and_wipe_database):
 
     example.refresh()
 
+    # make sure the automatic dict re-parse doesn't mark as dirty
+    assert not instance_state(example).modified
+
     # make sure the types are preserved when refreshed
     assert isinstance(example.list_field[0], SubObject)
     assert example.optional_list_field
@@ -120,6 +124,7 @@ def test_simple_json_object(create_and_wipe_database):
     assert isinstance(example.object_field, SubObject)
 
     example.refresh()
+    assert not instance_state(example).modified
 
     # make sure the types are preserved when refreshed
     assert isinstance(example.object_field, SubObject)
@@ -138,25 +143,48 @@ def test_json_object_update(create_and_wipe_database):
     "if we update a entry in a list of json objects, does the change persist?"
 
     sub_object = SubObject(name="test", value=1)
+    sub_object_2 = SubObject(name="test_2", value=2)
 
     example = ExampleWithJSONB(
-        list_field=[sub_object],
+        list_field=[sub_object, sub_object_2],
         generic_list_field=[{"one": "two"}],
         object_field=sub_object,
         unstructured_field={"one": "two"},
         semi_structured_field={"one": "two"},
     ).save()
 
+    # saving serializes the pydantic model and reloads it, which must not mark the object as dirty!
+    assert not instance_state(example).modified
+
     # modify a nested object
     example.list_field[0].name = "updated"
+
+    # the field will *not* be marked as dirty by default
+    assert not instance_state(example).modified
+
+    # so we have to force it to be dirty
+    example.flag_modified("list_field")
+
     example.object_field.value = 42
+    assert instance_state(example).modified
+
     example.save()
 
     assert example.list_field[0].name == "updated"
+
+    # NOTE this should be inverted, but we are asserting against the current behavior of `object_field` state not being updated
+    assert example.object_field.value != 42
+
+    # now, let's mark it as modified
+    example.object_field.value = 42
+    example.flag_modified("object_field")
+    example.save()
+
     assert example.object_field.value == 42
 
     # refresh from database
     fresh_example = ExampleWithJSONB.one(example.id)
+    assert not instance_state(example).modified
 
     # verify changes persisted
     assert fresh_example.list_field[0].name == "updated"
