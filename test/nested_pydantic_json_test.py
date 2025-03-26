@@ -7,6 +7,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Session
 
 from activemodel import BaseModel
+from sqlalchemy.dialects.postgresql import JSON
 from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
 from activemodel.session_manager import global_session
 from test.models import AnotherExample, ExampleWithComputedProperty
@@ -30,6 +31,13 @@ class ExampleWithJSONB(
     optional_object_field: SubObject | None = Field(sa_type=JSONB, default=None)
 
     normal_field: str | None = Field(default=None)
+
+
+class ExampleWithSimpleJSON(
+    BaseModel, PydanticJSONMixin, TypeIDMixin("simple_json_test"), table=True
+):
+    # NOT JSONB!
+    object_field: SubObject = Field(sa_type=JSON)
 
 
 def test_json_serialization(create_and_wipe_database):
@@ -100,3 +108,56 @@ def test_computed_serialization(create_and_wipe_database):
 
     assert ExampleWithComputedProperty.count() == 1
     assert AnotherExample.count() == 1
+
+
+def test_simple_json_object(create_and_wipe_database):
+    sub_object = SubObject(name="test", value=1)
+    example = ExampleWithSimpleJSON(
+        object_field=sub_object,
+    ).save()
+
+    # make sure the types are preserved when saved
+    assert isinstance(example.object_field, SubObject)
+
+    example.refresh()
+
+    # make sure the types are preserved when refreshed
+    assert isinstance(example.object_field, SubObject)
+    assert example.object_field.name == "test"
+    assert example.object_field.value == 1
+
+    fresh_example = ExampleWithSimpleJSON.get(example.id)
+
+    assert fresh_example is not None
+    assert isinstance(fresh_example.object_field, SubObject)
+    assert fresh_example.object_field.name == "test"
+    assert fresh_example.object_field.value == 1
+
+
+def test_json_object_update(create_and_wipe_database):
+    "if we update a entry in a list of json objects, does the change persist?"
+
+    sub_object = SubObject(name="test", value=1)
+
+    example = ExampleWithJSONB(
+        list_field=[sub_object],
+        generic_list_field=[{"one": "two"}],
+        object_field=sub_object,
+        unstructured_field={"one": "two"},
+        semi_structured_field={"one": "two"},
+    ).save()
+
+    # modify a nested object
+    example.list_field[0].name = "updated"
+    example.object_field.value = 42
+    example.save()
+
+    assert example.list_field[0].name == "updated"
+    assert example.object_field.value == 42
+
+    # refresh from database
+    fresh_example = ExampleWithJSONB.one(example.id)
+
+    # verify changes persisted
+    assert fresh_example.list_field[0].name == "updated"
+    assert fresh_example.object_field.value == 42

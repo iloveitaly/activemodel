@@ -1,5 +1,9 @@
 """
-https://github.com/fastapi/sqlmodel/issues/63
+Need to store nested Pydantic models in PostgreSQL using FastAPI and SQLModel.
+
+SQLModel lacks a direct JSONField equivalent (like Tortoise ORM's JSONField), making it tricky to handle nested model data as JSON in the DB.
+
+Extensive discussion on the problem: https://github.com/fastapi/sqlmodel/issues/63
 """
 
 from types import UnionType
