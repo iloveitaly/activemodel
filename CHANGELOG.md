@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.9.0](https://github.com/iloveitaly/activemodel/compare/v0.8.0...v0.9.0) (2025-03-26)
+
+
+### Features
+
+* add flag_modified and modified_fields to BaseModel ([3059903](https://github.com/iloveitaly/activemodel/commit/305990387797f4fde26c7c89a8d332b6ef7ff21f))
+* add refresh method to BaseModel for database sync ([59be3bb](https://github.com/iloveitaly/activemodel/commit/59be3bb87c64c865b08a2856f043678650c07194))
+* add robust record retrieval methods to BaseModel ([d15b5a1](https://github.com/iloveitaly/activemodel/commit/d15b5a1ffbbb18b6fde94d64dbc76f45c21f7da8))
+
+
+### Bug Fixes
+
+* use set_committed_value in PydanticJSONMixin ([5446204](https://github.com/iloveitaly/activemodel/commit/5446204fc4b17ed5f1daa4c898f5ba2242b0fc40))
+
+
+### Documentation
+
+* update TODOs and correct typeid return value ([52b2514](https://github.com/iloveitaly/activemodel/commit/52b2514b6d30212a56e34c2fe4c849ff79e36e6a))
+
 ## [0.8.0](https://github.com/iloveitaly/activemodel/compare/v0.7.0...v0.8.0) (2025-03-18)
 
 
