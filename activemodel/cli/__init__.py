@@ -31,6 +31,25 @@ def format_python_file(file_path: str | Path) -> bool:
         return False
 
 
+def fix_python_file(file_path: str | Path) -> bool:
+    """
+    Fix linting issues in a Python file using ruff.
+
+    Args:
+        file_path: Path to the Python file to fix
+
+    Returns:
+        bool: True if fixing was successful, False otherwise
+    """
+    try:
+        subprocess.run(["ruff", "check", str(file_path), "--fix"], check=True)
+        logger.info(f"Fixed linting issues using ruff at {file_path}")
+        return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error running ruff to fix the file: {e}")
+        return False
+
+
 def generate_sqlalchemy_protocol():
     """Generate Protocol type definitions for SQLAlchemy SelectOfScalar methods"""
     logger.info("Starting SQLAlchemy protocol generation")
@@ -106,8 +125,9 @@ class SQLAlchemyQueryMethods(Protocol, Generic[T]):
 
         logger.info(f"Generated SQLAlchemy protocol at {protocol_path}")
 
-        # Format the generated file with ruff
+        # Format and fix the generated file with ruff
         format_python_file(protocol_path)
+        fix_python_file(protocol_path)
     except Exception as e:
         logger.error(f"Error generating SQLAlchemy protocol: {e}", exc_info=True)
         raise
