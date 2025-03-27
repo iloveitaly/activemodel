@@ -1,32 +1,52 @@
 import inspect
 import os
 import logging
+import subprocess
 import sqlmodel as sm
 from sqlmodel.sql.expression import SelectOfScalar
 from pathlib import Path
+from typing import Any  # already imported in header of generated file
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
+def format_python_file(file_path: str | Path) -> bool:
+    """
+    Format a Python file using ruff.
+
+    Args:
+        file_path: Path to the Python file to format
+
+    Returns:
+        bool: True if formatting was successful, False otherwise
+    """
+    try:
+        subprocess.run(["ruff", "format", str(file_path)], check=True)
+        logger.info(f"Formatted file using ruff at {file_path}")
+        return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error running ruff to format the file: {e}")
+        return False
+
+
 def generate_sqlalchemy_protocol():
     """Generate Protocol type definitions for SQLAlchemy SelectOfScalar methods"""
     logger.info("Starting SQLAlchemy protocol generation")
 
-    # Define the header using a multiline stringT]):
     header = """
 # IMPORTANT: This file is auto-generated. Do not edit directly.
 
 from typing import Protocol, TypeVar, Any, Generic
 import sqlmodel as sm
+from sqlalchemy.sql.base import _NoArg
 
 T = TypeVar('T', bound=sm.SQLModel, covariant=True)
 
 class SQLAlchemyQueryMethods(Protocol, Generic[T]):
     \"""Protocol defining SQLAlchemy query methods forwarded by QueryWrapper.__getattr__\"""
 """
-
     # Initialize output list for generated method signatures
     output: list = []
 
@@ -49,16 +69,18 @@ class SQLAlchemyQueryMethods(Protocol, Generic[T]):
                 signature = inspect.signature(method)
                 params = []
 
-                # Process parameters
-                for param_name, param in list(signature.parameters.items())[
-                    1:
-                ]:  # Skip 'self'
-                    if param.default is inspect.Parameter.empty:
-                        params.append(f"{param_name}")
+                # Process parameters, skipping 'self'
+                for param_name, param in list(signature.parameters.items())[1:]:
+                    if param.kind == param.VAR_POSITIONAL:
+                        params.append(f"*{param_name}: Any")
+                    elif param.kind == param.VAR_KEYWORD:
+                        params.append(f"**{param_name}: Any")
                     else:
-                        # Handle default values safely
-                        default_repr = repr(param.default).replace('"', '\\"')
-                        params.append(f"{param_name}={default_repr}")
+                        if param.default is inspect.Parameter.empty:
+                            params.append(f"{param_name}: Any")
+                        else:
+                            default_repr = repr(param.default)
+                            params.append(f"{param_name}: Any = {default_repr}")
 
                 params_str = ", ".join(params)
                 output.append(
@@ -68,7 +90,7 @@ class SQLAlchemyQueryMethods(Protocol, Generic[T]):
                 logger.warning(f"Could not get signature for {name}: {e}")
                 # Some methods might not have proper signatures
                 output.append(
-                    f'    def {name}(self, *args, **kwargs) -> "SQLAlchemyQueryMethods[T]": ...'
+                    f'    def {name}(self, *args: Any, **kwargs: Any) -> "SQLAlchemyQueryMethods[T]": ...'
                 )
 
         # Write the output to a file
@@ -83,6 +105,9 @@ class SQLAlchemyQueryMethods(Protocol, Generic[T]):
             f.write(header + "\n".join(output))
 
         logger.info(f"Generated SQLAlchemy protocol at {protocol_path}")
+
+        # Format the generated file with ruff
+        format_python_file(protocol_path)
     except Exception as e:
         logger.error(f"Error generating SQLAlchemy protocol: {e}", exc_info=True)
         raise
