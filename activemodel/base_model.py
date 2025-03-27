@@ -4,11 +4,11 @@ from uuid import UUID
 
 import pydash
 import sqlalchemy as sa
-from sqlalchemy.orm.attributes import flag_modified as sa_flag_modified
-from sqlalchemy.orm.base import instance_state
 import sqlmodel as sm
 from sqlalchemy import Connection, event
 from sqlalchemy.orm import Mapper, declared_attr
+from sqlalchemy.orm.attributes import flag_modified as sa_flag_modified
+from sqlalchemy.orm.base import instance_state
 from sqlmodel import Column, Field, Session, SQLModel, inspect, select
 from typeid import TypeID
 
@@ -163,8 +163,10 @@ class BaseModel(SQLModel):
         """
         Returns a `Field` object referencing the foreign key of the model.
 
-        >>> other_model_id: int
-        >>> other_model = OtherModel.foreign_key()
+        Helps quickly build a many-to-one or one-to-one relationship.
+
+        >>> other_model_id: int = OtherModel.foreign_key()
+        >>> other_model = Relationship()
         """
 
         field_options = {"nullable": False} | kwargs
@@ -258,7 +260,7 @@ class BaseModel(SQLModel):
 
     def flag_modified(self, *args: str):
         """
-        Flag one or more fields as modified. Useful for marking a field containing sub-objects as modified.
+        Flag one or more fields as modified/mutated/dirty. Useful for marking a field containing sub-objects as modified.
 
         Will throw an error if an invalid field is passed.
         """
