@@ -72,6 +72,7 @@ class SessionManager:
                 self._database_url,
                 # NOTE very important! This enables pydantic models to be serialized for JSONB columns
                 json_serializer=_serialize_pydantic_model,
+                # TODO move to a constants area
                 echo=config("ACTIVEMODEL_LOG_SQL", cast=bool, default=False),
                 # https://docs.sqlalchemy.org/en/20/core/pooling.html#disconnect-handling-pessimistic
                 pool_pre_ping=True,
@@ -119,6 +120,9 @@ _session_context = contextvars.ContextVar[Session | None](
 
 @contextlib.contextmanager
 def global_session():
+    if _session_context.get() is not None:
+        raise RuntimeError("global session already set")
+
     with SessionManager.get_instance().get_session() as s:
         token = _session_context.set(s)
 
@@ -139,6 +143,9 @@ async def aglobal_session():
     >>>     ]
     >>> )
     """
+
+    if _session_context.get() is not None:
+        raise RuntimeError("global session already set")
 
     with SessionManager.get_instance().get_session() as s:
         token = _session_context.set(s)
