@@ -220,11 +220,17 @@ class BaseModel(SQLModel):
             postgres_insert(cls)
             .values(**data)
             .on_conflict_do_update(index_elements=index_elements, set_=data)
+            .returning(cls)
         )
 
         with get_session() as session:
-            session.exec(stmt)
+            result = session.exec(stmt)
             session.commit()
+
+            # TODO this is so ugly:
+            result = result.one()[0]
+
+        return result
 
     def delete(self):
         with get_session() as session:
