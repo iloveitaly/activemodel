@@ -1,22 +1,10 @@
 import pytest
 from sqlalchemy import UniqueConstraint
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field
 
 from activemodel import BaseModel
-from activemodel.session_manager import init, get_session
-
-
-class UpsertTestModel(BaseModel, table=True):
-    """Test model for upsert operations"""
-
-    id: int | None = Field(default=None, primary_key=True)
-    name: str = Field(unique=True)
-    category: str = Field(index=True)
-    value: int = Field(default=0)
-    description: str | None = Field(default=None)
-
-    # Add a composite unique constraint for the multiple unique field test
-    __table_args__ = (UniqueConstraint("name", "category", name="compound_constraint"),)
+from activemodel.mixins.typeid import TypeIDMixin
+from test.models import UpsertTestModel
 
 
 def test_upsert_single_unique_field(create_and_wipe_database):

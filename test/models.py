@@ -1,4 +1,5 @@
 from pydantic import computed_field
+from sqlalchemy import UniqueConstraint
 from sqlmodel import Column, Field, Integer, Relationship
 
 from activemodel import BaseModel
@@ -42,3 +43,15 @@ class ExampleWithComputedProperty(
     @property
     def special_note(self) -> str:
         return f"SPECIAL: {self.another_example.note}"
+
+
+class UpsertTestModel(BaseModel, TypeIDMixin("upsert_test"), table=True):
+    """Test model for upsert operations"""
+
+    name: str = Field(unique=True)
+    category: str = Field(index=True)
+    value: int = Field(default=0)
+    description: str | None = Field(default=None)
+
+    # Add a composite unique constraint for the multiple unique field test
+    __table_args__ = (UniqueConstraint("name", "category", name="compound_constraint"),)
