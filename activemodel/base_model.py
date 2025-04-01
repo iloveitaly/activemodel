@@ -137,8 +137,15 @@ class BaseModel(SQLModel):
                 cls.__table_args__ = {"comment": doc}
             elif isinstance(table_args, dict):
                 table_args.setdefault("comment", doc)
+            elif isinstance(table_args, tuple):
+                # If it's a tuple, we need to convert it to a list and add the comment
+                table_args = list(table_args)
+                table_args.append({"comment": doc})
+                cls.__table_args__ = tuple(table_args)
             else:
-                raise ValueError("Unexpected __table_args__ type")
+                raise ValueError(
+                    f"Unexpected __table_args__ type {type(table_args)}, expected dictionary."
+                )
 
     # TODO no type check decorator here
     @declared_attr
@@ -258,7 +265,7 @@ class BaseModel(SQLModel):
     def is_new(self) -> bool:
         return not self._sa_instance_state.has_identity
 
-    def flag_modified(self, *args: str):
+    def flag_modified(self, *args: str) -> None:
         """
         Flag one or more fields as modified/mutated/dirty. Useful for marking a field containing sub-objects as modified.
 
