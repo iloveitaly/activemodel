@@ -19,6 +19,7 @@ from . import get_column_from_field_patch  # noqa: F401
 from .logger import logger
 from .query_wrapper import QueryWrapper
 from .session_manager import get_session
+from sqlalchemy.dialects.postgresql import insert as postgres_insert
 
 POSTGRES_INDEXES_NAMING_CONVENTION = {
     "ix": "%(column_0_label)s_idx",
@@ -194,6 +195,36 @@ class BaseModel(SQLModel):
     def where(cls, *args):
         "convenience method to avoid having to write .select().where() in order to add conditions"
         return cls.select().where(*args)
+
+    @classmethod
+    def upsert(
+        cls,
+        data: dict[str, t.Any],
+        unique_by: str | list[str],
+    ) -> None:
+        """
+        This method will insert a new record if it doesn't exist, or update the existing record if it does.
+
+        It uses SQLAlchemy's `on_conflict_do_update` and does not yet support MySQL. Some implementation details below.
+
+        ---
+
+        - `index_elements=["name"]`: Specifies the column(s) to check for conflicts (e.g., unique constraint or index). If a row with the same "name" exists, it triggers the update instead of an insert.
+        - `values`: Defines the data to insert (e.g., `name="example", value=123`). If no conflict occurs, this data is inserted as a new row.
+
+        The `set_` parameter (e.g., `set_=dict(value=123)`) then dictates what gets updated on conflict, overriding matching fields in `values` if specified.
+        """
+        index_elements = [unique_by] if isinstance(unique_by, str) else unique_by
+
+        stmt = (
+            postgres_insert(cls)
+            .values(**data)
+            .on_conflict_do_update(index_elements=index_elements, set_=data)
+        )
+
+        with get_session() as session:
+            session.exec(stmt)
+            session.commit()
 
     def delete(self):
         with get_session() as session:
