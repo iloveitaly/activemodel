@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.10.0](https://github.com/iloveitaly/activemodel/compare/v0.9.0...v0.10.0) (2025-04-01)
+
+
+### Features
+
+* add upsert method for PostgreSQL support in BaseModel ([d639de6](https://github.com/iloveitaly/activemodel/commit/d639de6cb498b72cd4b42422822c7d59ca6a646c))
+* prevent nested global sessions and add test ([3aca2cc](https://github.com/iloveitaly/activemodel/commit/3aca2ccadf3e029801d5e517f5e660af44564f73))
+* return upserted model and enhance upsert tests ([df2359a](https://github.com/iloveitaly/activemodel/commit/df2359a4ba8a00305bd3d5024b9789642b7b4718))
+
+
+### Bug Fixes
+
+* use sa_column default instead of sqlmodel ([37e299d](https://github.com/iloveitaly/activemodel/commit/37e299d43dcec7db2cdfd3bc3b572b31b3234f35))
+
+
+### Documentation
+
+* enhance docstrings in BaseModel for clarity ([12a5dee](https://github.com/iloveitaly/activemodel/commit/12a5deec1ee2480410bbad9250b253991dd12d86))
+
 ## [0.9.0](https://github.com/iloveitaly/activemodel/compare/v0.8.0...v0.9.0) (2025-03-26)
 
 
