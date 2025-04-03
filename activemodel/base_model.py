@@ -196,12 +196,13 @@ class BaseModel(SQLModel):
         "convenience method to avoid having to write .select().where() in order to add conditions"
         return cls.select().where(*args)
 
+    # TODO we should add an instance method for this as well
     @classmethod
     def upsert(
         cls,
         data: dict[str, t.Any],
         unique_by: str | list[str],
-    ) -> None:
+    ) -> t.Self:
         """
         This method will insert a new record if it doesn't exist, or update the existing record if it does.
 
