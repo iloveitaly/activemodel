@@ -8,6 +8,10 @@ _prefixes: list[str] = []
 
 
 def TypeIDMixin(prefix: str):
+    """
+    Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
+    """
+
     # make sure duplicate prefixes are not used!
     # NOTE this will cause issues on code reloads
     assert prefix
@@ -23,9 +27,12 @@ def TypeIDMixin(prefix: str):
                 TypeIDType(prefix),
                 primary_key=True,
                 nullable=False,
+                # default on the sa_column level ensures that an ID is generated when creating a new record, even when
+                # raw SQLAlchemy operations are used instead of activemodel operations
                 default=lambda: TypeID(prefix),
             ),
-            # default_factory=lambda: TypeID(prefix),
+            # add a database comment to document the prefix, since it's not stored in the DB otherwise
+            description=f"TypeID with prefix: {prefix}",
         )
 
     _prefixes.append(prefix)
