@@ -1,4 +1,7 @@
+import json
 from test.models import TYPEID_PREFIX, ExampleWithId
+from pydantic import BaseModel as PydanticBaseModel
+from typeid import TypeID
 
 
 def test_json_schema(create_and_wipe_database):
@@ -6,3 +9,20 @@ def test_json_schema(create_and_wipe_database):
 
     example = ExampleWithId().save()
     example.model_json_schema()
+
+
+class PydanticResponseModel(PydanticBaseModel):
+    id: TypeID
+
+
+def test_typeid_render(create_and_wipe_database):
+    """
+    ensure that pydantic models can render the type id, this requires dunder methods to be added to the TypeID type
+    """
+
+    example = ExampleWithId().save()
+    response = PydanticResponseModel(id=example.id)
+
+    # check that the TypeID is serialized as a string
+    assert json.loads(response.model_dump_json())["id"] == str(example.id)
+    assert response.model_json_schema()["properties"]["id"]["type"] == "string"
