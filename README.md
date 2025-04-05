@@ -95,14 +95,14 @@ index 0d07420..a63631c 100644
  # Use forward slashes (/) also on windows to provide an os agnostic path
 -script_location = .
 +script_location = migrations
- 
+
  # template used to generate migration file names; The default value is %%(rev)s_%%(slug)s
  # Uncomment the line below if you want the files to be prepended with date and time
  # see https://alembic.sqlalchemy.org/en/latest/tutorial.html#editing-the-ini-file
  # for all available tokens
  # file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s
 +file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(rev)s_%%(slug)s
- 
+
  # sys.path path, will be prepended to sys.path if present.
  # defaults to the current working directory.
 diff --git i/test/migrations/env.py w/test/migrations/env.py
@@ -114,12 +114,12 @@ index 36112a3..a1e15c2 100644
 +# isort: off
 +
  from logging.config import fileConfig
- 
+
  from sqlalchemy import engine_from_config
 @@ -14,11 +17,17 @@ config = context.config
  if config.config_file_name is not None:
      fileConfig(config.config_file_name)
- 
+
 +from sqlmodel import SQLModel
 +from test.models import *
 +from test.utils import database_url
@@ -132,7 +132,7 @@ index 36112a3..a1e15c2 100644
  # target_metadata = mymodel.Base.metadata
 -target_metadata = None
 +target_metadata = SQLModel.metadata
- 
+
  # other values from the config, defined by the needs of env.py,
  # can be acquired:
 diff --git i/test/migrations/script.py.mako w/test/migrations/script.py.mako
@@ -140,13 +140,13 @@ index fbc4b07..9dc78bb 100644
 --- i/test/migrations/script.py.mako
 +++ w/test/migrations/script.py.mako
 @@ -9,6 +9,8 @@ from typing import Sequence, Union
- 
+
  from alembic import op
  import sqlalchemy as sa
 +import sqlmodel
 +import activemodel
  ${imports if imports else ""}
- 
+
  # revision identifiers, used by Alembic.
 ```
 
@@ -163,7 +163,7 @@ This tool is added to all `BaseModel`s and makes it easy to write SQL queries. S
 
 ### Easy Database Sessions
 
-I hate the idea f 
+I hate the idea f
 
 * Behavior should be intuitive and easy to understand. If you run `save()`, it should save, not stick the save in a transaction.
 * Don't worry about dead sessions. This makes it easy to lazy-load computed properties and largely eliminates the need to think about database sessions.
@@ -171,7 +171,7 @@ I hate the idea f
 There are a couple of thorny problems we need to solve for here:
 
 * In-memory fastapi servers are not the same as a uvicorn server, which is threaded *and* uses some sort of threadpool model for handling async requests. I don't claim to understand the entire implementation. For global DB session state (a) we can't use global variables (b) we can't use thread-local variables.
-* 
+*
 
 https://github.com/tomwojcik/starlette-context
 
@@ -187,8 +187,11 @@ https://github.com/tomwojcik/starlette-context
 SQLModel & SQLAlchemy are tricky. Here are some useful internal tricks:
 
 * `__sqlmodel_relationships__` is where any `RelationshipInfo` objects are stored. This is used to generate relationship fields on the object.
-* `ModelClass.relationship_name.property.local_columns` 
+* `ModelClass.relationship_name.property.local_columns`
 * Get cached fields from a model `object_state(instance).dict.get(field_name)`
+* Set the value on a field, without marking it as dirty `attributes.set_committed_value(instance, field_name, val)`
+* Is a model dirty `instance_state(instance).modified`
+* `select(Table).outerjoin??` won't work in a ipython session, but `Table.__table__.outerjoin??` will. `__table__` is a reference to the underlying SQLAlchemy table record.
 
 ### TypeID
 
