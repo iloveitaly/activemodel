@@ -18,6 +18,7 @@ class PydanticResponseModel(PydanticBaseModel):
 def test_typeid_render(create_and_wipe_database):
     """
     ensure that pydantic models can render the type id, this requires dunder methods to be added to the TypeID type
+    which is done thruogh the typeid_patch file
     """
 
     example = ExampleWithId().save()
