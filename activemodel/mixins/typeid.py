@@ -1,6 +1,7 @@
 from sqlmodel import Column, Field
 from typeid import TypeID
 
+from activemodel.types import typeid_patch  # noqa: F401
 from activemodel.types.typeid import TypeIDType
 
 # global list of prefixes to ensure uniqueness
