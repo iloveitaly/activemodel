@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.11.0](https://github.com/iloveitaly/activemodel/compare/v0.10.0...v0.11.0) (2025-04-05)
+
+
+### Features
+
+* add pydantic patch for TypeID schema serialization ([767726e](https://github.com/iloveitaly/activemodel/commit/767726eaf2a20f1c65162ba7d3a599495c83f721))
+* add typeid prefix to db field comments ([34e4574](https://github.com/iloveitaly/activemodel/commit/34e457488a6e59c4e7daf1d7495b59ac64bd7ea2))
+* render TypeIDType in plain old pydantic models ([8aa0a4d](https://github.com/iloveitaly/activemodel/commit/8aa0a4db51b425a60889064e723129041e418da5))
+
+
+### Bug Fixes
+
+* typing on upsert properly returns self ([8965113](https://github.com/iloveitaly/activemodel/commit/896511399c818e8a4a1c01ed324921e04073a279))
+
+
+### Documentation
+
+* add advanced SQLAlchemy tips to README.md ([c624ac0](https://github.com/iloveitaly/activemodel/commit/c624ac0712598d06759166ce9f91a37f40fefcfe))
+* update comments in session_manager to clarify usage ([e657a2e](https://github.com/iloveitaly/activemodel/commit/e657a2e5985be6f0770bf945fc062a05dcff8cc8))
+
 ## [0.10.0](https://github.com/iloveitaly/activemodel/compare/v0.9.0...v0.10.0) (2025-04-01)
 
 
