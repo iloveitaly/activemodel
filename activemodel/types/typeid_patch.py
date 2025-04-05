@@ -1,9 +1,7 @@
-import importlib.util
 from typing import Any
 
 
-from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
-from pydantic.json_schema import JsonSchemaValue
+from pydantic import GetCoreSchemaHandler
 from pydantic_core import CoreSchema, core_schema
 
 from typeid import TypeID
