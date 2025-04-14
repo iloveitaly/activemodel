@@ -2,7 +2,7 @@ import json
 import typing as t
 from uuid import UUID
 
-import pydash
+import textcase
 import sqlalchemy as sa
 import sqlmodel as sm
 from sqlalchemy import Connection, event
@@ -164,7 +164,7 @@ class BaseModel(SQLModel):
 
         https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
         """
-        return pydash.strings.snake_case(cls.__name__)
+        return textcase.snake(cls.__name__)
 
     @classmethod
     def foreign_key(cls, **kwargs):
