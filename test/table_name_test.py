@@ -1,14 +1,15 @@
 from activemodel import BaseModel
 
 
-class TestTable(BaseModel):
+class TableForTesting(BaseModel):
     id: int
 
 
-class TestLLMCache(BaseModel):
+# this one is especially tricky...
+class LLMCache(BaseModel):
     id: int
 
 
 def test_table_name():
-    assert TestTable.__tablename__ == "test_table"
-    assert TestLLMCache.__tablename__ == "test_llm_cache"
+    assert TableForTesting.__tablename__ == "table_for_testing"
+    assert LLMCache.__tablename__ == "llm_cache"
