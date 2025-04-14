@@ -5,9 +5,9 @@ description = "Make SQLModel more like an a real ORM"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "pydash>=8.0.4",
     "python-decouple-typed>=3.11.0",
     "sqlmodel>=0.0.22",
+    "textcase>=0.4.0",
     "typeid-python>=0.3.1",
 ]
 authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]

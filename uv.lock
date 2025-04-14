@@ -11,9 +11,9 @@ name = "activemodel"
 version = "0.10.0"
 source = { editable = "." }
 dependencies = [
-    { name = "pydash" },
     { name = "python-decouple-typed" },
     { name = "sqlmodel" },
+    { name = "textcase" },
     { name = "typeid-python" },
 ]
 
@@ -31,9 +31,9 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "pydash", specifier = ">=8.0.4" },
     { name = "python-decouple-typed", specifier = ">=3.11.0" },
     { name = "sqlmodel", specifier = ">=0.0.22" },
+    { name = "textcase", specifier = ">=0.4.0" },
     { name = "typeid-python", specifier = ">=0.3.1" },
 ]
 
@@ -827,18 +827,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pydash"
-version = "8.0.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/2f/24/91c037f47e434172c2112d65c00c84d475a6715425e3315ba2cbb7a87e66/pydash-8.0.5.tar.gz", hash = "sha256:7cc44ebfe5d362f4f5f06c74c8684143c5ac481376b059ff02570705523f9e2e", size = 164861 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/2c/86/e74c978800131c657fc5145f2c1c63e0cea01a49b6216f729cf77a2e1edf/pydash-8.0.5-py3-none-any.whl", hash = "sha256:b2625f8981862e19911daa07f80ed47b315ce20d9b5eb57aaf97aaf570c3892f", size = 102077 },
-]
-
-[[package]]
 name = "pygments"
 version = "2.19.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1084,6 +1072,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ce/20/08dfcd9c983f6a6f4a1000d934b9e6d626cff8d2eeb77a89a68eef20a2b7/starlette-0.46.2.tar.gz", hash = "sha256:7f7361f34eed179294600af672f565727419830b54b7b084efe44bb82d2fccd5", size = 2580846 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/0c/9d30a4ebeb6db2b25a841afbb80f6ef9a854fc3b41be131d249a977b4959/starlette-0.46.2-py3-none-any.whl", hash = "sha256:595633ce89f8ffa71a015caed34a5b2dc1c0cdb3f0f1fbd1e69339cf2abeec35", size = 72037 },
+]
+
+[[package]]
+name = "textcase"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/55/d4/1059637f58e1cbc8d0923d943bce1c1a711b9617dbf4b8d08d69c7d0825d/textcase-0.4.0.tar.gz", hash = "sha256:1d0b33c35f9bcb2fdc8696b46a0a15ff193db9a6c5c2d2e79368b0b255ca4757", size = 45434 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/24/46/c4c8976c915d3d5ba8051437c3d70c0fe3a570133e8bf3bfe43274f5360c/textcase-0.4.0-py3-none-any.whl", hash = "sha256:de438128d7636b9ca7d2eb4d54022e97a702747507e81173abe487f2b64d3e2d", size = 30343 },
 ]
 
 [[package]]
