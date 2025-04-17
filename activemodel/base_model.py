@@ -152,15 +152,15 @@ class BaseModel(SQLModel):
     @declared_attr
     def __tablename__(cls) -> str:
         """
-        Automatically generates the table name for the model by converting the class name from camel case to snake case.
-        This is the recommended format for table names:
+        Automatically generates the table name for the model by converting the model's class name from camel case to snake case.
+        This is the recommended text case style for table names:
 
         https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names
 
-        By default, the class is lower cased which makes it harder to read.
+        By default, the model's class name is lower cased which makes it harder to read.
 
-        Many snake_case libraries struggle with snake case for names like LLMCache, which is why we are using a more
-        complicated implementation from pydash.
+        Also, many text case conversion libraries struggle handling words like "LLMCache", this is why we are using
+        a more precise library which processes such acronyms: [`textcase`](https://pypi.org/project/textcase/).
 
         https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
         """
