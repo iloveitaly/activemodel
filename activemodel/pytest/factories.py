@@ -49,7 +49,7 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
     def should_set_field_value(cls, field_meta: FieldMeta, **kwargs: t.Any) -> bool:
         # do not default deleted at mixin to deleted!
         # TODO should be smarter about detecting if the mixin is in place
-        if field_meta.name == "deleted_at":
+        if field_meta.name in ["deleted_at", "updated_at", "created_at"]:
             return False
 
         return super().should_set_field_value(field_meta, **kwargs)
