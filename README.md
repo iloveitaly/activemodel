@@ -44,7 +44,7 @@ from sqlmodel import SQLModel
 
 SQLModel.metadata.create_all(get_engine())
 
-# now you can create a user!
+# now you can create a user! without managing sessions!
 User(a_field="a").save()
 ```
 
@@ -69,7 +69,24 @@ class User(
     list_field: list[SubObject] = Field(sa_type=JSONB())
 ```
 
+You'll probably want to query the model. Look ma, no sessions!
+
+```python
+User.where(id="user_123").all()
+
+# or, even better, for this case
+User.one("user_123")
+```
+
+Magically creating sessions for DB operations is one of the main problems this project tackles. Even better, you can set
+a single session object to be used for all DB operations. This is helpful for DB transactions, [specifically rolling back
+DB operations on each test.](#pytest)
+
 ## Usage
+
+### Pytest
+
+TODO detail out truncation and transactions
 
 ### Integrating Alembic
 
@@ -255,6 +272,7 @@ https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d
 
 * https://github.com/woofz/sqlmodel-basecrud
 * https://github.com/0xthiagomartins/sqlmodel-controller
+* https://github.com/litestar-org/advanced-alchemy?tab=readme-ov-file
 
 ## Inspiration
 
