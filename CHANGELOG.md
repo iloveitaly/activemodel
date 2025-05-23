@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.12.0](https://github.com/iloveitaly/activemodel/compare/v0.11.0...v0.12.0) (2025-05-23)
+
+
+### Features
+
+* add base SQLModel and ActiveModel polyfactory factories ([12a5e1d](https://github.com/iloveitaly/activemodel/commit/12a5e1db9be741f12db174d5a25f6c2eee61a446))
+
+
+### Bug Fixes
+
+* prevent factories from setting timestamp fields by default ([5d78745](https://github.com/iloveitaly/activemodel/commit/5d7874506047b7ae91f22566e1dc2c64d68814f4))
+
+
+### Documentation
+
+* clarify session management and querying in usage section ([cdadaff](https://github.com/iloveitaly/activemodel/commit/cdadafffa1ac835f2f6419f40de5bf2f281f94d2))
+* improve base model tablename docstring ([de98cbc](https://github.com/iloveitaly/activemodel/commit/de98cbcff0b2ef903207f4c65fb1aa6e014cf40c))
+* update TODOs for testing, constraints, and unique key suggestions ([6010f8f](https://github.com/iloveitaly/activemodel/commit/6010f8fec1c3bdb22d68ac3b545ebeafd6bd04ef))
+
 ## [0.11.0](https://github.com/iloveitaly/activemodel/compare/v0.10.0...v0.11.0) (2025-04-05)
 
 
