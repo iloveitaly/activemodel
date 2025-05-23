@@ -10,9 +10,11 @@ Docs are bad:
 
 TODO
 
+- [ ] tests for polyfactory support, setting session across all factories
 - [ ] sessions in tests, they don't work right now
 - [ ] snake case for attributes https://github.com/sqlalchemy/sqlalchemy/issues/7149
-
+- [ ] compound unique constraints don't have great names
+- [ ] https://grok.com/share/bGVnYWN5_7bfd5140-2351-4e4f-a8ba-bdedb59ac1e1 figure out better json tracking
 
 find_or_create
 
@@ -49,4 +51,15 @@ clear engine
 #         _engine.dispose()
 #         _engine = None
 #         _connection = None
+```
+
+---
+
+There should be a better way to add unique keys
+
+```
+    __table_args__ = (
+        # users should never see two schemas with the same name
+        UniqueConstraint("note_type", "doctor_id", name="doctor_and_note_type_unique"),
+    )
 ```
