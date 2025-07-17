@@ -10,6 +10,7 @@ Docs are bad:
 
 TODO
 
+- [ ] nested sessions, maybe only with connections
 - [ ] tests for polyfactory support, setting session across all factories
 - [ ] sessions in tests, they don't work right now
 - [ ] snake case for attributes https://github.com/sqlalchemy/sqlalchemy/issues/7149
