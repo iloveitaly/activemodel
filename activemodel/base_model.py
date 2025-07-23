@@ -2,10 +2,11 @@ import json
 import typing as t
 from uuid import UUID
 
-import textcase
 import sqlalchemy as sa
 import sqlmodel as sm
+import textcase
 from sqlalchemy import Connection, event
+from sqlalchemy.dialects.postgresql import insert as postgres_insert
 from sqlalchemy.orm import Mapper, declared_attr
 from sqlalchemy.orm.attributes import flag_modified as sa_flag_modified
 from sqlalchemy.orm.base import instance_state
@@ -19,7 +20,6 @@ from . import get_column_from_field_patch  # noqa: F401
 from .logger import logger
 from .query_wrapper import QueryWrapper
 from .session_manager import get_session
-from sqlalchemy.dialects.postgresql import insert as postgres_insert
 
 POSTGRES_INDEXES_NAMING_CONVENTION = {
     "ix": "%(column_0_label)s_idx",
@@ -234,6 +234,8 @@ class BaseModel(SQLModel):
         return result
 
     def delete(self):
+        "Delete record completely from the database"
+
         with get_session() as session:
             if old_session := Session.object_session(self):
                 old_session.expunge(self)
