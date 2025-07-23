@@ -1,11 +1,13 @@
 import sqlmodel as sm
 from sqlmodel.sql.expression import SelectOfScalar
 
+from activemodel.types.sqlalchemy_protocol import SQLAlchemyQueryMethods
+
 from .session_manager import get_session
 from .utils import compile_sql
 
 
-class QueryWrapper[T: sm.SQLModel]:
+class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
     """
     Make it easy to run queries off of a model
     """
