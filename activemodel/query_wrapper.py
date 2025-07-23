@@ -46,13 +46,20 @@ class QueryWrapper[T: sm.SQLModel]:
         with get_session() as session:
             return session.scalar(sm.select(sm.func.count()).select_from(self.target))
 
+    def scalar(self):
+        """
+        >>>
+        """
+        with get_session() as session:
+            return session.scalar(self.target)
+
     def exec(self):
         with get_session() as session:
             return session.exec(self.target)
 
     def delete(self):
         with get_session() as session:
-            session.delete(self.target)
+            return session.delete(self.target)
 
     def __getattr__(self, name):
         """
@@ -87,4 +94,5 @@ class QueryWrapper[T: sm.SQLModel]:
         return compile_sql(self.target)
 
     def __repr__(self) -> str:
+        # TODO we should improve structure of this a bit more, maybe wrap in <> or something?
         return f"{self.__class__.__name__}: Current SQL:\n{self.sql()}"
