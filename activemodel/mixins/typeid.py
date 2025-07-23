@@ -17,7 +17,7 @@ def TypeIDMixin(prefix: str):
     # NOTE this will cause issues on code reloads
     assert prefix
     assert prefix not in _prefixes, (
-        f"prefix {prefix} already exists, pick a different one"
+        f"TypeID prefix '{prefix}' already exists, pick a different one"
     )
 
     class _TypeIDMixin:
