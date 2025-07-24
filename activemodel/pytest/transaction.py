@@ -2,6 +2,36 @@ from activemodel import SessionManager
 
 from ..logger import logger
 
+try:
+    import factory as factory_exists
+except ImportError:
+    factory_exists = None
+
+try:
+    import polyfactory as polyfactory_exists
+except ImportError:
+    polyfactory_exists = None
+
+
+def set_factory_session(session):
+    if not factory_exists:
+        return
+    from factory.alchemy import SQLAlchemyModelFactory
+
+    # Ensure that all factories use the same session
+    for factory in SQLAlchemyModelFactory.__subclasses__():
+        factory._meta.sqlalchemy_session = factory_session
+        factory._meta.sqlalchemy_session_persistence = "commit"
+
+
+def set_polyfactory_session(session):
+    if not polyfactory_exists:
+        return
+
+    from .factories import ActiveModelFactory
+
+    ActiveModelFactory.__sqlalchemy_session__ = session
+
 
 def database_reset_transaction():
     """
@@ -40,16 +70,10 @@ def database_reset_transaction():
         SessionManager.get_instance().session_connection = connection
 
         try:
-            with SessionManager.get_instance().get_session() as factory_session:
-                try:
-                    from factory.alchemy import SQLAlchemyModelFactory
-
-                    # Ensure that all factories use the same session
-                    for factory in SQLAlchemyModelFactory.__subclasses__():
-                        factory._meta.sqlalchemy_session = factory_session
-                        factory._meta.sqlalchemy_session_persistence = "commit"
-                except ImportError:
-                    pass
+            with SessionManager.get_instance().get_session() as model_factory_session:
+                # set global database sessions for model factories to avoid lazy loading issues
+                set_factory_session(model_factory_session)
+                set_polyfactory_session(model_factory_session)
 
                 yield
         finally:
