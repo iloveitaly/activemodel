@@ -157,3 +157,30 @@ def test_one_multiple_results(create_and_wipe_database):
 
     with pytest.raises(sqlalchemy.exc.MultipleResultsFound):
         ExampleRecord.one(something="hi")
+
+
+def test_one_or_none_no_results(create_and_wipe_database):
+    record = ExampleRecord()
+    # do not save!
+
+    # Unlike one(), one_or_none() should return None instead of raising an exception
+    result = ExampleRecord.one_or_none(record.id)
+    assert result is None
+
+
+def test_one_or_none_single_result(create_and_wipe_database):
+    example = ExampleRecord().save()
+    result = ExampleRecord.one_or_none(example.id)
+
+    assert result
+    assert isinstance(result, ExampleRecord)
+    assert result.id == example.id
+
+
+def test_one_or_none_multiple_results(create_and_wipe_database):
+    # not a pk, but should still throw an error even with one_or_none
+    ExampleRecord(something="hi").save()
+    ExampleRecord(something="hi").save()
+
+    with pytest.raises(sqlalchemy.exc.MultipleResultsFound):
+        ExampleRecord.one_or_none(something="hi")
