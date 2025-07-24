@@ -407,6 +407,19 @@ class BaseModel(SQLModel):
             return session.exec(statement).first()
 
     @classmethod
+    def one_or_none(cls, *args: t.Any, **kwargs: t.Any):
+        """
+        Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+        Returns None if no record is found. Throws an error if more than one record is found.
+        """
+
+        args, kwargs = cls.__process_filter_args__(*args, **kwargs)
+        statement = select(cls).filter(*args).filter_by(**kwargs)
+
+        with get_session() as session:
+            return session.exec(statement).one_or_none()
+
+    @classmethod
     def one(cls, *args: t.Any, **kwargs: t.Any):
         """
         Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
