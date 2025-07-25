@@ -52,8 +52,12 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
     __is_base_factory__ = True
     __sqlalchemy_session__ = None
 
+    # TODO we shouldn't have to type this, but `save()` typing is not working
     @classmethod
-    def save(cls, *args, **kwargs):
+    def save(cls, *args, **kwargs) -> T:
+        """
+        Where this gets tricky, is this can be called multiple times within the same callstack
+        """
         with global_session(cls.__sqlalchemy_session__):
             return cls.build(*args, **kwargs).save()
 
