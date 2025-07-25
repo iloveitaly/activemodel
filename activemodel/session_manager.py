@@ -130,22 +130,28 @@ a place to persist a session to use globally across the application.
 @contextlib.contextmanager
 def global_session(session: Session | None = None):
     """
-    Generate a session shared across all activemodel calls.
+    Generate a session and share it across all activemodel calls.
 
     Alternatively, you can pass a session to use globally into the context manager, which is helpful for migrations
     and testing.
 
+    This may only be called a single time per callstack. There is one exception: if you call this multiple times
+    and pass in the same session reference, it will result in a noop.
+
     Args:
-        nested: If True, creates a nested transaction that automatically commits
         session: Use an existing session instead of creating a new one
     """
 
-    if _session_context.get() is not None:
-        raise RuntimeError("global session already set")
+    if session is not None and _session_context.get() is session:
+        yield session
+        return
 
-    # Create a context manager for session cleanup if needed
+    if _session_context.get() is not None:
+        raise RuntimeError("ActiveModel: global session already set")
+
     @contextlib.contextmanager
     def manage_existing_session():
+        "if an existing session already exists, use it without triggering another __enter__"
         yield session
 
     # Use provided session or create a new one
