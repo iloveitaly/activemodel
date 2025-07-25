@@ -42,3 +42,19 @@ def test_global_session_with_passed_session(create_and_wipe_database):
             result = ExampleRecord.one(another_with_index="unique1")
             assert result is not None
             assert result.something == "test"
+
+
+def test_global_session_noop_with_same_session(create_and_wipe_database):
+    """Test that global_session should be a noop when the same session is passed."""
+
+    with global_session() as custom_session:
+        with global_session(session=custom_session) as session1:
+            assert session1 is custom_session
+
+            # According to the docstring, passing the same session reference
+            # should result in a noop
+            with global_session(session=custom_session) as session2:
+                # This should be a noop and session2 should be the same as session1
+                assert session2 is custom_session
+                assert session2 is session1
+                assert session2 is session2
