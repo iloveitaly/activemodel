@@ -1,4 +1,9 @@
+import contextlib
+import contextvars
+
+from sqlmodel import Session
 from activemodel import SessionManager
+from activemodel.session_manager import global_session
 
 from ..logger import logger
 
@@ -11,6 +16,9 @@ try:
     import polyfactory as polyfactory_exists
 except ImportError:
     polyfactory_exists = None
+
+
+_test_session = contextvars.ContextVar[Session | None]("test_session", default=None)
 
 
 def set_factory_session(session):
@@ -31,6 +39,26 @@ def set_polyfactory_session(session):
     from .factories import ActiveModelFactory
 
     ActiveModelFactory.__sqlalchemy_session__ = session
+
+
+@contextlib.contextmanager
+def test_session():
+    """
+    Provides a database session for testing purposes.
+
+    This is useful for tests that need to interact back and forth with the database
+    multiple times before calling application code that uses the objects.
+
+    Factory.save() does this automatically, but if you need to manually create objects
+    and persist them to a DB, you can run into issues with the simple `expunge()` call
+    used to reassociate an object with a new session. If there are more complex relationships
+    this approach will fail and give you detached object errors.
+
+    https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b
+    """
+
+    with global_session(_test_session.get()) as session:
+        yield session
 
 
 def database_reset_transaction():
@@ -64,6 +92,7 @@ def database_reset_transaction():
         transaction = connection.begin_nested()
 
         if SessionManager.get_instance().session_connection is not None:
+            raise ValueError("global session already set")
             logger.warning("session override already exists")
             # TODO should we throw an exception here?
 
@@ -75,7 +104,12 @@ def database_reset_transaction():
                 set_factory_session(model_factory_session)
                 set_polyfactory_session(model_factory_session)
 
-                yield
+                test_session_token = _test_session.set(model_factory_session)
+
+                try:
+                    yield
+                finally:
+                    _test_session.reset(test_session_token)
         finally:
             logger.debug("rolling back transaction")
 
