@@ -29,11 +29,11 @@ def database_reset_truncate():
     logger.info("truncating database")
 
     # TODO get additonal tables to preserve from config
-    exception_tables = ["alembic_version"]
+    exception_tables = ["alembic_version", "zip_code"]
 
-    assert (
-        SQLModel.metadata.sorted_tables
-    ), "No model metadata. Ensure model metadata is imported before running truncate_db"
+    assert SQLModel.metadata.sorted_tables, (
+        "No model metadata. Ensure model metadata is imported before running truncate_db"
+    )
 
     with get_engine().connect() as connection:
         for table in reversed(SQLModel.metadata.sorted_tables):
