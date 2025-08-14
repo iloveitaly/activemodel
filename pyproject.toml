@@ -14,8 +14,12 @@ authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
 keywords = ["sqlmodel", "orm", "activerecord", "activemodel", "sqlalchemy"]
 urls = { "Repository" = "https://github.com/iloveitaly/activemodel" }
 
-[project.scripts]
-activemodel = "python_package_template:main"
+# TODO reference cli tool?
+# [project.scripts]
+# activemodel = "python_package_template:main"
+
+[project.entry-points.pytest11]
+activemodel = "activemodel.pytest.plugin"
 
 [tool.setuptools.packages.find]
 exclude = ["playground", "tests"]
