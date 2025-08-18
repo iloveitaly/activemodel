@@ -34,7 +34,7 @@ jobs:
     needs: [release-please]
     if: needs.release-please.outputs.release_created
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: jdx/mise-action@v2
       - run: direnv allow . && direnv export gha >> "$GITHUB_ENV"
       - run: uv build
@@ -49,7 +49,7 @@ jobs:
         python-version: ["3.13", "3.12"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: jdx/mise-action@v2
       - run: mise use python@${{ matrix.python-version }}
       - run: docker compose up -d --wait
