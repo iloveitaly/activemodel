@@ -56,7 +56,10 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
     @classmethod
     def save(cls, *args, **kwargs) -> T:
         """
-        Where this gets tricky, is this can be called multiple times within the same callstack
+        Where this gets tricky, is this can be called multiple times within the same callstack. This can happen when
+        a factory uses other factories to create relationships.
+
+        In a truncation strategy, the __sqlalchemy_session__ is set to None.
         """
         with global_session(cls.__sqlalchemy_session__):
             return cls.build(*args, **kwargs).save()
