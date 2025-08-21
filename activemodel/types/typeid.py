@@ -76,6 +76,7 @@ class TypeIDType(types.TypeDecorator):
         if isinstance(value, str):
             # no prefix, raw UUID, let's coerce it into a UUID which SQLAlchemy can handle
             # ex: '01942886-7afc-7129-8f57-db09137ed002'
+            # if an invalid uuid is passed, `ValueError('badly formed hexadecimal UUID string')` will be raised
             return UUID(value)
 
         if isinstance(value, TypeID):
