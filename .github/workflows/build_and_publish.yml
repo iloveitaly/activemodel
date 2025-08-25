@@ -35,7 +35,7 @@ jobs:
     if: needs.release-please.outputs.release_created
     steps:
       - uses: actions/checkout@v5
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v3
       - run: direnv allow . && direnv export gha >> "$GITHUB_ENV"
       - run: uv build
       - run: uv publish --token ${{ secrets.PYPI_API_TOKEN }}
@@ -50,7 +50,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v3
       - run: mise use python@${{ matrix.python-version }}
       - run: docker compose up -d --wait
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
