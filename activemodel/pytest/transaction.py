@@ -44,20 +44,43 @@ def set_polyfactory_session(session):
 @contextlib.contextmanager
 def test_session():
     """
-    Provides a database session for testing purposes.
+    Configures a session-global database session for a test.
 
-    This is useful for tests that need to interact back and forth with the database
-    multiple times before calling application code that uses the objects.
+    You can use this as a fixture using `db_session`.
 
-    Factory.save() does this automatically, but if you need to manually create objects
+    This is useful for tests that need to interact with the database multiple times before calling application code
+    that uses the objects. This is intended to be used outside of an integration test. Integration tests generally
+    do not use database transactions to clean the database and instead use truncation. The transaction fixture
+    configures a session, which is then used here. If the transaction fixture is not used, then there is no session
+    available for use and this will fail.
+
+    ActiveModelFactory.save() does this automatically, but if you need to manually create objects
     and persist them to a DB, you can run into issues with the simple `expunge()` call
     used to reassociate an object with a new session. If there are more complex relationships
     this approach will fail and give you detached object errors.
 
-    https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b
+    >>> from activemodel.pytest import test_session
+    >>> with test_session():
+    ...     obj = MyModel(name="test").save()
+    ...     obj2 = MyModelFactory.save()
+
+    More information: https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b
     """
 
-    with global_session(_test_session.get()) as session:
+    if model_factory_session := _test_session.get():
+        with global_session(model_factory_session) as session:
+            yield session
+    else:
+        raise ValueError("No test session available")
+
+
+def database_truncate_session():
+    """
+    Provides a database session for testing when using a truncation cleaning strategy.
+
+    When not using a transaction cleaning strategy, no global test session is set
+    """
+    with test_session() as session:
         yield session
 
 
@@ -65,13 +88,19 @@ def database_reset_transaction():
     """
     Wrap all database interactions for a given test in a nested transaction and roll it back after the test.
 
+    This is provided as a function, not a fixture, since you'll need to determine when a integration test is run. Here's
+    an example of how to build a fixture from this method:
+
     >>> from activemodel.pytest import database_reset_transaction
     >>> database_reset_transaction = pytest.fixture(scope="function", autouse=True)(database_reset_transaction)
 
-    Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process, which should
-    use spawn, because the same session is not shared across processes. Note that using `fork` is dangerous.
+    Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process because the
+    same session is not shared across python processes. For this scenario, use the truncate method.
 
-    In this case, you should use the truncate.
+    Note that using `fork` as a multiprocess start method is dangerous. Use spawn. This link has more documentation
+    around this topic:
+
+    https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py
 
     References:
 
@@ -86,16 +115,15 @@ def database_reset_transaction():
 
     engine = SessionManager.get_instance().get_engine()
 
-    logger.info("starting global database transaction")
+    logger.debug("starting global database transaction")
 
     with engine.begin() as connection:
         transaction = connection.begin_nested()
 
         if SessionManager.get_instance().session_connection is not None:
             raise ValueError("global session already set")
-            logger.warning("session override already exists")
-            # TODO should we throw an exception here?
 
+        # NOTE we very intentionally do NOT
         SessionManager.get_instance().session_connection = connection
 
         try:
