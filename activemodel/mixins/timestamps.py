@@ -20,7 +20,10 @@ class TimestampsMixin:
     >>> class MyModel(TimestampsMixin, SQLModel):
     >>>    pass
 
-    Originally pulled from: https://github.com/tiangolo/sqlmodel/issues/252
+    Notes:
+    
+    - Originally pulled from: https://github.com/tiangolo/sqlmodel/issues/252
+    - Related issue: https://github.com/fastapi/sqlmodel/issues/539
     """
 
     created_at: datetime | None = Field(
