@@ -209,6 +209,7 @@ SQLModel & SQLAlchemy are tricky. Here are some useful internal tricks:
 * Set the value on a field, without marking it as dirty `attributes.set_committed_value(instance, field_name, val)`
 * Is a model dirty `instance_state(instance).modified`
 * `select(Table).outerjoin??` won't work in a ipython session, but `Table.__table__.outerjoin??` will. `__table__` is a reference to the underlying SQLAlchemy table record.
+* `get_engine().pool.stats()` is helpful for inspecting connection pools and limits\
 
 ### TypeID
 
