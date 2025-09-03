@@ -8,6 +8,10 @@ up:
 db_open:
 	open -a TablePlus $$DATABASE_URL
 
+lint:
+	pyright
+	ruff format
+
 clean:
 	rm -rf *.egg-info
 	rm -rf .venv
