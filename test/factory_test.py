@@ -4,15 +4,15 @@ from test.models import AnotherExample, ExampleRecord, ExampleWithId
 
 
 class ExampleRecordFactory(ActiveModelFactory[ExampleRecord]):
-    pass
+    __model__ = ExampleRecord
 
 
 class AnotherExampleFactory(ActiveModelFactory[AnotherExample]):
-    pass
+    __model__ = AnotherExample
 
 
 class ExampleWithIdFactory(ActiveModelFactory[ExampleWithId]):
-    pass
+    __model__ = ExampleWithId
 
 
 def test_factory_save_helper_sets_session_and_persists(create_and_wipe_database):

@@ -46,13 +46,13 @@ def test_session():
     """
     Configures a session-global database session for a test.
 
-    You can use this as a fixture using `db_session`.
+    Use this as a fixture using `db_session`. This method is meant to be used as a context manager.
 
     This is useful for tests that need to interact with the database multiple times before calling application code
     that uses the objects. This is intended to be used outside of an integration test. Integration tests generally
     do not use database transactions to clean the database and instead use truncation. The transaction fixture
-    configures a session, which is then used here. If the transaction fixture is not used, then there is no session
-    available for use and this will fail.
+    configures a session, which is then used here. This method requires that this global test session is already
+    configured. If the transaction fixture is not used, then there is no session available for use and this will fail.
 
     ActiveModelFactory.save() does this automatically, but if you need to manually create objects
     and persist them to a DB, you can run into issues with the simple `expunge()` call
@@ -60,9 +60,10 @@ def test_session():
     this approach will fail and give you detached object errors.
 
     >>> from activemodel.pytest import test_session
-    >>> with test_session():
-    ...     obj = MyModel(name="test").save()
-    ...     obj2 = MyModelFactory.save()
+    >>> def test_the_thing():
+    >>>     with test_session():
+    ...         obj = MyModel(name="test").save()
+    ...         obj2 = MyModelFactory.save()
 
     More information: https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b
     """
