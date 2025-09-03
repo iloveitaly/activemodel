@@ -25,6 +25,23 @@ def test_basic_types(create_and_wipe_database):
     assert_type(all_records_list, list[ExampleRecord])
 
 
+def test_scalar_single_column(create_and_wipe_database):
+    """Ensure QueryWrapper.scalar returns the first column value when selecting a single scalar expression.
+
+    We create a record, build a query selecting only the id column and assert scalar() returns that id.
+    """
+    record = ExampleRecord(something="hello").save()
+
+    # Build a query selecting only the id column from the ExampleRecord table
+    # Using the model .select(...) helper that forwards args to QueryWrapper
+    query = ExampleRecord.select(ExampleRecord.id).where(ExampleRecord.id == record.id)
+
+    value = query.scalar()
+
+    # Should return the primary key of the inserted record
+    assert value == record.id
+
+
 # TODO needs to be fixed
 def test_select_with_args(create_and_wipe_database):
     result = ExampleRecord.select(sm.func.count()).one()
