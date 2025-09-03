@@ -29,9 +29,7 @@ exclude = ["playground", "tests"]
 package = true
 
 [dependency-groups]
-debugging-extras = [
-    "pytest-watcher>=0.4.3",
-]
+debugging-extras = ["pytest-watcher>=0.4.3"]
 dev = [
     "ipdb>=0.13.13",
     "pdbr>=0.8.9",
@@ -41,6 +39,7 @@ dev = [
     "fastapi[standard]>=0.115.6",
     "alembic>=1.14.1",
     "pyright>=1.1.398",
+    "polyfactory>=2.22.1",
 ]
 
 [tool.ruff]

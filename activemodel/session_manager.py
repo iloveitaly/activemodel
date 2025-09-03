@@ -62,7 +62,7 @@ class SessionManager:
             assert database_url is not None, (
                 "Database URL required for first initialization"
             )
-            cls._instance = cls(database_url, **engine_options)
+            cls._instance = cls(database_url, engine_options=engine_options)
 
         return cls._instance
 
