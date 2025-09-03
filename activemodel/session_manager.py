@@ -13,6 +13,8 @@ from pydantic import BaseModel
 from sqlalchemy import Connection, Engine
 from sqlmodel import Session, create_engine
 
+ACTIVEMODEL_LOG_SQL = config("ACTIVEMODEL_LOG_SQL", cast=bool, default=False)
+
 
 def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str | None:
     """
@@ -50,18 +52,26 @@ class SessionManager:
     "optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations"
 
     @classmethod
-    def get_instance(cls, database_url: str | None = None) -> "SessionManager":
+    def get_instance(
+        cls,
+        database_url: str | None = None,
+        *,
+        engine_options: dict[str, t.Any] | None = None,
+    ) -> "SessionManager":
         if cls._instance is None:
             assert database_url is not None, (
                 "Database URL required for first initialization"
             )
-            cls._instance = cls(database_url)
+            cls._instance = cls(database_url, **engine_options)
 
         return cls._instance
 
-    def __init__(self, database_url: str):
+    def __init__(
+        self, database_url: str, *, engine_options: dict[str, t.Any] | None = None
+    ):
         self._database_url = database_url
         self._engine = None
+        self._engine_options: dict = engine_options or {}
 
         self.session_connection = None
 
@@ -72,11 +82,12 @@ class SessionManager:
                 self._database_url,
                 # NOTE very important! This enables pydantic models to be serialized for JSONB columns
                 json_serializer=_serialize_pydantic_model,
-                # TODO move to a constants area
-                echo=config("ACTIVEMODEL_LOG_SQL", cast=bool, default=False),
+                echo=ACTIVEMODEL_LOG_SQL,
+                echo_pool=ACTIVEMODEL_LOG_SQL,
                 # https://docs.sqlalchemy.org/en/20/core/pooling.html#disconnect-handling-pessimistic
                 pool_pre_ping=True,
                 # some implementations include `future=True` but it's not required anymore
+                **self._engine_options,
             )
 
         return self._engine
@@ -99,9 +110,10 @@ class SessionManager:
         return Session(self.get_engine())
 
 
-def init(database_url: str):
+# TODO would be great one day to type engine_options as the SQLAlchemy EngineOptions
+def init(database_url: str, *, engine_options: dict[str, t.Any] | None = None):
     "configure activemodel to connect to a specific database"
-    return SessionManager.get_instance(database_url)
+    return SessionManager.get_instance(database_url, engine_options=engine_options)
 
 
 def get_engine():
