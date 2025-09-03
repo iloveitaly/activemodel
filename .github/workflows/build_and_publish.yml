@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - master
+  pull_request:
 
 env:
   # avoid build failures due to flaky pypi
