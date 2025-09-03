@@ -1,15 +1,25 @@
+"""
+This module provides utilities for generating Protocol type definitions for SQLAlchemy's
+SelectOfScalar methods, as well as formatting and fixing Python files using ruff.
+"""
+
 import inspect
-import os
 import logging
+import os
 import subprocess
-import sqlmodel as sm
-from sqlmodel.sql.expression import SelectOfScalar
 from pathlib import Path
 from typing import Any  # already imported in header of generated file
+
+import sqlmodel as sm
+from sqlmodel.sql.expression import SelectOfScalar
+
+from test.test_wrapper import QueryWrapper
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+QUERY_WRAPPER_CLASS_NAME = QueryWrapper.__name__
 
 
 def format_python_file(file_path: str | Path) -> bool:
@@ -103,13 +113,13 @@ class SQLAlchemyQueryMethods(Protocol, Generic[T]):
 
                 params_str = ", ".join(params)
                 output.append(
-                    f'    def {name}(self, {params_str}) -> "SQLAlchemyQueryMethods[T]": ...'
+                    f'    def {name}(self, {params_str}) -> "{QUERY_WRAPPER_CLASS_NAME}[T]": ...'
                 )
             except (ValueError, TypeError) as e:
                 logger.warning(f"Could not get signature for {name}: {e}")
                 # Some methods might not have proper signatures
                 output.append(
-                    f'    def {name}(self, *args: Any, **kwargs: Any) -> "SQLAlchemyQueryMethods[T]": ...'
+                    f'    def {name}(self, *args: Any, **kwargs: Any) -> "{QUERY_WRAPPER_CLASS_NAME}[T]": ...'
                 )
 
         # Write the output to a file
