@@ -51,8 +51,10 @@ User(a_field="a").save()
 Maybe you like JSON:
 
 ```python
-from activemodel import BaseModel
+from sqlalchemy.dialects.postgresql import JSONB
 from pydantic import BaseModel as PydanticBaseModel
+
+from activemodel import BaseModel
 from activemodel.mixins import PydanticJSONMixin, TypeIDMixin, TimestampsMixin
 
 class SubObject(PydanticBaseModel):
@@ -66,7 +68,7 @@ class User(
     TypeIDMixin("user"),
     table=True
 ):
-    list_field: list[SubObject] = Field(sa_type=JSONB())
+    list_field: list[SubObject] = Field(sa_type=JSONB)
 ```
 
 You'll probably want to query the model. Look ma, no sessions!
