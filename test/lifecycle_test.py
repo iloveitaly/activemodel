@@ -4,17 +4,23 @@ Hooks covered:
     before_create, after_create
     before_update, after_update
     before_save, after_save
-    around_save (wrapper)
-    before_delete, after_delete, around_delete
+    around_save (context manager)
+    before_delete, after_delete, around_delete (context manager)
+
+Ordering expectation (create):
+    before_create -> before_save -> around_save_before -> after_create -> after_save -> around_save_after
+Ordering expectation (update):
+    before_update -> before_save -> around_save_before -> after_update -> after_save -> around_save_after
+Ordering expectation (delete):
+    before_delete -> around_delete_before -> after_delete -> around_delete_after
 """
 
-from test.models import AnotherExample, RelationshipAfterSaveModel
+from contextlib import contextmanager
 from sqlmodel import Field
 
 import pytest
 from activemodel import BaseModel
 from activemodel.pytest.transaction import database_reset_transaction
-from sqlalchemy.orm.exc import DetachedInstanceError
 
 from .models import AnotherExample, RelationshipAfterSaveModel
 
@@ -52,10 +58,13 @@ class LifecycleModel(BaseModel, table=True):
     def after_save(self):  # type: ignore[override]
         events.append("after_save")
 
-    def around_save(self, proceed):  # type: ignore[override]
+    @contextmanager
+    def around_save(self):  # type: ignore[override]
         events.append("around_save_before")
-        proceed()
-        events.append("around_save_after")
+        try:
+            yield
+        finally:
+            events.append("around_save_after")
 
 
 def test_create_lifecycle_hooks():
@@ -106,10 +115,13 @@ class DeleteModel(BaseModel, table=True):
     def after_delete(self):  # type: ignore[override]
         events.append("after_delete")
 
-    def around_delete(self, proceed):  # type: ignore[override]
+    @contextmanager
+    def around_delete(self):  # type: ignore[override]
         events.append("around_delete_before")
-        proceed()
-        events.append("around_delete_after")
+        try:
+            yield
+        finally:
+            events.append("around_delete_after")
 
 
 def test_delete_hooks():
