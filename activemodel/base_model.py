@@ -1,22 +1,21 @@
 import json
 import typing as t
+import textcase
 from uuid import UUID
+from contextlib import nullcontext
 
 import sqlalchemy as sa
 import sqlmodel as sm
-import textcase
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
-from sqlalchemy.orm import declared_attr
 from sqlalchemy.orm.attributes import flag_modified as sa_flag_modified
-from sqlalchemy.orm.base import instance_state
 from sqlmodel import Column, Field, Session, SQLModel, inspect, select
 from typeid import TypeID
+from sqlalchemy.orm import declared_attr
 
 from activemodel.mixins.pydantic_json import PydanticJSONMixin
 
 # NOTE: this patches a core method in sqlmodel to support db comments
 from . import get_column_from_field_patch  # noqa: F401
-from .logger import logger
 from .query_wrapper import QueryWrapper
 from .session_manager import get_session
 
@@ -41,35 +40,32 @@ SQLModel.metadata.naming_convention = POSTGRES_INDEXES_NAMING_CONVENTION
 
 class BaseModel(SQLModel):
     """
-    Base model class to inherit from so we can hate python less
+    Base model class to inherit from so we can hate python less.
 
-    https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py
+    Some notes:
 
-    - {before,after} lifecycle hooks are modeled after Rails.
-    - class docstrings are converd to table-level comments
-    - save(), delete(), select(), where(), and other easy methods you would expect
+    - Inspired by https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py
+    - lifecycle hooks are modeled after Rails.
+    - class docstrings are converted to table-level comments
+    - save(), delete(), select(), where(), and other easy methods you would expect in a real ORM
     - Fixes foreign key naming conventions
+    - Sane table names
+
+    Here's how hooks work:
+
+        Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
+        Delete: before_delete, after_delete, around_delete
+
+    around_* hooks must be context managers (method returning a CM or a CM attribute).
+    Ordering (create): before_create -> before_save -> (enter around_save) -> persist -> after_create -> after_save -> (exit around_save)
+    Ordering (update): before_update -> before_save -> (enter around_save) -> persist -> after_update -> after_save -> (exit around_save)
+    Delete: before_delete -> (enter around_delete) -> delete -> after_delete -> (exit around_delete)
     """
 
-    # this is used for table-level comments
     __table_args__ = None
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
-        """Configure subclass (docstrings & metadata).
-
-        Lifecycle hooks are no longer wired through SQLAlchemy events. Instead they
-        are invoked manually inside `save()` based on whether the instance is new
-        or persisted. Supported hooks (all optional):
-
-            before_insert, before_update, before_save,
-            after_insert,  after_update,  after_save
-
-        Each hook can accept 1 positional argument (self). Additional positional
-        args were previously supported via SQLAlchemy event signatures, but are
-        intentionally not supported now to keep the API compact.
-        """
-
         super().__init_subclass__(**kwargs)
 
         from sqlmodel._compat import set_config_value
@@ -193,63 +189,72 @@ class BaseModel(SQLModel):
         return result
 
     def delete(self):
-        "Delete record completely from the database"
+        """Delete instance running delete hooks and optional around_delete context manager."""
+        self._call_hook("before_delete")
+        cm = self._get_around_context_manager("around_delete") or nullcontext()
 
-        with get_session() as session:
-            if (
-                old_session := Session.object_session(self)
-            ) and old_session is not session:
-                old_session.expunge(self)
+        with cm:
+            with get_session() as session:
+                if (
+                    old_session := Session.object_session(self)
+                ) and old_session is not session:
+                    old_session.expunge(self)
+                session.delete(self)
+                session.commit()
+            self._call_hook("after_delete")
 
-            session.delete(self)
-            session.commit()
-            return True
+        return True
 
     def save(self):
-        """Persist the model and run lifecycle hooks manually.
-
-        Order (insert):   before_insert -> before_save -> commit -> refresh -> after_insert -> after_save
-        Order (update):   before_update -> before_save -> commit -> refresh -> after_update -> after_save
-        """
-        def _call_lifecycle_hook(hook: str):
-            method = getattr(self, hook, None)
-            if callable(method):
-                if method.__code__.co_argcount != 1:
-                    raise TypeError(
-                        f"Hook '{hook}' must accept exactly 1 positional argument (self)"
-                    )
-                method()
+        """Persist instance running create/update hooks and optional around_save context manager."""
 
         is_new = self.is_new()
+        self._call_hook("before_create" if is_new else "before_update")
+        self._call_hook("before_save")
+        cm = self._get_around_context_manager("around_save") or nullcontext()
 
-        # BEFORE hooks
-        if is_new:
-            _call_lifecycle_hook("before_insert")
-        else:
-            _call_lifecycle_hook("before_update")
-        _call_lifecycle_hook("before_save")
+        with cm:
+            with get_session() as session:
+                if (
+                    old_session := Session.object_session(self)
+                ) and old_session is not session:
+                    old_session.expunge(self)
+                session.add(self)
+                session.commit()
+                session.refresh(self)
 
-        with get_session() as session:
-            if (
-                old_session := Session.object_session(self)
-            ) and old_session is not session:
-                old_session.expunge(self)
+            self._call_hook("after_create" if is_new else "after_update")
+            self._call_hook("after_save")
 
-            session.add(self)
-            session.commit()
-            session.refresh(self)
-
-        # AFTER hooks
-        if is_new:
-            _call_lifecycle_hook("after_insert")
-        else:
-            _call_lifecycle_hook("after_update")
-        _call_lifecycle_hook("after_save")
-
-        if issubclass(self.__class__, PydanticJSONMixin):
-            self.__class__.__transform_dict_to_pydantic__(self)
-
+            # Only call the transform method if the class is a subclass of PydanticJSONMixin
+            if issubclass(self.__class__, PydanticJSONMixin):
+                self.__class__.__transform_dict_to_pydantic__(self)
         return self
+
+    def _call_hook(self, hook_name: str) -> None:
+        method = getattr(self, hook_name, None)
+        if callable(method):
+            if method.__code__.co_argcount != 1:
+                raise TypeError(
+                    f"Hook '{hook_name}' must accept exactly 1 positional argument (self)"
+                )
+            method()
+
+    def _get_around_context_manager(self, name: str) -> t.ContextManager | None:
+        obj = getattr(self, name, None)
+        if obj is None:
+            return None
+
+        # If it's a callable (method/function), call it to obtain the CM
+        if callable(obj):
+            obj = obj()
+
+        cm = obj
+        if not (hasattr(cm, "__enter__") and hasattr(cm, "__exit__")):
+            raise TypeError(
+                f"{name} must return or be a context manager implementing __enter__/__exit__"
+            )
+        return t.cast(t.ContextManager, cm)
 
     def refresh(self):
         "Refreshes an object from the database"
@@ -271,6 +276,7 @@ class BaseModel(SQLModel):
 
     # TODO shouldn't this be handled by pydantic?
     # TODO where is this actually used? shoudl prob remove this
+    # TODO should we even do this? Can we specify a better json rendering class?
     def json(self, **kwargs):
         return json.dumps(self.dict(), default=str, **kwargs)
 
@@ -286,7 +292,12 @@ class BaseModel(SQLModel):
     # TODO got to be a better way to fwd these along...
     @classmethod
     def first(cls):
-        return cls.select().first()
+        # TODO should use dynamic pk
+        return cls.select().order_by(sa.desc(cls.id)).first()
+
+    # @classmethod
+    # def last(cls):
+    #     return cls.select().first()
 
     # TODO throw an error if this field is set on the model
     def is_new(self) -> bool:
