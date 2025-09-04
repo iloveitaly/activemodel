@@ -5,9 +5,8 @@ from uuid import UUID
 import sqlalchemy as sa
 import sqlmodel as sm
 import textcase
-from sqlalchemy import Connection, event
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
-from sqlalchemy.orm import Mapper, declared_attr
+from sqlalchemy.orm import declared_attr
 from sqlalchemy.orm.attributes import flag_modified as sa_flag_modified
 from sqlalchemy.orm.base import instance_state
 from sqlmodel import Column, Field, Session, SQLModel, inspect, select
@@ -57,69 +56,29 @@ class BaseModel(SQLModel):
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
-        "Setup automatic sqlalchemy lifecycle events for the class"
+        """Configure subclass (docstrings & metadata).
+
+        Lifecycle hooks are no longer wired through SQLAlchemy events. Instead they
+        are invoked manually inside `save()` based on whether the instance is new
+        or persisted. Supported hooks (all optional):
+
+            before_insert, before_update, before_save,
+            after_insert,  after_update,  after_save
+
+        Each hook can accept 1 positional argument (self). Additional positional
+        args were previously supported via SQLAlchemy event signatures, but are
+        intentionally not supported now to keep the API compact.
+        """
 
         super().__init_subclass__(**kwargs)
 
         from sqlmodel._compat import set_config_value
 
-        # enables field-level docstrings on the pydanatic `description` field, which we then copy into
-        # sa_args, which is persisted to sql table comments
+        # Enables field-level docstrings on the pydantic `description` field, which we
+        # copy into table/column comments by patching SQLModel internals elsewhere.
         set_config_value(model=cls, parameter="use_attribute_docstrings", value=True)
 
         cls._apply_class_doc()
-
-        def event_wrapper(method_name: str):
-            """
-            This does smart heavy lifting for us to make sqlalchemy lifecycle events nicer to work with:
-
-            * Passes the target first to the lifecycle method, so it feels like an instance method
-            * Allows as little as a single positional argument, so methods can be simple
-            * Removes the need for decorators or anything fancy on the subclass
-            """
-
-            def wrapper(mapper: Mapper, connection: Connection, target: BaseModel):
-                if hasattr(cls, method_name):
-                    method = getattr(cls, method_name)
-
-                    if callable(method):
-                        arg_count = method.__code__.co_argcount
-
-                        if arg_count == 1:  # Just self/cls
-                            method(target)
-                        elif arg_count == 2:  # Self, mapper
-                            method(target, mapper)
-                        elif arg_count == 3:  # Full signature
-                            method(target, mapper, connection)
-                        else:
-                            raise TypeError(
-                                f"Method {method_name} must accept either 1 to 3 arguments, got {arg_count}"
-                            )
-                    else:
-                        logger.warning(
-                            "SQLModel lifecycle hook found, but not callable hook_name=%s",
-                            method_name,
-                        )
-
-            return wrapper
-
-        event.listen(cls, "before_insert", event_wrapper("before_insert"))
-        event.listen(cls, "before_update", event_wrapper("before_update"))
-
-        # before_save maps to two type of events
-        event.listen(cls, "before_insert", event_wrapper("before_save"))
-        event.listen(cls, "before_update", event_wrapper("before_save"))
-
-        # now, let's handle after_* variants
-        event.listen(cls, "after_insert", event_wrapper("after_insert"))
-        event.listen(cls, "after_update", event_wrapper("after_update"))
-
-        # after_save maps to two type of events
-        event.listen(cls, "after_insert", event_wrapper("after_save"))
-        event.listen(cls, "after_update", event_wrapper("after_save"))
-
-        # def foreign_key()
-        # table.id
 
     @classmethod
     def _apply_class_doc(cls):
@@ -237,7 +196,9 @@ class BaseModel(SQLModel):
         "Delete record completely from the database"
 
         with get_session() as session:
-            if old_session := Session.object_session(self):
+            if (
+                old_session := Session.object_session(self)
+            ) and old_session is not session:
                 old_session.expunge(self)
 
             session.delete(self)
@@ -245,22 +206,48 @@ class BaseModel(SQLModel):
             return True
 
     def save(self):
+        """Persist the model and run lifecycle hooks manually.
+
+        Order (insert):   before_insert -> before_save -> commit -> refresh -> after_insert -> after_save
+        Order (update):   before_update -> before_save -> commit -> refresh -> after_update -> after_save
+        """
+        def _call_lifecycle_hook(hook: str):
+            method = getattr(self, hook, None)
+            if callable(method):
+                if method.__code__.co_argcount != 1:
+                    raise TypeError(
+                        f"Hook '{hook}' must accept exactly 1 positional argument (self)"
+                    )
+                method()
+
+        is_new = self.is_new()
+
+        # BEFORE hooks
+        if is_new:
+            _call_lifecycle_hook("before_insert")
+        else:
+            _call_lifecycle_hook("before_update")
+        _call_lifecycle_hook("before_save")
+
         with get_session() as session:
-            if old_session := Session.object_session(self):
-                # I was running into an issue where the object was already
-                # associated with a session, but the session had been closed,
-                # to get around this, you need to remove it from the old one,
-                # then add it to the new one (below)
+            if (
+                old_session := Session.object_session(self)
+            ) and old_session is not session:
                 old_session.expunge(self)
 
             session.add(self)
-            # NOTE very important method! This triggers sqlalchemy lifecycle hooks automatically
             session.commit()
             session.refresh(self)
 
-            # Only call the transform method if the class is a subclass of PydanticJSONMixin
-            if issubclass(self.__class__, PydanticJSONMixin):
-                self.__class__.__transform_dict_to_pydantic__(self)
+        # AFTER hooks
+        if is_new:
+            _call_lifecycle_hook("after_insert")
+        else:
+            _call_lifecycle_hook("after_update")
+        _call_lifecycle_hook("after_save")
+
+        if issubclass(self.__class__, PydanticJSONMixin):
+            self.__class__.__transform_dict_to_pydantic__(self)
 
         return self
 
