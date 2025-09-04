@@ -1,15 +1,28 @@
-"""Tests for BaseModel lifecycle hooks.
+"""Tests for manual lifecycle hooks (Rails-style subset).
 
-Covers these hooks registered in `BaseModel.__init_subclass__`:
-
-        before_insert, before_update, before_save, after_insert, after_update, after_save
-
-We verify ordering and that only the appropriate hooks fire for insert vs update.
+Hooks covered:
+    before_create, after_create
+    before_update, after_update
+    before_save, after_save
+    around_save (wrapper)
+    before_delete, after_delete, around_delete
 """
 
+from test.models import AnotherExample, RelationshipAfterSaveModel
 from sqlmodel import Field
 
+import pytest
 from activemodel import BaseModel
+from activemodel.pytest.transaction import database_reset_transaction
+from sqlalchemy.orm.exc import DetachedInstanceError
+
+from .models import AnotherExample, RelationshipAfterSaveModel
+
+
+@pytest.fixture(autouse=True)
+def setup_database(create_and_wipe_database):
+    """Ensure clean database state for each test"""
+    yield from database_reset_transaction()
 
 
 # simple event capture list used by the test model hooks
@@ -21,8 +34,8 @@ class LifecycleModel(BaseModel, table=True):
     name: str | None = None
 
     # Each hook appends its name; BaseModel's event wrapper will call with the appropriate args.
-    def before_insert(self):  # type: ignore[override]
-        events.append("before_insert")
+    def before_create(self):  # type: ignore[override]
+        events.append("before_create")
 
     def before_update(self):  # type: ignore[override]
         events.append("before_update")
@@ -30,8 +43,8 @@ class LifecycleModel(BaseModel, table=True):
     def before_save(self):  # type: ignore[override]
         events.append("before_save")
 
-    def after_insert(self):  # type: ignore[override]
-        events.append("after_insert")
+    def after_create(self):  # type: ignore[override]
+        events.append("after_create")
 
     def after_update(self):  # type: ignore[override]
         events.append("after_update")
@@ -39,24 +52,30 @@ class LifecycleModel(BaseModel, table=True):
     def after_save(self):  # type: ignore[override]
         events.append("after_save")
 
+    def around_save(self, proceed):  # type: ignore[override]
+        events.append("around_save_before")
+        proceed()
+        events.append("around_save_after")
 
-def test_insert_lifecycle_hooks(create_and_wipe_database):
+
+def test_create_lifecycle_hooks():
     events.clear()
 
     LifecycleModel(name="first").save()
 
-    # Only insert + save hooks should have fired, in the order they were registered.
     assert events == [
-        "before_insert",
+        "before_create",
         "before_save",
-        "after_insert",
+        "around_save_before",
+        "after_create",
         "after_save",
+        "around_save_after",
     ]
     assert "before_update" not in events
     assert "after_update" not in events
 
 
-def test_update_lifecycle_hooks(create_and_wipe_database):
+def test_update_lifecycle_hooks():
     events.clear()
 
     obj = LifecycleModel(name="first").save()
@@ -66,22 +85,55 @@ def test_update_lifecycle_hooks(create_and_wipe_database):
     obj.name = "second"
     obj.save()
 
-    # Only update + save hooks should have fired for the second save.
     assert events == [
         "before_update",
         "before_save",
+        "around_save_before",
         "after_update",
         "after_save",
+        "around_save_after",
     ]
-    assert "before_insert" not in events
-    assert "after_insert" not in events
+    assert "before_create" not in events
+    assert "after_create" not in events
 
 
-def test_after_save_relationship_access_failure(create_and_wipe_database):
-    from test.models import AnotherExample, RelationshipAfterSaveModel
+class DeleteModel(BaseModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
 
+    def before_delete(self):  # type: ignore[override]
+        events.append("before_delete")
+
+    def after_delete(self):  # type: ignore[override]
+        events.append("after_delete")
+
+    def around_delete(self, proceed):  # type: ignore[override]
+        events.append("around_delete_before")
+        proceed()
+        events.append("around_delete_after")
+
+
+def test_delete_hooks():
+    obj = DeleteModel().save()
+
+    events.clear()
+    obj.delete()
+
+    assert events == [
+        "before_delete",
+        "around_delete_before",
+        "after_delete",
+        "around_delete_after",
+    ]
+
+
+def test_after_save_with_relationship(db_session):
     parent = AnotherExample(note="parent").save()
 
     model_with_relationship = RelationshipAfterSaveModel(
         another_example_id=parent.id
     ).save()
+
+    # test after_save when the relationship exists
+    model_with_relationship.refresh()
+    model_with_relationship.note = "a new note"
+    model_with_relationship.save()
