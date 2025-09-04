@@ -75,3 +75,13 @@ def test_update_lifecycle_hooks(create_and_wipe_database):
     ]
     assert "before_insert" not in events
     assert "after_insert" not in events
+
+
+def test_after_save_relationship_access_failure(create_and_wipe_database):
+    from test.models import AnotherExample, RelationshipAfterSaveModel
+
+    parent = AnotherExample(note="parent").save()
+
+    model_with_relationship = RelationshipAfterSaveModel(
+        another_example_id=parent.id
+    ).save()
