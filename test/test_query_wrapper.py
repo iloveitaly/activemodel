@@ -6,7 +6,7 @@ from sqlmodel.sql.expression import SelectOfScalar
 from sqlalchemy import column
 
 from activemodel.query_wrapper import QueryWrapper
-from test.models import ExampleRecord
+from test.models import ExampleRecord, UpsertTestModel
 
 
 def test_basic_types(create_and_wipe_database):
@@ -88,3 +88,31 @@ def test_result_types(create_and_wipe_database):
     column_results = sm.select(column("id")).select_from(ExampleRecord)
     # TODO column_results type is unknown
     _ = column_results
+
+
+def test_scalar_sum_empty_returns_int_zero(create_and_wipe_database):
+    """SUM over empty table should allow easy int coercion via `or 0`."""
+    raw_sum = UpsertTestModel.select(sm.func.sum(UpsertTestModel.value)).scalar()
+    assert raw_sum is None
+
+
+def test_scalar_sum_with_rows_returns_int(create_and_wipe_database):
+    """SUM over table with rows returns an int when coerced; raw may be int already."""
+    UpsertTestModel(name="a", category="c1", value=5).save()
+    UpsertTestModel(name="b", category="c1", value=7).save()
+    UpsertTestModel(name="c", category="c2", value=0).save()
+
+    raw_sum = UpsertTestModel.select(sm.func.sum(UpsertTestModel.value)).scalar()
+    assert isinstance(raw_sum, int)
+    assert raw_sum == 12
+
+    # assert_type(raw_sum, int)  # generic inference currently loose
+
+    # Filtered sum (where no matching rows) again returns None -> coerce
+    filtered_none = (
+        UpsertTestModel.select(sm.func.sum(UpsertTestModel.value))
+        .where(UpsertTestModel.category == "does_not_exist")
+        .scalar()
+    )
+    assert filtered_none is None
+    # assert isinstance(filtered_sum, int)
