@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/iloveitaly/activemodel/compare/v0.12.0...v0.13.0) (2025-09-05)
+
+
+### Features
+
+* rewritten lifecycle hooks that actually work ([af4e6fe](https://github.com/iloveitaly/activemodel/commit/af4e6fe75099ef1cc6a998b471f48f32ee8b7d5d))
+
 ## [0.12.0](https://github.com/iloveitaly/activemodel/compare/v0.11.0...v0.12.0) (2025-09-03)
 
 
