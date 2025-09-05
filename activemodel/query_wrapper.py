@@ -1,5 +1,6 @@
 import sqlmodel as sm
 from sqlmodel.sql.expression import SelectOfScalar
+from typing import overload, Literal
 
 from activemodel.types.sqlalchemy_protocol import SQLAlchemyQueryMethods
 
@@ -48,6 +49,8 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         with get_session() as session:
             return session.scalar(sm.select(sm.func.count()).select_from(self.target))
 
+    # TODO typing is broken here
+    # TODO would be great to define a default return type if nothing is found
     def scalar(self):
         """
         >>>
@@ -90,7 +93,7 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
 
             def wrapper(*args, **kwargs):
                 result = sqlalchemy_target(*args, **kwargs)
-                self.target = result
+                self.target = result  # type: ignore[assignment]
                 return self
 
             return wrapper
@@ -105,6 +108,48 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         """
 
         return compile_sql(self.target)
+
+    @overload
+    def sample(self) -> T | None: ...
+
+    @overload
+    def sample(self, n: Literal[1]) -> T | None: ...
+
+    @overload
+    def sample(self, n: int) -> list[T]: ...
+
+    def sample(self, n: int = 1) -> T | None | list[T]:
+        """Return a random sample of rows from the current query.
+
+        Parameters
+        ----------
+        n: int
+            Number of rows to return. Defaults to 1.
+
+        Behavior
+        --------
+        - Returns a single model instance when ``n == 1`` (or ``None`` if no rows)
+        - Returns a list[Model] when ``n > 1`` (possibly empty list when no rows)
+        - Sampling is performed by appending an ``ORDER BY RANDOM()`` / ``func.random()``
+          and ``LIMIT n`` clause to the existing query target.
+        - Keeps original query intact (does not mutate ``self.target``) so further
+          chaining works as expected.
+        """
+
+        if n < 1:
+            raise ValueError("n must be >= 1")
+
+        # Build a new randomized limited query leaving self.target untouched
+        randomized = self.target.order_by(sm.func.random()).limit(n)
+
+        with get_session() as session:
+            result = list(session.exec(randomized))
+
+        if n == 1:
+            # Return the single instance or None
+            return result[0] if result else None
+
+        return result
 
     def __repr__(self) -> str:
         # TODO we should improve structure of this a bit more, maybe wrap in <> or something?

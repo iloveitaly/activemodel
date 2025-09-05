@@ -116,3 +116,48 @@ def test_scalar_sum_with_rows_returns_int(create_and_wipe_database):
     )
     assert filtered_none is None
     # assert isinstance(filtered_sum, int)
+
+
+def test_sample_single_none_when_empty(create_and_wipe_database):
+    """sample() with no rows returns None when n==1."""
+    assert ExampleRecord.select().sample() is None
+
+
+def test_sample_single_record(create_and_wipe_database):
+    r = ExampleRecord(something="one").save()
+    # With only one row we always get that row
+    sampled = ExampleRecord.select().sample()
+    assert sampled == r
+
+
+def test_sample_multiple(create_and_wipe_database):
+    # Insert several records
+    records = [ExampleRecord(something=str(i)).save() for i in range(10)]
+
+    sample_n = 5
+    sampled = ExampleRecord.select().sample(sample_n)
+    assert isinstance(sampled, list)
+    assert len(sampled) == sample_n
+    # Ensure all sampled items are part of inserted records set
+    record_ids = {r.id for r in records}
+    for row in sampled:
+        assert row.id in record_ids
+    # Should be unique (very high probability); enforce deterministically by set length
+    assert len({row.id for row in sampled}) == sample_n
+
+
+def test_sample_does_not_mutate_query(create_and_wipe_database):
+    ExampleRecord(something="one").save()
+    q = ExampleRecord.select().where(ExampleRecord.something == "one")
+    before_sql = q.sql()
+    _ = q.sample()  # run sample
+    # underlying query unchanged
+    assert q.sql() == before_sql
+
+
+def test_sample_error_conditions(create_and_wipe_database):
+    try:
+        ExampleRecord.select().sample(0)
+        assert False, "Expected ValueError for n < 1"
+    except ValueError:
+        pass
