@@ -60,6 +60,10 @@ class BaseModel(SQLModel):
     Ordering (create): before_create -> before_save -> (enter around_save) -> persist -> after_create -> after_save -> (exit around_save)
     Ordering (update): before_update -> before_save -> (enter around_save) -> persist -> after_update -> after_save -> (exit around_save)
     Delete: before_delete -> (enter around_delete) -> delete -> after_delete -> (exit around_delete)
+
+        # TODO document this in activemodel, this is an interesting edge case
+    # https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a
+
     """
 
     __table_args__ = None
@@ -190,16 +194,18 @@ class BaseModel(SQLModel):
 
     def delete(self):
         """Delete instance running delete hooks and optional around_delete context manager."""
-        self._call_hook("before_delete")
+
         cm = self._get_around_context_manager("around_delete") or nullcontext()
 
-        with cm:
-            with get_session() as session:
-                if (
-                    old_session := Session.object_session(self)
-                ) and old_session is not session:
-                    old_session.expunge(self)
-                session.delete(self)
+        with get_session() as session:
+            if (
+                old_session := Session.object_session(self)
+            ) and old_session is not session:
+                old_session.expunge(self)
+            session.delete(self)
+
+            self._call_hook("before_delete")
+            with cm:
                 session.commit()
             self._call_hook("after_delete")
 
@@ -209,17 +215,23 @@ class BaseModel(SQLModel):
         """Persist instance running create/update hooks and optional around_save context manager."""
 
         is_new = self.is_new()
-        self._call_hook("before_create" if is_new else "before_update")
-        self._call_hook("before_save")
         cm = self._get_around_context_manager("around_save") or nullcontext()
 
-        with cm:
-            with get_session() as session:
-                if (
-                    old_session := Session.object_session(self)
-                ) and old_session is not session:
-                    old_session.expunge(self)
-                session.add(self)
+        with get_session() as session:
+            if (
+                old_session := Session.object_session(self)
+            ) and old_session is not session:
+                old_session.expunge(self)
+
+            session.add(self)
+
+            # the order and placement of these hooks is really important
+            # we need the current object to be in a session otherwise it will not be able to
+            # load any relationships.
+            self._call_hook("before_create" if is_new else "before_update")
+            self._call_hook("before_save")
+
+            with cm:
                 session.commit()
                 session.refresh(self)
 

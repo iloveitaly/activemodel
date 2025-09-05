@@ -16,23 +16,69 @@ Ordering expectation (delete):
 """
 
 from contextlib import contextmanager
-from sqlmodel import Field
+from sqlmodel import Field, Relationship
 
 import pytest
 from activemodel import BaseModel
 from activemodel.pytest.transaction import database_reset_transaction
+from activemodel.types.typeid import TypeIDType
 
-from .models import AnotherExample, RelationshipAfterSaveModel
+from .models import AnotherExample
+
+# simple event capture list used by the test model hooks
+events: list[str] = []
 
 
 @pytest.fixture(autouse=True)
 def setup_database(create_and_wipe_database):
     """Ensure clean database state for each test"""
+    events.clear()
     yield from database_reset_transaction()
 
 
-# simple event capture list used by the test model hooks
-events: list[str] = []
+class LifecycleModelWithRelationships(BaseModel, table=True):
+    """Model used to test after_save accessing a relationship.
+
+    Intentionally written so that the after_save hook closes the session then attempts
+    to lazy-load the relationship, which should raise a SQLAlchemy error (DetachedInstanceError).
+    """
+
+    id: int | None = Field(default=None, primary_key=True)
+    note: str | None = Field(default=None)
+    another_example_id: TypeIDType = AnotherExample.foreign_key()
+    another_example: AnotherExample = Relationship(
+        sa_relationship_kwargs={"load_on_pending": True}
+    )
+
+    def log_self_and_relationships(self):
+        from activemodel.logger import logger
+
+        logger.info("self.note=%s", self.note)
+        logger.info("another_example.note=%s", self.another_example.note)
+
+    def before_create(self):
+        events.append("before_create")
+        self.log_self_and_relationships()
+
+    def before_update(self):
+        events.append("before_update")
+        self.log_self_and_relationships()
+
+    def before_save(self):
+        events.append("before_save")
+        self.log_self_and_relationships()
+
+    def after_save(self):
+        events.append("after_save")
+        self.log_self_and_relationships()
+
+    def after_create(self):
+        events.append("after_create")
+        self.log_self_and_relationships()
+
+    def after_update(self):
+        events.append("after_update")
+        self.log_self_and_relationships()
 
 
 class LifecycleModel(BaseModel, table=True):
@@ -40,26 +86,26 @@ class LifecycleModel(BaseModel, table=True):
     name: str | None = None
 
     # Each hook appends its name; BaseModel's event wrapper will call with the appropriate args.
-    def before_create(self):  # type: ignore[override]
+    def before_create(self):
         events.append("before_create")
 
-    def before_update(self):  # type: ignore[override]
+    def before_update(self):
         events.append("before_update")
 
-    def before_save(self):  # type: ignore[override]
+    def before_save(self):
         events.append("before_save")
 
-    def after_create(self):  # type: ignore[override]
+    def after_create(self):
         events.append("after_create")
 
-    def after_update(self):  # type: ignore[override]
+    def after_update(self):
         events.append("after_update")
 
-    def after_save(self):  # type: ignore[override]
+    def after_save(self):
         events.append("after_save")
 
     @contextmanager
-    def around_save(self):  # type: ignore[override]
+    def around_save(self):
         events.append("around_save_before")
         try:
             yield
@@ -68,18 +114,17 @@ class LifecycleModel(BaseModel, table=True):
 
 
 def test_create_lifecycle_hooks():
-    events.clear()
-
     LifecycleModel(name="first").save()
 
     assert events == [
         "before_create",
         "before_save",
         "around_save_before",
+        "around_save_after",
         "after_create",
         "after_save",
-        "around_save_after",
     ]
+
     assert "before_update" not in events
     assert "after_update" not in events
 
@@ -98,9 +143,9 @@ def test_update_lifecycle_hooks():
         "before_update",
         "before_save",
         "around_save_before",
+        "around_save_after",
         "after_update",
         "after_save",
-        "around_save_after",
     ]
     assert "before_create" not in events
     assert "after_create" not in events
@@ -109,19 +154,17 @@ def test_update_lifecycle_hooks():
 class DeleteModel(BaseModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
-    def before_delete(self):  # type: ignore[override]
+    def before_delete(self):
         events.append("before_delete")
 
-    def after_delete(self):  # type: ignore[override]
+    def after_delete(self):
         events.append("after_delete")
 
     @contextmanager
-    def around_delete(self):  # type: ignore[override]
+    def around_delete(self):
         events.append("around_delete_before")
-        try:
-            yield
-        finally:
-            events.append("around_delete_after")
+        yield
+        events.append("around_delete_after")
 
 
 def test_delete_hooks():
@@ -133,15 +176,15 @@ def test_delete_hooks():
     assert events == [
         "before_delete",
         "around_delete_before",
-        "after_delete",
         "around_delete_after",
+        "after_delete",
     ]
 
 
 def test_after_save_with_relationship(db_session):
     parent = AnotherExample(note="parent").save()
 
-    model_with_relationship = RelationshipAfterSaveModel(
+    model_with_relationship = LifecycleModelWithRelationships(
         another_example_id=parent.id
     ).save()
 
