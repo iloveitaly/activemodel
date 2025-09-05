@@ -1,7 +1,9 @@
 from typing import Any, Generator, assert_type
+import uuid
 
 import sqlmodel as sm
 from sqlmodel.sql.expression import SelectOfScalar
+from sqlalchemy import column
 
 from activemodel.query_wrapper import QueryWrapper
 from test.models import ExampleRecord
@@ -41,12 +43,39 @@ def test_scalar_single_column(create_and_wipe_database):
     assert value == record.id
 
 
+def test_exists_basic(create_and_wipe_database):
+    # empty table
+    assert ExampleRecord.select().exists() is False
+
+    r = ExampleRecord(something="hello").save()
+    assert ExampleRecord.select().exists() is True
+
+    # filter matches
+    assert ExampleRecord.select().where(ExampleRecord.id == r.id).exists() is True
+    # filter no match
+    assert (
+        ExampleRecord.select().where(ExampleRecord.id == str(uuid.uuid4())).exists()
+        is False
+    )
+
+
+def test_exists_does_not_mutate_query(create_and_wipe_database):
+    ExampleRecord(something="one").save()
+    q = ExampleRecord.select()
+    before_sql = q.sql()
+    assert q.exists() is True
+    # ensure calling exists didn't change underlying query
+    assert q.sql() == before_sql
+    # further chaining still works
+    assert q.where(ExampleRecord.something == "one").exists() is True
+
+
 # TODO needs to be fixed
 def test_select_with_args(create_and_wipe_database):
     result = ExampleRecord.select(sm.func.count()).one()
 
     assert result == 0
-    # TODO type inference for count() currently returns ExampleRecord | int; skip assert_type until generics fixed
+    # TODO type inference for count() currently returns ExampleRecord | int; skip precise assert_type until generics fixed
     # assert_type(result, int)
 
 
@@ -56,5 +85,6 @@ def test_result_types(create_and_wipe_database):
 
     ExampleRecord().save()
 
-    # column_results = sm.select(column("id")).select_from(ExampleRecord)  # unused until type handling improved
+    column_results = sm.select(column("id")).select_from(ExampleRecord)
     # TODO column_results type is unknown
+    _ = column_results

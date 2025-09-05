@@ -63,6 +63,17 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         with get_session() as session:
             return session.delete(self.target)
 
+    def exists(self) -> bool:
+        """Return True if the current query yields at least one row.
+
+        Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
+        the current target for efficiency. Keeps the original target intact.
+        """
+        with get_session() as session:
+            exists_stmt = sm.select(sm.exists(self.target))
+            result = session.scalar(exists_stmt)
+            return bool(result)
+
     def __getattr__(self, name):
         """
         This implements the magic that forwards function calls to sqlalchemy.
