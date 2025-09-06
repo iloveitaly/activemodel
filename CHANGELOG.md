@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.1](https://github.com/iloveitaly/activemodel/compare/v0.13.0...v0.13.1) (2025-09-06)
+
+
+### Documentation
+
+* fastapi-sqla ([2183686](https://github.com/iloveitaly/activemodel/commit/2183686421095856c59649c51c03ba1edaea9515))
+
 ## [0.13.0](https://github.com/iloveitaly/activemodel/compare/v0.12.0...v0.13.0) (2025-09-05)
 
 
