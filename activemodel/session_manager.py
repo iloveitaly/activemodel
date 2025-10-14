@@ -150,6 +150,14 @@ def global_session(session: Session | None = None):
     This may only be called a single time per callstack. There is one exception: if you call this multiple times
     and pass in the same session reference, it will result in a noop.
 
+    In complex testing code, you'll need to be careful here. For example:
+
+    - Unit test using a transaction db fixture (which sets __sqlalchemy_session__)
+    - Factory has a after_save hook
+    - That hook triggers a celery job
+    - The celery job (properly) calls `with global_session()`
+    - However, since `global_session()` is already set with __sqlalchemy_session__, this will raise an error
+
     Args:
         session: Use an existing session instead of creating a new one
     """
