@@ -6,9 +6,9 @@ SQLModel lacks a direct JSONField equivalent (like Tortoise ORM's JSONField), ma
 Extensive discussion on the problem: https://github.com/fastapi/sqlmodel/issues/63
 """
 
-from types import UnionType
 from typing import get_args, get_origin
-
+import typing
+import types
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy.orm import reconstructor, attributes
 
@@ -21,6 +21,11 @@ class PydanticJSONMixin:
 
     >>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
     >>>    list_field: list[SubObject] = Field(sa_type=JSONB()
+
+    Notes:
+
+    - Tuples of pydantic models are not supported, only lists.
+    - Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]
     """
 
     @reconstructor
@@ -37,6 +42,7 @@ class PydanticJSONMixin:
         for field_name, field_info in self.model_fields.items():
             raw_value = getattr(self, field_name, None)
 
+            # if the field is not set on the model, we can avoid doing anything with it
             if raw_value is None:
                 continue
 
@@ -44,32 +50,43 @@ class PydanticJSONMixin:
             origin = get_origin(annotation)
 
             # e.g. `dict` or `dict[str, str]`, we don't want to do anything with these
-            if origin is dict:
+            if origin in (dict, tuple):
                 continue
 
             annotation_args = get_args(annotation)
             is_top_level_list = origin is list
+            model_cls = annotation
 
+            # TODO not sure what was going on here...
             # if origin is not None:
             #     assert annotation.__class__ == origin
 
-            model_cls = annotation
+            # UnionType is only one way of defining an optional. If older typing syntax is used `Tuple[str] | None` the
+            # type annotation is different: `typing.Optional[typing.Tuple[float, float]]`. This is why we check both
+            # types below.
 
             # e.g. SomePydanticModel | None or list[SomePydanticModel] | None
-            # annotation_args are (type, NoneType) in this case
-            if isinstance(annotation, UnionType):
+            # annotation_args are (type, NoneType) in this case. Remove NoneType.
+            if origin in (typing.Union, types.UnionType):
                 non_none_types = [t for t in annotation_args if t is not type(None)]
 
                 if len(non_none_types) == 1:
                     model_cls = non_none_types[0]
+                else:
+                    # if there's more than one non-none type, it isn't meant to be serialized to JSON
+                    pass
+
+            model_cls_origin = get_origin(model_cls)
 
             # e.g. list[SomePydanticModel] | None, we have to unpack it
             # model_cls will print as a list, but it contains a subtype if you dig into it
             if (
-                get_origin(model_cls) is list
+                model_cls_origin is list
                 and len(list_annotation_args := get_args(model_cls)) == 1
             ):
                 model_cls = list_annotation_args[0]
+                model_cls_origin = get_origin(model_cls)
+
                 is_top_level_list = True
 
             # e.g. list[SomePydanticModel] or list[SomePydanticModel] | None
@@ -80,6 +97,9 @@ class PydanticJSONMixin:
                 ):
                     parsed_value = [model_cls(**item) for item in raw_value]
                     attributes.set_committed_value(self, field_name, parsed_value)
+                continue
+
+            if model_cls_origin in (list, tuple):
                 continue
 
             # single class
