@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.14.0](https://github.com/iloveitaly/activemodel/compare/v0.13.0...v0.14.0) (2025-10-16)
+
+
+### Features
+
+* **query_wrapper:** add efficient exists() query method with tests ([257452f](https://github.com/iloveitaly/activemodel/commit/257452fdf976ce263b13997816a3b1b81d2902e9))
+* **query:** add sample() to query wrapper for random row selection ([d35800c](https://github.com/iloveitaly/activemodel/commit/d35800c46244db21fd92e615609b895acdee25dc))
+
+
+### Bug Fixes
+
+* handle tuples and Optionals in JSON mixin ([1aa1018](https://github.com/iloveitaly/activemodel/commit/1aa1018d9714a43089fa9943daf1b4fcbc7742b9))
+
+
+### Documentation
+
+* clarify global_session usage in complex test scenarios ([a131b0f](https://github.com/iloveitaly/activemodel/commit/a131b0f64287b4225ac1eb2289e6ce6f006aa4d5))
+* fastapi-sqla ([2183686](https://github.com/iloveitaly/activemodel/commit/2183686421095856c59649c51c03ba1edaea9515))
+
 ## [0.13.0](https://github.com/iloveitaly/activemodel/compare/v0.12.0...v0.13.0) (2025-09-05)
 
 
