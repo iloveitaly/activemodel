@@ -271,6 +271,31 @@ extra constraints
 
 https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d2a4/src/my_model/model.py#L424C1-L426C6
 -->
+
+### SQLAlchemy Automap with Snake Case
+
+If you're working with legacy databases or want to use SQLAlchemy's automap feature, activemodel provides helper functions for snake_case relationship naming:
+
+```python
+from sqlalchemy.ext.automap import automap_base
+from activemodel import get_engine
+from activemodel.automap import (
+    name_for_scalar_relationship_snake,
+    name_for_collection_relationship_snake,
+)
+
+Base = automap_base()
+Base.prepare(
+    autoload_with=get_engine(),
+    name_for_scalar_relationship=name_for_scalar_relationship_snake,
+    name_for_collection_relationship=name_for_collection_relationship_snake,
+)
+
+# Now relationships use snake_case: user.process_status instead of user.processstatus
+```
+
+This addresses [SQLAlchemy issue #7149](https://github.com/sqlalchemy/sqlalchemy/issues/7149). See [docs/automap_snake_case.md](docs/automap_snake_case.md) for complete documentation.
+
 ## Related Projects
 
 * https://github.com/woofz/sqlmodel-basecrud
