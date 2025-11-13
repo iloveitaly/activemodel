@@ -8,17 +8,15 @@ Note: Due to SQLModel's type resolution behavior with Annotated types, this mixi
 explicit metadata annotations. A future version may provide deeper integration with the foreign_key() method.
 """
 
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any
 
 from sqlmodel import Relationship
 
 if TYPE_CHECKING:
     from sqlmodel import SQLModel
 
-T = TypeVar("T")
 
-
-def auto_relationships(cls: type[T]) -> type[T]:
+def auto_relationships[T](cls: type[T]) -> type[T]:
     """
     Decorator that inspects a model's fields and automatically creates relationship fields
     for any foreign key fields that have 'related_model' metadata.
