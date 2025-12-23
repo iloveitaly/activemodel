@@ -2,8 +2,8 @@
 
 Currently provides:
 
-* ``db_session`` fixture – quick access to a database session (see ``test_session``)
-* ``activemodel_preserve_tables`` ini option – configure tables to preserve when using
+* ``db_session`` fixture - quick access to a database session (see ``test_session``)
+* ``activemodel_preserve_tables`` ini option - configure tables to preserve when using
   ``database_reset_truncate`` (comma separated list or multiple lines depending on config style)
 
 Configuration examples:
@@ -53,7 +53,7 @@ def pytest_addoption(
 @pytest.fixture(scope="function")
 def db_session():
     """
-    Helpful for tests that are more similar to unit tests. If you doing a routing or integration test, you
+    Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you
     probably don't need this. If your unit test is simple (you are just creating a couple of models) you
     can most likely skip this.
 
@@ -71,11 +71,12 @@ def db_truncate_session():
     """
     Provides a database session for testing when using a truncation cleaning strategy.
 
-    When not using a transaction cleaning strategy, no global test session is set
+    When using a truncation cleaning strategy, no global test session is set. This means all models that are created
+    are tied to a detached session, which makes it hard to mutate models after creation. This fixture fixes that problem
+    by setting the session used by all model factories to a global session.
     """
     with global_session() as session:
         # set global database sessions for model factories to avoid lazy loading issues
-        set_factory_session(session)
-        set_polyfactory_session(session)
+        set_factory_sessions(session)
 
         yield session

@@ -41,6 +41,13 @@ def set_polyfactory_session(session):
     ActiveModelFactory.__sqlalchemy_session__ = session
 
 
+def set_factory_sessions(session):
+    "set all supported model factories to use the provided session"
+
+    set_factory_session(session)
+    set_polyfactory_session(session)
+
+
 @contextlib.contextmanager
 def test_session():
     """
