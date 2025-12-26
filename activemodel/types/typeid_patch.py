@@ -1,3 +1,9 @@
+"""
+Pydantic v2 support for TypeID.
+
+TODO should push this upstream to the typeid package
+"""
+
 from typing import Any, Type
 
 from pydantic import GetCoreSchemaHandler
