@@ -12,6 +12,7 @@ from polyfactory.field_meta import FieldMeta
 from typeid import TypeID
 
 from activemodel.session_manager import global_session
+from activemodel.logger import logger
 
 # TODO not currently used
 # def type_id_provider(cls, field_meta):
@@ -56,11 +57,20 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
     @classmethod
     def save(cls, *args, **kwargs) -> T:
         """
+        Builds and persists a new model to the database.
+
         Where this gets tricky, is this can be called multiple times within the same callstack. This can happen when
-        a factory uses other factories to create relationships.
+        a factory uses other factories to create relationships. This is fine if `__sqlalchemy_session__` is set, but
+        if it's not (in the case of a truncation DB strategy) you'll run into issues.
 
         In a truncation strategy, the __sqlalchemy_session__ is set to None.
         """
+
+        if cls.__sqlalchemy_session__ is None:
+            logger.warning(
+                "No __sqlalchemy_session__ set on factory class, nested factory save() will fail. Use `db_session` or `db_truncate_session` to avoid this."
+            )
+
         with global_session(cls.__sqlalchemy_session__):
             return cls.build(*args, **kwargs).save()
 
@@ -74,6 +84,7 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
         # TODO right now assumes the model is typeid, maybe we should assert against this?
         primary_key_name = cls.__model__.primary_key_column().name
         return TypeID(
+            # gets the prefix associated with the pk field
             cls.__model__.model_fields[primary_key_name].sa_column.type.prefix
         )
 
