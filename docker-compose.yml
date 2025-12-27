@@ -10,7 +10,7 @@ services:
     ports:
       - ${CI:+5432}:5432
     volumes:
-      - app_postgres_data:/var/lib/postgresql/
+      - package_postgres_data:/var/lib/postgresql/
     healthcheck:
       # if you customize the default user at all, this healthcheck with clutter your logs
       # since the default username + database does not match up
