@@ -3,7 +3,7 @@ name = "activemodel"
 version = "0.14.0"
 description = "Make SQLModel more like an a real ORM"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "python-decouple-typed>=3.11.0",
     "sqlmodel>=0.0.22",
