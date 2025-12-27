@@ -8,9 +8,7 @@ jobs:
   repo_sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetching Local Repository
-        uses: actions/checkout@v5
-      - name: Repository Metadata Sync
-        uses: iloveitaly/github-actions-metadata-sync@main
+      - uses: actions/checkout@v6
+      - uses: iloveitaly/github-actions-metadata-sync@main
         with:
           TOKEN: ${{ secrets.GH_PERSONAL_TOKEN }}
