@@ -35,22 +35,32 @@ jobs:
     needs: [release-please]
     if: needs.release-please.outputs.release_created
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
-      - run: direnv allow . && direnv export gha >> "$GITHUB_ENV"
+      - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv build
       - run: uv publish --token ${{ secrets.PYPI_API_TOKEN }}
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v3
+        env:
+          MISE_ENV: ci
+      - uses: iloveitaly/github-action-direnv-load-and-mask@master
+      - run: uv sync
+      - run: just lint
 
   matrix-test:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        # TODO test on macos-latest, does not have docker by default :/
         # unfortunately, some of the typing stuff we use requires new python versions
-        python-version: ["3.13", "3.12"]
+        python-version: ["3.14", "3.13", "3.12"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
       - run: mise use python@${{ matrix.python-version }}
       - run: docker compose up -d --wait
