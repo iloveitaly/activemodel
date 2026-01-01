@@ -13,26 +13,23 @@ Some ideas for this originally sourced from: https://github.com/fastapi/sqlmodel
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
     Sequence,
     cast,
 )
 
 import sqlmodel
-from pydantic.fields import FieldInfo as PydanticFieldInfo
 from sqlalchemy import (
     Column,
     ForeignKey,
 )
 from sqlmodel._compat import (  # type: ignore[attr-defined]
-    IS_PYDANTIC_V2,
     ModelMetaclass,
     Representation,
     Undefined,
     UndefinedType,
     is_field_noneable,
 )
-from sqlmodel.main import FieldInfo, get_sqlalchemy_type
+from sqlmodel.main import get_sqlalchemy_type
 
 from activemodel.utils import hash_function_code
 
@@ -43,37 +40,31 @@ if TYPE_CHECKING:
     from pydantic_core import PydanticUndefinedType as UndefinedType
 
 
+# https://github.com/fastapi/sqlmodel/blob/5c2dbe419edc2d15200eee5269c9508987944ed8/sqlmodel/main.py#L691
 assert (
     hash_function_code(sqlmodel.main.get_column_from_field)
-    == "398006ef8fd8da191ca1a271ef25b6e135da0f400a80df2f29526d8674f9ec51"
+    == "ab3cdd5d20079358911b6aef76b3916ba3890b20eb07e970a0f35bd63e1713d9"
+), (
+    f"get_column_from_field has changed, please verify the patch is still valid: {hash_function_code(sqlmodel.main.get_column_from_field)}"
 )
 
 
-def get_column_from_field(field: PydanticFieldInfo | FieldInfo) -> Column:  # type: ignore
-    """
-    Takes a field definition, which can either come from the sqlmodel FieldInfo class or the pydantic variant of that class,
-    and converts it into a sqlalchemy Column object.
-    """
-    if IS_PYDANTIC_V2:
-        field_info = field
-    else:
-        field_info = field.field_info
-
+def get_column_from_field(field: Any) -> Column:  # type: ignore
+    field_info = field
     sa_column = getattr(field_info, "sa_column", Undefined)
     if isinstance(sa_column, Column):
-        # IMPORTANT: change from the original function
+        # <Change>
         if not sa_column.comment and (field_comment := field_info.description):
             sa_column.comment = field_comment
+        # </Change>
         return sa_column
-
+    sa_type = get_sqlalchemy_type(field)
     primary_key = getattr(field_info, "primary_key", Undefined)
     if primary_key is Undefined:
         primary_key = False
-
     index = getattr(field_info, "index", Undefined)
     if index is Undefined:
         index = False
-
     nullable = not primary_key and is_field_noneable(field)
     # Override derived nullability if the nullable property is set explicitly
     # on the field
@@ -103,7 +94,6 @@ def get_column_from_field(field: PydanticFieldInfo | FieldInfo) -> Column:  # ty
         "index": index,
         "unique": unique,
     }
-
     sa_default = Undefined
     if field_info.default_factory:
         sa_default = field_info.default_factory
@@ -111,14 +101,12 @@ def get_column_from_field(field: PydanticFieldInfo | FieldInfo) -> Column:  # ty
         sa_default = field_info.default
     if sa_default is not Undefined:
         kwargs["default"] = sa_default
-
     sa_column_args = getattr(field_info, "sa_column_args", Undefined)
     if sa_column_args is not Undefined:
         args.extend(list(cast(Sequence[Any], sa_column_args)))
-
     sa_column_kwargs = getattr(field_info, "sa_column_kwargs", Undefined)
 
-    # IMPORTANT: change from the original function
+    # <Change>
     if field_info.description:
         if sa_column_kwargs is Undefined:
             sa_column_kwargs = {}
@@ -128,11 +116,10 @@ def get_column_from_field(field: PydanticFieldInfo | FieldInfo) -> Column:  # ty
         # only update comments if not already set
         if "comment" not in sa_column_kwargs:
             sa_column_kwargs["comment"] = field_info.description
+    # </Change>
 
     if sa_column_kwargs is not Undefined:
-        kwargs.update(cast(Dict[Any, Any], sa_column_kwargs))
-
-    sa_type = get_sqlalchemy_type(field)
+        kwargs.update(cast(dict[Any, Any], sa_column_kwargs))
     return Column(sa_type, *args, **kwargs)  # type: ignore
 
 
