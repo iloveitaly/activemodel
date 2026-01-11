@@ -651,15 +651,15 @@ wheels = [
 
 [[package]]
 name = "pdbr"
-version = "0.9.3"
+version = "0.9.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyreadline3", marker = "sys_platform == 'win32'" },
     { name = "rich" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/83/6f/d0818c55714284960f646c62f8b2990d82e1f493036b6a4c76bbd8b79058/pdbr-0.9.3.tar.gz", hash = "sha256:56f5b7d29df187234c2ff878ffd41e5946378269bc52e38139f8c2d7ae5b5c7e", size = 15803, upload-time = "2025-12-27T12:44:31.035Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/37/47/1458f133732817d5e98e1323b454b032e70a07589c52562e8985e7add8e5/pdbr-0.9.7.tar.gz", hash = "sha256:8baba0b0dfe0ee2b758da4341507a71c20a6f6a3f92d9ee6bcd9650ae2e805bf", size = 15615, upload-time = "2026-01-05T08:36:11.166Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0e/54/d7ee6e59f2fd8d9dd68134debffc274b8a936b5ae8d6f54c515de2c02ab2/pdbr-0.9.3-py3-none-any.whl", hash = "sha256:3a97ca6f1fadc0b1e888de15eba4d9698a5d481771cff2b505e5bf02e6a3734e", size = 16309, upload-time = "2025-12-27T12:44:29.872Z" },
+    { url = "https://files.pythonhosted.org/packages/84/9e/1ea57f0c7b13cc85f280eded3f24d0ee1f264709289ebc0804dc4608f34e/pdbr-0.9.7-py3-none-any.whl", hash = "sha256:b88c8df940897d01eb0944062b80cd4422e46903b2b910d281b215748029ba21", size = 16201, upload-time = "2026-01-05T08:36:09.942Z" },
 ]
 
 [[package]]
