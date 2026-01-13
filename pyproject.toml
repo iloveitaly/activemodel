@@ -38,13 +38,16 @@ dev = [
     "pydantic>=2.10.0",
     "fastapi[standard]>=0.115.6",
     "alembic>=1.14.1",
-    "pyright>=1.1.398",
+    "pyright[nodejs]>=1.1.398",
     "polyfactory>=2.22.1",
 ]
 
 [tool.ruff]
 extend-exclude = ["playground.py"]
 force-exclude = true
+
+[tool.pyright]
+include = ["activemodel"]
 
 # https://github.com/astral-sh/uv/issues/9513
 [build-system]
