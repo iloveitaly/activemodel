@@ -72,11 +72,9 @@ class BaseModel(SQLModel):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
 
-        from sqlmodel._compat import set_config_value
-
         # Enables field-level docstrings on the pydantic `description` field, which we
         # copy into table/column comments by patching SQLModel internals elsewhere.
-        set_config_value(model=cls, parameter="use_attribute_docstrings", value=True)
+        cls.model_config["use_attribute_docstrings"] = True
 
         cls._apply_class_doc()
 
@@ -290,7 +288,7 @@ class BaseModel(SQLModel):
     # TODO where is this actually used? shoudl prob remove this
     # TODO should we even do this? Can we specify a better json rendering class?
     def json(self, **kwargs):
-        return json.dumps(self.dict(), default=str, **kwargs)
+        return json.dumps(self.model_dump(), default=str, **kwargs)
 
     # TODO should move this to the wrapper
     @classmethod
@@ -325,7 +323,7 @@ class BaseModel(SQLModel):
         assert len(args) > 0, "Must pass at least one field name"
 
         for field_name in args:
-            if field_name not in self.__fields__:
+            if field_name not in self.model_fields:
                 raise ValueError(f"Field '{field_name}' does not exist in the model.")
 
             # check if the field exists
