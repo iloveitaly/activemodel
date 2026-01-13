@@ -28,7 +28,10 @@ The list always implicitly includes ``alembic_version`` even if not specified.
 from activemodel.session_manager import global_session
 import pytest
 
-from .transaction import set_factory_session, set_polyfactory_session, test_session
+from .transaction import (
+    set_factory_sessions,
+    test_session,
+)
 
 
 def pytest_addoption(
