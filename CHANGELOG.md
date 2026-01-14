@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.14.1](https://github.com/iloveitaly/activemodel/compare/v0.14.0...v0.14.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* work with latest sqlmodel which drops v1 ([79920c6](https://github.com/iloveitaly/activemodel/commit/79920c63913b0a1d6824efc84719e6ea41b483eb))
+
+
+### Documentation
+
+* add pydantic v2 compatibility notes to typeid_patch.py ([7d3f43a](https://github.com/iloveitaly/activemodel/commit/7d3f43a0b1a3c2c51d46ef0530aabee7392f75ec))
+* add warning log for missing session in ActiveModelFactory ([317dd22](https://github.com/iloveitaly/activemodel/commit/317dd22b4abe5d9261d8c7f69a7b32b9c7b2d4de))
+
 ## [0.14.0](https://github.com/iloveitaly/activemodel/compare/v0.13.0...v0.14.0) (2025-10-16)
 
 
