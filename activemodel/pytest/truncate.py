@@ -1,7 +1,6 @@
 import os
 from typing import Iterable
 
-import pytest
 from sqlmodel import SQLModel
 
 from ..logger import logger
