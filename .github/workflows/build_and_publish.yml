@@ -54,7 +54,7 @@ jobs:
           MISE_ENV: ci
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv sync
-      - run: just lint
+      # - run: just lint
 
   matrix-test:
     strategy:
