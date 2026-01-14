@@ -117,6 +117,7 @@ def test_get_non_pk(create_and_wipe_database):
 def test_database_refresh(create_and_wipe_database):
     example = ExampleRecord(something="hi").save()
     example_2 = ExampleRecord.get(example.id)
+    assert example_2 is not None
 
     # now, let's update the "hi" on the 2nd example
     example_2.something = "hello"

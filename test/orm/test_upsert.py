@@ -40,6 +40,7 @@ def test_upsert_single_unique_field(create_and_wipe_database):
 
     assert UpsertTestModel.count() == 1
     record = UpsertTestModel.get(name="test1")
+    assert record is not None
     # 1. Double-check that DB record matches what was returned
     assert record.id == updated_result.id
     assert record.category == "B"
@@ -63,6 +64,7 @@ def test_upsert_multiple_unique_fields(create_and_wipe_database):
 
     # 1. Check that returned model's ID matches the DB record
     db_record1 = UpsertTestModel.get(name="multi1", category="X")
+    assert db_record1 is not None
     assert db_record1.id == result1.id
 
     result2 = UpsertTestModel.upsert(
@@ -134,6 +136,7 @@ def test_upsert_single_update_field(create_and_wipe_database):
 
     # Get record to verify field was updated
     record = UpsertTestModel.get(name="update1")
+    assert record is not None
     # 1. Check that DB record matches what was returned
     assert record.id == updated_result.id
     assert record.value == 25  # Updated
@@ -173,6 +176,7 @@ def test_upsert_multiple_update_fields(create_and_wipe_database):
 
     # Get record to verify all fields were updated
     record = UpsertTestModel.get(name="update2")
+    assert record is not None
     # 1. Check that DB record matches what was returned
     assert record.id == updated_result.id
     assert record.value == 99

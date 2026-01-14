@@ -106,6 +106,7 @@ class TestTestSession:
 
         # Second session - should be able to see the committed record
         with test_session() as session2:
+            assert session2 is not None
             found_record = session2.get(ExampleRecord, record_id)
             assert found_record is not None
             assert found_record.something == "first session"
