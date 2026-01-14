@@ -6,7 +6,6 @@ from sqlalchemy import text
 from activemodel import get_engine
 from sqlmodel import SQLModel
 
-from activemodel.session_manager import get_session
 
 
 def database_url():

@@ -1,13 +1,11 @@
 import json
 
-import pytest
 from pydantic import BaseModel as PydanticBaseModel
 from typeid import TypeID
 
 from test.models import TYPEID_PREFIX, ExampleWithId
 from test.utils import temporary_tables
 
-from activemodel.mixins import TypeIDMixin
 
 
 def test_get_through_prefixed_uid():

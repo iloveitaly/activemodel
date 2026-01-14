@@ -1,9 +1,4 @@
-import pytest
-from sqlalchemy import UniqueConstraint
-from sqlmodel import Field
 
-from activemodel import BaseModel
-from activemodel.mixins.typeid import TypeIDMixin
 from test.models import UpsertTestModel
 
 

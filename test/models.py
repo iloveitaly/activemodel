@@ -4,7 +4,7 @@ Example models to test various ORM cases
 
 from pydantic import computed_field
 from sqlalchemy import UniqueConstraint
-from sqlmodel import Column, Field, Integer, Relationship
+from sqlmodel import Field, Relationship
 
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
