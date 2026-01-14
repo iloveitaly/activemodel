@@ -43,11 +43,10 @@ dev = [
 ]
 
 [tool.ruff]
-extend-exclude = ["playground.py"]
-force-exclude = true
+extend-exclude = ["playground.py", "playground/"]
 
 [tool.pyright]
-include = ["activemodel"]
+exclude = ["playground/", "tmp/", ".venv/", "tests/"]
 
 # https://github.com/astral-sh/uv/issues/9513
 [build-system]
