@@ -95,8 +95,9 @@ Take a look at this patched function from an external package. The assertion tha
 
 I want you to investigate the changes in that function between The current version of that package that is used in this project and the most recent version. Take a look at our patch and:
 
-1. Update it if necessary to be compatible with the latest logic and the upstream function.
-2. Provide a summary of the changes made in the latest version of that function.
+1. Check the latest version of the package in pypi and update the version reference in pyproject.toml and `uv sync`
+2. Update the patch if necessary to be compatible with the latest logic in the upstream package.
+3. Provide a summary of the changes made in the latest version of that function.
 '''
 
 # Output the investigate patches prompt
