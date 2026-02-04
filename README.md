@@ -1,3 +1,9 @@
+[![Release Notes](https://img.shields.io/github/release/iloveitaly/activemodel)](https://github.com/iloveitaly/activemodel/releases)
+[![Downloads](https://static.pepy.tech/badge/activemodel/month)](https://pepy.tech/project/activemodel)
+[![Python Versions](https://img.shields.io/pypi/pyversions/activemodel)](https://pypi.org/project/activemodel)
+![GitHub CI Status](https://github.com/iloveitaly/activemodel/actions/workflows/build_and_publish.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # ActiveModel: ORM Wrapper for SQLModel
 
 No, this isn't *really* [ActiveModel](https://guides.rubyonrails.org/active_model_basics.html). It's just a wrapper around SQLModel that provides a more ActiveRecord-like interface.
@@ -290,3 +296,7 @@ https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d
 ## Upstream Changes
 
 - [ ] https://github.com/fastapi/sqlmodel/pull/1293
+
+---
+
+*This project was created from [iloveitaly/python-package-template](https://github.com/iloveitaly/python-package-template)*
