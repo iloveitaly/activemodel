@@ -29,7 +29,7 @@ from sqlmodel._compat import (  # type: ignore[attr-defined]
     UndefinedType,
     is_field_noneable,
 )
-from sqlmodel.main import get_sqlalchemy_type
+from sqlmodel.main import get_sqlalchemy_type, _get_sqlmodel_field_value
 
 from activemodel.utils import hash_function_code
 
@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 # https://github.com/fastapi/sqlmodel/blob/5c2dbe419edc2d15200eee5269c9508987944ed8/sqlmodel/main.py#L691
 assert (
     hash_function_code(sqlmodel.main.get_column_from_field)
-    == "ab3cdd5d20079358911b6aef76b3916ba3890b20eb07e970a0f35bd63e1713d9"
+    == "c64e50f8ca8a345ad2543690849a284d5436515835e41c56638cfaba251bc406"
 ), (
     f"get_column_from_field has changed, please verify the patch is still valid: {hash_function_code(sqlmodel.main.get_column_from_field)}"
 )
@@ -51,7 +51,7 @@ assert (
 
 def get_column_from_field(field: Any) -> Column:  # type: ignore
     field_info = field
-    sa_column = getattr(field_info, "sa_column", Undefined)
+    sa_column = _get_sqlmodel_field_value(field_info, "sa_column", Undefined)
     if isinstance(sa_column, Column):
         # <Change>
         if not sa_column.comment and (field_comment := field_info.description):
@@ -59,35 +59,35 @@ def get_column_from_field(field: Any) -> Column:  # type: ignore
         # </Change>
         return sa_column
     sa_type = get_sqlalchemy_type(field)
-    primary_key = getattr(field_info, "primary_key", Undefined)
+    primary_key = _get_sqlmodel_field_value(field_info, "primary_key", Undefined)
     if primary_key is Undefined:
         primary_key = False
-    index = getattr(field_info, "index", Undefined)
+    index = _get_sqlmodel_field_value(field_info, "index", Undefined)
     if index is Undefined:
         index = False
     nullable = not primary_key and is_field_noneable(field)
     # Override derived nullability if the nullable property is set explicitly
     # on the field
-    field_nullable = getattr(field_info, "nullable", Undefined)  # noqa: B009
+    field_nullable = _get_sqlmodel_field_value(field_info, "nullable", Undefined)  # noqa: B009
     if field_nullable is not Undefined:
         assert not isinstance(field_nullable, UndefinedType)
         nullable = field_nullable
     args = []
-    foreign_key = getattr(field_info, "foreign_key", Undefined)
+    foreign_key = _get_sqlmodel_field_value(field_info, "foreign_key", Undefined)
     if foreign_key is Undefined:
         foreign_key = None
-    unique = getattr(field_info, "unique", Undefined)
+    unique = _get_sqlmodel_field_value(field_info, "unique", Undefined)
     if unique is Undefined:
         unique = False
     if foreign_key:
-        if field_info.ondelete == "SET NULL" and not nullable:
+        ondelete_value = _get_sqlmodel_field_value(field_info, "ondelete", Undefined)
+        if ondelete_value is Undefined:
+            ondelete_value = None
+        if ondelete_value == "SET NULL" and not nullable:
             raise RuntimeError('ondelete="SET NULL" requires nullable=True')
         assert isinstance(foreign_key, str)
-        ondelete = getattr(field_info, "ondelete", Undefined)
-        if ondelete is Undefined:
-            ondelete = None
-        assert isinstance(ondelete, (str, type(None)))  # for typing
-        args.append(ForeignKey(foreign_key, ondelete=ondelete))
+        assert isinstance(ondelete_value, (str, type(None)))  # for typing
+        args.append(ForeignKey(foreign_key, ondelete=ondelete_value))
     kwargs = {
         "primary_key": primary_key,
         "nullable": nullable,
@@ -101,10 +101,12 @@ def get_column_from_field(field: Any) -> Column:  # type: ignore
         sa_default = field_info.default
     if sa_default is not Undefined:
         kwargs["default"] = sa_default
-    sa_column_args = getattr(field_info, "sa_column_args", Undefined)
+    sa_column_args = _get_sqlmodel_field_value(field_info, "sa_column_args", Undefined)
     if sa_column_args is not Undefined:
         args.extend(list(cast(Sequence[Any], sa_column_args)))
-    sa_column_kwargs = getattr(field_info, "sa_column_kwargs", Undefined)
+    sa_column_kwargs = _get_sqlmodel_field_value(
+        field_info, "sa_column_kwargs", Undefined
+    )
 
     # <Change>
     if field_info.description:

@@ -89,3 +89,17 @@ github_ruleset_protect_master_delete:
 # adds github ruleset to prevent --force and other destructive actions on the github main branch
 github_ruleset_protect_master_create: github_ruleset_protect_master_delete
 	gh api --method POST repos/$(just _github_repo)/rulesets --input - <<< '{{GITHUB_PROTECT_MASTER_RULESET}}'
+
+INVESTIGATE_PATCHES_PROMPT := '''
+Take a look at this patched function from an external package. The assertion that is in place is breaking because the upstream package was mutated.
+
+I want you to investigate the changes in that function between The current version of that package that is used in this project and the most recent version. Take a look at our patch and:
+
+1. Check the latest version of the package in pypi and update the version reference in pyproject.toml and `uv sync`
+2. Update the patch if necessary to be compatible with the latest logic in the upstream package.
+3. Provide a summary of the changes made in the latest version of that function.
+'''
+
+# Output the investigate patches prompt
+investigate-patches-prompt:
+	@echo '{{INVESTIGATE_PATCHES_PROMPT}}'
