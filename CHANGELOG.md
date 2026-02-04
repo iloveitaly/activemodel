@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/iloveitaly/activemodel/compare/v0.14.1...v0.15.0) (2026-02-04)
+
+
+### Features
+
+* sqlmodel 0.0.32 support ([#33](https://github.com/iloveitaly/activemodel/issues/33)) ([e2a104a](https://github.com/iloveitaly/activemodel/commit/e2a104a11cd1f530e52aa0d6b2e951752ef2bb92))
+
 ## [0.14.1](https://github.com/iloveitaly/activemodel/compare/v0.14.0...v0.14.1) (2026-01-14)
 
 
