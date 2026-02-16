@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 # https://github.com/fastapi/sqlmodel/blob/5c2dbe419edc2d15200eee5269c9508987944ed8/sqlmodel/main.py#L691
 assert (
     hash_function_code(sqlmodel.main.get_column_from_field)
-    == "c64e50f8ca8a345ad2543690849a284d5436515835e41c56638cfaba251bc406"
+    == "eaa5cd8a3a0119209154f04dfece6253c0d24b5bd365b16bbbd09704e1ffc57d"
 ), (
     f"get_column_from_field has changed, please verify the patch is still valid: {hash_function_code(sqlmodel.main.get_column_from_field)}"
 )
