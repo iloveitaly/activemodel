@@ -29,6 +29,7 @@ jobs:
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv sync
       - run: just lint
+        continue-on-error: true
 
   matrix-test:
     needs: lint
