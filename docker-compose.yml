@@ -10,7 +10,7 @@ services:
     ports:
       - ${CI:+5432}:5432
     volumes:
-      - package_postgres_data:/var/lib/postgresql/
+      - app_postgres_data:/var/lib/postgresql/
     healthcheck:
       # if you customize the default user at all, this healthcheck with clutter your logs
       # since the default username + database does not match up
@@ -20,5 +20,4 @@ services:
       retries: 5
 
 volumes:
-  # NOTE redis data is not persisted, assumed to be ephemeral
-  package_postgres_data:
+  app_postgres_data:

@@ -4,7 +4,10 @@ on:
     branches:
       - main
       - master
-  pull_request:
+  pull_request: {}
+
+permissions:
+  contents: write
 
 env:
   # avoid build failures due to flaky pypi
@@ -15,48 +18,21 @@ env:
 
   # required otherwise github api calls are rate limited
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  MISE_ENV: ci
 
 jobs:
-  release-please:
-    runs-on: ubuntu-latest
-    needs: [matrix-test]
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-    steps:
-      - uses: googleapis/release-please-action@v4
-        id: release
-        with:
-          release-type: python
-          # bump-minor-pre-major: true
-          token: ${{ secrets.GH_PERSONAL_TOKEN }}
-
-  publish:
-    runs-on: ubuntu-latest
-    needs: release-please
-    if: needs.release-please.outputs.release_created
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v3
-      - uses: iloveitaly/github-action-direnv-load-and-mask@master
-      - run: uv sync
-      - run: uv build
-      - run: uv publish
-
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v3
-        env:
-          MISE_ENV: ci
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv sync
-      # - run: just lint
+      - run: just lint
+        continue-on-error: true
 
   matrix-test:
+    needs: lint
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -71,3 +47,40 @@ jobs:
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv sync
       - run: uv run pytest
+
+  release-please:
+    needs: matrix-test
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    permissions:
+      contents: write
+      issues: write
+      # NOTE this permission requires configuration to be set on the repo, check `just github_repo_permissions_create`
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: python
+
+  build-and-publish:
+    needs: release-please
+    runs-on: ubuntu-latest
+    if: ${{ needs.release-please.outputs.release_created }}
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v3
+      - uses: iloveitaly/github-action-direnv-load-and-mask@master
+      - run: uv sync
+      - run: uv build
+      - run: uv publish
+
+
