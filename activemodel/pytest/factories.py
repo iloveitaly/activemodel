@@ -72,7 +72,17 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
             )
 
         with global_session(cls.__sqlalchemy_session__):
-            return cls.build(*args, **kwargs).save()
+            model = cls.build(*args, **kwargs).save()
+        return cls.post_save(model)
+
+    @classmethod
+    def post_save(cls, model: T) -> T:
+        """
+        Post-save hook for performing additional actions after the model has been saved to the database.
+
+        This is useful for cases where you need to perform additional operations that require the model be persisted in the database.
+        """
+        return model
 
     @classmethod
     def foreign_key_typeid(cls):
