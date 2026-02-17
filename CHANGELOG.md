@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/iloveitaly/activemodel/compare/v0.15.0...v0.15.1) (2026-02-16)
+
+
+### Bug Fixes
+
+* upstream template upgrade ([#35](https://github.com/iloveitaly/activemodel/issues/35)) ([1dc0b13](https://github.com/iloveitaly/activemodel/commit/1dc0b133929cee64ccdb1156999789d29bbdd82e))
+
 ## [0.15.0](https://github.com/iloveitaly/activemodel/compare/v0.14.1...v0.15.0) (2026-02-04)
 
 
