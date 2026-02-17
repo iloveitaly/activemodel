@@ -59,3 +59,12 @@ class UpsertTestModel(BaseModel, TypeIDMixin("upsert_test"), table=True):
 
     # Add a composite unique constraint for the multiple unique field test
     __table_args__ = (UniqueConstraint("name", "category", name="compound_constraint"),)
+
+
+class ExampleRelatedModel(BaseModel, TypeIDMixin("related_model"), table=True):
+    """
+    Test model with a foreign key relationship to ExampleRecord, used to test related model creation in factories.
+    """
+
+    example_record_id: TypeIDType = ExampleRecord.foreign_key(index=True)
+    example_record: ExampleRecord = Relationship()
