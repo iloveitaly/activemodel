@@ -161,3 +161,25 @@ def test_sample_error_conditions(create_and_wipe_database):
         assert False, "Expected ValueError for n < 1"
     except ValueError:
         pass
+
+
+def test_first_and_last_ordering(create_and_wipe_database):
+    # Oldest first inserted
+    oldest = ExampleRecord(something="oldest").save()
+    ExampleRecord(something="middle").save()
+    newest = ExampleRecord(something="newest").save()
+
+    # first() should return newest (highest PK) per project convention
+    assert ExampleRecord.select().first() == newest
+    # last() should return oldest (lowest PK)
+    assert ExampleRecord.select().last() == oldest
+
+
+def test_first_last_do_not_mutate_query(create_and_wipe_database):
+    ExampleRecord(something="a").save()
+    q = ExampleRecord.select().where(ExampleRecord.something == "a")
+    before_sql = q.sql()
+    _ = q.first()
+    _ = q.last()
+    # underlying query should remain identical
+    assert q.sql() == before_sql
