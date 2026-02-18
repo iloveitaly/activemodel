@@ -19,6 +19,8 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         # TODO add generics here
         # self.target: SelectOfScalar[T] = sql.select(cls)
 
+        self._model_cls = cls
+
         if args:
             # very naive, let's assume the args are specific select statements
             self.target = sm.select(*args).select_from(cls)
@@ -27,9 +29,20 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
 
     # TODO the .exec results should be handled in one shot
 
+    def _pk_col(self):
+        return list(self._model_cls.__table__.primary_key)[0]
+
     def first(self):
+        """Return the record with the highest primary key (most recently inserted)."""
+        ordered = self.target.order_by(self._pk_col().desc())
         with get_session() as session:
-            return session.exec(self.target).first()
+            return session.exec(ordered).first()
+
+    def last(self):
+        """Return the record with the lowest primary key (oldest inserted)."""
+        ordered = self.target.order_by(self._pk_col().asc())
+        with get_session() as session:
+            return session.exec(ordered).first()
 
     def one(self):
         "requires exactly one result in the dataset"
