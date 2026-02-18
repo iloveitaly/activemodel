@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/iloveitaly/activemodel/compare/v0.15.1...v0.16.0) (2026-02-18)
+
+
+### Features
+
+* **factory:** add post-save hook ([#43](https://github.com/iloveitaly/activemodel/issues/43)) ([3c1d249](https://github.com/iloveitaly/activemodel/commit/3c1d2490b857701fa24263f7e67072a4c1b5a9b4))
+
 ## [0.15.1](https://github.com/iloveitaly/activemodel/compare/v0.15.0...v0.15.1) (2026-02-16)
 
 
