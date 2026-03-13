@@ -11,7 +11,7 @@ import typing as t
 from decouple import config
 from pydantic import BaseModel
 from sqlalchemy import Connection, Engine, inspect
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import Session, SQLModel, create_engine
 
 ACTIVEMODEL_LOG_SQL = config("ACTIVEMODEL_LOG_SQL", cast=bool, default=False)
 
@@ -170,12 +170,16 @@ def global_session(session: Session | None = None):
         session: Use an existing session instead of creating a new one
     """
 
-    if session is not None and _session_context.get() is session:
-        yield session
-        return
+    current_session = _session_context.get()
+    if current_session is not None:
+        if session is None or session is current_session:
+            yield current_session
+            return
 
-    if _session_context.get() is not None:
-        raise RuntimeError("ActiveModel: global session already set")
+        # hard fail if the global session is already set and different from the one being passed in
+        raise RuntimeError(
+            "ActiveModel: global session already set with a different session"
+        )
 
     @contextlib.contextmanager
     def manage_existing_session():
