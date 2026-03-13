@@ -57,8 +57,10 @@ def pytest_addoption(
 def db_session():
     """
     Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you
-    probably don't need this. If your unit test is simple (you are just creating a couple of models) you
-    can most likely skip this.
+    probably don't need this because the router, job harness, etc should wrap the logic in a database session.
+
+    If your unit test is simple (you are just creating a couple of models) you
+    can most likely skip this, unless your factories or models do something more complex with nested database calls.
 
     This is helpful if you are doing a lot of lazy-loaded params or need a database session to be in place
     for testing code that will run within a celery worker or something similar.
