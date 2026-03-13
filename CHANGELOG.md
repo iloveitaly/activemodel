@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://github.com/iloveitaly/activemodel/compare/v0.16.0...v0.17.0) (2026-03-13)
+
+
+### Features
+
+* sqlmodel upgrade, add last ([#50](https://github.com/iloveitaly/activemodel/issues/50)) ([2cd3487](https://github.com/iloveitaly/activemodel/commit/2cd3487fb657bd1b724fef403c2d77a7cbed1209))
+
 ## [0.15.1](https://github.com/iloveitaly/activemodel/compare/v0.15.0...v0.15.1) (2026-02-16)
 
 
