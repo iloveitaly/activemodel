@@ -2,7 +2,7 @@ name: docs
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 permissions:
   contents: write
@@ -23,7 +23,7 @@ jobs:
         run: uv sync --all-extras
 
       - name: Build
-        run: uv run sphinx-build -b html docs docs/_build/html
+        run: just docs-build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
