@@ -85,7 +85,11 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
         Post-save hook for performing additional actions after the model has been saved to the database. This is useful
         for cases where you need to perform additional operations that require the model be persisted in the database.
 
-        The implementation of this method should return a refreshed instance of the model if that's necessary.
+        The implementation of this method should return a refreshed instance of the model if that's necessary. For
+        example, if your post_save hook triggers another factory save(), the current model will likely be expired
+        and detached, leading to a DetachedInstanceError when accessing it later.
+
+        To avoid this, return `model.refresh()` at the end of your implementation.
         """
         return model
 

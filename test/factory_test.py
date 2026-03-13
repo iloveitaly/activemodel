@@ -87,7 +87,7 @@ class CreateRelatedModelOnPostSaveExampleRecordFactory(
     def post_save(cls, model: ExampleRecord) -> ExampleRecord:
         # Create a related ExampleRelatedModel in the post_save hook
         ExampleRelatedModelFactory.save(example_record_id=model.id)
-        return model
+        return model.refresh()
 
 
 def test_factory_save_helper_sets_session_and_persists(create_and_wipe_database):
