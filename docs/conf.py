@@ -19,6 +19,7 @@ extensions = [
     "autoapi.extension",     # Auto-generate API reference
     "sphinx_autodoc_typehints", # Clean up type hints
     "sphinx_paramlinks",     # Direct links to parameters
+    "sphinx_llm.txt",        # LLM-friendly documentation
 ]
 
 # Configure AutoAPI

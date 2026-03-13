@@ -25,6 +25,7 @@ docs = [
     "sphinx-autoapi",
     "sphinx-autodoc-typehints",
     "sphinx-paramlinks",
+    "sphinx-llm",
 ]
 
 [project.entry-points.pytest11]
