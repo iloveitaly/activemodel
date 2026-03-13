@@ -7,7 +7,7 @@
 # ActiveModel: ORM Wrapper for SQLModel
 
 <p align="center">
-  <img src="assets/logo.png" alt="ActiveModel Logo" width="600"/>
+  <img src="docs/_static/logo.png" alt="ActiveModel Logo" width="600"/>
 </p>
 
 No, this isn't *really* [ActiveModel](https://guides.rubyonrails.org/active_model_basics.html). It's just a wrapper around SQLModel that provides a ActiveRecord-like interface.

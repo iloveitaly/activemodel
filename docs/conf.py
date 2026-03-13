@@ -64,14 +64,13 @@ myst_heading_anchors = 3
 # 4. Theme & Appearance (Shibuya)
 html_theme = "shibuya"
 html_static_path = ["_static"]
-html_extra_path = ["html_extra"]
 html_css_files = ["custom.css"]
 
 html_theme_options = {
     "accent_color": "blue",
     "github_url": "https://github.com/iloveitaly/activemodel",
-    "light_logo": "_static/logo.png",
-    "dark_logo": "_static/logo.png",
+    "light_logo": "_static/logo-nav.png",
+    "dark_logo": "_static/logo-nav.png",
     "nav_links": [
         {"title": "Getting Started", "url": "getting-started"},
         {"title": "API Reference", "url": "autoapi/index"},
