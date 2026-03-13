@@ -10,8 +10,8 @@ import typing as t
 
 from decouple import config
 from pydantic import BaseModel
-from sqlalchemy import Connection, Engine
-from sqlmodel import Session, create_engine
+from sqlalchemy import Connection, Engine, inspect
+from sqlmodel import SQLModel, Session, create_engine
 
 ACTIVEMODEL_LOG_SQL = config("ACTIVEMODEL_LOG_SQL", cast=bool, default=False)
 
@@ -114,6 +114,14 @@ class SessionManager:
 def init(database_url: str, *, engine_options: dict[str, t.Any] | None = None):
     "configure activemodel to connect to a specific database"
     return SessionManager.get_instance(database_url, engine_options=engine_options)
+
+
+def table_exists(model: type[SQLModel]) -> bool:
+    """
+    Check if the table for the given model exists in the database.
+    """
+    engine = get_engine()
+    return inspect(engine).has_table(model.__tablename__)
 
 
 def get_engine():
