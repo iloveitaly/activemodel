@@ -1,0 +1,2604 @@
+# index.html.md
+
+<div class="title-with-logo">
+   <div class="brand-text">ACTIVEMODEL</div>
+</div>
+<p class="lead" style="text-align: center; font-size: 1.25rem; color: var(--sy-c-text-muted); margin-bottom: 2rem;">
+SQLModel with developer ergonomics. Make SQLModel act like ActiveRecord.
+</p>
+
+<a href="getting-started.html" class="btn-no-wrap">Get Started</a>
+
+Built on SQLModel and SQLAlchemy for maximum efficiency and modern async workflows.
+
+Clean, intuitive ActiveRecord-like API designed for rapid development and less boilerplate.
+
+
+# index.html.md
+
+# API Reference
+
+This page contains auto-generated API reference documentation <sup>[1](#f1)</sup>.
+
+* [activemodel](activemodel/index.md)
+  * [activemodel.base_model](activemodel/base_model/index.md)
+  * [activemodel.celery](activemodel/celery/index.md)
+  * [activemodel.cli](activemodel/cli/index.md)
+  * [activemodel.errors](activemodel/errors/index.md)
+  * [activemodel.logger](activemodel/logger/index.md)
+  * [activemodel.mixins](activemodel/mixins/index.md)
+    * [activemodel.mixins.pydantic_json](activemodel/mixins/pydantic_json/index.md)
+    * [activemodel.mixins.soft_delete](activemodel/mixins/soft_delete/index.md)
+    * [activemodel.mixins.timestamps](activemodel/mixins/timestamps/index.md)
+    * [activemodel.mixins.typeid](activemodel/mixins/typeid/index.md)
+  * [activemodel.patches](activemodel/patches/index.md)
+    * [activemodel.patches.get_column_from_field_patch](activemodel/patches/get_column_from_field_patch/index.md)
+  * [activemodel.pytest](activemodel/pytest/index.md)
+    * [activemodel.pytest.factories](activemodel/pytest/factories/index.md)
+    * [activemodel.pytest.plugin](activemodel/pytest/plugin/index.md)
+    * [activemodel.pytest.transaction](activemodel/pytest/transaction/index.md)
+    * [activemodel.pytest.truncate](activemodel/pytest/truncate/index.md)
+  * [activemodel.query_wrapper](activemodel/query_wrapper/index.md)
+  * [activemodel.session_manager](activemodel/session_manager/index.md)
+  * [activemodel.types](activemodel/types/index.md)
+    * [activemodel.types.sqlalchemy_protocol](activemodel/types/sqlalchemy_protocol/index.md)
+    * [activemodel.types.typeid](activemodel/types/typeid/index.md)
+    * [activemodel.types.typeid_patch](activemodel/types/typeid_patch/index.md)
+  * [activemodel.utils](activemodel/utils/index.md)
+
+* <a id='f1'>**[1]**</a> Created with [sphinx-autoapi](https://github.com/readthedocs/sphinx-autoapi)
+
+
+# index.html.md
+
+# activemodel
+
+## Submodules
+
+* [activemodel.base_model](base_model/index.md)
+* [activemodel.celery](celery/index.md)
+* [activemodel.cli](cli/index.md)
+* [activemodel.errors](errors/index.md)
+* [activemodel.logger](logger/index.md)
+* [activemodel.mixins](mixins/index.md)
+* [activemodel.patches](patches/index.md)
+* [activemodel.pytest](pytest/index.md)
+* [activemodel.query_wrapper](query_wrapper/index.md)
+* [activemodel.session_manager](session_manager/index.md)
+* [activemodel.types](types/index.md)
+* [activemodel.utils](utils/index.md)
+
+## Classes
+
+| [`BaseModel`](#activemodel.BaseModel)           | Base model class to inherit from so we can hate python less.   |
+|-------------------------------------------------|----------------------------------------------------------------|
+| [`SessionManager`](#activemodel.SessionManager) |                                                                |
+
+## Functions
+
+| [`get_engine`](#activemodel.get_engine)()                       | alias to get the database engine without importing SessionManager   |
+|-----------------------------------------------------------------|---------------------------------------------------------------------|
+| [`get_session`](#activemodel.get_session)()                     | alias to get a database session without importing SessionManager    |
+| [`init`](#activemodel.init)(database_url, \*[, engine_options]) | configure activemodel to connect to a specific database             |
+
+## Package Contents
+
+### *class* activemodel.BaseModel(\*\*data: Any)
+
+Bases: `sqlmodel.SQLModel`
+
+Base model class to inherit from so we can hate python less.
+
+Some notes:
+
+- Inspired by [https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py](https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py)
+- lifecycle hooks are modeled after Rails.
+- class docstrings are converted to table-level comments
+- save(), delete(), select(), where(), and other easy methods you would expect in a real ORM
+- Fixes foreign key naming conventions
+- Sane table names
+
+Here’s how hooks work:
+
+> Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
+> Delete: before_delete, after_delete, around_delete
+
+around_\* hooks must be context managers (method returning a CM or a CM attribute).
+Ordering (create): before_create -> before_save -> (enter around_save) -> persist -> after_create -> after_save -> (exit around_save)
+Ordering (update): before_update -> before_save -> (enter around_save) -> persist -> after_update -> after_save -> (exit around_save)
+Delete: before_delete -> (enter around_delete) -> delete -> after_delete -> (exit around_delete)
+
+> # TODO document this in activemodel, this is an interesting edge case
+
+# [https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a](https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a)
+
+#### \_\_table_args_\_ *= None*
+
+#### *classmethod* \_\_init_subclass_\_(\*\*kwargs)
+
+This signature is included purely to help type-checkers check arguments to class declaration, which
+provides a way to conveniently set model_config key/value pairs.
+
+```
+``
+```
+
+```
+`
+```
+
+python
+from pydantic import BaseModel
+
+class MyModel(BaseModel, extra=’allow’): …
+
+```
+``
+```
+
+```
+`
+```
+
+However, this may be deceiving, since the \_actual_ calls to \_\_init_subclass_\_ will not receive any
+of the config arguments, and will only receive any keyword arguments passed during class initialization
+that are \_not_ expected keys in ConfigDict. (This is due to the way ModelMetaclass._\_new_\_ works.)
+
+* **Parameters:**
+  **\*\*kwargs** – Keyword arguments passed to the class definition, which set model_config
+
+#### NOTE
+You may want to override \_\_pydantic_init_subclass_\_ instead, which behaves similarly but is called
+*after* the class is fully initialized.
+
+#### \_\_tablename_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+Automatically generates the table name for the model by converting the model’s class name from camel case to snake case.
+This is the recommended text case style for table names:
+
+[https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names](https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names)
+
+By default, the model’s class name is lower cased which makes it harder to read.
+
+Also, many text case conversion libraries struggle handling words like “LLMCache”, this is why we are using
+a more precise library which processes such acronyms: [textcase]([https://pypi.org/project/textcase/](https://pypi.org/project/textcase/)).
+
+[https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case](https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case)
+
+#### *classmethod* foreign_key(\*\*kwargs)
+
+Returns a Field object referencing the foreign key of the model.
+
+Helps quickly build a many-to-one or one-to-one relationship.
+
+```pycon
+>>> other_model_id: int = OtherModel.foreign_key()
+>>> other_model = Relationship()
+```
+
+#### *classmethod* select(\*args)
+
+create a query wrapper to easily run sqlmodel queries on this model
+
+#### *classmethod* where(\*args)
+
+convenience method to avoid having to write .select().where() in order to add conditions
+
+#### *classmethod* upsert(data: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any], unique_by: [str](https://docs.python.org/3/library/stdtypes.html#str) | [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]) → Self
+
+This method will insert a new record if it doesn’t exist, or update the existing record if it does.
+
+It uses SQLAlchemy’s on_conflict_do_update and does not yet support MySQL. Some implementation details below.
+
+—
+
+- index_elements=[“name”]: Specifies the column(s) to check for conflicts (e.g., unique constraint or index). If a row with the same “name” exists, it triggers the update instead of an insert.
+- values: Defines the data to insert (e.g., name=”example”, value=123). If no conflict occurs, this data is inserted as a new row.
+
+The set_ parameter (e.g., set_=dict(value=123)) then dictates what gets updated on conflict, overriding matching fields in values if specified.
+
+#### delete()
+
+Delete instance running delete hooks and optional around_delete context manager.
+
+#### save()
+
+Persist instance running create/update hooks and optional around_save context manager.
+
+#### refresh()
+
+Refreshes an object from the database
+
+#### json(\*\*kwargs)
+
+#### *classmethod* count() → [int](https://docs.python.org/3/library/functions.html#int)
+
+Returns the number of records in the database.
+
+#### *classmethod* first()
+
+#### is_new() → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+#### flag_modified(\*args: [str](https://docs.python.org/3/library/stdtypes.html#str)) → [None](https://docs.python.org/3/library/constants.html#None)
+
+Flag one or more fields as modified/mutated/dirty. Useful for marking a field containing sub-objects as modified.
+
+Will throw an error if an invalid field is passed.
+
+#### modified_fields() → [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
+
+set of fields that are modified
+
+#### *classmethod* find_or_create_by(\*\*kwargs)
+
+Find record or create it with the passed args if it doesn’t exist.
+
+#### *classmethod* find_or_initialize_by(\*\*kwargs)
+
+Unfortunately, unlike ruby, python does not have a great lambda story. This makes writing convenience methods
+like this a bit more difficult.
+
+#### *classmethod* primary_key_column() → sqlmodel.Column
+
+Returns the primary key column of the model by inspecting SQLAlchemy field information.
+
+```pycon
+>>> ExampleModel.primary_key_field().name
+```
+
+#### *classmethod* get(\*args: Any, \*\*kwargs: Any)
+
+Gets a single record (or None) from the database. Pass an PK ID or kwargs to filter by.
+
+#### *classmethod* one_or_none(\*args: Any, \*\*kwargs: Any)
+
+Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+Returns None if no record is found. Throws an error if more than one record is found.
+
+#### *classmethod* one(\*args: Any, \*\*kwargs: Any)
+
+Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+
+#### *classmethod* \_\_process_filter_args_\_(\*args: Any, \*\*kwargs: Any)
+
+Helper method to process filter arguments and implement some nice DX for our devs.
+
+#### *classmethod* all()
+
+get a generator for all records in the database
+
+#### *classmethod* sample()
+
+Pick a random record from the database. Raises if none exist.
+
+Helpful for testing and console debugging.
+
+### *class* activemodel.SessionManager(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+#### session_connection *: sqlalchemy.Connection | [None](https://docs.python.org/3/library/constants.html#None)*
+
+optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations
+
+#### *classmethod* get_instance(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None) = None, , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [SessionManager](#activemodel.SessionManager)
+
+#### get_engine() → sqlalchemy.Engine
+
+#### get_session()
+
+get a new database session, respecting any globally set sessions
+
+### activemodel.get_engine()
+
+alias to get the database engine without importing SessionManager
+
+### activemodel.get_session()
+
+alias to get a database session without importing SessionManager
+
+### activemodel.init(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+configure activemodel to connect to a specific database
+
+
+# index.html.md
+
+# activemodel.patches
+
+## Submodules
+
+* [activemodel.patches.get_column_from_field_patch](get_column_from_field_patch/index.md)
+
+
+# index.html.md
+
+# activemodel.logger
+
+## Attributes
+
+| [`logger`](#activemodel.logger.logger)   |    |
+|------------------------------------------|----|
+
+## Module Contents
+
+### activemodel.logger.logger
+
+
+# index.html.md
+
+# activemodel.pytest
+
+## Submodules
+
+* [activemodel.pytest.factories](factories/index.md)
+* [activemodel.pytest.plugin](plugin/index.md)
+* [activemodel.pytest.transaction](transaction/index.md)
+* [activemodel.pytest.truncate](truncate/index.md)
+
+## Functions
+
+| [`database_reset_transaction`](#activemodel.pytest.database_reset_transaction)()                           | Wrap all database interactions for a given test in a nested transaction and roll it back after the test.   |
+|------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| [`test_session`](#activemodel.pytest.test_session)()                                                       | Configures a session-global database session for a test.                                                   |
+| [`database_reset_truncate`](#activemodel.pytest.database_reset_truncate)([preserve_tables, pytest_config]) | Transaction is most likely the better way to go, but there are some scenarios where the session override   |
+
+## Package Contents
+
+### activemodel.pytest.database_reset_transaction()
+
+Wrap all database interactions for a given test in a nested transaction and roll it back after the test.
+
+This is provided as a function, not a fixture, since you’ll need to determine when a integration test is run. Here’s
+an example of how to build a fixture from this method:
+
+```pycon
+>>> from activemodel.pytest import database_reset_transaction
+>>> database_reset_transaction = pytest.fixture(scope="function", autouse=True)(database_reset_transaction)
+```
+
+Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process because the
+same session is not shared across python processes. For this scenario, use the truncate method.
+
+Note that using fork as a multiprocess start method is dangerous. Use spawn. This link has more documentation
+around this topic:
+
+[https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py](https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py)
+
+References:
+
+- [https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created](https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created)
+- [https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/](https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/)
+- [https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77](https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77)
+- [https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46](https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46)
+- [https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn](https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn)
+
+Using a named SAVEPOINT does not give us anything extra, so we are not using it.
+
+### activemodel.pytest.test_session()
+
+Configures a session-global database session for a test.
+
+Use this as a fixture using db_session. This method is meant to be used as a context manager.
+
+This is useful for tests that need to interact with the database multiple times before calling application code
+that uses the objects. This is intended to be used outside of an integration test. Integration tests generally
+do not use database transactions to clean the database and instead use truncation. The transaction fixture
+configures a session, which is then used here. This method requires that this global test session is already
+configured. If the transaction fixture is not used, then there is no session available for use and this will fail.
+
+ActiveModelFactory.save() does this automatically, but if you need to manually create objects
+and persist them to a DB, you can run into issues with the simple expunge() call
+used to reassociate an object with a new session. If there are more complex relationships
+this approach will fail and give you detached object errors.
+
+```pycon
+>>> from activemodel.pytest import test_session
+>>> def test_the_thing():
+>>>     with test_session():
+...         obj = MyModel(name="test").save()
+...         obj2 = MyModelFactory.save()
+```
+
+More information: [https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b](https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b)
+
+### activemodel.pytest.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+Transaction is most likely the better way to go, but there are some scenarios where the session override
+logic does not work properly and you need to truncate tables back to their original state.
+
+Here’s how to do this once at the start of the test:
+
+```pycon
+>>> from activemodel.pytest import database_reset_truncation
+>>> def pytest_configure(config):
+>>>         database_reset_truncation()
+```
+
+Or, if you want to use this as a fixture:
+
+```pycon
+>>> pytest.fixture(scope="function")(database_reset_truncation)
+>>> def test_the_thing(database_reset_truncation)
+```
+
+This approach has a couple of problems:
+
+* You can’t run multiple tests in parallel without separate databases
+* If you have important seed data and want to truncate those tables, the seed data will be lost
+
+
+# index.html.md
+
+# activemodel.cli
+
+This module provides utilities for generating Protocol type definitions for SQLAlchemy’s
+SelectOfScalar methods, as well as formatting and fixing Python files using ruff.
+
+## Attributes
+
+| [`logger`](#activemodel.cli.logger)                                     |    |
+|-------------------------------------------------------------------------|----|
+| [`QUERY_WRAPPER_CLASS_NAME`](#activemodel.cli.QUERY_WRAPPER_CLASS_NAME) |    |
+
+## Functions
+
+| [`format_python_file`](#activemodel.cli.format_python_file)(→ bool)               | Format a Python file using ruff.                                         |
+|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| [`fix_python_file`](#activemodel.cli.fix_python_file)(→ bool)                     | Fix linting issues in a Python file using ruff.                          |
+| [`generate_sqlalchemy_protocol`](#activemodel.cli.generate_sqlalchemy_protocol)() | Generate Protocol type definitions for SQLAlchemy SelectOfScalar methods |
+
+## Package Contents
+
+### activemodel.cli.logger
+
+### activemodel.cli.QUERY_WRAPPER_CLASS_NAME
+
+### activemodel.cli.format_python_file(file_path: [str](https://docs.python.org/3/library/stdtypes.html#str) | [pathlib.Path](https://docs.python.org/3/library/pathlib.html#pathlib.Path)) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Format a Python file using ruff.
+
+* **Parameters:**
+  **file_path** – Path to the Python file to format
+* **Returns:**
+  True if formatting was successful, False otherwise
+* **Return type:**
+  [bool](https://docs.python.org/3/library/functions.html#bool)
+
+### activemodel.cli.fix_python_file(file_path: [str](https://docs.python.org/3/library/stdtypes.html#str) | [pathlib.Path](https://docs.python.org/3/library/pathlib.html#pathlib.Path)) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Fix linting issues in a Python file using ruff.
+
+* **Parameters:**
+  **file_path** – Path to the Python file to fix
+* **Returns:**
+  True if fixing was successful, False otherwise
+* **Return type:**
+  [bool](https://docs.python.org/3/library/functions.html#bool)
+
+### activemodel.cli.generate_sqlalchemy_protocol()
+
+Generate Protocol type definitions for SQLAlchemy SelectOfScalar methods
+
+
+# index.html.md
+
+# activemodel.celery
+
+Do not import unless you have Celery/Kombu installed.
+
+In order for TypeID objects to be properly handled by celery, a custom encoder must be registered.
+
+## Functions
+
+| [`register_celery_typeid_encoder`](#activemodel.celery.register_celery_typeid_encoder)()   | Ensures TypeID objects passed as arguments to a delayed function are properly serialized.   |
+|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### activemodel.celery.register_celery_typeid_encoder()
+
+Ensures TypeID objects passed as arguments to a delayed function are properly serialized.
+
+Run at the top of your celery initialization script.
+
+
+# index.html.md
+
+# activemodel.utils
+
+## Functions
+
+| [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries   |
+|---------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`raw_sql_exec`](#activemodel.utils.raw_sql_exec)(raw_query)        |                                                                               |
+| [`hash_function_code`](#activemodel.utils.hash_function_code)(func) | get sha of a function to easily assert that it hasn't changed                 |
+
+## Module Contents
+
+### activemodel.utils.compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
+
+### activemodel.utils.raw_sql_exec(raw_query: [str](https://docs.python.org/3/library/stdtypes.html#str))
+
+### activemodel.utils.hash_function_code(func)
+
+get sha of a function to easily assert that it hasn’t changed
+
+
+# index.html.md
+
+# activemodel.mixins
+
+## Submodules
+
+* [activemodel.mixins.pydantic_json](pydantic_json/index.md)
+* [activemodel.mixins.soft_delete](soft_delete/index.md)
+* [activemodel.mixins.timestamps](timestamps/index.md)
+* [activemodel.mixins.typeid](typeid/index.md)
+
+## Classes
+
+| [`PydanticJSONMixin`](#activemodel.mixins.PydanticJSONMixin)   | By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.   |
+|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| [`SoftDeletionMixin`](#activemodel.mixins.SoftDeletionMixin)   |                                                                                                                    |
+| [`TimestampsMixin`](#activemodel.mixins.TimestampsMixin)       | Simple created at and updated at timestamps. Mix them into your model:                                             |
+
+## Functions
+
+| [`TypeIDMixin`](#activemodel.mixins.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
+|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+
+## Package Contents
+
+### *class* activemodel.mixins.PydanticJSONMixin
+
+By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.
+
+This mixin, combined with a custom serializer (\_serialize_pydantic_model), fixes that issue.
+
+```pycon
+>>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
+>>>    list_field: list[SubObject] = Field(sa_type=JSONB()
+```
+
+Notes:
+
+- Tuples of pydantic models are not supported, only lists.
+- Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]
+
+#### \_\_transform_dict_to_pydantic_\_()
+
+Transforms dictionary fields into Pydantic models upon loading.
+
+- Reconstructor only runs once, when the object is loaded.
+- We manually call this method on save(), etc to ensure the pydantic types are maintained
+- set_committed_value sets Pydantic models as committed, avoiding setattr marking fields as modified
+  after loading from the database.
+
+### *class* activemodel.mixins.SoftDeletionMixin
+
+#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime)* *= None*
+
+#### soft_delete()
+
+### *class* activemodel.mixins.TimestampsMixin
+
+Simple created at and updated at timestamps. Mix them into your model:
+
+```pycon
+>>> class MyModel(TimestampsMixin, SQLModel):
+>>>    pass
+```
+
+Notes:
+
+- Originally pulled from: [https://github.com/tiangolo/sqlmodel/issues/252](https://github.com/tiangolo/sqlmodel/issues/252)
+- Related issue: [https://github.com/fastapi/sqlmodel/issues/539](https://github.com/fastapi/sqlmodel/issues/539)
+
+#### created_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+#### updated_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+### activemodel.mixins.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
+
+Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
+
+
+# index.html.md
+
+# activemodel.query_wrapper
+
+## Classes
+
+| [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries off of a model   |
+|-------------------------------------------------------------|----------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.query_wrapper.QueryWrapper(cls: [T](../pytest/truncate/index.md#activemodel.pytest.truncate.T), \*args)
+
+Bases: [`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`](../types/sqlalchemy_protocol/index.md#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)[`T`]
+
+Make it easy to run queries off of a model
+
+#### target *: sqlmodel.sql.expression.SelectOfScalar[[T](../pytest/truncate/index.md#activemodel.pytest.truncate.T)]*
+
+#### first()
+
+#### last()
+
+#### one()
+
+requires exactly one result in the dataset
+
+#### all()
+
+#### count()
+
+I did some basic tests
+
+#### scalar()
+
+```pycon
+>>>
+```
+
+#### exec()
+
+#### delete()
+
+#### exists() → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Return True if the current query yields at least one row.
+
+Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
+the current target for efficiency. Keeps the original target intact.
+
+#### \_\_getattr_\_(name)
+
+This implements the magic that forwards function calls to sqlalchemy.
+
+#### sql()
+
+Output the raw SQL of the query for debugging
+
+#### sample() → [T](../pytest/truncate/index.md#activemodel.pytest.truncate.T) | [None](https://docs.python.org/3/library/constants.html#None)
+
+#### sample(n: Literal[1]) → [T](../pytest/truncate/index.md#activemodel.pytest.truncate.T) | [None](https://docs.python.org/3/library/constants.html#None)
+
+#### sample(n: [int](https://docs.python.org/3/library/functions.html#int)) → [list](https://docs.python.org/3/library/stdtypes.html#list)[[T](../pytest/truncate/index.md#activemodel.pytest.truncate.T)]
+
+Return a random sample of rows from the current query.
+
+* **Parameters:**
+  * **n** ([*int*](https://docs.python.org/3/library/functions.html#int)) – Number of rows to return. Defaults to 1.
+  * **Behavior**
+  * **--------**
+  * **rows****)** ( *- Returns a list* *[**Model* *]* *when n > 1* *(**possibly empty list when no*)
+  * **rows****)**
+  * **func.random****(****)** ( *- Sampling is performed by appending an ORDER BY RANDOM* *(* *)*  */*) – and `LIMIT n` clause to the existing query target.
+  * **further** ( *- Keeps original query intact* *(**does not mutate self.target* *)* *so*) – chaining works as expected.
+
+#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+
+# index.html.md
+
+# activemodel.session_manager
+
+Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it easy to mutate the
+database environment when testing.
+
+## Attributes
+
+| [`ACTIVEMODEL_LOG_SQL`](#activemodel.session_manager.ACTIVEMODEL_LOG_SQL)   |    |
+|-----------------------------------------------------------------------------|----|
+
+## Classes
+
+| [`SessionManager`](#activemodel.session_manager.SessionManager)   |    |
+|-------------------------------------------------------------------|----|
+
+## Functions
+
+| [`init`](#activemodel.session_manager.init)(database_url, \*[, engine_options])   | configure activemodel to connect to a specific database                              |
+|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| [`table_exists`](#activemodel.session_manager.table_exists)(→ bool)               | Check if the table for the given model exists in the database.                       |
+| [`get_engine`](#activemodel.session_manager.get_engine)()                         | alias to get the database engine without importing SessionManager                    |
+| [`get_session`](#activemodel.session_manager.get_session)()                       | alias to get a database session without importing SessionManager                     |
+| [`global_session`](#activemodel.session_manager.global_session)([session])        | Generate a session and share it across all activemodel calls.                        |
+| [`aglobal_session`](#activemodel.session_manager.aglobal_session)()               | Use this as a fastapi dependency to get a session that is shared across the request: |
+
+## Module Contents
+
+### activemodel.session_manager.ACTIVEMODEL_LOG_SQL
+
+### *class* activemodel.session_manager.SessionManager(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+#### session_connection *: sqlalchemy.Connection | [None](https://docs.python.org/3/library/constants.html#None)*
+
+optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations
+
+#### *classmethod* get_instance(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None) = None, , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [SessionManager](#activemodel.session_manager.SessionManager)
+
+#### get_engine() → sqlalchemy.Engine
+
+#### get_session()
+
+get a new database session, respecting any globally set sessions
+
+### activemodel.session_manager.init(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+configure activemodel to connect to a specific database
+
+### activemodel.session_manager.table_exists(model: [type](https://docs.python.org/3/library/functions.html#type)[sqlmodel.SQLModel]) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Check if the table for the given model exists in the database.
+
+### activemodel.session_manager.get_engine()
+
+alias to get the database engine without importing SessionManager
+
+### activemodel.session_manager.get_session()
+
+alias to get a database session without importing SessionManager
+
+### activemodel.session_manager.global_session(session: sqlmodel.Session | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+Generate a session and share it across all activemodel calls.
+
+Alternatively, you can pass a session to use globally into the context manager, which is helpful for migrations
+and testing.
+
+This may only be called a single time per callstack. There is one exception: if you call this multiple times
+and pass in the same session reference, it will result in a noop.
+
+In complex testing code, you’ll need to be careful here. For example:
+
+- Unit test using a transaction db fixture (which sets \_\_sqlalchemy_session_\_)
+- Factory has a after_save hook
+- That hook triggers a celery job
+- The celery job (properly) calls with global_session()
+- However, since global_session() is already set with \_\_sqlalchemy_session_\_, this will raise an error
+
+* **Parameters:**
+  **session** – Use an existing session instead of creating a new one
+
+### *async* activemodel.session_manager.aglobal_session()
+
+Use this as a fastapi dependency to get a session that is shared across the request:
+
+```pycon
+>>> APIRouter(
+>>>     prefix="/internal/v1",
+>>>     dependencies=[
+>>>         Depends(aglobal_session),
+>>>     ]
+>>> )
+```
+
+
+# index.html.md
+
+# activemodel.types
+
+## Submodules
+
+* [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.md)
+* [activemodel.types.typeid](typeid/index.md)
+* [activemodel.types.typeid_patch](typeid_patch/index.md)
+
+## Classes
+
+| [`TypeIDType`](#activemodel.types.TypeIDType)   | A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.   |
+|-------------------------------------------------|---------------------------------------------------------------------------|
+
+## Package Contents
+
+### *class* activemodel.types.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str), \*args, \*\*kwargs)
+
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
+
+A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.
+
+The prefix will not be persisted to the database, instead the database-native UUID field will be used.
+At retrieval time a TypeID will be constructed (in python) based on the configured prefix and the UUID
+value from the database.
+
+For example:
+
+```pycon
+>>> id = mapped_column(
+>>>     TypeIDType("user"),
+>>>     primary_key=True,
+>>>     default=lambda: TypeID("user")
+>>> )
+```
+
+Will result in TypeIDs such as “user_01h45ytscbebyvny4gc8cr8ma2”. There’s a mixin provided to make it easy
+to add a id pk field to your model with a specific prefix.
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str)*
+
+#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+#### process_bind_param(value, dialect)
+
+This is run when a search query is built or …
+
+#### process_result_value(value, dialect)
+
+convert a raw UUID, without a prefix, to a TypeID with the correct prefix
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_core_schema: pydantic_core.core_schema.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://docs.pydantic.dev/latest/api/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+This fixes the following error: ‘Unable to serialize unknown type’ by telling pydantic how to serialize this field.
+
+Note that TypeIDType MUST be the type of the field in SQLModel otherwise you’ll get serialization errors.
+This is done automatically for the mixin but for any relationship fields you’ll need to specify the type explicitly.
+
+- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88)
+- [https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py](https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py)
+- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14)
+- [https://github.com/pydantic/pydantic/issues/10060](https://github.com/pydantic/pydantic/issues/10060)
+- [https://github.com/fastapi/fastapi/discussions/10027](https://github.com/fastapi/fastapi/discussions/10027)
+- [https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50](https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50)
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://docs.pydantic.dev/latest/api/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+
+Called when generating the openapi schema. This overrides the function-plain type which
+is generated by the no_info_plain_validator_function.
+
+This logic seems to be a hot part of the codebase, so I’d expect this to break as pydantic
+fastapi continue to evolve.
+
+Note that this method can return multiple types. A return value can be as simple as:
+
+```pycon
+>>> {"type": "string"}
+```
+
+Or, you could return a more specific JSON schema type:
+
+```pycon
+>>> core_schema.uuid_schema()
+```
+
+The problem with using something like uuid_schema is the specific patterns
+
+[https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153](https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153)
+
+
+# index.html.md
+
+# activemodel.errors
+
+## Exceptions
+
+| [`TypeIDValidationError`](#activemodel.errors.TypeIDValidationError)   | Raised when a TypeID is invalid in some way   |
+|------------------------------------------------------------------------|-----------------------------------------------|
+
+## Module Contents
+
+### *exception* activemodel.errors.TypeIDValidationError
+
+Bases: [`ValueError`](https://docs.python.org/3/library/exceptions.html#ValueError)
+
+Raised when a TypeID is invalid in some way
+
+
+# index.html.md
+
+# activemodel.base_model
+
+## Attributes
+
+| [`POSTGRES_INDEXES_NAMING_CONVENTION`](#activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION)   | By default, the foreign key naming convention in sqlalchemy do not create unique identifiers when there are multiple   |
+|------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+
+## Classes
+
+| [`BaseModel`](#activemodel.base_model.BaseModel)   | Base model class to inherit from so we can hate python less.   |
+|----------------------------------------------------|----------------------------------------------------------------|
+
+## Module Contents
+
+### activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION
+
+By default, the foreign key naming convention in sqlalchemy do not create unique identifiers when there are multiple
+foreign keys in a table. This naming convention is a workaround to fix this issue:
+
+- [https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#set-db-keys-naming-conventions](https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#set-db-keys-naming-conventions)
+- [https://github.com/fastapi/sqlmodel/discussions/1213](https://github.com/fastapi/sqlmodel/discussions/1213)
+- Implementation lifted from: [https://github.com/AlexanderZharyuk/billing-service/blob/3c8aaf19ab7546b97cc4db76f60335edec9fc79d/src/models.py#L24](https://github.com/AlexanderZharyuk/billing-service/blob/3c8aaf19ab7546b97cc4db76f60335edec9fc79d/src/models.py#L24)
+
+### *class* activemodel.base_model.BaseModel(\*\*data: Any)
+
+Bases: `sqlmodel.SQLModel`
+
+Base model class to inherit from so we can hate python less.
+
+Some notes:
+
+- Inspired by [https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py](https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py)
+- lifecycle hooks are modeled after Rails.
+- class docstrings are converted to table-level comments
+- save(), delete(), select(), where(), and other easy methods you would expect in a real ORM
+- Fixes foreign key naming conventions
+- Sane table names
+
+Here’s how hooks work:
+
+> Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
+> Delete: before_delete, after_delete, around_delete
+
+around_\* hooks must be context managers (method returning a CM or a CM attribute).
+Ordering (create): before_create -> before_save -> (enter around_save) -> persist -> after_create -> after_save -> (exit around_save)
+Ordering (update): before_update -> before_save -> (enter around_save) -> persist -> after_update -> after_save -> (exit around_save)
+Delete: before_delete -> (enter around_delete) -> delete -> after_delete -> (exit around_delete)
+
+> # TODO document this in activemodel, this is an interesting edge case
+
+# [https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a](https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a)
+
+#### \_\_table_args_\_ *= None*
+
+#### *classmethod* \_\_init_subclass_\_(\*\*kwargs)
+
+This signature is included purely to help type-checkers check arguments to class declaration, which
+provides a way to conveniently set model_config key/value pairs.
+
+```
+``
+```
+
+```
+`
+```
+
+python
+from pydantic import BaseModel
+
+class MyModel(BaseModel, extra=’allow’): …
+
+```
+``
+```
+
+```
+`
+```
+
+However, this may be deceiving, since the \_actual_ calls to \_\_init_subclass_\_ will not receive any
+of the config arguments, and will only receive any keyword arguments passed during class initialization
+that are \_not_ expected keys in ConfigDict. (This is due to the way ModelMetaclass._\_new_\_ works.)
+
+* **Parameters:**
+  **\*\*kwargs** – Keyword arguments passed to the class definition, which set model_config
+
+#### NOTE
+You may want to override \_\_pydantic_init_subclass_\_ instead, which behaves similarly but is called
+*after* the class is fully initialized.
+
+#### \_\_tablename_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+Automatically generates the table name for the model by converting the model’s class name from camel case to snake case.
+This is the recommended text case style for table names:
+
+[https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names](https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names)
+
+By default, the model’s class name is lower cased which makes it harder to read.
+
+Also, many text case conversion libraries struggle handling words like “LLMCache”, this is why we are using
+a more precise library which processes such acronyms: [textcase]([https://pypi.org/project/textcase/](https://pypi.org/project/textcase/)).
+
+[https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case](https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case)
+
+#### *classmethod* foreign_key(\*\*kwargs)
+
+Returns a Field object referencing the foreign key of the model.
+
+Helps quickly build a many-to-one or one-to-one relationship.
+
+```pycon
+>>> other_model_id: int = OtherModel.foreign_key()
+>>> other_model = Relationship()
+```
+
+#### *classmethod* select(\*args)
+
+create a query wrapper to easily run sqlmodel queries on this model
+
+#### *classmethod* where(\*args)
+
+convenience method to avoid having to write .select().where() in order to add conditions
+
+#### *classmethod* upsert(data: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any], unique_by: [str](https://docs.python.org/3/library/stdtypes.html#str) | [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]) → Self
+
+This method will insert a new record if it doesn’t exist, or update the existing record if it does.
+
+It uses SQLAlchemy’s on_conflict_do_update and does not yet support MySQL. Some implementation details below.
+
+—
+
+- index_elements=[“name”]: Specifies the column(s) to check for conflicts (e.g., unique constraint or index). If a row with the same “name” exists, it triggers the update instead of an insert.
+- values: Defines the data to insert (e.g., name=”example”, value=123). If no conflict occurs, this data is inserted as a new row.
+
+The set_ parameter (e.g., set_=dict(value=123)) then dictates what gets updated on conflict, overriding matching fields in values if specified.
+
+#### delete()
+
+Delete instance running delete hooks and optional around_delete context manager.
+
+#### save()
+
+Persist instance running create/update hooks and optional around_save context manager.
+
+#### refresh()
+
+Refreshes an object from the database
+
+#### json(\*\*kwargs)
+
+#### *classmethod* count() → [int](https://docs.python.org/3/library/functions.html#int)
+
+Returns the number of records in the database.
+
+#### *classmethod* first()
+
+#### is_new() → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+#### flag_modified(\*args: [str](https://docs.python.org/3/library/stdtypes.html#str)) → [None](https://docs.python.org/3/library/constants.html#None)
+
+Flag one or more fields as modified/mutated/dirty. Useful for marking a field containing sub-objects as modified.
+
+Will throw an error if an invalid field is passed.
+
+#### modified_fields() → [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
+
+set of fields that are modified
+
+#### *classmethod* find_or_create_by(\*\*kwargs)
+
+Find record or create it with the passed args if it doesn’t exist.
+
+#### *classmethod* find_or_initialize_by(\*\*kwargs)
+
+Unfortunately, unlike ruby, python does not have a great lambda story. This makes writing convenience methods
+like this a bit more difficult.
+
+#### *classmethod* primary_key_column() → sqlmodel.Column
+
+Returns the primary key column of the model by inspecting SQLAlchemy field information.
+
+```pycon
+>>> ExampleModel.primary_key_field().name
+```
+
+#### *classmethod* get(\*args: Any, \*\*kwargs: Any)
+
+Gets a single record (or None) from the database. Pass an PK ID or kwargs to filter by.
+
+#### *classmethod* one_or_none(\*args: Any, \*\*kwargs: Any)
+
+Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+Returns None if no record is found. Throws an error if more than one record is found.
+
+#### *classmethod* one(\*args: Any, \*\*kwargs: Any)
+
+Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+
+#### *classmethod* \_\_process_filter_args_\_(\*args: Any, \*\*kwargs: Any)
+
+Helper method to process filter arguments and implement some nice DX for our devs.
+
+#### *classmethod* all()
+
+get a generator for all records in the database
+
+#### *classmethod* sample()
+
+Pick a random record from the database. Raises if none exist.
+
+Helpful for testing and console debugging.
+
+
+# index.html.md
+
+# activemodel.types.sqlalchemy_protocol
+
+## Classes
+
+| [`SQLAlchemyQueryMethods`](#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)   | Base class for protocol classes.   |
+|---------------------------------------------------------------------------------------------|------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods
+
+Bases: `Protocol`
+
+Base class for protocol classes.
+
+Protocol classes are defined as:
+
+```default
+class Proto(Protocol):
+    def meth(self) -> int:
+        ...
+```
+
+Such classes are primarily used with static type checkers that recognize
+structural subtyping (static duck-typing).
+
+For example:
+
+```default
+class C:
+    def meth(self) -> int:
+        return 0
+
+def func(x: Proto) -> int:
+    return x.meth()
+
+func(C())  # Passes static type check
+```
+
+See PEP 544 for details. Protocol classes decorated with
+@typing.runtime_checkable act as simple-minded runtime protocols that check
+only the presence of given attributes, ignoring their type signatures.
+Protocol classes can be generic, they are defined as:
+
+```default
+class GenProto[T](Protocol):
+    def meth(self) -> T:
+        ...
+```
+
+
+# index.html.md
+
+# activemodel.types.typeid_patch
+
+Pydantic v2 support for TypeID.
+
+TODO should push this upstream to the typeid package
+
+## Module Contents
+
+### *classmethod* activemodel.types.typeid_patch.get_pydantic_core_schema(source_type: Any, handler: [pydantic.GetCoreSchemaHandler](https://docs.pydantic.dev/latest/api/annotated_handlers/#pydantic.annotated_handlers.GetCoreSchemaHandler)) → pydantic_core.CoreSchema
+
+
+# index.html.md
+
+# activemodel.types.typeid
+
+Lifted from: [https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py](https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py)
+
+## Classes
+
+| [`TypeIDType`](#activemodel.types.typeid.TypeIDType)   | A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.   |
+|--------------------------------------------------------|---------------------------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.types.typeid.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str), \*args, \*\*kwargs)
+
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
+
+A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.
+
+The prefix will not be persisted to the database, instead the database-native UUID field will be used.
+At retrieval time a TypeID will be constructed (in python) based on the configured prefix and the UUID
+value from the database.
+
+For example:
+
+```pycon
+>>> id = mapped_column(
+>>>     TypeIDType("user"),
+>>>     primary_key=True,
+>>>     default=lambda: TypeID("user")
+>>> )
+```
+
+Will result in TypeIDs such as “user_01h45ytscbebyvny4gc8cr8ma2”. There’s a mixin provided to make it easy
+to add a id pk field to your model with a specific prefix.
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str)*
+
+#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+#### process_bind_param(value, dialect)
+
+This is run when a search query is built or …
+
+#### process_result_value(value, dialect)
+
+convert a raw UUID, without a prefix, to a TypeID with the correct prefix
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_core_schema: pydantic_core.core_schema.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://docs.pydantic.dev/latest/api/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+This fixes the following error: ‘Unable to serialize unknown type’ by telling pydantic how to serialize this field.
+
+Note that TypeIDType MUST be the type of the field in SQLModel otherwise you’ll get serialization errors.
+This is done automatically for the mixin but for any relationship fields you’ll need to specify the type explicitly.
+
+- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88)
+- [https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py](https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py)
+- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14)
+- [https://github.com/pydantic/pydantic/issues/10060](https://github.com/pydantic/pydantic/issues/10060)
+- [https://github.com/fastapi/fastapi/discussions/10027](https://github.com/fastapi/fastapi/discussions/10027)
+- [https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50](https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50)
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://docs.pydantic.dev/latest/api/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+
+Called when generating the openapi schema. This overrides the function-plain type which
+is generated by the no_info_plain_validator_function.
+
+This logic seems to be a hot part of the codebase, so I’d expect this to break as pydantic
+fastapi continue to evolve.
+
+Note that this method can return multiple types. A return value can be as simple as:
+
+```pycon
+>>> {"type": "string"}
+```
+
+Or, you could return a more specific JSON schema type:
+
+```pycon
+>>> core_schema.uuid_schema()
+```
+
+The problem with using something like uuid_schema is the specific patterns
+
+[https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153](https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153)
+
+
+# index.html.md
+
+# activemodel.mixins.timestamps
+
+## Classes
+
+| [`TimestampsMixin`](#activemodel.mixins.timestamps.TimestampsMixin)   | Simple created at and updated at timestamps. Mix them into your model:   |
+|-----------------------------------------------------------------------|--------------------------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.mixins.timestamps.TimestampsMixin
+
+Simple created at and updated at timestamps. Mix them into your model:
+
+```pycon
+>>> class MyModel(TimestampsMixin, SQLModel):
+>>>    pass
+```
+
+Notes:
+
+- Originally pulled from: [https://github.com/tiangolo/sqlmodel/issues/252](https://github.com/tiangolo/sqlmodel/issues/252)
+- Related issue: [https://github.com/fastapi/sqlmodel/issues/539](https://github.com/fastapi/sqlmodel/issues/539)
+
+#### created_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+#### updated_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+
+# index.html.md
+
+# activemodel.mixins.pydantic_json
+
+Need to store nested Pydantic models in PostgreSQL using FastAPI and SQLModel.
+
+SQLModel lacks a direct JSONField equivalent (like Tortoise ORM’s JSONField), making it tricky to handle nested model data as JSON in the DB.
+
+Extensive discussion on the problem: [https://github.com/fastapi/sqlmodel/issues/63](https://github.com/fastapi/sqlmodel/issues/63)
+
+## Classes
+
+| [`PydanticJSONMixin`](#activemodel.mixins.pydantic_json.PydanticJSONMixin)   | By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.   |
+|------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.mixins.pydantic_json.PydanticJSONMixin
+
+By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.
+
+This mixin, combined with a custom serializer (\_serialize_pydantic_model), fixes that issue.
+
+```pycon
+>>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
+>>>    list_field: list[SubObject] = Field(sa_type=JSONB()
+```
+
+Notes:
+
+- Tuples of pydantic models are not supported, only lists.
+- Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]
+
+#### \_\_transform_dict_to_pydantic_\_()
+
+Transforms dictionary fields into Pydantic models upon loading.
+
+- Reconstructor only runs once, when the object is loaded.
+- We manually call this method on save(), etc to ensure the pydantic types are maintained
+- set_committed_value sets Pydantic models as committed, avoiding setattr marking fields as modified
+  after loading from the database.
+
+
+# index.html.md
+
+# activemodel.mixins.soft_delete
+
+## Classes
+
+| [`SoftDeletionMixin`](#activemodel.mixins.soft_delete.SoftDeletionMixin)   |    |
+|----------------------------------------------------------------------------|----|
+
+## Module Contents
+
+### *class* activemodel.mixins.soft_delete.SoftDeletionMixin
+
+#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime)* *= None*
+
+#### soft_delete()
+
+
+# index.html.md
+
+# activemodel.mixins.typeid
+
+## Functions
+
+| [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
+|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
+
+Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
+
+
+# index.html.md
+
+# activemodel.pytest.truncate
+
+## Attributes
+
+| [`T`](#activemodel.pytest.truncate.T)   |    |
+|-----------------------------------------|----|
+
+## Functions
+
+| [`database_reset_truncate`](#activemodel.pytest.truncate.database_reset_truncate)([preserve_tables, pytest_config])   | Transaction is most likely the better way to go, but there are some scenarios where the session override   |
+|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### activemodel.pytest.truncate.T
+
+### activemodel.pytest.truncate.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+Transaction is most likely the better way to go, but there are some scenarios where the session override
+logic does not work properly and you need to truncate tables back to their original state.
+
+Here’s how to do this once at the start of the test:
+
+```pycon
+>>> from activemodel.pytest import database_reset_truncation
+>>> def pytest_configure(config):
+>>>         database_reset_truncation()
+```
+
+Or, if you want to use this as a fixture:
+
+```pycon
+>>> pytest.fixture(scope="function")(database_reset_truncation)
+>>> def test_the_thing(database_reset_truncation)
+```
+
+This approach has a couple of problems:
+
+* You can’t run multiple tests in parallel without separate databases
+* If you have important seed data and want to truncate those tables, the seed data will be lost
+
+
+# index.html.md
+
+# activemodel.pytest.plugin
+
+Pytest plugin integration for activemodel.
+
+Currently provides:
+
+* `db_session` fixture - quick access to a database session (see `test_session`)
+* `activemodel_preserve_tables` ini option - configure tables to preserve when using
+  `database_reset_truncate` (comma separated list or multiple lines depending on config style)
+
+Configuration examples:
+
+pytest.ini:
+
+```default
+[pytest]
+activemodel_preserve_tables = alembic_version,zip_code,seed_table
+```
+
+pyproject.toml:
+
+```default
+[tool.pytest.ini_options]
+activemodel_preserve_tables = [
+  "alembic_version",
+  "zip_code",
+  "seed_table",
+]
+```
+
+The list always implicitly includes `alembic_version` even if not specified.
+
+## Functions
+
+| [`pytest_addoption`](#activemodel.pytest.plugin.pytest_addoption)(→ None)   | Register custom ini options.                                                                      |
+|-----------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| [`db_session`](#activemodel.pytest.plugin.db_session)()                     | Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you |
+| [`db_truncate_session`](#activemodel.pytest.plugin.db_truncate_session)()   | Provides a database session for testing when using a truncation cleaning strategy.                |
+
+## Module Contents
+
+### activemodel.pytest.plugin.pytest_addoption(parser: pytest.Parser) → [None](https://docs.python.org/3/library/constants.html#None)
+
+Register custom ini options.
+
+We treat this as a *linelist* so pyproject.toml list syntax works. Comma separated works too because
+pytest splits lines first; users can still provide one line with commas.
+
+### activemodel.pytest.plugin.db_session()
+
+Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you
+probably don’t need this because the router, job harness, etc should wrap the logic in a database session.
+
+If your unit test is simple (you are just creating a couple of models) you
+can most likely skip this, unless your factories or models do something more complex with nested database calls.
+
+This is helpful if you are doing a lot of lazy-loaded params or need a database session to be in place
+for testing code that will run within a celery worker or something similar.
+
+```pycon
+>>> def the_test(db_session):
+```
+
+### activemodel.pytest.plugin.db_truncate_session()
+
+Provides a database session for testing when using a truncation cleaning strategy.
+
+When using a truncation cleaning strategy, no global test session is set. This means all models that are created
+are tied to a detached session, which makes it hard to mutate models after creation. This fixture fixes that problem
+by setting the session used by all model factories to a global session.
+
+
+# index.html.md
+
+# activemodel.pytest.transaction
+
+## Attributes
+
+| [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
+|----------------------------------------------------------------------------|----|
+| [`polyfactory_exists`](#activemodel.pytest.transaction.polyfactory_exists) |    |
+
+## Functions
+
+| [`set_factory_session`](#activemodel.pytest.transaction.set_factory_session)(session)         |                                                                                                          |
+|-----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| [`set_polyfactory_session`](#activemodel.pytest.transaction.set_polyfactory_session)(session) |                                                                                                          |
+| [`set_factory_sessions`](#activemodel.pytest.transaction.set_factory_sessions)(session)       | set all supported model factories to use the provided session                                            |
+| [`test_session`](#activemodel.pytest.transaction.test_session)()                              | Configures a session-global database session for a test.                                                 |
+| [`database_truncate_session`](#activemodel.pytest.transaction.database_truncate_session)()    | Provides a database session for testing when using a truncation cleaning strategy.                       |
+| [`database_reset_transaction`](#activemodel.pytest.transaction.database_reset_transaction)()  | Wrap all database interactions for a given test in a nested transaction and roll it back after the test. |
+
+## Module Contents
+
+### activemodel.pytest.transaction.factory_exists *= None*
+
+### activemodel.pytest.transaction.polyfactory_exists *= None*
+
+### activemodel.pytest.transaction.set_factory_session(session)
+
+### activemodel.pytest.transaction.set_polyfactory_session(session)
+
+### activemodel.pytest.transaction.set_factory_sessions(session)
+
+set all supported model factories to use the provided session
+
+### activemodel.pytest.transaction.test_session()
+
+Configures a session-global database session for a test.
+
+Use this as a fixture using db_session. This method is meant to be used as a context manager.
+
+This is useful for tests that need to interact with the database multiple times before calling application code
+that uses the objects. This is intended to be used outside of an integration test. Integration tests generally
+do not use database transactions to clean the database and instead use truncation. The transaction fixture
+configures a session, which is then used here. This method requires that this global test session is already
+configured. If the transaction fixture is not used, then there is no session available for use and this will fail.
+
+ActiveModelFactory.save() does this automatically, but if you need to manually create objects
+and persist them to a DB, you can run into issues with the simple expunge() call
+used to reassociate an object with a new session. If there are more complex relationships
+this approach will fail and give you detached object errors.
+
+```pycon
+>>> from activemodel.pytest import test_session
+>>> def test_the_thing():
+>>>     with test_session():
+...         obj = MyModel(name="test").save()
+...         obj2 = MyModelFactory.save()
+```
+
+More information: [https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b](https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b)
+
+### activemodel.pytest.transaction.database_truncate_session()
+
+Provides a database session for testing when using a truncation cleaning strategy.
+
+When not using a transaction cleaning strategy, no global test session is set
+
+### activemodel.pytest.transaction.database_reset_transaction()
+
+Wrap all database interactions for a given test in a nested transaction and roll it back after the test.
+
+This is provided as a function, not a fixture, since you’ll need to determine when a integration test is run. Here’s
+an example of how to build a fixture from this method:
+
+```pycon
+>>> from activemodel.pytest import database_reset_transaction
+>>> database_reset_transaction = pytest.fixture(scope="function", autouse=True)(database_reset_transaction)
+```
+
+Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process because the
+same session is not shared across python processes. For this scenario, use the truncate method.
+
+Note that using fork as a multiprocess start method is dangerous. Use spawn. This link has more documentation
+around this topic:
+
+[https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py](https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py)
+
+References:
+
+- [https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created](https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created)
+- [https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/](https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/)
+- [https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77](https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77)
+- [https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46](https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46)
+- [https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn](https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn)
+
+Using a named SAVEPOINT does not give us anything extra, so we are not using it.
+
+
+# index.html.md
+
+# activemodel.pytest.factories
+
+Notes on polyfactory:
+
+1. is_supported_type validates that the class can be used to generate a factory
+[https://github.com/litestar-org/polyfactory/issues/655#issuecomment-2727450854](https://github.com/litestar-org/polyfactory/issues/655#issuecomment-2727450854)
+
+## Classes
+
+| [`SQLModelFactory`](#activemodel.pytest.factories.SQLModelFactory)       | Base factory for SQLModel models:   |
+|--------------------------------------------------------------------------|-------------------------------------|
+| [`ActiveModelFactory`](#activemodel.pytest.factories.ActiveModelFactory) | Base factory for SQLModel models:   |
+
+## Module Contents
+
+### *class* activemodel.pytest.factories.SQLModelFactory
+
+Bases: `polyfactory.factories.pydantic_factory.ModelFactory`[`T`]
+
+Base factory for SQLModel models:
+
+1. Ability to ignore all relationship fks
+2. Option to ignore all pks
+
+#### \_\_is_base_factory_\_ *= True*
+
+Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.
+
+#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Determine whether to set a value for a given field_name.
+This is an override of BaseFactory.should_set_field_value.
+
+* **Parameters:**
+  * **field_meta** – FieldMeta instance.
+  * **kwargs** – Any kwargs passed to the factory.
+* **Returns:**
+  A boolean determining whether a value should be set for the given field_meta.
+
+### *class* activemodel.pytest.factories.ActiveModelFactory
+
+Bases: [`SQLModelFactory`](#activemodel.pytest.factories.SQLModelFactory)[`T`]
+
+Base factory for SQLModel models:
+
+1. Ability to ignore all relationship fks
+2. Option to ignore all pks
+
+#### \_\_is_base_factory_\_ *= True*
+
+Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.
+
+#### \_\_sqlalchemy_session_\_ *= None*
+
+#### *classmethod* save(\*args, \*\*kwargs) → [T](../truncate/index.md#activemodel.pytest.truncate.T)
+
+Builds and persists a new model to the database.
+
+Where this gets tricky, is this can be called multiple times within the same callstack. This can happen when
+a factory uses other factories to create relationships. This is fine if \_\_sqlalchemy_session_\_ is set, but
+if it’s not (in the case of a truncation DB strategy) you’ll run into issues.
+
+In a truncation strategy, the \_\_sqlalchemy_session_\_ is set to None.
+
+#### *classmethod* post_save(model: [T](../truncate/index.md#activemodel.pytest.truncate.T)) → [T](../truncate/index.md#activemodel.pytest.truncate.T)
+
+Post-save hook for performing additional actions after the model has been saved to the database. This is useful
+for cases where you need to perform additional operations that require the model be persisted in the database.
+
+The implementation of this method should return a refreshed instance of the model if that’s necessary. For
+example, if your post_save hook triggers another factory save(), the current model will likely be expired
+and detached, leading to a DetachedInstanceError when accessing it later.
+
+To avoid this, return model.refresh() at the end of your implementation.
+
+#### *classmethod* foreign_key_typeid()
+
+Return a random type id for the foreign key on this model.
+
+This is helpful for generating TypeIDs for testing 404s, parsing, manually settings, etc
+
+#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Determine whether to set a value for a given field_name.
+This is an override of BaseFactory.should_set_field_value.
+
+* **Parameters:**
+  * **field_meta** – FieldMeta instance.
+  * **kwargs** – Any kwargs passed to the factory.
+* **Returns:**
+  A boolean determining whether a value should be set for the given field_meta.
+
+
+# index.html.md
+
+# activemodel.patches.get_column_from_field_patch
+
+Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fields of a model.
+
+Making sure these docstrings make their way to the DB schema is helpful for a bunch of reasons (LLM understanding being one of them).
+
+This patch mutates a core sqlmodel function which translates pydantic FieldInfo objects into sqlalchemy Column objects. It adds the field description as a comment to the column.
+
+Note that FieldInfo *from pydantic* is used when a “bare” field is defined. This can be confusing, because when inspecting model fields, the class name looks exactly the same.
+
+Some ideas for this originally sourced from: [https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633](https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633)
+
+## Functions
+
+| [`get_column_from_field`](#activemodel.patches.get_column_from_field_patch.get_column_from_field)(→ sqlalchemy.Column)   |    |
+|--------------------------------------------------------------------------------------------------------------------------|----|
+
+## Module Contents
+
+### activemodel.patches.get_column_from_field_patch.get_column_from_field(field: Any) → sqlalchemy.Column
+
+
+# changelog.html.md
+
+# Changelog
+
+## [0.18.0](https://github.com/iloveitaly/activemodel/compare/v0.17.0...v0.18.0) (2026-03-13)
+
+### Features
+
+* **docs:** add Sphinx documentation and deploy workflow ([#56](https://github.com/iloveitaly/activemodel/issues/56)) ([596de09](https://github.com/iloveitaly/activemodel/commit/596de099cfd1e5489904c8b49431d7f883590b9a))
+
+### Bug Fixes
+
+* deprecation warnings ([#52](https://github.com/iloveitaly/activemodel/issues/52)) ([7291f18](https://github.com/iloveitaly/activemodel/commit/7291f186f42758eccf73478782ce758c66fa64ac))
+* include post_save in the same fixture session ([#54](https://github.com/iloveitaly/activemodel/issues/54)) ([c92c675](https://github.com/iloveitaly/activemodel/commit/c92c6755f03b6d9203b13dbdafd3f3bdca992162))
+
+## [0.17.0](https://github.com/iloveitaly/activemodel/compare/v0.16.0...v0.17.0) (2026-03-13)
+
+### Features
+
+* sqlmodel upgrade, add last ([#50](https://github.com/iloveitaly/activemodel/issues/50)) ([2cd3487](https://github.com/iloveitaly/activemodel/commit/2cd3487fb657bd1b724fef403c2d77a7cbed1209))
+
+## [0.15.1](https://github.com/iloveitaly/activemodel/compare/v0.15.0...v0.15.1) (2026-02-16)
+
+### Bug Fixes
+
+* upstream template upgrade ([#35](https://github.com/iloveitaly/activemodel/issues/35)) ([1dc0b13](https://github.com/iloveitaly/activemodel/commit/1dc0b133929cee64ccdb1156999789d29bbdd82e))
+
+## [0.15.0](https://github.com/iloveitaly/activemodel/compare/v0.14.1...v0.15.0) (2026-02-04)
+
+### Features
+
+* sqlmodel 0.0.32 support ([#33](https://github.com/iloveitaly/activemodel/issues/33)) ([e2a104a](https://github.com/iloveitaly/activemodel/commit/e2a104a11cd1f530e52aa0d6b2e951752ef2bb92))
+
+## [0.14.1](https://github.com/iloveitaly/activemodel/compare/v0.14.0...v0.14.1) (2026-01-14)
+
+### Bug Fixes
+
+* work with latest sqlmodel which drops v1 ([79920c6](https://github.com/iloveitaly/activemodel/commit/79920c63913b0a1d6824efc84719e6ea41b483eb))
+
+### Documentation
+
+* add pydantic v2 compatibility notes to typeid_patch.py ([7d3f43a](https://github.com/iloveitaly/activemodel/commit/7d3f43a0b1a3c2c51d46ef0530aabee7392f75ec))
+* add warning log for missing session in ActiveModelFactory ([317dd22](https://github.com/iloveitaly/activemodel/commit/317dd22b4abe5d9261d8c7f69a7b32b9c7b2d4de))
+
+## [0.14.0](https://github.com/iloveitaly/activemodel/compare/v0.13.0...v0.14.0) (2025-10-16)
+
+### Features
+
+* **query_wrapper:** add efficient exists() query method with tests ([257452f](https://github.com/iloveitaly/activemodel/commit/257452fdf976ce263b13997816a3b1b81d2902e9))
+* **query:** add sample() to query wrapper for random row selection ([d35800c](https://github.com/iloveitaly/activemodel/commit/d35800c46244db21fd92e615609b895acdee25dc))
+
+### Bug Fixes
+
+* handle tuples and Optionals in JSON mixin ([1aa1018](https://github.com/iloveitaly/activemodel/commit/1aa1018d9714a43089fa9943daf1b4fcbc7742b9))
+
+### Documentation
+
+* clarify global_session usage in complex test scenarios ([a131b0f](https://github.com/iloveitaly/activemodel/commit/a131b0f64287b4225ac1eb2289e6ce6f006aa4d5))
+* fastapi-sqla ([2183686](https://github.com/iloveitaly/activemodel/commit/2183686421095856c59649c51c03ba1edaea9515))
+
+## [0.13.0](https://github.com/iloveitaly/activemodel/compare/v0.12.0...v0.13.0) (2025-09-05)
+
+### Features
+
+* rewritten lifecycle hooks that actually work ([af4e6fe](https://github.com/iloveitaly/activemodel/commit/af4e6fe75099ef1cc6a998b471f48f32ee8b7d5d))
+
+## [0.12.0](https://github.com/iloveitaly/activemodel/compare/v0.11.0...v0.12.0) (2025-09-03)
+
+### Features
+
+* add ActiveModelFactory helpers for session management and typeid generation ([a6b9915](https://github.com/iloveitaly/activemodel/commit/a6b9915cc0c74c3b0d1421bc3d0300c1a2f63426))
+* add base SQLModel and ActiveModel polyfactory factories ([12a5e1d](https://github.com/iloveitaly/activemodel/commit/12a5e1db9be741f12db174d5a25f6c2eee61a446))
+* add one_or_none method to BaseModel for safe queries ([7574777](https://github.com/iloveitaly/activemodel/commit/75747773f99a7a6cc82d2ca784ce607abd7ae511))
+* add pytest db_session fixture ([22d2ad8](https://github.com/iloveitaly/activemodel/commit/22d2ad8cbd77260c1c73524f3251ef7fd145caec))
+* add scalar method to QueryWrapper and return from delete ([3d68097](https://github.com/iloveitaly/activemodel/commit/3d680972b6a60b43de6d3826d4289b0f81847b74))
+* add SQLAlchemy protocol generation script ([6e4524e](https://github.com/iloveitaly/activemodel/commit/6e4524ed73644bea5b837ce2a9a7a1994b19df00))
+* add test_session context manager for test DB interactions ([d7a8112](https://github.com/iloveitaly/activemodel/commit/d7a8112f6b303a50df62ca55a0ca8a9c864e4686))
+* export test_session from activemodel.pytest ([9bf692a](https://github.com/iloveitaly/activemodel/commit/9bf692a72937d9a87a1ba2e574cff6dc4000bafd))
+* **pytest:** omit truncation tables, truncation db fixture ([f20f17e](https://github.com/iloveitaly/activemodel/commit/f20f17ea0854dfbde09e86f9446d57d33ab516e8))
+* support engine options ([9b00ecd](https://github.com/iloveitaly/activemodel/commit/9b00ecd4a7b1ac95a6a16b1e7727ef37afe81e00))
+* support passing session to global_session context manager ([567708a](https://github.com/iloveitaly/activemodel/commit/567708aeb6642e75b21932d599cd1431f62c4c65))
+
+### Bug Fixes
+
+* add return type to ActiveModelFactory save method ([96f4a0a](https://github.com/iloveitaly/activemodel/commit/96f4a0a70eb72b14dea8df16b9e92a4b79122285))
+* add ruff link + check on autogenerated types ([91ae5ea](https://github.com/iloveitaly/activemodel/commit/91ae5ea079533dc7e5600cf99c757ec5c6cd872f))
+* allow reentrant global_session when using same session reference ([d4d7949](https://github.com/iloveitaly/activemodel/commit/d4d79493afdf7ef6ae36f9f6d1c2949eb2b7c393))
+* clarify duplicate TypeID prefix error message ([a73c221](https://github.com/iloveitaly/activemodel/commit/a73c221fd51c1efa70812eb1a21a96f0af7faadc))
+* prevent factories from setting timestamp fields by default ([5d78745](https://github.com/iloveitaly/activemodel/commit/5d7874506047b7ae91f22566e1dc2c64d68814f4))
+
+### Documentation
+
+* added related issue ([3c47e60](https://github.com/iloveitaly/activemodel/commit/3c47e601b8f3eb8a85d9cb84a3e64df68ea10d90))
+* clarify session management and querying in usage section ([cdadaff](https://github.com/iloveitaly/activemodel/commit/cdadafffa1ac835f2f6419f40de5bf2f281f94d2))
+* connection pool tip ([5d92b99](https://github.com/iloveitaly/activemodel/commit/5d92b992d4f71af0bf8244826cd4d12281fe350b))
+* fix JSONB usage in example and clarify imports in README ([386e69d](https://github.com/iloveitaly/activemodel/commit/386e69d5ad99baddfba119f62b6d3c6a53809857))
+* improve base model tablename docstring ([de98cbc](https://github.com/iloveitaly/activemodel/commit/de98cbcff0b2ef903207f4c65fb1aa6e014cf40c))
+* **pytest:** clarify ActiveModelFactory.save behavior with relationships and truncation ([6ee2cbe](https://github.com/iloveitaly/activemodel/commit/6ee2cbef23601943271a36a90f2f453de4519c72))
+* **typeid:** clarify exception on invalid UUID string ([bf13a7e](https://github.com/iloveitaly/activemodel/commit/bf13a7e7e537d41a94ff926dcabf316b0d62625b))
+* update TODOs for testing, constraints, and unique key suggestions ([6010f8f](https://github.com/iloveitaly/activemodel/commit/6010f8fec1c3bdb22d68ac3b545ebeafd6bd04ef))
+
+## [0.11.0](https://github.com/iloveitaly/activemodel/compare/v0.10.0...v0.11.0) (2025-04-05)
+
+### Features
+
+* add pydantic patch for TypeID schema serialization ([767726e](https://github.com/iloveitaly/activemodel/commit/767726eaf2a20f1c65162ba7d3a599495c83f721))
+* add typeid prefix to db field comments ([34e4574](https://github.com/iloveitaly/activemodel/commit/34e457488a6e59c4e7daf1d7495b59ac64bd7ea2))
+* render TypeIDType in plain old pydantic models ([8aa0a4d](https://github.com/iloveitaly/activemodel/commit/8aa0a4db51b425a60889064e723129041e418da5))
+
+### Bug Fixes
+
+* typing on upsert properly returns self ([8965113](https://github.com/iloveitaly/activemodel/commit/896511399c818e8a4a1c01ed324921e04073a279))
+
+### Documentation
+
+* add advanced SQLAlchemy tips to README.md ([c624ac0](https://github.com/iloveitaly/activemodel/commit/c624ac0712598d06759166ce9f91a37f40fefcfe))
+* update comments in session_manager to clarify usage ([e657a2e](https://github.com/iloveitaly/activemodel/commit/e657a2e5985be6f0770bf945fc062a05dcff8cc8))
+
+## [0.10.0](https://github.com/iloveitaly/activemodel/compare/v0.9.0...v0.10.0) (2025-04-01)
+
+### Features
+
+* add upsert method for PostgreSQL support in BaseModel ([d639de6](https://github.com/iloveitaly/activemodel/commit/d639de6cb498b72cd4b42422822c7d59ca6a646c))
+* prevent nested global sessions and add test ([3aca2cc](https://github.com/iloveitaly/activemodel/commit/3aca2ccadf3e029801d5e517f5e660af44564f73))
+* return upserted model and enhance upsert tests ([df2359a](https://github.com/iloveitaly/activemodel/commit/df2359a4ba8a00305bd3d5024b9789642b7b4718))
+
+### Bug Fixes
+
+* use sa_column default instead of sqlmodel ([37e299d](https://github.com/iloveitaly/activemodel/commit/37e299d43dcec7db2cdfd3bc3b572b31b3234f35))
+
+### Documentation
+
+* enhance docstrings in BaseModel for clarity ([12a5dee](https://github.com/iloveitaly/activemodel/commit/12a5deec1ee2480410bbad9250b253991dd12d86))
+
+## [0.9.0](https://github.com/iloveitaly/activemodel/compare/v0.8.0...v0.9.0) (2025-03-26)
+
+### Features
+
+* add flag_modified and modified_fields to BaseModel ([3059903](https://github.com/iloveitaly/activemodel/commit/305990387797f4fde26c7c89a8d332b6ef7ff21f))
+* add refresh method to BaseModel for database sync ([59be3bb](https://github.com/iloveitaly/activemodel/commit/59be3bb87c64c865b08a2856f043678650c07194))
+* add robust record retrieval methods to BaseModel ([d15b5a1](https://github.com/iloveitaly/activemodel/commit/d15b5a1ffbbb18b6fde94d64dbc76f45c21f7da8))
+
+### Bug Fixes
+
+* use set_committed_value in PydanticJSONMixin ([5446204](https://github.com/iloveitaly/activemodel/commit/5446204fc4b17ed5f1daa4c898f5ba2242b0fc40))
+
+### Documentation
+
+* update TODOs and correct typeid return value ([52b2514](https://github.com/iloveitaly/activemodel/commit/52b2514b6d30212a56e34c2fe4c849ff79e36e6a))
+
+## [0.8.0](https://github.com/iloveitaly/activemodel/compare/v0.7.0...v0.8.0) (2025-03-18)
+
+### Features
+
+* add BaseModel.where method and update test cases ([9fe4c5a](https://github.com/iloveitaly/activemodel/commit/9fe4c5af619690ffb6344cf5c74a2d4b2b46ef02))
+* add primary_key_field ([947a410](https://github.com/iloveitaly/activemodel/commit/947a410766dd764e8ac5b3177152d2ff22cdb609))
+* log start of database transaction in tests ([ac90d6f](https://github.com/iloveitaly/activemodel/commit/ac90d6f18bb0a4cca68527dec9c55b4af1f6e851))
+* reload json fields when record is reloaded from db ([c013082](https://github.com/iloveitaly/activemodel/commit/c013082004bb3a93e81f00eb0c990833a9cae7e2))
+
+### Bug Fixes
+
+* yield session object in global_session function ([47b33cc](https://github.com/iloveitaly/activemodel/commit/47b33cc1aa66d6076363635191c297c52fcc3deb))
+
+### Documentation
+
+* add comments to clarify SessionManager use and config ([e73561b](https://github.com/iloveitaly/activemodel/commit/e73561b3d52e617a0f92da5cd93981ff429da16f))
+* update comments and README with additional examples and info ([209ee36](https://github.com/iloveitaly/activemodel/commit/209ee36a9df53f927cd9e5b2bb15b3a5776b34ce))
+* update README with setup instructions and SQLModel tips ([f2520b5](https://github.com/iloveitaly/activemodel/commit/f2520b5fa5d7c462e8f7a591b83d874239a34b8d))
+
+## [0.7.0](https://github.com/iloveitaly/activemodel/compare/v0.6.0...v0.7.0) (2025-02-08)
+
+### Features
+
+* **migrations:** add test to validate autogenerated migrations ([03e0511](https://github.com/iloveitaly/activemodel/commit/03e0511b90307091448f165cca1976ca37e41d4a))
+
+### Bug Fixes
+
+* filter migration files to include only Python files in test ([76f6723](https://github.com/iloveitaly/activemodel/commit/76f672349f24c34284c190368e71a5d4116c3293))
+* make another_with_index optional in ExampleRecord ([2ace729](https://github.com/iloveitaly/activemodel/commit/2ace7292bcc84907818f8719571a2bfcafecfd6b))
+
+### Documentation
+
+* enhance README with alembic integration instructions ([a7ac734](https://github.com/iloveitaly/activemodel/commit/a7ac734c5f456afb605ce4e7d0e5111835bfb5f6))
+* improve Alembic integration guidance and resources ([1206278](https://github.com/iloveitaly/activemodel/commit/1206278ae292669bff5a1eb4747d81225dd420e9))
+
+## [0.6.0](https://github.com/iloveitaly/activemodel/compare/v0.5.0...v0.6.0) (2025-02-08)
+
+### Features
+
+* add active model meta functionality with comments ([4180df7](https://github.com/iloveitaly/activemodel/commit/4180df73c8e49fb2da970f934856ac89cd9f4ebc))
+* add Celery encoder for TypeID serialization ([416b04a](https://github.com/iloveitaly/activemodel/commit/416b04ad4bff5f156886fe5519c24505e380f9c7))
+* add data initialization on model load ([00a90ce](https://github.com/iloveitaly/activemodel/commit/00a90cef17d4d5ef1530df21357812d974488012))
+* add field comments to SQLModel metadata ([c32bb9a](https://github.com/iloveitaly/activemodel/commit/c32bb9a45be0e0dd90bc967d28141bf460b524d3))
+* add initial TypeIDType import to **init**.py ([8594dff](https://github.com/iloveitaly/activemodel/commit/8594dffd5ac7fb03ae07bdd8c81e556e1542176e))
+* add JSON serialization for Pydantic models ([1213f2f](https://github.com/iloveitaly/activemodel/commit/1213f2f2bcee0a006eb58658565484ebb60727d5))
+* add playground script for interactive database testing ([fbe419a](https://github.com/iloveitaly/activemodel/commit/fbe419aa6d0edde5abbcdf405f7b037317730df1))
+* add soft deletion mixin for model handling ([2e24e26](https://github.com/iloveitaly/activemodel/commit/2e24e26e0283189d18a7b51b068bd63d58b5e3dd))
+* add TypeID validation and refactor TypeIDType ([5a2a49e](https://github.com/iloveitaly/activemodel/commit/5a2a49e1ee10cb648b4fedc7fd3e262ba5d8e0f1))
+* add utility to import all SQLModel subclasses ([e850016](https://github.com/iloveitaly/activemodel/commit/e85001632524130eac461e6cff23691fcb1c6bbb))
+* enforce unique non-empty prefixes in TypeIDMixin ([a167293](https://github.com/iloveitaly/activemodel/commit/a167293996b319759c8b01c49a05ab0f8dd1d153))
+* enhance foreign key handling and add validation ([61d5849](https://github.com/iloveitaly/activemodel/commit/61d58495a64c7d87d4c5ad1f1cfe0dd4649fe523))
+* enhance query handling and testing in ORM ([363c0dd](https://github.com/iloveitaly/activemodel/commit/363c0dd67b24ba4e860799555e25d51a3c8d4b0d))
+* enhance schema handling with new json schema generation ([3ba47b6](https://github.com/iloveitaly/activemodel/commit/3ba47b6c150d80e24691c8eba195b800cc3ba61c))
+* enhance session management and JSON serialization ([c74804b](https://github.com/iloveitaly/activemodel/commit/c74804b005e7667b5b18cb4f9b03f52cdcb72313))
+* handle dict annotations in PydanticJSONMixin ([085c6a9](https://github.com/iloveitaly/activemodel/commit/085c6a96d02e0d1521c6c58be38cf5b7d3a667af))
+* integrate field description as SQL comment ([cd98fe4](https://github.com/iloveitaly/activemodel/commit/cd98fe4b3024d55dbd9e7951d65b3b73b2aa3cf8))
+* integrate table comment extraction for models ([b7b9722](https://github.com/iloveitaly/activemodel/commit/b7b97224244b886f2067c0f5a0aea3c77c6bbe82))
+* integrate TypeID with Pydantic schema handling ([ab7ded9](https://github.com/iloveitaly/activemodel/commit/ab7ded9e472abdab8e34205e15fc643db842904d))
+* patch FieldInfo for comment support ([e85d154](https://github.com/iloveitaly/activemodel/commit/e85d1543856be8bd19f185e025a43f20aa9a01cb))
+* **test:** enhance ORM tests and introduce QueryWrapper test ([be98abb](https://github.com/iloveitaly/activemodel/commit/be98abb1bb5abe34cf42ebba7b63b89a942e487e))
+
+### Bug Fixes
+
+* attempt at using a context manager, no joy ([409ed6d](https://github.com/iloveitaly/activemodel/commit/409ed6de7618c0fcce7fa8fde2f77e0c612c39cb))
+* return True upon successful delete operation ([444a5f5](https://github.com/iloveitaly/activemodel/commit/444a5f561a04fb2dad549c4ffc5a05cc31453fca))
+* support lots of UUID inputs ([783a9fe](https://github.com/iloveitaly/activemodel/commit/783a9fe7f733b346cd6bf2401a9ae134ec785cf6))
+
+### Documentation
+
+* add example queries to the README file ([f3e878c](https://github.com/iloveitaly/activemodel/commit/f3e878cb72e62fdec727f7b268806d850ea145f0))
+* add new controller project ([c10bc29](https://github.com/iloveitaly/activemodel/commit/c10bc2946b8819812810271c195e317c19269adc))
+* add usage example for Appointment model in README ([7d9ac70](https://github.com/iloveitaly/activemodel/commit/7d9ac708b6bc5c77d3dde0a904ddb6c24c7f2710))
+* expand README with setup and usage sections ([c471f5f](https://github.com/iloveitaly/activemodel/commit/c471f5ff6359e2ab06e9e9053b416dc4f19dd26a))
+* update README with TypeID integration details ([6112888](https://github.com/iloveitaly/activemodel/commit/6112888a4ac0fc8601bf57daba638db6b5bc6788))
+
+## [0.5.0](https://github.com/iloveitaly/activemodel/compare/v0.4.0...v0.5.0) (2024-11-28)
+
+### Features
+
+* add methods for finding or creating records in model ([f1fd2f2](https://github.com/iloveitaly/activemodel/commit/f1fd2f2d65f182631b5df6a1ab20bf2f9a269607))
+
+## [0.4.0](https://github.com/iloveitaly/activemodel/compare/v0.3.0...v0.4.0) (2024-11-26)
+
+### Bug Fixes
+
+* update uv version to 0.5.4 ([1d77c39](https://github.com/iloveitaly/activemodel/commit/1d77c39e2234b98335e7206626dc2fdca0b34b79))
+
+### Features
+
+* add database truncation functionality for tests ([177abf9](https://github.com/iloveitaly/activemodel/commit/177abf91c8b25295cb93878433132302f8caffbc))
+* add FastAPISessionMaker for SQLAlchemy session management ([b80f045](https://github.com/iloveitaly/activemodel/commit/b80f045e52c908c7b1ae8721e42ee2796c8e85bc))
+* add mixins for timestamps and TypeID handling ([51a6128](https://github.com/iloveitaly/activemodel/commit/51a6128e6d0f45e5801821b99e399ae0bcfca624))
+* add python-decouple-typed as a dependency ([d495ad4](https://github.com/iloveitaly/activemodel/commit/d495ad419494c0c387a331a9d0ef4d112df83af7))
+* add typeid-python dependency to project requirements ([998762f](https://github.com/iloveitaly/activemodel/commit/998762fda8f62a078fc3a4afa8c09f5af323dcfb))
+* implement database reset methods for tests ([9cec29d](https://github.com/iloveitaly/activemodel/commit/9cec29d2ad89a871d4cbda2a6b8ad3a1ef50df6e))
+* lots of stuff :) ([0510d20](https://github.com/iloveitaly/activemodel/commit/0510d20a807829db4f6b454ee2915c32ecedb323))
+
+## [0.3.0](https://github.com/iloveitaly/activemodel/compare/v0.2.0...v0.3.0) (2024-11-20)
+
+### Features
+
+* add inspiration section to README and update TODO ([b11fb09](https://github.com/iloveitaly/activemodel/commit/b11fb09eb95e338de7358ba070fac0e75eda9909))
+
+## [0.2.0](https://github.com/iloveitaly/activemodel/compare/193f839c9ace154e7aaa0a9770400031d0e67cd3...v0.2.0) (2024-11-16)
+
+### Bug Fixes
+
+* update uv version and rename test file location ([9389fd2](https://github.com/iloveitaly/activemodel/commit/9389fd2e20e75ea322cd55bb699777978a9d282d))
+
+### Features
+
+* add Redis and Postgres services to CI workflow ([b9cb0ba](https://github.com/iloveitaly/activemodel/commit/b9cb0baca6bd46092437552ddf1d317a528983ca))
+* automate tablename generation from camelCase ([193f839](https://github.com/iloveitaly/activemodel/commit/193f839c9ace154e7aaa0a9770400031d0e67cd3))
+* enhance project description and keywords in config ([10c5707](https://github.com/iloveitaly/activemodel/commit/10c570786925fa9d7a397cb6f503b658df00aa4f))
+
+
+# getting-started.html.md
+
+[![Release Notes](https://img.shields.io/github/release/iloveitaly/activemodel)](https://github.com/iloveitaly/activemodel/releases)
+[![Downloads](https://static.pepy.tech/badge/activemodel/month)](https://pepy.tech/project/activemodel)
+[![Python Versions](https://img.shields.io/pypi/pyversions/activemodel)](https://pypi.org/project/activemodel)
+![GitHub CI Status](https://github.com/iloveitaly/activemodel/actions/workflows/build_and_publish.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+# ActiveModel: ORM Wrapper for SQLModel
+
+<p align="center">
+  <img src="docs/_static/logo.png" alt="ActiveModel Logo" width="600"/>
+</p>
+
+No, this isn’t *really* [ActiveModel](https://guides.rubyonrails.org/active_model_basics.html). It’s just a wrapper around SQLModel that provides a ActiveRecord-like interface.
+
+SQLModel is *not* an ORM. It’s a SQL query builder and a schema definition tool. This drives me nuts because the developer ergonomics are terrible because of this.
+
+This package provides a thin wrapper around SQLModel that provides a more ActiveRecord-like interface with things like:
+
+* Timestamp column mixins
+* Lifecycle hooks
+
+> [!TIP]
+> This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this.
+
+## Installation
+
+```bash
+uv add activemodel
+```
+
+## Getting Started
+
+First, setup your DB:
+
+```python
+import activemodel
+activemodel.init("sqlite:///database.db")
+```
+
+Create models:
+
+```python
+from activemodel import BaseModel
+from activemodel.mixins import TimestampsMixin, TypeIDMixin
+
+class User(
+    BaseModel,
+    # optionally, obviously
+    TimestampsMixin,
+    # you can use a different pk type, but why would you?
+    # put this mixin last otherwise `id` will not be the first column in the DB
+    TypeIDMixin("user"),
+    # wire this model into the DB, without this alembic will not generate a migration
+    table=True
+):
+    a_field: str
+```
+
+You’ll need to create the models in the DB. Alembic is the best way to do it, but you can cheat as well:
+
+```python
+from sqlmodel import SQLModel
+
+SQLModel.metadata.create_all(get_engine())
+
+# now you can create a user! without managing sessions!
+User(a_field="a").save()
+```
+
+Maybe you like JSON:
+
+```python
+from sqlalchemy.dialects.postgresql import JSONB
+from pydantic import BaseModel as PydanticBaseModel
+
+from activemodel import BaseModel
+from activemodel.mixins import PydanticJSONMixin, TypeIDMixin, TimestampsMixin
+
+class SubObject(PydanticBaseModel):
+    name: str
+    value: int
+
+class User(
+    BaseModel,
+    TimestampsMixin,
+    PydanticJSONMixin,
+    TypeIDMixin("user"),
+    table=True
+):
+    list_field: list[SubObject] = Field(sa_type=JSONB)
+```
+
+You’ll probably want to query the model. Look ma, no sessions!
+
+```python
+User.where(id="user_123").all()
+
+# or, even better, for this case
+User.one("user_123")
+```
+
+Magically creating sessions for DB operations is one of the main problems this project tackles. Even better, you can set
+a single session object to be used for all DB operations. This is helpful for DB transactions, [specifically rolling back
+DB operations on each test.]()
+
+## Usage
+
+### Pytest
+
+TODO detail out truncation and transactions
+
+### Integrating Alembic
+
+`alembic init` will not work out of the box. You need to mutate a handful of files:
+
+* To import all of your models you want in your DB. [Here’s my recommended way to do this.](https://github.com/iloveitaly/python-starter-template/blob/master/app/models/__init__.py)
+* Use your DB URL from the ENV
+* Target sqlalchemy metadata to the sqlmodel-generated metadata
+* Most likely you’ll want to add [alembic-postgresql-enum](https://pypi.org/project/alembic-postgresql-enum/) so migrations work properly
+
+[Take a look at these scripts for an example of how to fully integrate Alembic into your development workflow.](https://github.com/iloveitaly/python-starter-template/blob/0af2c7e95217e34bde7357cc95be048900000e48/Justfile#L618-L712)
+
+Here’s a diff from the bare `alembic init` from version `1.14.1`.
+
+```diff
+diff --git i/test/migrations/alembic.ini w/test/migrations/alembic.ini
+index 0d07420..a63631c 100644
+--- i/test/migrations/alembic.ini
++++ w/test/migrations/alembic.ini
+@@ -3,13 +3,14 @@
+ [alembic]
+ # path to migration scripts
+ # Use forward slashes (/) also on windows to provide an os agnostic path
+-script_location = .
++script_location = migrations
+
+ # template used to generate migration file names; The default value is %%(rev)s_%%(slug)s
+ # Uncomment the line below if you want the files to be prepended with date and time
+ # see https://alembic.sqlalchemy.org/en/latest/tutorial.html#editing-the-ini-file
+ # for all available tokens
+ # file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s
++file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(rev)s_%%(slug)s
+
+ # sys.path path, will be prepended to sys.path if present.
+ # defaults to the current working directory.
+diff --git i/test/migrations/env.py w/test/migrations/env.py
+index 36112a3..a1e15c2 100644
+--- i/test/migrations/env.py
++++ w/test/migrations/env.py
+@@ -1,3 +1,6 @@
++# fmt: off
++# isort: off
++
+ from logging.config import fileConfig
+
+ from sqlalchemy import engine_from_config
+@@ -14,11 +17,17 @@ config = context.config
+ if config.config_file_name is not None:
+     fileConfig(config.config_file_name)
+
++from sqlmodel import SQLModel
++from test.models import *
++from test.utils import database_url
++
++config.set_main_option("sqlalchemy.url", database_url())
++
+ # add your model's MetaData object here
+ # for 'autogenerate' support
+ # from myapp import mymodel
+ # target_metadata = mymodel.Base.metadata
+-target_metadata = None
++target_metadata = SQLModel.metadata
+
+ # other values from the config, defined by the needs of env.py,
+ # can be acquired:
+diff --git i/test/migrations/script.py.mako w/test/migrations/script.py.mako
+index fbc4b07..9dc78bb 100644
+--- i/test/migrations/script.py.mako
++++ w/test/migrations/script.py.mako
+@@ -9,6 +9,8 @@ from typing import Sequence, Union
+
+ from alembic import op
+ import sqlalchemy as sa
++import sqlmodel
++import activemodel
+ ${imports if imports else ""}
+
+ # revision identifiers, used by Alembic.
+```
+
+Here are some useful resources around Alembic + SQLModel:
+
+* https://github.com/fastapi/sqlmodel/issues/85
+* https://testdriven.io/blog/fastapi-sqlmodel/
+
+### Query Wrapper
+
+This tool is added to all `BaseModel`s and makes it easy to write SQL queries. Some examples:
+
+### Easy Database Sessions
+
+I hate the idea f
+
+* Behavior should be intuitive and easy to understand. If you run `save()`, it should save, not stick the save in a transaction.
+* Don’t worry about dead sessions. This makes it easy to lazy-load computed properties and largely eliminates the need to think about database sessions.
+
+There are a couple of thorny problems we need to solve for here:
+
+* In-memory fastapi servers are not the same as a uvicorn server, which is threaded *and* uses some sort of threadpool model for handling async requests. I don’t claim to understand the entire implementation. For global DB session state (a) we can’t use global variables (b) we can’t use thread-local variables.iset
+
+https://github.com/tomwojcik/starlette-context
+
+### Example SQLAlchemy Queries
+
+* Conditional: `Scrape.select().where(Scrape.id < last_scraped.id).all()`
+* Equality: `MenuItem.select().where(MenuItem.menu_id == menu.id).all()`
+* `IN` example: `CanonicalMenuItem.select().where(col(CanonicalMenuItem.id).in_(canonized_ids)).all()`
+* Compound where query: `User.where((User.last_active_at != None) & (User.last_active_at > last_24_hours)).count()`
+* How to select a field in a JSONB column: `str(HostScreeningOrder.form_data["email"].as_string())`
+* JSONB where clause: `Screening.where(Screening.theater_location['name'].astext.ilike('%AMC%'))`
+
+### SQLModel Internals
+
+SQLModel & SQLAlchemy are tricky. Here are some useful internal tricks:
+
+* `__sqlmodel_relationships__` is where any `RelationshipInfo` objects are stored. This is used to generate relationship fields on the object.
+* `inspect(type(self)).relationships['distribution']` to inspect a specific generated relationship object
+* `ModelClass.relationship_name.property.local_columns`
+* Get cached fields from a model `object_state(instance).dict.get(field_name)`
+* Set the value on a field, without marking it as dirty `attributes.set_committed_value(instance, field_name, val)`
+* Is a model dirty `instance_state(instance).modified`
+* `select(Table).outerjoin??` won’t work in a ipython session, but `Table.__table__.outerjoin??` will. `__table__` is a reference to the underlying SQLAlchemy table record.
+* `get_engine().pool.stats()` is helpful for inspecting connection pools and limits\\
+
+### TypeID
+
+I’m a massive fan of Stripe-style prefixed UUIDs. [There’s an excellent project](https://github.com/jetify-com/typeid)
+that defined a clear spec for these IDs. I’ve used the python implementation of this spec and developed a clean integration
+with SQLModel that plays well with fastapi as well.
+
+Here’s an example of defining a relationship:
+
+```python
+import uuid
+
+from activemodel import BaseModel
+from activemodel.mixins import TimestampsMixin, TypeIDMixin
+from activemodel.types import TypeIDType
+from sqlmodel import Field, Relationship
+
+from .patient import Patient
+
+class Appointment(
+    BaseModel,
+    # this adds an `id` field to the model with the correct type
+    TypeIDMixin("appointment"),
+    table=True
+):
+    # `foreign_key` is a activemodel method to generate the right `Field` for the relationship
+    # TypeIDType is really important here for fastapi serialization
+    doctor_id: TypeIDType = Doctor.foreign_key()
+    doctor: Doctor = Relationship()
+```
+
+Here’s how to get the prefix associated with a given field:
+
+```python
+model_class.__model__.model_fields["field_name"].sa_column.type.prefix
+```
+
+## Limitations
+
+### Validation
+
+SQLModel does not currently support pydantic validations (when `table=True`). This is very surprising, but is actually the intended functionality:
+
+* https://github.com/fastapi/sqlmodel/discussions/897
+* https://github.com/fastapi/sqlmodel/pull/1041
+* https://github.com/fastapi/sqlmodel/issues/453
+* https://github.com/fastapi/sqlmodel/issues/52#issuecomment-1311987732
+
+For validation:
+
+* When consuming API data, use a separate shadow model to validate the data with `table=False` and then inherit from that model in a model with `table=True`.
+* When validating ORM data, use SQL Alchemy hooks.
+
+<!--
+
+This looks neat
+https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d2a4/src/my_model/model.py#L155
+        schema_extra={
+            'pattern': r'^[a-z0-9_\\-\\.]+\\@[a-z0-9_\\-\\.]+\\.[a-z\\.]+$'
+        },
+
+extra constraints
+
+https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d2a4/src/my_model/model.py#L424C1-L426C6
+-->
+
+## Development
+
+Watch out for subtle differences across pydantic versions. There’s some sneaky type inspection stuff in `PydanticJSONMixin`
+that will break in subtle ways if the python, pydantic, etc versions don’t match.
+
+```python
+import pydantic
+print(pydantic.VERSION)
+import sys
+print(sys.version)
+```
+
+## Related Projects
+
+* https://github.com/woofz/sqlmodel-basecrud
+* https://github.com/0xthiagomartins/sqlmodel-controller
+* https://github.com/litestar-org/advanced-alchemy
+* https://github.com/dialoguemd/fastapi-sqla
+
+## Inspiration
+
+* https://github.com/peterdresslar/fastapi-sqlmodel-alembic-pg
+* [Albemic instructions](https://github.com/fastapi/sqlmodel/pull/899/files)
+* https://github.com/fastapiutils/fastapi-utils/
+* https://github.com/fastapi/full-stack-fastapi-template
+* https://github.com/DarylStark/my_data/
+* https://github.com/petrgazarov/FastAPI-app/tree/main/fastapi_app
+
+## Upstream Changes
+
+- <input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> https://github.com/fastapi/sqlmodel/pull/1293
+
+---
+
+*This project was created from [iloveitaly/python-package-template](https://github.com/iloveitaly/python-package-template)*
+
+

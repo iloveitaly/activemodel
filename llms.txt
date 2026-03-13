@@ -1,0 +1,374 @@
+# activemodel
+
+> [![Release Notes](https://img.shields.io/github/release/iloveitaly/activemodel)](https://github.com/iloveitaly/activemodel/releases)
+> [![Downloads](https://static.pepy.tech/badge/activemodel/month)](https://pepy.tech/project/activemodel)
+> [![Python Versions](https://img.shields.io/pypi/pyversions/activemodel)](https://pypi.org/project/activemodel)
+> ![GitHub CI Status](https://github.com/iloveitaly/activemodel/actions/workflows/build_and_publish.yml/badge.svg)
+> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+> 
+> # ActiveModel: ORM Wrapper for SQLModel
+> 
+> <p align="center">
+>   <img src="docs/_static/logo.png" alt="ActiveModel Logo" width="600"/>
+> </p>
+> 
+> No, this isn't *really* [ActiveModel](https://guides.rubyonrails.org/active_model_basics.html). It's just a wrapper around SQLModel that provides a ActiveRecord-like interface.
+> 
+> SQLModel is *not* an ORM. It's a SQL query builder and a schema definition tool. This drives me nuts because the developer ergonomics are terrible because of this.
+> 
+> This package provides a thin wrapper around SQLModel that provides a more ActiveRecord-like interface with things like:
+> 
+> * Timestamp column mixins
+> * Lifecycle hooks
+> 
+> > [!TIP]
+> > This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this. 
+> 
+> ## Installation
+> 
+> ```bash
+> uv add activemodel
+> ```
+> 
+> ## Getting Started
+> 
+> First, setup your DB:
+> 
+> ```python
+> import activemodel
+> activemodel.init("sqlite:///database.db")
+> ```
+> 
+> Create models:
+> 
+> ```python
+> from activemodel import BaseModel
+> from activemodel.mixins import TimestampsMixin, TypeIDMixin
+> 
+> class User(
+>     BaseModel,
+>     # optionally, obviously
+>     TimestampsMixin,
+>     # you can use a different pk type, but why would you?
+>     # put this mixin last otherwise `id` will not be the first column in the DB
+>     TypeIDMixin("user"),
+>     # wire this model into the DB, without this alembic will not generate a migration
+>     table=True
+> ):
+>     a_field: str
+> ```
+> 
+> You'll need to create the models in the DB. Alembic is the best way to do it, but you can cheat as well:
+> 
+> ```python
+> from sqlmodel import SQLModel
+> 
+> SQLModel.metadata.create_all(get_engine())
+> 
+> # now you can create a user! without managing sessions!
+> User(a_field="a").save()
+> ```
+> 
+> Maybe you like JSON:
+> 
+> ```python
+> from sqlalchemy.dialects.postgresql import JSONB
+> from pydantic import BaseModel as PydanticBaseModel
+> 
+> from activemodel import BaseModel
+> from activemodel.mixins import PydanticJSONMixin, TypeIDMixin, TimestampsMixin
+> 
+> class SubObject(PydanticBaseModel):
+>     name: str
+>     value: int
+> 
+> class User(
+>     BaseModel,
+>     TimestampsMixin,
+>     PydanticJSONMixin,
+>     TypeIDMixin("user"),
+>     table=True
+> ):
+>     list_field: list[SubObject] = Field(sa_type=JSONB)
+> ```
+> 
+> You'll probably want to query the model. Look ma, no sessions!
+> 
+> ```python
+> User.where(id="user_123").all()
+> 
+> # or, even better, for this case
+> User.one("user_123")
+> ```
+> 
+> Magically creating sessions for DB operations is one of the main problems this project tackles. Even better, you can set
+> a single session object to be used for all DB operations. This is helpful for DB transactions, [specifically rolling back
+> DB operations on each test.](#pytest)
+> 
+> ## Usage
+> 
+> ### Pytest
+> 
+> TODO detail out truncation and transactions
+> 
+> ### Integrating Alembic
+> 
+> `alembic init` will not work out of the box. You need to mutate a handful of files:
+> 
+> * To import all of your models you want in your DB. [Here's my recommended way to do this.](https://github.com/iloveitaly/python-starter-template/blob/master/app/models/__init__.py)
+> * Use your DB URL from the ENV
+> * Target sqlalchemy metadata to the sqlmodel-generated metadata
+> * Most likely you'll want to add [alembic-postgresql-enum](https://pypi.org/project/alembic-postgresql-enum/) so migrations work properly
+> 
+> [Take a look at these scripts for an example of how to fully integrate Alembic into your development workflow.](https://github.com/iloveitaly/python-starter-template/blob/0af2c7e95217e34bde7357cc95be048900000e48/Justfile#L618-L712)
+> 
+> Here's a diff from the bare `alembic init` from version `1.14.1`.
+> 
+> ```diff
+> diff --git i/test/migrations/alembic.ini w/test/migrations/alembic.ini
+> index 0d07420..a63631c 100644
+> --- i/test/migrations/alembic.ini
+> +++ w/test/migrations/alembic.ini
+> @@ -3,13 +3,14 @@
+>  [alembic]
+>  # path to migration scripts
+>  # Use forward slashes (/) also on windows to provide an os agnostic path
+> -script_location = .
+> +script_location = migrations
+> 
+>  # template used to generate migration file names; The default value is %%(rev)s_%%(slug)s
+>  # Uncomment the line below if you want the files to be prepended with date and time
+>  # see https://alembic.sqlalchemy.org/en/latest/tutorial.html#editing-the-ini-file
+>  # for all available tokens
+>  # file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s
+> +file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(rev)s_%%(slug)s
+> 
+>  # sys.path path, will be prepended to sys.path if present.
+>  # defaults to the current working directory.
+> diff --git i/test/migrations/env.py w/test/migrations/env.py
+> index 36112a3..a1e15c2 100644
+> --- i/test/migrations/env.py
+> +++ w/test/migrations/env.py
+> @@ -1,3 +1,6 @@
+> +# fmt: off
+> +# isort: off
+> +
+>  from logging.config import fileConfig
+> 
+>  from sqlalchemy import engine_from_config
+> @@ -14,11 +17,17 @@ config = context.config
+>  if config.config_file_name is not None:
+>      fileConfig(config.config_file_name)
+> 
+> +from sqlmodel import SQLModel
+> +from test.models import *
+> +from test.utils import database_url
+> +
+> +config.set_main_option("sqlalchemy.url", database_url())
+> +
+>  # add your model's MetaData object here
+>  # for 'autogenerate' support
+>  # from myapp import mymodel
+>  # target_metadata = mymodel.Base.metadata
+> -target_metadata = None
+> +target_metadata = SQLModel.metadata
+> 
+>  # other values from the config, defined by the needs of env.py,
+>  # can be acquired:
+> diff --git i/test/migrations/script.py.mako w/test/migrations/script.py.mako
+> index fbc4b07..9dc78bb 100644
+> --- i/test/migrations/script.py.mako
+> +++ w/test/migrations/script.py.mako
+> @@ -9,6 +9,8 @@ from typing import Sequence, Union
+> 
+>  from alembic import op
+>  import sqlalchemy as sa
+> +import sqlmodel
+> +import activemodel
+>  ${imports if imports else ""}
+> 
+>  # revision identifiers, used by Alembic.
+> ```
+> 
+> Here are some useful resources around Alembic + SQLModel:
+> 
+> * https://github.com/fastapi/sqlmodel/issues/85
+> * https://testdriven.io/blog/fastapi-sqlmodel/
+> 
+> ### Query Wrapper
+> 
+> This tool is added to all `BaseModel`s and makes it easy to write SQL queries. Some examples:
+> 
+> 
+> 
+> ### Easy Database Sessions
+> 
+> I hate the idea f
+> 
+> * Behavior should be intuitive and easy to understand. If you run `save()`, it should save, not stick the save in a transaction.
+> * Don't worry about dead sessions. This makes it easy to lazy-load computed properties and largely eliminates the need to think about database sessions.
+> 
+> There are a couple of thorny problems we need to solve for here:
+> 
+> * In-memory fastapi servers are not the same as a uvicorn server, which is threaded *and* uses some sort of threadpool model for handling async requests. I don't claim to understand the entire implementation. For global DB session state (a) we can't use global variables (b) we can't use thread-local variables.iset
+> *
+> 
+> https://github.com/tomwojcik/starlette-context
+> 
+> ### Example SQLAlchemy Queries
+> 
+> * Conditional: `Scrape.select().where(Scrape.id < last_scraped.id).all()`
+> * Equality: `MenuItem.select().where(MenuItem.menu_id == menu.id).all()`
+> * `IN` example: `CanonicalMenuItem.select().where(col(CanonicalMenuItem.id).in_(canonized_ids)).all()`
+> * Compound where query: `User.where((User.last_active_at != None) & (User.last_active_at > last_24_hours)).count()`
+> * How to select a field in a JSONB column: `str(HostScreeningOrder.form_data["email"].as_string())`
+> * JSONB where clause: `Screening.where(Screening.theater_location['name'].astext.ilike('%AMC%'))`
+> 
+> ### SQLModel Internals
+> 
+> SQLModel & SQLAlchemy are tricky. Here are some useful internal tricks:
+> 
+> * `__sqlmodel_relationships__` is where any `RelationshipInfo` objects are stored. This is used to generate relationship fields on the object.
+> * `inspect(type(self)).relationships['distribution']` to inspect a specific generated relationship object
+> * `ModelClass.relationship_name.property.local_columns`
+> * Get cached fields from a model `object_state(instance).dict.get(field_name)`
+> * Set the value on a field, without marking it as dirty `attributes.set_committed_value(instance, field_name, val)`
+> * Is a model dirty `instance_state(instance).modified`
+> * `select(Table).outerjoin??` won't work in a ipython session, but `Table.__table__.outerjoin??` will. `__table__` is a reference to the underlying SQLAlchemy table record.
+> * `get_engine().pool.stats()` is helpful for inspecting connection pools and limits\
+> 
+> ### TypeID
+> 
+> I'm a massive fan of Stripe-style prefixed UUIDs. [There's an excellent project](https://github.com/jetify-com/typeid)
+> that defined a clear spec for these IDs. I've used the python implementation of this spec and developed a clean integration
+> with SQLModel that plays well with fastapi as well.
+> 
+> Here's an example of defining a relationship:
+> 
+> ```python
+> import uuid
+> 
+> from activemodel import BaseModel
+> from activemodel.mixins import TimestampsMixin, TypeIDMixin
+> from activemodel.types import TypeIDType
+> from sqlmodel import Field, Relationship
+> 
+> from .patient import Patient
+> 
+> class Appointment(
+>     BaseModel,
+>     # this adds an `id` field to the model with the correct type
+>     TypeIDMixin("appointment"),
+>     table=True
+> ):
+>     # `foreign_key` is a activemodel method to generate the right `Field` for the relationship
+>     # TypeIDType is really important here for fastapi serialization
+>     doctor_id: TypeIDType = Doctor.foreign_key()
+>     doctor: Doctor = Relationship()
+> ```
+> 
+> Here's how to get the prefix associated with a given field:
+> 
+> ```python
+> model_class.__model__.model_fields["field_name"].sa_column.type.prefix
+> ```
+> 
+> ## Limitations
+> 
+> ### Validation
+> 
+> SQLModel does not currently support pydantic validations (when `table=True`). This is very surprising, but is actually the intended functionality:
+> 
+> * https://github.com/fastapi/sqlmodel/discussions/897
+> * https://github.com/fastapi/sqlmodel/pull/1041
+> * https://github.com/fastapi/sqlmodel/issues/453
+> * https://github.com/fastapi/sqlmodel/issues/52#issuecomment-1311987732
+> 
+> For validation:
+> 
+> * When consuming API data, use a separate shadow model to validate the data with `table=False` and then inherit from that model in a model with `table=True`.
+> * When validating ORM data, use SQL Alchemy hooks.
+> 
+> <!--
+> 
+> This looks neat
+> https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d2a4/src/my_model/model.py#L155
+>         schema_extra={
+>             'pattern': r'^[a-z0-9_\-\.]+\@[a-z0-9_\-\.]+\.[a-z\.]+$'
+>         },
+> 
+> extra constraints
+> 
+> https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d2a4/src/my_model/model.py#L424C1-L426C6
+> -->
+> 
+> ## Development
+> 
+> Watch out for subtle differences across pydantic versions. There's some sneaky type inspection stuff in `PydanticJSONMixin`
+> that will break in subtle ways if the python, pydantic, etc versions don't match.
+> 
+> ```python
+> import pydantic
+> print(pydantic.VERSION)
+> import sys
+> print(sys.version)
+> ```
+> 
+> ## Related Projects
+> 
+> * https://github.com/woofz/sqlmodel-basecrud
+> * https://github.com/0xthiagomartins/sqlmodel-controller
+> * https://github.com/litestar-org/advanced-alchemy
+> * https://github.com/dialoguemd/fastapi-sqla
+> 
+> ## Inspiration
+> 
+> * https://github.com/peterdresslar/fastapi-sqlmodel-alembic-pg
+> * [Albemic instructions](https://github.com/fastapi/sqlmodel/pull/899/files)
+> * https://github.com/fastapiutils/fastapi-utils/
+> * https://github.com/fastapi/full-stack-fastapi-template
+> * https://github.com/DarylStark/my_data/
+> * https://github.com/petrgazarov/FastAPI-app/tree/main/fastapi_app
+> 
+> ## Upstream Changes
+> 
+> - [ ] https://github.com/fastapi/sqlmodel/pull/1293
+> 
+> ---
+> 
+> *This project was created from [iloveitaly/python-package-template](https://github.com/iloveitaly/python-package-template)*
+
+
+2026, Michael Bianco
+
+## Pages
+
+- [Home](index.html.md): <div class="title-with-logo">
+- [API Reference](autoapi/index.html.md): This page contains auto-generated API reference documentation <sup>[1](#f1)</sup>.
+- [activemodel](autoapi/activemodel/index.html.md): * [activemodel.base_model](base_model/index.md)
+- [activemodel.patches](autoapi/activemodel/patches/index.html.md): * [activemodel.patches.get_column_from_field_patch](get_column_from_field_patch/index.md)
+- [activemodel.logger](autoapi/activemodel/logger/index.html.md): | [`logger`](#activemodel.logger.logger)   |    |
+- [activemodel.pytest](autoapi/activemodel/pytest/index.html.md): * [activemodel.pytest.factories](factories/index.md)
+- [activemodel.cli](autoapi/activemodel/cli/index.html.md): This module provides utilities for generating Protocol type definitions for SQLAlchemy’s
+- [activemodel.celery](autoapi/activemodel/celery/index.html.md): Do not import unless you have Celery/Kombu installed.
+- [activemodel.utils](autoapi/activemodel/utils/index.html.md): | [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, he...
+- [activemodel.mixins](autoapi/activemodel/mixins/index.html.md): * [activemodel.mixins.pydantic_json](pydantic_json/index.md)
+- [activemodel.query_wrapper](autoapi/activemodel/query_wrapper/index.html.md): | [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries off of a...
+- [activemodel.session_manager](autoapi/activemodel/session_manager/index.html.md): Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it ea...
+- [activemodel.types](autoapi/activemodel/types/index.html.md): * [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.md)
+- [activemodel.errors](autoapi/activemodel/errors/index.html.md): | [`TypeIDValidationError`](#activemodel.errors.TypeIDValidationError)   | Raised when a TypeID is i...
+- [activemodel.base_model](autoapi/activemodel/base_model/index.html.md): | [`POSTGRES_INDEXES_NAMING_CONVENTION`](#activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION)...
+- [activemodel.types.sqlalchemy_protocol](autoapi/activemodel/types/sqlalchemy_protocol/index.html.md): | [`SQLAlchemyQueryMethods`](#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)   | Base...
+- [activemodel.types.typeid_patch](autoapi/activemodel/types/typeid_patch/index.html.md): Pydantic v2 support for TypeID.
+- [activemodel.types.typeid](autoapi/activemodel/types/typeid/index.html.md): Lifted from: [https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py](https:/...
+- [activemodel.mixins.timestamps](autoapi/activemodel/mixins/timestamps/index.html.md): | [`TimestampsMixin`](#activemodel.mixins.timestamps.TimestampsMixin)   | Simple created at and upda...
+- [activemodel.mixins.pydantic_json](autoapi/activemodel/mixins/pydantic_json/index.html.md): Need to store nested Pydantic models in PostgreSQL using FastAPI and SQLModel.
+- [activemodel.mixins.soft_delete](autoapi/activemodel/mixins/soft_delete/index.html.md): | [`SoftDeletionMixin`](#activemodel.mixins.soft_delete.SoftDeletionMixin)   |    |
+- [activemodel.mixins.typeid](autoapi/activemodel/mixins/typeid/index.html.md): | [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID prima...
+- [activemodel.pytest.truncate](autoapi/activemodel/pytest/truncate/index.html.md): | [`T`](#activemodel.pytest.truncate.T)   |    |
+- [activemodel.pytest.plugin](autoapi/activemodel/pytest/plugin/index.html.md): Pytest plugin integration for activemodel.
+- [activemodel.pytest.transaction](autoapi/activemodel/pytest/transaction/index.html.md): | [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
+- [activemodel.pytest.factories](autoapi/activemodel/pytest/factories/index.html.md): Notes on polyfactory:
+- [activemodel.patches.get_column_from_field_patch](autoapi/activemodel/patches/get_column_from_field_patch/index.html.md): Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fie...
+- [Changelog](changelog.html.md): * **docs:** add Sphinx documentation and deploy workflow ([#56](https://github.com/iloveitaly/active...
+- [ActiveModel: ORM Wrapper for SQLModel](getting-started.html.md): [![Release Notes](https://img.shields.io/github/release/iloveitaly/activemodel)](https://github.com/...

@@ -1,0 +1,262 @@
+# Changelog
+
+## [0.18.0](https://github.com/iloveitaly/activemodel/compare/v0.17.0...v0.18.0) (2026-03-13)
+
+### Features
+
+* **docs:** add Sphinx documentation and deploy workflow ([#56](https://github.com/iloveitaly/activemodel/issues/56)) ([596de09](https://github.com/iloveitaly/activemodel/commit/596de099cfd1e5489904c8b49431d7f883590b9a))
+
+### Bug Fixes
+
+* deprecation warnings ([#52](https://github.com/iloveitaly/activemodel/issues/52)) ([7291f18](https://github.com/iloveitaly/activemodel/commit/7291f186f42758eccf73478782ce758c66fa64ac))
+* include post_save in the same fixture session ([#54](https://github.com/iloveitaly/activemodel/issues/54)) ([c92c675](https://github.com/iloveitaly/activemodel/commit/c92c6755f03b6d9203b13dbdafd3f3bdca992162))
+
+## [0.17.0](https://github.com/iloveitaly/activemodel/compare/v0.16.0...v0.17.0) (2026-03-13)
+
+### Features
+
+* sqlmodel upgrade, add last ([#50](https://github.com/iloveitaly/activemodel/issues/50)) ([2cd3487](https://github.com/iloveitaly/activemodel/commit/2cd3487fb657bd1b724fef403c2d77a7cbed1209))
+
+## [0.15.1](https://github.com/iloveitaly/activemodel/compare/v0.15.0...v0.15.1) (2026-02-16)
+
+### Bug Fixes
+
+* upstream template upgrade ([#35](https://github.com/iloveitaly/activemodel/issues/35)) ([1dc0b13](https://github.com/iloveitaly/activemodel/commit/1dc0b133929cee64ccdb1156999789d29bbdd82e))
+
+## [0.15.0](https://github.com/iloveitaly/activemodel/compare/v0.14.1...v0.15.0) (2026-02-04)
+
+### Features
+
+* sqlmodel 0.0.32 support ([#33](https://github.com/iloveitaly/activemodel/issues/33)) ([e2a104a](https://github.com/iloveitaly/activemodel/commit/e2a104a11cd1f530e52aa0d6b2e951752ef2bb92))
+
+## [0.14.1](https://github.com/iloveitaly/activemodel/compare/v0.14.0...v0.14.1) (2026-01-14)
+
+### Bug Fixes
+
+* work with latest sqlmodel which drops v1 ([79920c6](https://github.com/iloveitaly/activemodel/commit/79920c63913b0a1d6824efc84719e6ea41b483eb))
+
+### Documentation
+
+* add pydantic v2 compatibility notes to typeid_patch.py ([7d3f43a](https://github.com/iloveitaly/activemodel/commit/7d3f43a0b1a3c2c51d46ef0530aabee7392f75ec))
+* add warning log for missing session in ActiveModelFactory ([317dd22](https://github.com/iloveitaly/activemodel/commit/317dd22b4abe5d9261d8c7f69a7b32b9c7b2d4de))
+
+## [0.14.0](https://github.com/iloveitaly/activemodel/compare/v0.13.0...v0.14.0) (2025-10-16)
+
+### Features
+
+* **query_wrapper:** add efficient exists() query method with tests ([257452f](https://github.com/iloveitaly/activemodel/commit/257452fdf976ce263b13997816a3b1b81d2902e9))
+* **query:** add sample() to query wrapper for random row selection ([d35800c](https://github.com/iloveitaly/activemodel/commit/d35800c46244db21fd92e615609b895acdee25dc))
+
+### Bug Fixes
+
+* handle tuples and Optionals in JSON mixin ([1aa1018](https://github.com/iloveitaly/activemodel/commit/1aa1018d9714a43089fa9943daf1b4fcbc7742b9))
+
+### Documentation
+
+* clarify global_session usage in complex test scenarios ([a131b0f](https://github.com/iloveitaly/activemodel/commit/a131b0f64287b4225ac1eb2289e6ce6f006aa4d5))
+* fastapi-sqla ([2183686](https://github.com/iloveitaly/activemodel/commit/2183686421095856c59649c51c03ba1edaea9515))
+
+## [0.13.0](https://github.com/iloveitaly/activemodel/compare/v0.12.0...v0.13.0) (2025-09-05)
+
+### Features
+
+* rewritten lifecycle hooks that actually work ([af4e6fe](https://github.com/iloveitaly/activemodel/commit/af4e6fe75099ef1cc6a998b471f48f32ee8b7d5d))
+
+## [0.12.0](https://github.com/iloveitaly/activemodel/compare/v0.11.0...v0.12.0) (2025-09-03)
+
+### Features
+
+* add ActiveModelFactory helpers for session management and typeid generation ([a6b9915](https://github.com/iloveitaly/activemodel/commit/a6b9915cc0c74c3b0d1421bc3d0300c1a2f63426))
+* add base SQLModel and ActiveModel polyfactory factories ([12a5e1d](https://github.com/iloveitaly/activemodel/commit/12a5e1db9be741f12db174d5a25f6c2eee61a446))
+* add one_or_none method to BaseModel for safe queries ([7574777](https://github.com/iloveitaly/activemodel/commit/75747773f99a7a6cc82d2ca784ce607abd7ae511))
+* add pytest db_session fixture ([22d2ad8](https://github.com/iloveitaly/activemodel/commit/22d2ad8cbd77260c1c73524f3251ef7fd145caec))
+* add scalar method to QueryWrapper and return from delete ([3d68097](https://github.com/iloveitaly/activemodel/commit/3d680972b6a60b43de6d3826d4289b0f81847b74))
+* add SQLAlchemy protocol generation script ([6e4524e](https://github.com/iloveitaly/activemodel/commit/6e4524ed73644bea5b837ce2a9a7a1994b19df00))
+* add test_session context manager for test DB interactions ([d7a8112](https://github.com/iloveitaly/activemodel/commit/d7a8112f6b303a50df62ca55a0ca8a9c864e4686))
+* export test_session from activemodel.pytest ([9bf692a](https://github.com/iloveitaly/activemodel/commit/9bf692a72937d9a87a1ba2e574cff6dc4000bafd))
+* **pytest:** omit truncation tables, truncation db fixture ([f20f17e](https://github.com/iloveitaly/activemodel/commit/f20f17ea0854dfbde09e86f9446d57d33ab516e8))
+* support engine options ([9b00ecd](https://github.com/iloveitaly/activemodel/commit/9b00ecd4a7b1ac95a6a16b1e7727ef37afe81e00))
+* support passing session to global_session context manager ([567708a](https://github.com/iloveitaly/activemodel/commit/567708aeb6642e75b21932d599cd1431f62c4c65))
+
+### Bug Fixes
+
+* add return type to ActiveModelFactory save method ([96f4a0a](https://github.com/iloveitaly/activemodel/commit/96f4a0a70eb72b14dea8df16b9e92a4b79122285))
+* add ruff link + check on autogenerated types ([91ae5ea](https://github.com/iloveitaly/activemodel/commit/91ae5ea079533dc7e5600cf99c757ec5c6cd872f))
+* allow reentrant global_session when using same session reference ([d4d7949](https://github.com/iloveitaly/activemodel/commit/d4d79493afdf7ef6ae36f9f6d1c2949eb2b7c393))
+* clarify duplicate TypeID prefix error message ([a73c221](https://github.com/iloveitaly/activemodel/commit/a73c221fd51c1efa70812eb1a21a96f0af7faadc))
+* prevent factories from setting timestamp fields by default ([5d78745](https://github.com/iloveitaly/activemodel/commit/5d7874506047b7ae91f22566e1dc2c64d68814f4))
+
+### Documentation
+
+* added related issue ([3c47e60](https://github.com/iloveitaly/activemodel/commit/3c47e601b8f3eb8a85d9cb84a3e64df68ea10d90))
+* clarify session management and querying in usage section ([cdadaff](https://github.com/iloveitaly/activemodel/commit/cdadafffa1ac835f2f6419f40de5bf2f281f94d2))
+* connection pool tip ([5d92b99](https://github.com/iloveitaly/activemodel/commit/5d92b992d4f71af0bf8244826cd4d12281fe350b))
+* fix JSONB usage in example and clarify imports in README ([386e69d](https://github.com/iloveitaly/activemodel/commit/386e69d5ad99baddfba119f62b6d3c6a53809857))
+* improve base model tablename docstring ([de98cbc](https://github.com/iloveitaly/activemodel/commit/de98cbcff0b2ef903207f4c65fb1aa6e014cf40c))
+* **pytest:** clarify ActiveModelFactory.save behavior with relationships and truncation ([6ee2cbe](https://github.com/iloveitaly/activemodel/commit/6ee2cbef23601943271a36a90f2f453de4519c72))
+* **typeid:** clarify exception on invalid UUID string ([bf13a7e](https://github.com/iloveitaly/activemodel/commit/bf13a7e7e537d41a94ff926dcabf316b0d62625b))
+* update TODOs for testing, constraints, and unique key suggestions ([6010f8f](https://github.com/iloveitaly/activemodel/commit/6010f8fec1c3bdb22d68ac3b545ebeafd6bd04ef))
+
+## [0.11.0](https://github.com/iloveitaly/activemodel/compare/v0.10.0...v0.11.0) (2025-04-05)
+
+### Features
+
+* add pydantic patch for TypeID schema serialization ([767726e](https://github.com/iloveitaly/activemodel/commit/767726eaf2a20f1c65162ba7d3a599495c83f721))
+* add typeid prefix to db field comments ([34e4574](https://github.com/iloveitaly/activemodel/commit/34e457488a6e59c4e7daf1d7495b59ac64bd7ea2))
+* render TypeIDType in plain old pydantic models ([8aa0a4d](https://github.com/iloveitaly/activemodel/commit/8aa0a4db51b425a60889064e723129041e418da5))
+
+### Bug Fixes
+
+* typing on upsert properly returns self ([8965113](https://github.com/iloveitaly/activemodel/commit/896511399c818e8a4a1c01ed324921e04073a279))
+
+### Documentation
+
+* add advanced SQLAlchemy tips to README.md ([c624ac0](https://github.com/iloveitaly/activemodel/commit/c624ac0712598d06759166ce9f91a37f40fefcfe))
+* update comments in session_manager to clarify usage ([e657a2e](https://github.com/iloveitaly/activemodel/commit/e657a2e5985be6f0770bf945fc062a05dcff8cc8))
+
+## [0.10.0](https://github.com/iloveitaly/activemodel/compare/v0.9.0...v0.10.0) (2025-04-01)
+
+### Features
+
+* add upsert method for PostgreSQL support in BaseModel ([d639de6](https://github.com/iloveitaly/activemodel/commit/d639de6cb498b72cd4b42422822c7d59ca6a646c))
+* prevent nested global sessions and add test ([3aca2cc](https://github.com/iloveitaly/activemodel/commit/3aca2ccadf3e029801d5e517f5e660af44564f73))
+* return upserted model and enhance upsert tests ([df2359a](https://github.com/iloveitaly/activemodel/commit/df2359a4ba8a00305bd3d5024b9789642b7b4718))
+
+### Bug Fixes
+
+* use sa_column default instead of sqlmodel ([37e299d](https://github.com/iloveitaly/activemodel/commit/37e299d43dcec7db2cdfd3bc3b572b31b3234f35))
+
+### Documentation
+
+* enhance docstrings in BaseModel for clarity ([12a5dee](https://github.com/iloveitaly/activemodel/commit/12a5deec1ee2480410bbad9250b253991dd12d86))
+
+## [0.9.0](https://github.com/iloveitaly/activemodel/compare/v0.8.0...v0.9.0) (2025-03-26)
+
+### Features
+
+* add flag_modified and modified_fields to BaseModel ([3059903](https://github.com/iloveitaly/activemodel/commit/305990387797f4fde26c7c89a8d332b6ef7ff21f))
+* add refresh method to BaseModel for database sync ([59be3bb](https://github.com/iloveitaly/activemodel/commit/59be3bb87c64c865b08a2856f043678650c07194))
+* add robust record retrieval methods to BaseModel ([d15b5a1](https://github.com/iloveitaly/activemodel/commit/d15b5a1ffbbb18b6fde94d64dbc76f45c21f7da8))
+
+### Bug Fixes
+
+* use set_committed_value in PydanticJSONMixin ([5446204](https://github.com/iloveitaly/activemodel/commit/5446204fc4b17ed5f1daa4c898f5ba2242b0fc40))
+
+### Documentation
+
+* update TODOs and correct typeid return value ([52b2514](https://github.com/iloveitaly/activemodel/commit/52b2514b6d30212a56e34c2fe4c849ff79e36e6a))
+
+## [0.8.0](https://github.com/iloveitaly/activemodel/compare/v0.7.0...v0.8.0) (2025-03-18)
+
+### Features
+
+* add BaseModel.where method and update test cases ([9fe4c5a](https://github.com/iloveitaly/activemodel/commit/9fe4c5af619690ffb6344cf5c74a2d4b2b46ef02))
+* add primary_key_field ([947a410](https://github.com/iloveitaly/activemodel/commit/947a410766dd764e8ac5b3177152d2ff22cdb609))
+* log start of database transaction in tests ([ac90d6f](https://github.com/iloveitaly/activemodel/commit/ac90d6f18bb0a4cca68527dec9c55b4af1f6e851))
+* reload json fields when record is reloaded from db ([c013082](https://github.com/iloveitaly/activemodel/commit/c013082004bb3a93e81f00eb0c990833a9cae7e2))
+
+### Bug Fixes
+
+* yield session object in global_session function ([47b33cc](https://github.com/iloveitaly/activemodel/commit/47b33cc1aa66d6076363635191c297c52fcc3deb))
+
+### Documentation
+
+* add comments to clarify SessionManager use and config ([e73561b](https://github.com/iloveitaly/activemodel/commit/e73561b3d52e617a0f92da5cd93981ff429da16f))
+* update comments and README with additional examples and info ([209ee36](https://github.com/iloveitaly/activemodel/commit/209ee36a9df53f927cd9e5b2bb15b3a5776b34ce))
+* update README with setup instructions and SQLModel tips ([f2520b5](https://github.com/iloveitaly/activemodel/commit/f2520b5fa5d7c462e8f7a591b83d874239a34b8d))
+
+## [0.7.0](https://github.com/iloveitaly/activemodel/compare/v0.6.0...v0.7.0) (2025-02-08)
+
+### Features
+
+* **migrations:** add test to validate autogenerated migrations ([03e0511](https://github.com/iloveitaly/activemodel/commit/03e0511b90307091448f165cca1976ca37e41d4a))
+
+### Bug Fixes
+
+* filter migration files to include only Python files in test ([76f6723](https://github.com/iloveitaly/activemodel/commit/76f672349f24c34284c190368e71a5d4116c3293))
+* make another_with_index optional in ExampleRecord ([2ace729](https://github.com/iloveitaly/activemodel/commit/2ace7292bcc84907818f8719571a2bfcafecfd6b))
+
+### Documentation
+
+* enhance README with alembic integration instructions ([a7ac734](https://github.com/iloveitaly/activemodel/commit/a7ac734c5f456afb605ce4e7d0e5111835bfb5f6))
+* improve Alembic integration guidance and resources ([1206278](https://github.com/iloveitaly/activemodel/commit/1206278ae292669bff5a1eb4747d81225dd420e9))
+
+## [0.6.0](https://github.com/iloveitaly/activemodel/compare/v0.5.0...v0.6.0) (2025-02-08)
+
+### Features
+
+* add active model meta functionality with comments ([4180df7](https://github.com/iloveitaly/activemodel/commit/4180df73c8e49fb2da970f934856ac89cd9f4ebc))
+* add Celery encoder for TypeID serialization ([416b04a](https://github.com/iloveitaly/activemodel/commit/416b04ad4bff5f156886fe5519c24505e380f9c7))
+* add data initialization on model load ([00a90ce](https://github.com/iloveitaly/activemodel/commit/00a90cef17d4d5ef1530df21357812d974488012))
+* add field comments to SQLModel metadata ([c32bb9a](https://github.com/iloveitaly/activemodel/commit/c32bb9a45be0e0dd90bc967d28141bf460b524d3))
+* add initial TypeIDType import to **init**.py ([8594dff](https://github.com/iloveitaly/activemodel/commit/8594dffd5ac7fb03ae07bdd8c81e556e1542176e))
+* add JSON serialization for Pydantic models ([1213f2f](https://github.com/iloveitaly/activemodel/commit/1213f2f2bcee0a006eb58658565484ebb60727d5))
+* add playground script for interactive database testing ([fbe419a](https://github.com/iloveitaly/activemodel/commit/fbe419aa6d0edde5abbcdf405f7b037317730df1))
+* add soft deletion mixin for model handling ([2e24e26](https://github.com/iloveitaly/activemodel/commit/2e24e26e0283189d18a7b51b068bd63d58b5e3dd))
+* add TypeID validation and refactor TypeIDType ([5a2a49e](https://github.com/iloveitaly/activemodel/commit/5a2a49e1ee10cb648b4fedc7fd3e262ba5d8e0f1))
+* add utility to import all SQLModel subclasses ([e850016](https://github.com/iloveitaly/activemodel/commit/e85001632524130eac461e6cff23691fcb1c6bbb))
+* enforce unique non-empty prefixes in TypeIDMixin ([a167293](https://github.com/iloveitaly/activemodel/commit/a167293996b319759c8b01c49a05ab0f8dd1d153))
+* enhance foreign key handling and add validation ([61d5849](https://github.com/iloveitaly/activemodel/commit/61d58495a64c7d87d4c5ad1f1cfe0dd4649fe523))
+* enhance query handling and testing in ORM ([363c0dd](https://github.com/iloveitaly/activemodel/commit/363c0dd67b24ba4e860799555e25d51a3c8d4b0d))
+* enhance schema handling with new json schema generation ([3ba47b6](https://github.com/iloveitaly/activemodel/commit/3ba47b6c150d80e24691c8eba195b800cc3ba61c))
+* enhance session management and JSON serialization ([c74804b](https://github.com/iloveitaly/activemodel/commit/c74804b005e7667b5b18cb4f9b03f52cdcb72313))
+* handle dict annotations in PydanticJSONMixin ([085c6a9](https://github.com/iloveitaly/activemodel/commit/085c6a96d02e0d1521c6c58be38cf5b7d3a667af))
+* integrate field description as SQL comment ([cd98fe4](https://github.com/iloveitaly/activemodel/commit/cd98fe4b3024d55dbd9e7951d65b3b73b2aa3cf8))
+* integrate table comment extraction for models ([b7b9722](https://github.com/iloveitaly/activemodel/commit/b7b97224244b886f2067c0f5a0aea3c77c6bbe82))
+* integrate TypeID with Pydantic schema handling ([ab7ded9](https://github.com/iloveitaly/activemodel/commit/ab7ded9e472abdab8e34205e15fc643db842904d))
+* patch FieldInfo for comment support ([e85d154](https://github.com/iloveitaly/activemodel/commit/e85d1543856be8bd19f185e025a43f20aa9a01cb))
+* **test:** enhance ORM tests and introduce QueryWrapper test ([be98abb](https://github.com/iloveitaly/activemodel/commit/be98abb1bb5abe34cf42ebba7b63b89a942e487e))
+
+### Bug Fixes
+
+* attempt at using a context manager, no joy ([409ed6d](https://github.com/iloveitaly/activemodel/commit/409ed6de7618c0fcce7fa8fde2f77e0c612c39cb))
+* return True upon successful delete operation ([444a5f5](https://github.com/iloveitaly/activemodel/commit/444a5f561a04fb2dad549c4ffc5a05cc31453fca))
+* support lots of UUID inputs ([783a9fe](https://github.com/iloveitaly/activemodel/commit/783a9fe7f733b346cd6bf2401a9ae134ec785cf6))
+
+### Documentation
+
+* add example queries to the README file ([f3e878c](https://github.com/iloveitaly/activemodel/commit/f3e878cb72e62fdec727f7b268806d850ea145f0))
+* add new controller project ([c10bc29](https://github.com/iloveitaly/activemodel/commit/c10bc2946b8819812810271c195e317c19269adc))
+* add usage example for Appointment model in README ([7d9ac70](https://github.com/iloveitaly/activemodel/commit/7d9ac708b6bc5c77d3dde0a904ddb6c24c7f2710))
+* expand README with setup and usage sections ([c471f5f](https://github.com/iloveitaly/activemodel/commit/c471f5ff6359e2ab06e9e9053b416dc4f19dd26a))
+* update README with TypeID integration details ([6112888](https://github.com/iloveitaly/activemodel/commit/6112888a4ac0fc8601bf57daba638db6b5bc6788))
+
+## [0.5.0](https://github.com/iloveitaly/activemodel/compare/v0.4.0...v0.5.0) (2024-11-28)
+
+### Features
+
+* add methods for finding or creating records in model ([f1fd2f2](https://github.com/iloveitaly/activemodel/commit/f1fd2f2d65f182631b5df6a1ab20bf2f9a269607))
+
+## [0.4.0](https://github.com/iloveitaly/activemodel/compare/v0.3.0...v0.4.0) (2024-11-26)
+
+### Bug Fixes
+
+* update uv version to 0.5.4 ([1d77c39](https://github.com/iloveitaly/activemodel/commit/1d77c39e2234b98335e7206626dc2fdca0b34b79))
+
+### Features
+
+* add database truncation functionality for tests ([177abf9](https://github.com/iloveitaly/activemodel/commit/177abf91c8b25295cb93878433132302f8caffbc))
+* add FastAPISessionMaker for SQLAlchemy session management ([b80f045](https://github.com/iloveitaly/activemodel/commit/b80f045e52c908c7b1ae8721e42ee2796c8e85bc))
+* add mixins for timestamps and TypeID handling ([51a6128](https://github.com/iloveitaly/activemodel/commit/51a6128e6d0f45e5801821b99e399ae0bcfca624))
+* add python-decouple-typed as a dependency ([d495ad4](https://github.com/iloveitaly/activemodel/commit/d495ad419494c0c387a331a9d0ef4d112df83af7))
+* add typeid-python dependency to project requirements ([998762f](https://github.com/iloveitaly/activemodel/commit/998762fda8f62a078fc3a4afa8c09f5af323dcfb))
+* implement database reset methods for tests ([9cec29d](https://github.com/iloveitaly/activemodel/commit/9cec29d2ad89a871d4cbda2a6b8ad3a1ef50df6e))
+* lots of stuff :) ([0510d20](https://github.com/iloveitaly/activemodel/commit/0510d20a807829db4f6b454ee2915c32ecedb323))
+
+## [0.3.0](https://github.com/iloveitaly/activemodel/compare/v0.2.0...v0.3.0) (2024-11-20)
+
+### Features
+
+* add inspiration section to README and update TODO ([b11fb09](https://github.com/iloveitaly/activemodel/commit/b11fb09eb95e338de7358ba070fac0e75eda9909))
+
+## [0.2.0](https://github.com/iloveitaly/activemodel/compare/193f839c9ace154e7aaa0a9770400031d0e67cd3...v0.2.0) (2024-11-16)
+
+### Bug Fixes
+
+* update uv version and rename test file location ([9389fd2](https://github.com/iloveitaly/activemodel/commit/9389fd2e20e75ea322cd55bb699777978a9d282d))
+
+### Features
+
+* add Redis and Postgres services to CI workflow ([b9cb0ba](https://github.com/iloveitaly/activemodel/commit/b9cb0baca6bd46092437552ddf1d317a528983ca))
+* automate tablename generation from camelCase ([193f839](https://github.com/iloveitaly/activemodel/commit/193f839c9ace154e7aaa0a9770400031d0e67cd3))
+* enhance project description and keywords in config ([10c5707](https://github.com/iloveitaly/activemodel/commit/10c570786925fa9d7a397cb6f503b658df00aa4f))

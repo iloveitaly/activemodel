@@ -1,0 +1,39 @@
+# activemodel.mixins.pydantic_json
+
+Need to store nested Pydantic models in PostgreSQL using FastAPI and SQLModel.
+
+SQLModel lacks a direct JSONField equivalent (like Tortoise ORM’s JSONField), making it tricky to handle nested model data as JSON in the DB.
+
+Extensive discussion on the problem: [https://github.com/fastapi/sqlmodel/issues/63](https://github.com/fastapi/sqlmodel/issues/63)
+
+## Classes
+
+| [`PydanticJSONMixin`](#activemodel.mixins.pydantic_json.PydanticJSONMixin)   | By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.   |
+|------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.mixins.pydantic_json.PydanticJSONMixin
+
+By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.
+
+This mixin, combined with a custom serializer (\_serialize_pydantic_model), fixes that issue.
+
+```pycon
+>>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
+>>>    list_field: list[SubObject] = Field(sa_type=JSONB()
+```
+
+Notes:
+
+- Tuples of pydantic models are not supported, only lists.
+- Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]
+
+#### \_\_transform_dict_to_pydantic_\_()
+
+Transforms dictionary fields into Pydantic models upon loading.
+
+- Reconstructor only runs once, when the object is loaded.
+- We manually call this method on save(), etc to ensure the pydantic types are maintained
+- set_committed_value sets Pydantic models as committed, avoiding setattr marking fields as modified
+  after loading from the database.

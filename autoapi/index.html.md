@@ -1,0 +1,31 @@
+# API Reference
+
+This page contains auto-generated API reference documentation <sup>[1](#f1)</sup>.
+
+* [activemodel](activemodel/index.md)
+  * [activemodel.base_model](activemodel/base_model/index.md)
+  * [activemodel.celery](activemodel/celery/index.md)
+  * [activemodel.cli](activemodel/cli/index.md)
+  * [activemodel.errors](activemodel/errors/index.md)
+  * [activemodel.logger](activemodel/logger/index.md)
+  * [activemodel.mixins](activemodel/mixins/index.md)
+    * [activemodel.mixins.pydantic_json](activemodel/mixins/pydantic_json/index.md)
+    * [activemodel.mixins.soft_delete](activemodel/mixins/soft_delete/index.md)
+    * [activemodel.mixins.timestamps](activemodel/mixins/timestamps/index.md)
+    * [activemodel.mixins.typeid](activemodel/mixins/typeid/index.md)
+  * [activemodel.patches](activemodel/patches/index.md)
+    * [activemodel.patches.get_column_from_field_patch](activemodel/patches/get_column_from_field_patch/index.md)
+  * [activemodel.pytest](activemodel/pytest/index.md)
+    * [activemodel.pytest.factories](activemodel/pytest/factories/index.md)
+    * [activemodel.pytest.plugin](activemodel/pytest/plugin/index.md)
+    * [activemodel.pytest.transaction](activemodel/pytest/transaction/index.md)
+    * [activemodel.pytest.truncate](activemodel/pytest/truncate/index.md)
+  * [activemodel.query_wrapper](activemodel/query_wrapper/index.md)
+  * [activemodel.session_manager](activemodel/session_manager/index.md)
+  * [activemodel.types](activemodel/types/index.md)
+    * [activemodel.types.sqlalchemy_protocol](activemodel/types/sqlalchemy_protocol/index.md)
+    * [activemodel.types.typeid](activemodel/types/typeid/index.md)
+    * [activemodel.types.typeid_patch](activemodel/types/typeid_patch/index.md)
+  * [activemodel.utils](activemodel/utils/index.md)
+
+* <a id='f1'>**[1]**</a> Created with [sphinx-autoapi](https://github.com/readthedocs/sphinx-autoapi)

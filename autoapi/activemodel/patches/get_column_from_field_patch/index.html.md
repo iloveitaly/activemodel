@@ -1,0 +1,20 @@
+# activemodel.patches.get_column_from_field_patch
+
+Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fields of a model.
+
+Making sure these docstrings make their way to the DB schema is helpful for a bunch of reasons (LLM understanding being one of them).
+
+This patch mutates a core sqlmodel function which translates pydantic FieldInfo objects into sqlalchemy Column objects. It adds the field description as a comment to the column.
+
+Note that FieldInfo *from pydantic* is used when a “bare” field is defined. This can be confusing, because when inspecting model fields, the class name looks exactly the same.
+
+Some ideas for this originally sourced from: [https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633](https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633)
+
+## Functions
+
+| [`get_column_from_field`](#activemodel.patches.get_column_from_field_patch.get_column_from_field)(→ sqlalchemy.Column)   |    |
+|--------------------------------------------------------------------------------------------------------------------------|----|
+
+## Module Contents
+
+### activemodel.patches.get_column_from_field_patch.get_column_from_field(field: Any) → sqlalchemy.Column
