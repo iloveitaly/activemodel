@@ -6,14 +6,23 @@
 
 # ActiveModel: ORM Wrapper for SQLModel
 
-No, this isn't *really* [ActiveModel](https://guides.rubyonrails.org/active_model_basics.html). It's just a wrapper around SQLModel that provides a more ActiveRecord-like interface.
+No, this isn't *really* [ActiveModel](https://guides.rubyonrails.org/active_model_basics.html). It's just a wrapper around SQLModel that provides a ActiveRecord-like interface.
 
-SQLModel is *not* an ORM. It's a SQL query builder and a schema definition tool.
+SQLModel is *not* an ORM. It's a SQL query builder and a schema definition tool. This drives me nuts because the developer ergonomics are terrible because of this.
 
 This package provides a thin wrapper around SQLModel that provides a more ActiveRecord-like interface with things like:
 
 * Timestamp column mixins
 * Lifecycle hooks
+
+> [!TIP]
+> This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this. 
+
+## Installation
+
+```bash
+uv add activemodel
+```
 
 ## Getting Started
 
