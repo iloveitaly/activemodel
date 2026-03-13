@@ -65,6 +65,7 @@ myst_heading_anchors = 3
 html_theme = "shibuya"
 html_baseurl = "https://iloveitaly.github.io/activemodel/"
 html_static_path = ["_static"]
+html_extra_path = [".nojekyll"]
 html_css_files = ["custom.css"]
 
 html_theme_options = {
