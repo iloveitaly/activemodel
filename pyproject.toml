@@ -14,6 +14,19 @@ authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
 keywords = ["sqlmodel", "orm", "activerecord", "activemodel", "sqlalchemy"]
 urls = { "Repository" = "https://github.com/iloveitaly/activemodel" }
 
+[project.optional-dependencies]
+docs = [
+    "sphinx>=7.1.2",
+    "shibuya",
+    "myst-parser>=2.0.0",
+    "sphinx-design>=0.5.0",
+    "sphinx-copybutton>=0.5.2",
+    "sphinx-autobuild",
+    "sphinx-autoapi",
+    "sphinx-autodoc-typehints",
+    "sphinx-paramlinks",
+]
+
 [project.entry-points.pytest11]
 activemodel = "activemodel.pytest.plugin"
 

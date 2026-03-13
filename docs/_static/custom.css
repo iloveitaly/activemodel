@@ -1,0 +1,36 @@
+/* Hero Title Styling */
+.title-with-logo {
+  display: flex;
+  justify-content: center;
+  margin: 4rem auto;
+  user-select: none;
+}
+
+.brand-text {
+  font-size: 5rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* Light Mode Styling */
+html.light .brand-text {
+  color: #202235;
+  text-shadow: 0 0 10px rgba(32, 34, 53, 0.2);
+}
+
+/* Dark Mode Styling */
+html.dark .brand-text {
+  color: #edb641; /* Litestar Gold */
+  text-shadow: 0 0 15px rgba(237, 182, 65, 0.3);
+}
+
+/* Button Layout */
+.buttons.wrap {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}

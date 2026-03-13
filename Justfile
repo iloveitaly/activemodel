@@ -21,6 +21,14 @@ docker_down:
 test:
     uv run pytest -v
 
+# Build documentation
+docs-build:
+    uv run sphinx-build -b html docs docs/_build/html
+
+# Serve documentation with live reload
+docs-serve:
+    uv run sphinx-autobuild docs docs/_build/html --port 8000 --watch activemodel
+
 # python linting checks
 [script]
 lint FILES=".":

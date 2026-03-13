@@ -6,6 +6,10 @@
 
 # ActiveModel: ORM Wrapper for SQLModel
 
+<p align="center">
+  <img src="docs/_static/logo.png" alt="ActiveModel Logo" width="600"/>
+</p>
+
 No, this isn't *really* [ActiveModel](https://guides.rubyonrails.org/active_model_basics.html). It's just a wrapper around SQLModel that provides a ActiveRecord-like interface.
 
 SQLModel is *not* an ORM. It's a SQL query builder and a schema definition tool. This drives me nuts because the developer ergonomics are terrible because of this.
