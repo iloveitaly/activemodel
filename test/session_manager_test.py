@@ -1,4 +1,5 @@
 import pytest
+from sqlmodel import SQLModel
 
 from activemodel.session_manager import (
     get_engine,
@@ -8,26 +9,45 @@ from activemodel.session_manager import (
 )
 from test.models import AnotherExample, ExampleRecord, ExampleWithId
 from test.utils import drop_all_tables
-from sqlmodel import SQLModel
 
 
-def test_global_session_raises_when_nested():
-    """Test that global_session raises an error when used in a nested context."""
+def test_global_session_is_nested():
+    """Test that global_session is re-entrant when no session or the same session is used."""
 
     # First global_session should work fine
     with global_session() as outer_session:
         assert outer_session is not None
 
-        # Attempting to create a nested global_session should fail
-        with pytest.raises(RuntimeError) as excinfo:
-            with global_session() as _:
-                pass  # This code shouldn't execute
+        # Nested global_session with no session should return the same session
+        with global_session() as inner_session:
+            assert inner_session is outer_session
 
-        assert "global session already set" in str(excinfo.value)
+        # Nested global_session with the same session should also work
+        with global_session(session=outer_session) as same_session:
+            assert same_session is outer_session
 
     # After exiting the outer context, we should be able to use global_session again
     with global_session() as session:
         assert session is not None
+
+
+def test_global_session_raises_with_different_session():
+    """Test that global_session raises an error when a different session is passed."""
+
+    with global_session() as outer_session:
+        # Create a different session
+        from sqlmodel import Session
+
+        different_session = Session(get_engine())
+
+        try:
+            with pytest.raises(RuntimeError) as excinfo:
+                with global_session(session=different_session):
+                    pass
+
+            assert "different session" in str(excinfo.value)
+        finally:
+            different_session.close()
 
 
 def test_global_session_with_passed_session(create_and_wipe_database):
