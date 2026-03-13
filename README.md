@@ -195,23 +195,26 @@ I hate the idea f
 
 There are a couple of thorny problems we need to solve for here:
 
-* In-memory fastapi servers are not the same as a uvicorn server, which is threaded *and* uses some sort of threadpool model for handling async requests. I don't claim to understand the entire implementation. For global DB session state (a) we can't use global variables (b) we can't use thread-local variables.
+* In-memory fastapi servers are not the same as a uvicorn server, which is threaded *and* uses some sort of threadpool model for handling async requests. I don't claim to understand the entire implementation. For global DB session state (a) we can't use global variables (b) we can't use thread-local variables.iset
 *
 
 https://github.com/tomwojcik/starlette-context
 
-### Example Queries
+### Example SQLAlchemy Queries
 
 * Conditional: `Scrape.select().where(Scrape.id < last_scraped.id).all()`
 * Equality: `MenuItem.select().where(MenuItem.menu_id == menu.id).all()`
 * `IN` example: `CanonicalMenuItem.select().where(col(CanonicalMenuItem.id).in_(canonized_ids)).all()`
 * Compound where query: `User.where((User.last_active_at != None) & (User.last_active_at > last_24_hours)).count()`
+* How to select a field in a JSONB column: `str(HostScreeningOrder.form_data["email"].as_string())`
+* JSONB where clause: `Screening.where(Screening.theater_location['name'].astext.ilike('%AMC%'))`
 
 ### SQLModel Internals
 
 SQLModel & SQLAlchemy are tricky. Here are some useful internal tricks:
 
 * `__sqlmodel_relationships__` is where any `RelationshipInfo` objects are stored. This is used to generate relationship fields on the object.
+* `inspect(type(self)).relationships['distribution']` to inspect a specific generated relationship object
 * `ModelClass.relationship_name.property.local_columns`
 * Get cached fields from a model `object_state(instance).dict.get(field_name)`
 * Set the value on a field, without marking it as dirty `attributes.set_committed_value(instance, field_name, val)`
@@ -249,6 +252,12 @@ class Appointment(
     doctor: Doctor = Relationship()
 ```
 
+Here's how to get the prefix associated with a given field:
+
+```python
+model_class.__model__.model_fields["field_name"].sa_column.type.prefix
+```
+
 ## Limitations
 
 ### Validation
@@ -277,6 +286,19 @@ extra constraints
 
 https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d2a4/src/my_model/model.py#L424C1-L426C6
 -->
+
+## Development
+
+Watch out for subtle differences across pydantic versions. There's some sneaky type inspection stuff in `PydanticJSONMixin`
+that will break in subtle ways if the python, pydantic, etc versions don't match.
+
+```python
+import pydantic
+print(pydantic.VERSION)
+import sys
+print(sys.version)
+```
+
 ## Related Projects
 
 * https://github.com/woofz/sqlmodel-basecrud
