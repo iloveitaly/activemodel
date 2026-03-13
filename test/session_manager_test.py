@@ -30,6 +30,24 @@ def test_global_session_raises_when_nested():
         assert session is not None
 
 
+def test_global_session_raises_with_different_session():
+    """Test that global_session raises an error when a different session is passed."""
+
+    with global_session() as outer_session:
+        # Create a different session
+        from sqlmodel import Session
+        different_session = Session(get_engine())
+
+        try:
+            with pytest.raises(RuntimeError) as excinfo:
+                with global_session(session=different_session):
+                    pass
+
+            assert "different session" in str(excinfo.value)
+        finally:
+            different_session.close()
+
+
 def test_global_session_with_passed_session(create_and_wipe_database):
     """Test that global_session accepts an existing session."""
     # Create our own session using get_session()
