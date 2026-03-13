@@ -1,0 +1,28 @@
+activemodel.mixins.soft_delete
+==============================
+
+.. py:module:: activemodel.mixins.soft_delete
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   activemodel.mixins.soft_delete.SoftDeletionMixin
+
+
+Module Contents
+---------------
+
+.. py:class:: SoftDeletionMixin
+
+   .. py:attribute:: deleted_at
+      :type:  datetime.datetime
+      :value: None
+
+
+
+   .. py:method:: soft_delete()
+
+

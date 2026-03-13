@@ -1,0 +1,15 @@
+activemodel.patches
+===================
+
+.. py:module:: activemodel.patches
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/activemodel/patches/get_column_from_field_patch/index
+
+

@@ -1,0 +1,123 @@
+activemodel.session_manager
+===========================
+
+.. py:module:: activemodel.session_manager
+
+.. autoapi-nested-parse::
+
+   Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it easy to mutate the
+   database environment when testing.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   activemodel.session_manager.ACTIVEMODEL_LOG_SQL
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   activemodel.session_manager.SessionManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   activemodel.session_manager.init
+   activemodel.session_manager.table_exists
+   activemodel.session_manager.get_engine
+   activemodel.session_manager.get_session
+   activemodel.session_manager.global_session
+   activemodel.session_manager.aglobal_session
+
+
+Module Contents
+---------------
+
+.. py:data:: ACTIVEMODEL_LOG_SQL
+
+.. py:class:: SessionManager(database_url: str, *, engine_options: dict[str, Any] | None = None)
+
+   .. py:attribute:: session_connection
+      :type:  sqlalchemy.Connection | None
+
+      optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations
+
+
+   .. py:method:: get_instance(database_url: str | None = None, *, engine_options: dict[str, Any] | None = None) -> SessionManager
+      :classmethod:
+
+
+
+   .. py:method:: get_engine() -> sqlalchemy.Engine
+
+
+   .. py:method:: get_session()
+
+      get a new database session, respecting any globally set sessions
+
+
+
+.. py:function:: init(database_url: str, *, engine_options: dict[str, Any] | None = None)
+
+   configure activemodel to connect to a specific database
+
+
+.. py:function:: table_exists(model: type[sqlmodel.SQLModel]) -> bool
+
+   Check if the table for the given model exists in the database.
+
+
+.. py:function:: get_engine()
+
+   alias to get the database engine without importing SessionManager
+
+
+.. py:function:: get_session()
+
+   alias to get a database session without importing SessionManager
+
+
+.. py:function:: global_session(session: sqlmodel.Session | None = None)
+
+   Generate a session and share it across all activemodel calls.
+
+   Alternatively, you can pass a session to use globally into the context manager, which is helpful for migrations
+   and testing.
+
+   This may only be called a single time per callstack. There is one exception: if you call this multiple times
+   and pass in the same session reference, it will result in a noop.
+
+   In complex testing code, you'll need to be careful here. For example:
+
+   - Unit test using a transaction db fixture (which sets __sqlalchemy_session__)
+   - Factory has a after_save hook
+   - That hook triggers a celery job
+   - The celery job (properly) calls `with global_session()`
+   - However, since `global_session()` is already set with __sqlalchemy_session__, this will raise an error
+
+   :param session: Use an existing session instead of creating a new one
+
+
+.. py:function:: aglobal_session()
+   :async:
+
+
+   Use this as a fastapi dependency to get a session that is shared across the request:
+
+   >>> APIRouter(
+   >>>     prefix="/internal/v1",
+   >>>     dependencies=[
+   >>>         Depends(aglobal_session),
+   >>>     ]
+   >>> )
+
+

@@ -1,0 +1,20 @@
+activemodel.types.typeid_patch
+==============================
+
+.. py:module:: activemodel.types.typeid_patch
+
+.. autoapi-nested-parse::
+
+   Pydantic v2 support for TypeID.
+
+   TODO should push this upstream to the typeid package
+
+
+
+Module Contents
+---------------
+
+.. py:method:: get_pydantic_core_schema(source_type: Any, handler: pydantic.GetCoreSchemaHandler) -> pydantic_core.CoreSchema
+   :classmethod:
+
+

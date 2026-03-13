@@ -1,0 +1,25 @@
+activemodel.errors
+==================
+
+.. py:module:: activemodel.errors
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   activemodel.errors.TypeIDValidationError
+
+
+Module Contents
+---------------
+
+.. py:exception:: TypeIDValidationError
+
+   Bases: :py:obj:`ValueError`
+
+
+   Raised when a TypeID is invalid in some way
+
+

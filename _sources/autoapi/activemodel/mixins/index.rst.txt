@@ -1,0 +1,106 @@
+activemodel.mixins
+==================
+
+.. py:module:: activemodel.mixins
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/activemodel/mixins/pydantic_json/index
+   /autoapi/activemodel/mixins/soft_delete/index
+   /autoapi/activemodel/mixins/timestamps/index
+   /autoapi/activemodel/mixins/typeid/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   activemodel.mixins.PydanticJSONMixin
+   activemodel.mixins.SoftDeletionMixin
+   activemodel.mixins.TimestampsMixin
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   activemodel.mixins.TypeIDMixin
+
+
+Package Contents
+----------------
+
+.. py:class:: PydanticJSONMixin
+
+   By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.
+
+   This mixin, combined with a custom serializer (`_serialize_pydantic_model`), fixes that issue.
+
+   >>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
+   >>>    list_field: list[SubObject] = Field(sa_type=JSONB()
+
+   Notes:
+
+   - Tuples of pydantic models are not supported, only lists.
+   - Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]
+
+
+   .. py:method:: __transform_dict_to_pydantic__()
+
+      Transforms dictionary fields into Pydantic models upon loading.
+
+      - Reconstructor only runs once, when the object is loaded.
+      - We manually call this method on save(), etc to ensure the pydantic types are maintained
+      - `set_committed_value` sets Pydantic models as committed, avoiding `setattr` marking fields as modified
+        after loading from the database.
+
+
+
+.. py:class:: SoftDeletionMixin
+
+   .. py:attribute:: deleted_at
+      :type:  datetime.datetime
+      :value: None
+
+
+
+   .. py:method:: soft_delete()
+
+
+.. py:class:: TimestampsMixin
+
+   Simple created at and updated at timestamps. Mix them into your model:
+
+   >>> class MyModel(TimestampsMixin, SQLModel):
+   >>>    pass
+
+   Notes:
+
+   - Originally pulled from: https://github.com/tiangolo/sqlmodel/issues/252
+   - Related issue: https://github.com/fastapi/sqlmodel/issues/539
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime | None
+      :value: None
+
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime | None
+      :value: None
+
+
+
+.. py:function:: TypeIDMixin(prefix: str)
+
+   Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
+
+

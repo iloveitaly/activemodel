@@ -1,0 +1,138 @@
+activemodel.pytest.factories
+============================
+
+.. py:module:: activemodel.pytest.factories
+
+.. autoapi-nested-parse::
+
+   Notes on polyfactory:
+
+   1. is_supported_type validates that the class can be used to generate a factory
+   https://github.com/litestar-org/polyfactory/issues/655#issuecomment-2727450854
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   activemodel.pytest.factories.SQLModelFactory
+   activemodel.pytest.factories.ActiveModelFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: SQLModelFactory[T]
+
+   Bases: :py:obj:`polyfactory.factories.pydantic_factory.ModelFactory`\ [\ :py:obj:`T`\ ]
+
+
+   Base factory for SQLModel models:
+
+   1. Ability to ignore all relationship fks
+   2. Option to ignore all pks
+
+
+   .. py:attribute:: __is_base_factory__
+      :value: True
+
+
+      Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
+      For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
+
+
+   .. py:method:: should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, **kwargs: Any) -> bool
+      :classmethod:
+
+
+      Determine whether to set a value for a given field_name.
+      This is an override of BaseFactory.should_set_field_value.
+
+      :param field_meta: FieldMeta instance.
+      :param kwargs: Any kwargs passed to the factory.
+
+      :returns: A boolean determining whether a value should be set for the given field_meta.
+
+
+
+
+.. py:class:: ActiveModelFactory[T]
+
+   Bases: :py:obj:`SQLModelFactory`\ [\ :py:obj:`T`\ ]
+
+
+   Base factory for SQLModel models:
+
+   1. Ability to ignore all relationship fks
+   2. Option to ignore all pks
+
+
+   .. py:attribute:: __is_base_factory__
+      :value: True
+
+
+      Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
+      For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
+
+
+   .. py:attribute:: __sqlalchemy_session__
+      :value: None
+
+
+
+   .. py:method:: save(*args, **kwargs) -> T
+      :classmethod:
+
+
+      Builds and persists a new model to the database.
+
+      Where this gets tricky, is this can be called multiple times within the same callstack. This can happen when
+      a factory uses other factories to create relationships. This is fine if `__sqlalchemy_session__` is set, but
+      if it's not (in the case of a truncation DB strategy) you'll run into issues.
+
+      In a truncation strategy, the __sqlalchemy_session__ is set to None.
+
+
+
+   .. py:method:: post_save(model: T) -> T
+      :classmethod:
+
+
+      Post-save hook for performing additional actions after the model has been saved to the database. This is useful
+      for cases where you need to perform additional operations that require the model be persisted in the database.
+
+      The implementation of this method should return a refreshed instance of the model if that's necessary. For
+      example, if your post_save hook triggers another factory save(), the current model will likely be expired
+      and detached, leading to a DetachedInstanceError when accessing it later.
+
+      To avoid this, return `model.refresh()` at the end of your implementation.
+
+
+
+   .. py:method:: foreign_key_typeid()
+      :classmethod:
+
+
+      Return a random type id for the foreign key on this model.
+
+      This is helpful for generating TypeIDs for testing 404s, parsing, manually settings, etc
+
+
+
+   .. py:method:: should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, **kwargs: Any) -> bool
+      :classmethod:
+
+
+      Determine whether to set a value for a given field_name.
+      This is an override of BaseFactory.should_set_field_value.
+
+      :param field_meta: FieldMeta instance.
+      :param kwargs: Any kwargs passed to the factory.
+
+      :returns: A boolean determining whether a value should be set for the given field_meta.
+
+
+
+

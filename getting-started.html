@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ActiveModel: ORM Wrapper for SQLModel - activemodel documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="API Reference" href="autoapi/index.html" /><link rel="prev" title="&lt;no title&gt;" href="index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="ActiveModel: ORM Wrapper for SQLModel"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      <img class="light-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="#">Getting Started</a></li><li class="link"><a href="autoapi/index.html">API Reference</a></li><li class="link"><a href="changelog.html">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/activemodel/index.html">activemodel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/base_model/index.html">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/cli/index.html">activemodel.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/logger/index.html">activemodel.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/mixins/index.html">activemodel.mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/factories/index.html">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/transaction/index.html">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#pytest">Pytest</a></li>
+<li><a class="reference internal" href="#integrating-alembic">Integrating Alembic</a></li>
+<li><a class="reference internal" href="#query-wrapper">Query Wrapper</a></li>
+<li><a class="reference internal" href="#easy-database-sessions">Easy Database Sessions</a></li>
+<li><a class="reference internal" href="#example-sqlalchemy-queries">Example SQLAlchemy Queries</a></li>
+<li><a class="reference internal" href="#sqlmodel-internals">SQLModel Internals</a></li>
+<li><a class="reference internal" href="#typeid">TypeID</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#limitations">Limitations</a><ul>
+<li><a class="reference internal" href="#validation">Validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#development">Development</a></li>
+<li><a class="reference internal" href="#related-projects">Related Projects</a></li>
+<li><a class="reference internal" href="#inspiration">Inspiration</a></li>
+<li><a class="reference internal" href="#upstream-changes">Upstream Changes</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">ActiveModel: ORM Wrapper for SQLModel</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <p><a class="reference external" href="https://github.com/iloveitaly/activemodel/releases"><img alt="Release Notes" src="https://img.shields.io/github/release/iloveitaly/activemodel" /></a>
+<a class="reference external" href="https://pepy.tech/project/activemodel"><img alt="Downloads" src="https://static.pepy.tech/badge/activemodel/month" /></a>
+<a class="reference external" href="https://pypi.org/project/activemodel"><img alt="Python Versions" src="https://img.shields.io/pypi/pyversions/activemodel" /></a>
+<img alt="GitHub CI Status" src="https://github.com/iloveitaly/activemodel/actions/workflows/build_and_publish.yml/badge.svg" />
+<a class="reference external" href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a></p>
+<section id="activemodel-orm-wrapper-for-sqlmodel">
+<h1>ActiveModel: ORM Wrapper for SQLModel<a class="headerlink" href="#activemodel-orm-wrapper-for-sqlmodel" title="Link to this heading">¶</a></h1>
+<p align="center">
+  <img src="docs/_static/logo.png" alt="ActiveModel Logo" width="600"/>
+</p>
+<p>No, this isn’t <em>really</em> <a class="reference external" href="https://guides.rubyonrails.org/active_model_basics.html">ActiveModel</a>. It’s just a wrapper around SQLModel that provides a ActiveRecord-like interface.</p>
+<p>SQLModel is <em>not</em> an ORM. It’s a SQL query builder and a schema definition tool. This drives me nuts because the developer ergonomics are terrible because of this.</p>
+<p>This package provides a thin wrapper around SQLModel that provides a more ActiveRecord-like interface with things like:</p>
+<ul class="simple">
+<li><p>Timestamp column mixins</p></li>
+<li><p>Lifecycle hooks</p></li>
+</ul>
+<blockquote>
+<div><p>[!TIP]
+This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this.</p>
+</div></blockquote>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>add<span class="w"> </span>activemodel
+</span></pre></div>
+</div>
+</section>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h2>
+<p>First, setup your DB:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">activemodel</span>
+</span><span data-line="2"><span class="n">activemodel</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="s2">&quot;sqlite:///database.db&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Create models:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampsMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span>
+</span><span data-line="5">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="6">    <span class="c1"># optionally, obviously</span>
+</span><span data-line="7">    <span class="n">TimestampsMixin</span><span class="p">,</span>
+</span><span data-line="8">    <span class="c1"># you can use a different pk type, but why would you?</span>
+</span><span data-line="9">    <span class="c1"># put this mixin last otherwise `id` will not be the first column in the DB</span>
+</span><span data-line="10">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">),</span>
+</span><span data-line="11">    <span class="c1"># wire this model into the DB, without this alembic will not generate a migration</span>
+</span><span data-line="12">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span>
+</span><span data-line="13"><span class="p">):</span>
+</span><span data-line="14">    <span class="n">a_field</span><span class="p">:</span> <span class="nb">str</span>
+</span></pre></div>
+</div>
+<p>You’ll need to create the models in the DB. Alembic is the best way to do it, but you can cheat as well:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLModel</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">SQLModel</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">get_engine</span><span class="p">())</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="c1"># now you can create a user! without managing sessions!</span>
+</span><span data-line="6"><span class="n">User</span><span class="p">(</span><span class="n">a_field</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>Maybe you like JSON:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">,</span> <span class="n">TimestampsMixin</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="k">class</span><span class="w"> </span><span class="nc">SubObject</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
+</span><span data-line="8">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="9">    <span class="n">value</span><span class="p">:</span> <span class="nb">int</span>
+</span><span data-line="10">
+</span><span data-line="11"><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span>
+</span><span data-line="12">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="13">    <span class="n">TimestampsMixin</span><span class="p">,</span>
+</span><span data-line="14">    <span class="n">PydanticJSONMixin</span><span class="p">,</span>
+</span><span data-line="15">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">),</span>
+</span><span data-line="16">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span>
+</span><span data-line="17"><span class="p">):</span>
+</span><span data-line="18">    <span class="n">list_field</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SubObject</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>You’ll probably want to query the model. Look ma, no sessions!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">User</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;user_123&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="c1"># or, even better, for this case</span>
+</span><span data-line="4"><span class="n">User</span><span class="o">.</span><span class="n">one</span><span class="p">(</span><span class="s2">&quot;user_123&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Magically creating sessions for DB operations is one of the main problems this project tackles. Even better, you can set
+a single session object to be used for all DB operations. This is helpful for DB transactions, <a class="reference internal" href="#pytest">specifically rolling back
+DB operations on each test.</a></p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<section id="pytest">
+<h3>Pytest<a class="headerlink" href="#pytest" title="Link to this heading">¶</a></h3>
+<p>TODO detail out truncation and transactions</p>
+</section>
+<section id="integrating-alembic">
+<h3>Integrating Alembic<a class="headerlink" href="#integrating-alembic" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">alembic</span> <span class="pre">init</span></code> will not work out of the box. You need to mutate a handful of files:</p>
+<ul class="simple">
+<li><p>To import all of your models you want in your DB. <a class="reference external" href="https://github.com/iloveitaly/python-starter-template/blob/master/app/models/__init__.py">Here’s my recommended way to do this.</a></p></li>
+<li><p>Use your DB URL from the ENV</p></li>
+<li><p>Target sqlalchemy metadata to the sqlmodel-generated metadata</p></li>
+<li><p>Most likely you’ll want to add <a class="reference external" href="https://pypi.org/project/alembic-postgresql-enum/">alembic-postgresql-enum</a> so migrations work properly</p></li>
+</ul>
+<p><a class="reference external" href="https://github.com/iloveitaly/python-starter-template/blob/0af2c7e95217e34bde7357cc95be048900000e48/Justfile#L618-L712">Take a look at these scripts for an example of how to fully integrate Alembic into your development workflow.</a></p>
+<p>Here’s a diff from the bare <code class="docutils literal notranslate"><span class="pre">alembic</span> <span class="pre">init</span></code> from version <code class="docutils literal notranslate"><span class="pre">1.14.1</span></code>.</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gh">diff --git i/test/migrations/alembic.ini w/test/migrations/alembic.ini</span>
+</span><span data-line="2"><span class="gh">index 0d07420..a63631c 100644</span>
+</span><span data-line="3"><span class="gd">--- i/test/migrations/alembic.ini</span>
+</span><span data-line="4"><span class="gi">+++ w/test/migrations/alembic.ini</span>
+</span><span data-line="5"><span class="gu">@@ -3,13 +3,14 @@</span>
+</span><span data-line="6"><span class="w"> </span>[alembic]
+</span><span data-line="7"><span class="w"> </span># path to migration scripts
+</span><span data-line="8"><span class="w"> </span># Use forward slashes (/) also on windows to provide an os agnostic path
+</span><span data-line="9"><span class="gd">-script_location = .</span>
+</span><span data-line="10"><span class="gi">+script_location = migrations</span>
+</span><span data-line="11">
+</span><span data-line="12"><span class="w"> </span># template used to generate migration file names; The default value is %%(rev)s_%%(slug)s
+</span><span data-line="13"><span class="w"> </span># Uncomment the line below if you want the files to be prepended with date and time
+</span><span data-line="14"><span class="w"> </span># see https://alembic.sqlalchemy.org/en/latest/tutorial.html#editing-the-ini-file
+</span><span data-line="15"><span class="w"> </span># for all available tokens
+</span><span data-line="16"><span class="w"> </span># file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s
+</span><span data-line="17"><span class="gi">+file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(rev)s_%%(slug)s</span>
+</span><span data-line="18">
+</span><span data-line="19"><span class="w"> </span># sys.path path, will be prepended to sys.path if present.
+</span><span data-line="20"><span class="w"> </span># defaults to the current working directory.
+</span><span data-line="21"><span class="gh">diff --git i/test/migrations/env.py w/test/migrations/env.py</span>
+</span><span data-line="22"><span class="gh">index 36112a3..a1e15c2 100644</span>
+</span><span data-line="23"><span class="gd">--- i/test/migrations/env.py</span>
+</span><span data-line="24"><span class="gi">+++ w/test/migrations/env.py</span>
+</span><span data-line="25"><span class="gu">@@ -1,3 +1,6 @@</span>
+</span><span data-line="26"><span class="gi">+# fmt: off</span>
+</span><span data-line="27"><span class="gi">+# isort: off</span>
+</span><span data-line="28"><span class="gi">+</span>
+</span><span data-line="29"><span class="w"> </span>from logging.config import fileConfig
+</span><span data-line="30">
+</span><span data-line="31"><span class="w"> </span>from sqlalchemy import engine_from_config
+</span><span data-line="32"><span class="gu">@@ -14,11 +17,17 @@ config = context.config</span>
+</span><span data-line="33"><span class="w"> </span>if config.config_file_name is not None:
+</span><span data-line="34"><span class="w"> </span>    fileConfig(config.config_file_name)
+</span><span data-line="35">
+</span><span data-line="36"><span class="gi">+from sqlmodel import SQLModel</span>
+</span><span data-line="37"><span class="gi">+from test.models import *</span>
+</span><span data-line="38"><span class="gi">+from test.utils import database_url</span>
+</span><span data-line="39"><span class="gi">+</span>
+</span><span data-line="40"><span class="gi">+config.set_main_option(&quot;sqlalchemy.url&quot;, database_url())</span>
+</span><span data-line="41"><span class="gi">+</span>
+</span><span data-line="42"><span class="w"> </span># add your model&#39;s MetaData object here
+</span><span data-line="43"><span class="w"> </span># for &#39;autogenerate&#39; support
+</span><span data-line="44"><span class="w"> </span># from myapp import mymodel
+</span><span data-line="45"><span class="w"> </span># target_metadata = mymodel.Base.metadata
+</span><span data-line="46"><span class="gd">-target_metadata = None</span>
+</span><span data-line="47"><span class="gi">+target_metadata = SQLModel.metadata</span>
+</span><span data-line="48">
+</span><span data-line="49"><span class="w"> </span># other values from the config, defined by the needs of env.py,
+</span><span data-line="50"><span class="w"> </span># can be acquired:
+</span><span data-line="51"><span class="gh">diff --git i/test/migrations/script.py.mako w/test/migrations/script.py.mako</span>
+</span><span data-line="52"><span class="gh">index fbc4b07..9dc78bb 100644</span>
+</span><span data-line="53"><span class="gd">--- i/test/migrations/script.py.mako</span>
+</span><span data-line="54"><span class="gi">+++ w/test/migrations/script.py.mako</span>
+</span><span data-line="55"><span class="gu">@@ -9,6 +9,8 @@ from typing import Sequence, Union</span>
+</span><span data-line="56">
+</span><span data-line="57"><span class="w"> </span>from alembic import op
+</span><span data-line="58"><span class="w"> </span>import sqlalchemy as sa
+</span><span data-line="59"><span class="gi">+import sqlmodel</span>
+</span><span data-line="60"><span class="gi">+import activemodel</span>
+</span><span data-line="61"><span class="w"> </span>${imports if imports else &quot;&quot;}
+</span><span data-line="62">
+</span><span data-line="63"><span class="w"> </span># revision identifiers, used by Alembic.
+</span></pre></div>
+</div>
+<p>Here are some useful resources around Alembic + SQLModel:</p>
+<ul class="simple">
+<li><p>https://github.com/fastapi/sqlmodel/issues/85</p></li>
+<li><p>https://testdriven.io/blog/fastapi-sqlmodel/</p></li>
+</ul>
+</section>
+<section id="query-wrapper">
+<h3>Query Wrapper<a class="headerlink" href="#query-wrapper" title="Link to this heading">¶</a></h3>
+<p>This tool is added to all <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code>s and makes it easy to write SQL queries. Some examples:</p>
+</section>
+<section id="easy-database-sessions">
+<h3>Easy Database Sessions<a class="headerlink" href="#easy-database-sessions" title="Link to this heading">¶</a></h3>
+<p>I hate the idea f</p>
+<ul class="simple">
+<li><p>Behavior should be intuitive and easy to understand. If you run <code class="docutils literal notranslate"><span class="pre">save()</span></code>, it should save, not stick the save in a transaction.</p></li>
+<li><p>Don’t worry about dead sessions. This makes it easy to lazy-load computed properties and largely eliminates the need to think about database sessions.</p></li>
+</ul>
+<p>There are a couple of thorny problems we need to solve for here:</p>
+<ul class="simple">
+<li><p>In-memory fastapi servers are not the same as a uvicorn server, which is threaded <em>and</em> uses some sort of threadpool model for handling async requests. I don’t claim to understand the entire implementation. For global DB session state (a) we can’t use global variables (b) we can’t use thread-local variables.iset</p></li>
+<li></li>
+</ul>
+<p>https://github.com/tomwojcik/starlette-context</p>
+</section>
+<section id="example-sqlalchemy-queries">
+<h3>Example SQLAlchemy Queries<a class="headerlink" href="#example-sqlalchemy-queries" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Conditional: <code class="docutils literal notranslate"><span class="pre">Scrape.select().where(Scrape.id</span> <span class="pre">&lt;</span> <span class="pre">last_scraped.id).all()</span></code></p></li>
+<li><p>Equality: <code class="docutils literal notranslate"><span class="pre">MenuItem.select().where(MenuItem.menu_id</span> <span class="pre">==</span> <span class="pre">menu.id).all()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IN</span></code> example: <code class="docutils literal notranslate"><span class="pre">CanonicalMenuItem.select().where(col(CanonicalMenuItem.id).in_(canonized_ids)).all()</span></code></p></li>
+<li><p>Compound where query: <code class="docutils literal notranslate"><span class="pre">User.where((User.last_active_at</span> <span class="pre">!=</span> <span class="pre">None)</span> <span class="pre">&amp;</span> <span class="pre">(User.last_active_at</span> <span class="pre">&gt;</span> <span class="pre">last_24_hours)).count()</span></code></p></li>
+<li><p>How to select a field in a JSONB column: <code class="docutils literal notranslate"><span class="pre">str(HostScreeningOrder.form_data[&quot;email&quot;].as_string())</span></code></p></li>
+<li><p>JSONB where clause: <code class="docutils literal notranslate"><span class="pre">Screening.where(Screening.theater_location['name'].astext.ilike('%AMC%'))</span></code></p></li>
+</ul>
+</section>
+<section id="sqlmodel-internals">
+<h3>SQLModel Internals<a class="headerlink" href="#sqlmodel-internals" title="Link to this heading">¶</a></h3>
+<p>SQLModel &amp; SQLAlchemy are tricky. Here are some useful internal tricks:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">__sqlmodel_relationships__</span></code> is where any <code class="docutils literal notranslate"><span class="pre">RelationshipInfo</span></code> objects are stored. This is used to generate relationship fields on the object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inspect(type(self)).relationships['distribution']</span></code> to inspect a specific generated relationship object</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ModelClass.relationship_name.property.local_columns</span></code></p></li>
+<li><p>Get cached fields from a model <code class="docutils literal notranslate"><span class="pre">object_state(instance).dict.get(field_name)</span></code></p></li>
+<li><p>Set the value on a field, without marking it as dirty <code class="docutils literal notranslate"><span class="pre">attributes.set_committed_value(instance,</span> <span class="pre">field_name,</span> <span class="pre">val)</span></code></p></li>
+<li><p>Is a model dirty <code class="docutils literal notranslate"><span class="pre">instance_state(instance).modified</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">select(Table).outerjoin??</span></code> won’t work in a ipython session, but <code class="docutils literal notranslate"><span class="pre">Table.__table__.outerjoin??</span></code> will. <code class="docutils literal notranslate"><span class="pre">__table__</span></code> is a reference to the underlying SQLAlchemy table record.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_engine().pool.stats()</span></code> is helpful for inspecting connection pools and limits\</p></li>
+</ul>
+</section>
+<section id="typeid">
+<h3>TypeID<a class="headerlink" href="#typeid" title="Link to this heading">¶</a></h3>
+<p>I’m a massive fan of Stripe-style prefixed UUIDs. <a class="reference external" href="https://github.com/jetify-com/typeid">There’s an excellent project</a>
+that defined a clear spec for these IDs. I’ve used the python implementation of this spec and developed a clean integration
+with SQLModel that plays well with fastapi as well.</p>
+<p>Here’s an example of defining a relationship:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampsMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDType</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Relationship</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">.patient</span><span class="w"> </span><span class="kn">import</span> <span class="n">Patient</span>
+</span><span data-line="9">
+</span><span data-line="10"><span class="k">class</span><span class="w"> </span><span class="nc">Appointment</span><span class="p">(</span>
+</span><span data-line="11">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="12">    <span class="c1"># this adds an `id` field to the model with the correct type</span>
+</span><span data-line="13">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;appointment&quot;</span><span class="p">),</span>
+</span><span data-line="14">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span>
+</span><span data-line="15"><span class="p">):</span>
+</span><span data-line="16">    <span class="c1"># `foreign_key` is a activemodel method to generate the right `Field` for the relationship</span>
+</span><span data-line="17">    <span class="c1"># TypeIDType is really important here for fastapi serialization</span>
+</span><span data-line="18">    <span class="n">doctor_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">=</span> <span class="n">Doctor</span><span class="o">.</span><span class="n">foreign_key</span><span class="p">()</span>
+</span><span data-line="19">    <span class="n">doctor</span><span class="p">:</span> <span class="n">Doctor</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>Here’s how to get the prefix associated with a given field:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">model_class</span><span class="o">.</span><span class="n">__model__</span><span class="o">.</span><span class="n">model_fields</span><span class="p">[</span><span class="s2">&quot;field_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sa_column</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">prefix</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">¶</a></h2>
+<section id="validation">
+<h3>Validation<a class="headerlink" href="#validation" title="Link to this heading">¶</a></h3>
+<p>SQLModel does not currently support pydantic validations (when <code class="docutils literal notranslate"><span class="pre">table=True</span></code>). This is very surprising, but is actually the intended functionality:</p>
+<ul class="simple">
+<li><p>https://github.com/fastapi/sqlmodel/discussions/897</p></li>
+<li><p>https://github.com/fastapi/sqlmodel/pull/1041</p></li>
+<li><p>https://github.com/fastapi/sqlmodel/issues/453</p></li>
+<li><p>https://github.com/fastapi/sqlmodel/issues/52#issuecomment-1311987732</p></li>
+</ul>
+<p>For validation:</p>
+<ul class="simple">
+<li><p>When consuming API data, use a separate shadow model to validate the data with <code class="docutils literal notranslate"><span class="pre">table=False</span></code> and then inherit from that model in a model with <code class="docutils literal notranslate"><span class="pre">table=True</span></code>.</p></li>
+<li><p>When validating ORM data, use SQL Alchemy hooks.</p></li>
+</ul>
+<!--
+
+This looks neat
+https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d2a4/src/my_model/model.py#L155
+        schema_extra={
+            'pattern': r'^[a-z0-9_\-\.]+\@[a-z0-9_\-\.]+\.[a-z\.]+$'
+        },
+
+extra constraints
+
+https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d2a4/src/my_model/model.py#L424C1-L426C6
+-->
+</section>
+</section>
+<section id="development">
+<h2>Development<a class="headerlink" href="#development" title="Link to this heading">¶</a></h2>
+<p>Watch out for subtle differences across pydantic versions. There’s some sneaky type inspection stuff in <code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code>
+that will break in subtle ways if the python, pydantic, etc versions don’t match.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">pydantic</span>
+</span><span data-line="2"><span class="nb">print</span><span class="p">(</span><span class="n">pydantic</span><span class="o">.</span><span class="n">VERSION</span><span class="p">)</span>
+</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+</span><span data-line="4"><span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="related-projects">
+<h2>Related Projects<a class="headerlink" href="#related-projects" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>https://github.com/woofz/sqlmodel-basecrud</p></li>
+<li><p>https://github.com/0xthiagomartins/sqlmodel-controller</p></li>
+<li><p>https://github.com/litestar-org/advanced-alchemy</p></li>
+<li><p>https://github.com/dialoguemd/fastapi-sqla</p></li>
+</ul>
+</section>
+<section id="inspiration">
+<h2>Inspiration<a class="headerlink" href="#inspiration" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>https://github.com/peterdresslar/fastapi-sqlmodel-alembic-pg</p></li>
+<li><p><a class="reference external" href="https://github.com/fastapi/sqlmodel/pull/899/files">Albemic instructions</a></p></li>
+<li><p>https://github.com/fastapiutils/fastapi-utils/</p></li>
+<li><p>https://github.com/fastapi/full-stack-fastapi-template</p></li>
+<li><p>https://github.com/DarylStark/my_data/</p></li>
+<li><p>https://github.com/petrgazarov/FastAPI-app/tree/main/fastapi_app</p></li>
+</ul>
+</section>
+<section id="upstream-changes">
+<h2>Upstream Changes<a class="headerlink" href="#upstream-changes" title="Link to this heading">¶</a></h2>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> https://github.com/fastapi/sqlmodel/pull/1293</p></li>
+</ul>
+<hr class="docutils" />
+<p><em>This project was created from <a class="reference external" href="https://github.com/iloveitaly/python-package-template">iloveitaly/python-package-template</a></em></p>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Home</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="autoapi/index.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">API Reference</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/design-tabs.js?v=f930bc37"></script>
+      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>activemodel.mixins.typeid - activemodel documentation</title><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="activemodel.patches" href="../../patches/index.html" /><link rel="prev" title="activemodel.mixins.timestamps" href="../timestamps/index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="activemodel.mixins.typeid"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../../../index.html">
+      <img class="light-logo" src="../../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../index.html">API Reference</a></li><li class="link"><a href="../../../../changelog.html">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">activemodel</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../base_model/index.html">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/index.html">activemodel.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../logger/index.html">activemodel.logger</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">activemodel.mixins</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../pytest/index.html">activemodel.pytest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../pytest/factories/index.html">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../pytest/transaction/index.html">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../pytest/truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#activemodel.mixins.typeid.TypeIDMixin"><code class="docutils literal notranslate"><span class="pre">TypeIDMixin()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../../index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../index.html"><span itemprop="name">API Reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">activemodel.mixins</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="4" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">activemodel.mixins.typeid</strong>
+        <meta itemprop="position" content="5" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="module-activemodel.mixins.typeid">
+<span id="activemodel-mixins-typeid"></span><h1>activemodel.mixins.typeid<a class="headerlink" href="#module-activemodel.mixins.typeid" title="Link to this heading">¶</a></h1>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.mixins.typeid.TypeIDMixin" title="activemodel.mixins.typeid.TypeIDMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeIDMixin</span></code></a>(prefix)</p></td>
+<td><p>Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.mixins.typeid.TypeIDMixin">
+<span class="sig-prename descclassname"><span class="pre">activemodel.mixins.typeid.</span></span><span class="sig-name descname"><span class="pre">TypeIDMixin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/mixins/typeid.html#TypeIDMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.typeid.TypeIDMixin" title="Link to this definition">¶</a></dt>
+<dd><p>Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.</p>
+</dd></dl>
+
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="../timestamps/index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">activemodel.mixins.timestamps</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="../../patches/index.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">activemodel.patches</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../../../../_static/shibuya.js?v=cac61aee"></script></body>
+</html>

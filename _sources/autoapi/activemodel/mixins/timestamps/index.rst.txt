@@ -1,0 +1,42 @@
+activemodel.mixins.timestamps
+=============================
+
+.. py:module:: activemodel.mixins.timestamps
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   activemodel.mixins.timestamps.TimestampsMixin
+
+
+Module Contents
+---------------
+
+.. py:class:: TimestampsMixin
+
+   Simple created at and updated at timestamps. Mix them into your model:
+
+   >>> class MyModel(TimestampsMixin, SQLModel):
+   >>>    pass
+
+   Notes:
+
+   - Originally pulled from: https://github.com/tiangolo/sqlmodel/issues/252
+   - Related issue: https://github.com/fastapi/sqlmodel/issues/539
+
+
+   .. py:attribute:: created_at
+      :type:  datetime.datetime | None
+      :value: None
+
+
+
+   .. py:attribute:: updated_at
+      :type:  datetime.datetime | None
+      :value: None
+
+
+

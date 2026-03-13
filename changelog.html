@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Changelog - activemodel documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="activemodel.utils" href="autoapi/activemodel/utils/index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="Changelog"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      <img class="light-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="getting-started.html">Getting Started</a></li><li class="link"><a href="autoapi/index.html">API Reference</a></li><li class="link"><a href="#">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/activemodel/index.html">activemodel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/base_model/index.html">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/cli/index.html">activemodel.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/logger/index.html">activemodel.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/mixins/index.html">activemodel.mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/factories/index.html">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/transaction/index.html">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#id1">0.17.0 (2026-03-13)</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">0.15.1 (2026-02-16)</a><ul>
+<li><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">0.15.0 (2026-02-04)</a><ul>
+<li><a class="reference internal" href="#id4">Features</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id5">0.14.1 (2026-01-14)</a><ul>
+<li><a class="reference internal" href="#id6">Bug Fixes</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id7">0.14.0 (2025-10-16)</a><ul>
+<li><a class="reference internal" href="#id8">Features</a></li>
+<li><a class="reference internal" href="#id9">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id10">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id11">0.13.0 (2025-09-05)</a><ul>
+<li><a class="reference internal" href="#id12">Features</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id13">0.12.0 (2025-09-03)</a><ul>
+<li><a class="reference internal" href="#id14">Features</a></li>
+<li><a class="reference internal" href="#id15">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id16">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id17">0.11.0 (2025-04-05)</a><ul>
+<li><a class="reference internal" href="#id18">Features</a></li>
+<li><a class="reference internal" href="#id19">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id20">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id21">0.10.0 (2025-04-01)</a><ul>
+<li><a class="reference internal" href="#id22">Features</a></li>
+<li><a class="reference internal" href="#id23">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id24">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id25">0.9.0 (2025-03-26)</a><ul>
+<li><a class="reference internal" href="#id26">Features</a></li>
+<li><a class="reference internal" href="#id27">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id28">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id29">0.8.0 (2025-03-18)</a><ul>
+<li><a class="reference internal" href="#id30">Features</a></li>
+<li><a class="reference internal" href="#id31">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id32">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id33">0.7.0 (2025-02-08)</a><ul>
+<li><a class="reference internal" href="#id34">Features</a></li>
+<li><a class="reference internal" href="#id35">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id36">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id37">0.6.0 (2025-02-08)</a><ul>
+<li><a class="reference internal" href="#id38">Features</a></li>
+<li><a class="reference internal" href="#id39">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id40">Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id41">0.5.0 (2024-11-28)</a><ul>
+<li><a class="reference internal" href="#id42">Features</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id43">0.4.0 (2024-11-26)</a><ul>
+<li><a class="reference internal" href="#id44">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id45">Features</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id46">0.3.0 (2024-11-20)</a><ul>
+<li><a class="reference internal" href="#id47">Features</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id48">0.2.0 (2024-11-16)</a><ul>
+<li><a class="reference internal" href="#id49">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id50">Features</a></li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Changelog</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.16.0...v0.17.0">0.17.0</a> (2026-03-13)<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>sqlmodel upgrade, add last (<a class="reference external" href="https://github.com/iloveitaly/activemodel/issues/50">#50</a>) (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/2cd3487fb657bd1b724fef403c2d77a7cbed1209">2cd3487</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id2">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.15.0...v0.15.1">0.15.1</a> (2026-02-16)<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<section id="bug-fixes">
+<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>upstream template upgrade (<a class="reference external" href="https://github.com/iloveitaly/activemodel/issues/35">#35</a>) (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/1dc0b133929cee64ccdb1156999789d29bbdd82e">1dc0b13</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id3">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.14.1...v0.15.0">0.15.0</a> (2026-02-04)<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<section id="id4">
+<h3>Features<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>sqlmodel 0.0.32 support (<a class="reference external" href="https://github.com/iloveitaly/activemodel/issues/33">#33</a>) (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/e2a104a11cd1f530e52aa0d6b2e951752ef2bb92">e2a104a</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id5">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.14.0...v0.14.1">0.14.1</a> (2026-01-14)<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<section id="id6">
+<h3>Bug Fixes<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>work with latest sqlmodel which drops v1 (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/79920c63913b0a1d6824efc84719e6ea41b483eb">79920c6</a>)</p></li>
+</ul>
+</section>
+<section id="documentation">
+<h3>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add pydantic v2 compatibility notes to typeid_patch.py (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/7d3f43a0b1a3c2c51d46ef0530aabee7392f75ec">7d3f43a</a>)</p></li>
+<li><p>add warning log for missing session in ActiveModelFactory (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/317dd22b4abe5d9261d8c7f69a7b32b9c7b2d4de">317dd22</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id7">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.13.0...v0.14.0">0.14.0</a> (2025-10-16)<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<section id="id8">
+<h3>Features<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>query_wrapper:</strong> add efficient exists() query method with tests (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/257452fdf976ce263b13997816a3b1b81d2902e9">257452f</a>)</p></li>
+<li><p><strong>query:</strong> add sample() to query wrapper for random row selection (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/d35800c46244db21fd92e615609b895acdee25dc">d35800c</a>)</p></li>
+</ul>
+</section>
+<section id="id9">
+<h3>Bug Fixes<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>handle tuples and Optionals in JSON mixin (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/1aa1018d9714a43089fa9943daf1b4fcbc7742b9">1aa1018</a>)</p></li>
+</ul>
+</section>
+<section id="id10">
+<h3>Documentation<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>clarify global_session usage in complex test scenarios (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/a131b0f64287b4225ac1eb2289e6ce6f006aa4d5">a131b0f</a>)</p></li>
+<li><p>fastapi-sqla (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/2183686421095856c59649c51c03ba1edaea9515">2183686</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id11">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.12.0...v0.13.0">0.13.0</a> (2025-09-05)<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
+<section id="id12">
+<h3>Features<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>rewritten lifecycle hooks that actually work (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/af4e6fe75099ef1cc6a998b471f48f32ee8b7d5d">af4e6fe</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id13">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.11.0...v0.12.0">0.12.0</a> (2025-09-03)<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h2>
+<section id="id14">
+<h3>Features<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add ActiveModelFactory helpers for session management and typeid generation (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/a6b9915cc0c74c3b0d1421bc3d0300c1a2f63426">a6b9915</a>)</p></li>
+<li><p>add base SQLModel and ActiveModel polyfactory factories (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/12a5e1db9be741f12db174d5a25f6c2eee61a446">12a5e1d</a>)</p></li>
+<li><p>add one_or_none method to BaseModel for safe queries (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/75747773f99a7a6cc82d2ca784ce607abd7ae511">7574777</a>)</p></li>
+<li><p>add pytest db_session fixture (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/22d2ad8cbd77260c1c73524f3251ef7fd145caec">22d2ad8</a>)</p></li>
+<li><p>add scalar method to QueryWrapper and return from delete (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/3d680972b6a60b43de6d3826d4289b0f81847b74">3d68097</a>)</p></li>
+<li><p>add SQLAlchemy protocol generation script (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/6e4524ed73644bea5b837ce2a9a7a1994b19df00">6e4524e</a>)</p></li>
+<li><p>add test_session context manager for test DB interactions (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/d7a8112f6b303a50df62ca55a0ca8a9c864e4686">d7a8112</a>)</p></li>
+<li><p>export test_session from activemodel.pytest (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/9bf692a72937d9a87a1ba2e574cff6dc4000bafd">9bf692a</a>)</p></li>
+<li><p><strong>pytest:</strong> omit truncation tables, truncation db fixture (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/f20f17ea0854dfbde09e86f9446d57d33ab516e8">f20f17e</a>)</p></li>
+<li><p>support engine options (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/9b00ecd4a7b1ac95a6a16b1e7727ef37afe81e00">9b00ecd</a>)</p></li>
+<li><p>support passing session to global_session context manager (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/567708aeb6642e75b21932d599cd1431f62c4c65">567708a</a>)</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>Bug Fixes<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add return type to ActiveModelFactory save method (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/96f4a0a70eb72b14dea8df16b9e92a4b79122285">96f4a0a</a>)</p></li>
+<li><p>add ruff link + check on autogenerated types (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/91ae5ea079533dc7e5600cf99c757ec5c6cd872f">91ae5ea</a>)</p></li>
+<li><p>allow reentrant global_session when using same session reference (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/d4d79493afdf7ef6ae36f9f6d1c2949eb2b7c393">d4d7949</a>)</p></li>
+<li><p>clarify duplicate TypeID prefix error message (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/a73c221fd51c1efa70812eb1a21a96f0af7faadc">a73c221</a>)</p></li>
+<li><p>prevent factories from setting timestamp fields by default (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/5d7874506047b7ae91f22566e1dc2c64d68814f4">5d78745</a>)</p></li>
+</ul>
+</section>
+<section id="id16">
+<h3>Documentation<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>added related issue (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/3c47e601b8f3eb8a85d9cb84a3e64df68ea10d90">3c47e60</a>)</p></li>
+<li><p>clarify session management and querying in usage section (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/cdadafffa1ac835f2f6419f40de5bf2f281f94d2">cdadaff</a>)</p></li>
+<li><p>connection pool tip (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/5d92b992d4f71af0bf8244826cd4d12281fe350b">5d92b99</a>)</p></li>
+<li><p>fix JSONB usage in example and clarify imports in README (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/386e69d5ad99baddfba119f62b6d3c6a53809857">386e69d</a>)</p></li>
+<li><p>improve base model tablename docstring (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/de98cbcff0b2ef903207f4c65fb1aa6e014cf40c">de98cbc</a>)</p></li>
+<li><p><strong>pytest:</strong> clarify ActiveModelFactory.save behavior with relationships and truncation (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/6ee2cbef23601943271a36a90f2f453de4519c72">6ee2cbe</a>)</p></li>
+<li><p><strong>typeid:</strong> clarify exception on invalid UUID string (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/bf13a7e7e537d41a94ff926dcabf316b0d62625b">bf13a7e</a>)</p></li>
+<li><p>update TODOs for testing, constraints, and unique key suggestions (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/6010f8fec1c3bdb22d68ac3b545ebeafd6bd04ef">6010f8f</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id17">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.10.0...v0.11.0">0.11.0</a> (2025-04-05)<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<section id="id18">
+<h3>Features<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add pydantic patch for TypeID schema serialization (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/767726eaf2a20f1c65162ba7d3a599495c83f721">767726e</a>)</p></li>
+<li><p>add typeid prefix to db field comments (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/34e457488a6e59c4e7daf1d7495b59ac64bd7ea2">34e4574</a>)</p></li>
+<li><p>render TypeIDType in plain old pydantic models (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/8aa0a4db51b425a60889064e723129041e418da5">8aa0a4d</a>)</p></li>
+</ul>
+</section>
+<section id="id19">
+<h3>Bug Fixes<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>typing on upsert properly returns self (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/896511399c818e8a4a1c01ed324921e04073a279">8965113</a>)</p></li>
+</ul>
+</section>
+<section id="id20">
+<h3>Documentation<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add advanced SQLAlchemy tips to README.md (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/c624ac0712598d06759166ce9f91a37f40fefcfe">c624ac0</a>)</p></li>
+<li><p>update comments in session_manager to clarify usage (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/e657a2e5985be6f0770bf945fc062a05dcff8cc8">e657a2e</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id21">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.9.0...v0.10.0">0.10.0</a> (2025-04-01)<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h2>
+<section id="id22">
+<h3>Features<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add upsert method for PostgreSQL support in BaseModel (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/d639de6cb498b72cd4b42422822c7d59ca6a646c">d639de6</a>)</p></li>
+<li><p>prevent nested global sessions and add test (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/3aca2ccadf3e029801d5e517f5e660af44564f73">3aca2cc</a>)</p></li>
+<li><p>return upserted model and enhance upsert tests (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/df2359a4ba8a00305bd3d5024b9789642b7b4718">df2359a</a>)</p></li>
+</ul>
+</section>
+<section id="id23">
+<h3>Bug Fixes<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>use sa_column default instead of sqlmodel (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/37e299d43dcec7db2cdfd3bc3b572b31b3234f35">37e299d</a>)</p></li>
+</ul>
+</section>
+<section id="id24">
+<h3>Documentation<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>enhance docstrings in BaseModel for clarity (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/12a5deec1ee2480410bbad9250b253991dd12d86">12a5dee</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id25">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.8.0...v0.9.0">0.9.0</a> (2025-03-26)<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h2>
+<section id="id26">
+<h3>Features<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add flag_modified and modified_fields to BaseModel (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/305990387797f4fde26c7c89a8d332b6ef7ff21f">3059903</a>)</p></li>
+<li><p>add refresh method to BaseModel for database sync (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/59be3bb87c64c865b08a2856f043678650c07194">59be3bb</a>)</p></li>
+<li><p>add robust record retrieval methods to BaseModel (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/d15b5a1ffbbb18b6fde94d64dbc76f45c21f7da8">d15b5a1</a>)</p></li>
+</ul>
+</section>
+<section id="id27">
+<h3>Bug Fixes<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>use set_committed_value in PydanticJSONMixin (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/5446204fc4b17ed5f1daa4c898f5ba2242b0fc40">5446204</a>)</p></li>
+</ul>
+</section>
+<section id="id28">
+<h3>Documentation<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>update TODOs and correct typeid return value (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/52b2514b6d30212a56e34c2fe4c849ff79e36e6a">52b2514</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id29">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.7.0...v0.8.0">0.8.0</a> (2025-03-18)<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h2>
+<section id="id30">
+<h3>Features<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add BaseModel.where method and update test cases (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/9fe4c5af619690ffb6344cf5c74a2d4b2b46ef02">9fe4c5a</a>)</p></li>
+<li><p>add primary_key_field (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/947a410766dd764e8ac5b3177152d2ff22cdb609">947a410</a>)</p></li>
+<li><p>log start of database transaction in tests (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/ac90d6f18bb0a4cca68527dec9c55b4af1f6e851">ac90d6f</a>)</p></li>
+<li><p>reload json fields when record is reloaded from db (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/c013082004bb3a93e81f00eb0c990833a9cae7e2">c013082</a>)</p></li>
+</ul>
+</section>
+<section id="id31">
+<h3>Bug Fixes<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>yield session object in global_session function (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/47b33cc1aa66d6076363635191c297c52fcc3deb">47b33cc</a>)</p></li>
+</ul>
+</section>
+<section id="id32">
+<h3>Documentation<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add comments to clarify SessionManager use and config (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/e73561b3d52e617a0f92da5cd93981ff429da16f">e73561b</a>)</p></li>
+<li><p>update comments and README with additional examples and info (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/209ee36a9df53f927cd9e5b2bb15b3a5776b34ce">209ee36</a>)</p></li>
+<li><p>update README with setup instructions and SQLModel tips (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/f2520b5fa5d7c462e8f7a591b83d874239a34b8d">f2520b5</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id33">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.6.0...v0.7.0">0.7.0</a> (2025-02-08)<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h2>
+<section id="id34">
+<h3>Features<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>migrations:</strong> add test to validate autogenerated migrations (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/03e0511b90307091448f165cca1976ca37e41d4a">03e0511</a>)</p></li>
+</ul>
+</section>
+<section id="id35">
+<h3>Bug Fixes<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>filter migration files to include only Python files in test (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/76f672349f24c34284c190368e71a5d4116c3293">76f6723</a>)</p></li>
+<li><p>make another_with_index optional in ExampleRecord (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/2ace7292bcc84907818f8719571a2bfcafecfd6b">2ace729</a>)</p></li>
+</ul>
+</section>
+<section id="id36">
+<h3>Documentation<a class="headerlink" href="#id36" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>enhance README with alembic integration instructions (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/a7ac734c5f456afb605ce4e7d0e5111835bfb5f6">a7ac734</a>)</p></li>
+<li><p>improve Alembic integration guidance and resources (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/1206278ae292669bff5a1eb4747d81225dd420e9">1206278</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id37">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.5.0...v0.6.0">0.6.0</a> (2025-02-08)<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h2>
+<section id="id38">
+<h3>Features<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add active model meta functionality with comments (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/4180df73c8e49fb2da970f934856ac89cd9f4ebc">4180df7</a>)</p></li>
+<li><p>add Celery encoder for TypeID serialization (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/416b04ad4bff5f156886fe5519c24505e380f9c7">416b04a</a>)</p></li>
+<li><p>add data initialization on model load (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/00a90cef17d4d5ef1530df21357812d974488012">00a90ce</a>)</p></li>
+<li><p>add field comments to SQLModel metadata (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/c32bb9a45be0e0dd90bc967d28141bf460b524d3">c32bb9a</a>)</p></li>
+<li><p>add initial TypeIDType import to <strong>init</strong>.py (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/8594dffd5ac7fb03ae07bdd8c81e556e1542176e">8594dff</a>)</p></li>
+<li><p>add JSON serialization for Pydantic models (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/1213f2f2bcee0a006eb58658565484ebb60727d5">1213f2f</a>)</p></li>
+<li><p>add playground script for interactive database testing (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/fbe419aa6d0edde5abbcdf405f7b037317730df1">fbe419a</a>)</p></li>
+<li><p>add soft deletion mixin for model handling (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/2e24e26e0283189d18a7b51b068bd63d58b5e3dd">2e24e26</a>)</p></li>
+<li><p>add TypeID validation and refactor TypeIDType (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/5a2a49e1ee10cb648b4fedc7fd3e262ba5d8e0f1">5a2a49e</a>)</p></li>
+<li><p>add utility to import all SQLModel subclasses (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/e85001632524130eac461e6cff23691fcb1c6bbb">e850016</a>)</p></li>
+<li><p>enforce unique non-empty prefixes in TypeIDMixin (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/a167293996b319759c8b01c49a05ab0f8dd1d153">a167293</a>)</p></li>
+<li><p>enhance foreign key handling and add validation (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/61d58495a64c7d87d4c5ad1f1cfe0dd4649fe523">61d5849</a>)</p></li>
+<li><p>enhance query handling and testing in ORM (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/363c0dd67b24ba4e860799555e25d51a3c8d4b0d">363c0dd</a>)</p></li>
+<li><p>enhance schema handling with new json schema generation (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/3ba47b6c150d80e24691c8eba195b800cc3ba61c">3ba47b6</a>)</p></li>
+<li><p>enhance session management and JSON serialization (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/c74804b005e7667b5b18cb4f9b03f52cdcb72313">c74804b</a>)</p></li>
+<li><p>handle dict annotations in PydanticJSONMixin (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/085c6a96d02e0d1521c6c58be38cf5b7d3a667af">085c6a9</a>)</p></li>
+<li><p>integrate field description as SQL comment (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/cd98fe4b3024d55dbd9e7951d65b3b73b2aa3cf8">cd98fe4</a>)</p></li>
+<li><p>integrate table comment extraction for models (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/b7b97224244b886f2067c0f5a0aea3c77c6bbe82">b7b9722</a>)</p></li>
+<li><p>integrate TypeID with Pydantic schema handling (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/ab7ded9e472abdab8e34205e15fc643db842904d">ab7ded9</a>)</p></li>
+<li><p>patch FieldInfo for comment support (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/e85d1543856be8bd19f185e025a43f20aa9a01cb">e85d154</a>)</p></li>
+<li><p><strong>test:</strong> enhance ORM tests and introduce QueryWrapper test (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/be98abb1bb5abe34cf42ebba7b63b89a942e487e">be98abb</a>)</p></li>
+</ul>
+</section>
+<section id="id39">
+<h3>Bug Fixes<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>attempt at using a context manager, no joy (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/409ed6de7618c0fcce7fa8fde2f77e0c612c39cb">409ed6d</a>)</p></li>
+<li><p>return True upon successful delete operation (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/444a5f561a04fb2dad549c4ffc5a05cc31453fca">444a5f5</a>)</p></li>
+<li><p>support lots of UUID inputs (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/783a9fe7f733b346cd6bf2401a9ae134ec785cf6">783a9fe</a>)</p></li>
+</ul>
+</section>
+<section id="id40">
+<h3>Documentation<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add example queries to the README file (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/f3e878cb72e62fdec727f7b268806d850ea145f0">f3e878c</a>)</p></li>
+<li><p>add new controller project (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/c10bc2946b8819812810271c195e317c19269adc">c10bc29</a>)</p></li>
+<li><p>add usage example for Appointment model in README (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/7d9ac708b6bc5c77d3dde0a904ddb6c24c7f2710">7d9ac70</a>)</p></li>
+<li><p>expand README with setup and usage sections (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/c471f5ff6359e2ab06e9e9053b416dc4f19dd26a">c471f5f</a>)</p></li>
+<li><p>update README with TypeID integration details (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/6112888a4ac0fc8601bf57daba638db6b5bc6788">6112888</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id41">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.4.0...v0.5.0">0.5.0</a> (2024-11-28)<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h2>
+<section id="id42">
+<h3>Features<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add methods for finding or creating records in model (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/f1fd2f2d65f182631b5df6a1ab20bf2f9a269607">f1fd2f2</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id43">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.3.0...v0.4.0">0.4.0</a> (2024-11-26)<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h2>
+<section id="id44">
+<h3>Bug Fixes<a class="headerlink" href="#id44" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>update uv version to 0.5.4 (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/1d77c39e2234b98335e7206626dc2fdca0b34b79">1d77c39</a>)</p></li>
+</ul>
+</section>
+<section id="id45">
+<h3>Features<a class="headerlink" href="#id45" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add database truncation functionality for tests (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/177abf91c8b25295cb93878433132302f8caffbc">177abf9</a>)</p></li>
+<li><p>add FastAPISessionMaker for SQLAlchemy session management (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/b80f045e52c908c7b1ae8721e42ee2796c8e85bc">b80f045</a>)</p></li>
+<li><p>add mixins for timestamps and TypeID handling (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/51a6128e6d0f45e5801821b99e399ae0bcfca624">51a6128</a>)</p></li>
+<li><p>add python-decouple-typed as a dependency (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/d495ad419494c0c387a331a9d0ef4d112df83af7">d495ad4</a>)</p></li>
+<li><p>add typeid-python dependency to project requirements (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/998762fda8f62a078fc3a4afa8c09f5af323dcfb">998762f</a>)</p></li>
+<li><p>implement database reset methods for tests (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/9cec29d2ad89a871d4cbda2a6b8ad3a1ef50df6e">9cec29d</a>)</p></li>
+<li><p>lots of stuff :) (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/0510d20a807829db4f6b454ee2915c32ecedb323">0510d20</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id46">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/v0.2.0...v0.3.0">0.3.0</a> (2024-11-20)<a class="headerlink" href="#id46" title="Link to this heading">¶</a></h2>
+<section id="id47">
+<h3>Features<a class="headerlink" href="#id47" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add inspiration section to README and update TODO (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/b11fb09eb95e338de7358ba070fac0e75eda9909">b11fb09</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id48">
+<h2><a class="reference external" href="https://github.com/iloveitaly/activemodel/compare/193f839c9ace154e7aaa0a9770400031d0e67cd3...v0.2.0">0.2.0</a> (2024-11-16)<a class="headerlink" href="#id48" title="Link to this heading">¶</a></h2>
+<section id="id49">
+<h3>Bug Fixes<a class="headerlink" href="#id49" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>update uv version and rename test file location (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/9389fd2e20e75ea322cd55bb699777978a9d282d">9389fd2</a>)</p></li>
+</ul>
+</section>
+<section id="id50">
+<h3>Features<a class="headerlink" href="#id50" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>add Redis and Postgres services to CI workflow (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/b9cb0baca6bd46092437552ddf1d317a528983ca">b9cb0ba</a>)</p></li>
+<li><p>automate tablename generation from camelCase (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/193f839c9ace154e7aaa0a9770400031d0e67cd3">193f839</a>)</p></li>
+<li><p>enhance project description and keywords in config (<a class="reference external" href="https://github.com/iloveitaly/activemodel/commit/10c570786925fa9d7a397cb6f503b658df00aa4f">10c5707</a>)</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="autoapi/activemodel/utils/index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">activemodel.utils</div></div>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/design-tabs.js?v=f930bc37"></script>
+      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+</html>

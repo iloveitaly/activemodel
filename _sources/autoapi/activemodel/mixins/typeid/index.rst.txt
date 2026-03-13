@@ -1,0 +1,22 @@
+activemodel.mixins.typeid
+=========================
+
+.. py:module:: activemodel.mixins.typeid
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   activemodel.mixins.typeid.TypeIDMixin
+
+
+Module Contents
+---------------
+
+.. py:function:: TypeIDMixin(prefix: str)
+
+   Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
+
+

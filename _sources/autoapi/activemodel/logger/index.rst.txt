@@ -1,0 +1,19 @@
+activemodel.logger
+==================
+
+.. py:module:: activemodel.logger
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   activemodel.logger.logger
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+

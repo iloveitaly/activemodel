@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>activemodel.base_model - activemodel documentation</title><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="activemodel.celery" href="../celery/index.html" /><link rel="prev" title="activemodel" href="../index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="activemodel.base_model"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../../index.html">
+      <img class="light-logo" src="../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">activemodel</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cli/index.html">activemodel.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../logger/index.html">activemodel.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mixins/index.html">activemodel.mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../mixins/pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pytest/index.html">activemodel.pytest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pytest/factories/index.html">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pytest/transaction/index.html">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pytest/truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION"><code class="docutils literal notranslate"><span class="pre">POSTGRES_INDEXES_NAMING_CONVENTION</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel"><code class="docutils literal notranslate"><span class="pre">BaseModel</span></code></a><ul>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.__table_args__"><code class="docutils literal notranslate">__table_args__</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.__init_subclass__"><code class="docutils literal notranslate">__init_subclass__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.__tablename__"><code class="docutils literal notranslate">__tablename__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.foreign_key"><code class="docutils literal notranslate">foreign_key()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.select"><code class="docutils literal notranslate">select()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.where"><code class="docutils literal notranslate">where()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.upsert"><code class="docutils literal notranslate">upsert()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.delete"><code class="docutils literal notranslate">delete()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.save"><code class="docutils literal notranslate">save()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.refresh"><code class="docutils literal notranslate">refresh()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.json"><code class="docutils literal notranslate">json()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.count"><code class="docutils literal notranslate">count()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.first"><code class="docutils literal notranslate">first()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.is_new"><code class="docutils literal notranslate">is_new()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.flag_modified"><code class="docutils literal notranslate">flag_modified()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.modified_fields"><code class="docutils literal notranslate">modified_fields()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.find_or_create_by"><code class="docutils literal notranslate">find_or_create_by()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.find_or_initialize_by"><code class="docutils literal notranslate">find_or_initialize_by()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.primary_key_column"><code class="docutils literal notranslate">primary_key_column()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.get"><code class="docutils literal notranslate">get()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.one_or_none"><code class="docutils literal notranslate">one_or_none()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.one"><code class="docutils literal notranslate">one()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.__process_filter_args__"><code class="docutils literal notranslate">__process_filter_args__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.all"><code class="docutils literal notranslate">all()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.base_model.BaseModel.sample"><code class="docutils literal notranslate">sample()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">API Reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">activemodel.base_model</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="module-activemodel.base_model">
+<span id="activemodel-base-model"></span><h1>activemodel.base_model<a class="headerlink" href="#module-activemodel.base_model" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION" title="activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">POSTGRES_INDEXES_NAMING_CONVENTION</span></code></a></p></td>
+<td><p>By default, the foreign key naming convention in sqlalchemy do not create unique identifiers when there are multiple</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.base_model.BaseModel" title="activemodel.base_model.BaseModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p></td>
+<td><p>Base model class to inherit from so we can hate python less.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION">
+<span class="sig-prename descclassname"><span class="pre">activemodel.base_model.</span></span><span class="sig-name descname"><span class="pre">POSTGRES_INDEXES_NAMING_CONVENTION</span></span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#POSTGRES_INDEXES_NAMING_CONVENTION"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION" title="Link to this definition">¶</a></dt>
+<dd><p>By default, the foreign key naming convention in sqlalchemy do not create unique identifiers when there are multiple
+foreign keys in a table. This naming convention is a workaround to fix this issue:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#set-db-keys-naming-conventions">https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#set-db-keys-naming-conventions</a></p></li>
+<li><p><a class="reference external" href="https://github.com/fastapi/sqlmodel/discussions/1213">https://github.com/fastapi/sqlmodel/discussions/1213</a></p></li>
+<li><p>Implementation lifted from: <a class="reference external" href="https://github.com/AlexanderZharyuk/billing-service/blob/3c8aaf19ab7546b97cc4db76f60335edec9fc79d/src/models.py#L24">https://github.com/AlexanderZharyuk/billing-service/blob/3c8aaf19ab7546b97cc4db76f60335edec9fc79d/src/models.py#L24</a></p></li>
+</ul>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.base_model.</span></span><span class="sig-name descname"><span class="pre">BaseModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">sqlmodel.SQLModel</span></code></p>
+<p>Base model class to inherit from so we can hate python less.</p>
+<p>Some notes:</p>
+<ul class="simple">
+<li><p>Inspired by <a class="reference external" href="https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py">https://github.com/woofz/sqlmodel-basecrud/blob/main/sqlmodel_basecrud/basecrud.py</a></p></li>
+<li><p>lifecycle hooks are modeled after Rails.</p></li>
+<li><p>class docstrings are converted to table-level comments</p></li>
+<li><p>save(), delete(), select(), where(), and other easy methods you would expect in a real ORM</p></li>
+<li><p>Fixes foreign key naming conventions</p></li>
+<li><p>Sane table names</p></li>
+</ul>
+<p>Here’s how hooks work:</p>
+<blockquote>
+<div><p>Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
+Delete: before_delete, after_delete, around_delete</p>
+</div></blockquote>
+<p>around_* hooks must be context managers (method returning a CM or a CM attribute).
+Ordering (create): before_create -&gt; before_save -&gt; (enter around_save) -&gt; persist -&gt; after_create -&gt; after_save -&gt; (exit around_save)
+Ordering (update): before_update -&gt; before_save -&gt; (enter around_save) -&gt; persist -&gt; after_update -&gt; after_save -&gt; (exit around_save)
+Delete: before_delete -&gt; (enter around_delete) -&gt; delete -&gt; after_delete -&gt; (exit around_delete)</p>
+<blockquote>
+<div><p># TODO document this in activemodel, this is an interesting edge case</p>
+</div></blockquote>
+<p># <a class="reference external" href="https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a">https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a</a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.__table_args__">
+<span class="sig-name descname"><span class="pre">__table_args__</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.__table_args__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.__table_args__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.__init_subclass__">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__init_subclass__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.__init_subclass__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.__init_subclass__" title="Link to this definition">¶</a></dt>
+<dd><p>This signature is included purely to help type-checkers check arguments to class declaration, which
+provides a way to conveniently set model_config key/value pairs.</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
+from pydantic import BaseModel</p>
+<p>class MyModel(BaseModel, extra=’allow’): …
+<a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<p>However, this may be deceiving, since the _actual_ calls to <cite>__init_subclass__</cite> will not receive any
+of the config arguments, and will only receive any keyword arguments passed during class initialization
+that are _not_ expected keys in ConfigDict. (This is due to the way <cite>ModelMetaclass.__new__</cite> works.)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – Keyword arguments passed to the class definition, which set model_config</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may want to override <cite>__pydantic_init_subclass__</cite> instead, which behaves similarly but is called
+<em>after</em> the class is fully initialized.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.__tablename__">
+<span class="sig-name descname"><span class="pre">__tablename__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.__tablename__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.__tablename__" title="Link to this definition">¶</a></dt>
+<dd><p>Automatically generates the table name for the model by converting the model’s class name from camel case to snake case.
+This is the recommended text case style for table names:</p>
+<p><a class="reference external" href="https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names">https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names</a></p>
+<p>By default, the model’s class name is lower cased which makes it harder to read.</p>
+<p>Also, many text case conversion libraries struggle handling words like “LLMCache”, this is why we are using
+a more precise library which processes such acronyms: [<cite>textcase</cite>](<a class="reference external" href="https://pypi.org/project/textcase/">https://pypi.org/project/textcase/</a>).</p>
+<p><a class="reference external" href="https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case">https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.foreign_key">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">foreign_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.foreign_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.foreign_key" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a <cite>Field</cite> object referencing the foreign key of the model.</p>
+<p>Helps quickly build a many-to-one or one-to-one relationship.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">other_model_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">OtherModel</span><span class="o">.</span><span class="n">foreign_key</span><span class="p">()</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="n">other_model</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">()</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.select">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.select" title="Link to this definition">¶</a></dt>
+<dd><p>create a query wrapper to easily run sqlmodel queries on this model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.where">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">where</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.where"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.where" title="Link to this definition">¶</a></dt>
+<dd><p>convenience method to avoid having to write .select().where() in order to add conditions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.upsert">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upsert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.upsert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.upsert" title="Link to this definition">¶</a></dt>
+<dd><p>This method will insert a new record if it doesn’t exist, or update the existing record if it does.</p>
+<p>It uses SQLAlchemy’s <cite>on_conflict_do_update</cite> and does not yet support MySQL. Some implementation details below.</p>
+<p>—</p>
+<ul class="simple">
+<li><p><cite>index_elements=[“name”]</cite>: Specifies the column(s) to check for conflicts (e.g., unique constraint or index). If a row with the same “name” exists, it triggers the update instead of an insert.</p></li>
+<li><p><cite>values</cite>: Defines the data to insert (e.g., <cite>name=”example”, value=123</cite>). If no conflict occurs, this data is inserted as a new row.</p></li>
+</ul>
+<p>The <cite>set_</cite> parameter (e.g., <cite>set_=dict(value=123)</cite>) then dictates what gets updated on conflict, overriding matching fields in <cite>values</cite> if specified.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Delete instance running delete hooks and optional around_delete context manager.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.save" title="Link to this definition">¶</a></dt>
+<dd><p>Persist instance running create/update hooks and optional around_save context manager.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.refresh">
+<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.refresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.refresh" title="Link to this definition">¶</a></dt>
+<dd><p>Refreshes an object from the database</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.json">
+<span class="sig-name descname"><span class="pre">json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.json" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.count">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.count" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the number of records in the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.first">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">first</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.first"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.first" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.is_new">
+<span class="sig-name descname"><span class="pre">is_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.is_new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.is_new" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.flag_modified">
+<span class="sig-name descname"><span class="pre">flag_modified</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.flag_modified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.flag_modified" title="Link to this definition">¶</a></dt>
+<dd><p>Flag one or more fields as modified/mutated/dirty. Useful for marking a field containing sub-objects as modified.</p>
+<p>Will throw an error if an invalid field is passed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.modified_fields">
+<span class="sig-name descname"><span class="pre">modified_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.modified_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.modified_fields" title="Link to this definition">¶</a></dt>
+<dd><p>set of fields that are modified</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.find_or_create_by">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">find_or_create_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.find_or_create_by"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.find_or_create_by" title="Link to this definition">¶</a></dt>
+<dd><p>Find record or create it with the passed args if it doesn’t exist.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.find_or_initialize_by">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">find_or_initialize_by</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.find_or_initialize_by"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.find_or_initialize_by" title="Link to this definition">¶</a></dt>
+<dd><p>Unfortunately, unlike ruby, python does not have a great lambda story. This makes writing convenience methods
+like this a bit more difficult.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.primary_key_column">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">primary_key_column</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">sqlmodel.Column</span></span></span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.primary_key_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.primary_key_column" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the primary key column of the model by inspecting SQLAlchemy field information.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">ExampleModel</span><span class="o">.</span><span class="n">primary_key_field</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.get">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.get" title="Link to this definition">¶</a></dt>
+<dd><p>Gets a single record (or None) from the database. Pass an PK ID or kwargs to filter by.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.one_or_none">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">one_or_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.one_or_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.one_or_none" title="Link to this definition">¶</a></dt>
+<dd><p>Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+Returns None if no record is found. Throws an error if more than one record is found.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.one">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">one</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.one" title="Link to this definition">¶</a></dt>
+<dd><p>Gets a single record from the database. Pass an PK ID or a kwarg to filter by.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.__process_filter_args__">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__process_filter_args__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.__process_filter_args__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.__process_filter_args__" title="Link to this definition">¶</a></dt>
+<dd><p>Helper method to process filter arguments and implement some nice DX for our devs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.all">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.all" title="Link to this definition">¶</a></dt>
+<dd><p>get a generator for all records in the database</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.base_model.BaseModel.sample">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/base_model.html#BaseModel.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.base_model.BaseModel.sample" title="Link to this definition">¶</a></dt>
+<dd><p>Pick a random record from the database. Raises if none exist.</p>
+<p>Helpful for testing and console debugging.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="../index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">activemodel</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="../celery/index.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">activemodel.celery</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../../../_static/shibuya.js?v=cac61aee"></script></body>
+</html>

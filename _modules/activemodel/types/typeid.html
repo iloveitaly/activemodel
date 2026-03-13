@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>activemodel.types.typeid - activemodel documentation</title><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="activemodel.types.typeid"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../../index.html">
+      <img class="light-logo" src="../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../autoapi/activemodel/index.html">activemodel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/base_model/index.html">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/cli/index.html">activemodel.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/logger/index.html">activemodel.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/mixins/index.html">activemodel.mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/pytest/factories/index.html">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/pytest/transaction/index.html">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/pytest/truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">Module code</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">activemodel.types.typeid</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <h1>Source code for activemodel.types.typeid</h1><div class="highlight"><pre>
+<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="2"><span class="sd">Lifted from: https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py</span>
+</span><span data-line="3"><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="8">    <span class="n">GetJsonSchemaHandler</span><span class="p">,</span>
+</span><span data-line="9"><span class="p">)</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_core</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoreSchema</span><span class="p">,</span> <span class="n">core_schema</span>
+</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">types</span>
+</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">generic_repr</span>
+</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
+</span><span data-line="14">
+</span><span data-line="15"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDValidationError</span>
+</span><span data-line="16">
+</span><span data-line="17">
+<div class="viewcode-block" id="TypeIDType">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid/index.html#activemodel.types.TypeIDType">[docs]</a>
+</span><span data-line="18"><span class="k">class</span><span class="w"> </span><span class="nc">TypeIDType</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">TypeDecorator</span><span class="p">):</span>
+</span><span data-line="19"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="20"><span class="sd">    A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.</span>
+</span><span data-line="21">
+</span><span data-line="22"><span class="sd">    The prefix will not be persisted to the database, instead the database-native UUID field will be used.</span>
+</span><span data-line="23"><span class="sd">    At retrieval time a TypeID will be constructed (in python) based on the configured prefix and the UUID</span>
+</span><span data-line="24"><span class="sd">    value from the database.</span>
+</span><span data-line="25">
+</span><span data-line="26"><span class="sd">    For example:</span>
+</span><span data-line="27">
+</span><span data-line="28"><span class="sd">    &gt;&gt;&gt; id = mapped_column(</span>
+</span><span data-line="29"><span class="sd">    &gt;&gt;&gt;     TypeIDType(&quot;user&quot;),</span>
+</span><span data-line="30"><span class="sd">    &gt;&gt;&gt;     primary_key=True,</span>
+</span><span data-line="31"><span class="sd">    &gt;&gt;&gt;     default=lambda: TypeID(&quot;user&quot;)</span>
+</span><span data-line="32"><span class="sd">    &gt;&gt;&gt; )</span>
+</span><span data-line="33">
+</span><span data-line="34"><span class="sd">    Will result in TypeIDs such as &quot;user_01h45ytscbebyvny4gc8cr8ma2&quot;. There&#39;s a mixin provided to make it easy</span>
+</span><span data-line="35"><span class="sd">    to add a `id` pk field to your model with a specific prefix.</span>
+</span><span data-line="36"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="37">
+</span><span data-line="38">    <span class="c1"># TODO are we sure we wouldn&#39;t use TypeID here?</span>
+<div class="viewcode-block" id="TypeIDType.impl">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid/index.html#activemodel.types.TypeIDType.impl">[docs]</a>
+</span><span data-line="39">    <span class="n">impl</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">Uuid</span></div>
+
+</span><span data-line="40">    <span class="c1"># TODO why the types version?</span>
+</span><span data-line="41">    <span class="c1"># impl = uuid.UUID</span>
+</span><span data-line="42">
+<div class="viewcode-block" id="TypeIDType.cache_ok">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid/index.html#activemodel.types.TypeIDType.cache_ok">[docs]</a>
+</span><span data-line="43">    <span class="n">cache_ok</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="TypeIDType.prefix">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid/index.html#activemodel.types.TypeIDType.prefix">[docs]</a>
+</span><span data-line="44">    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span></div>
+
+</span><span data-line="45">
+</span><span data-line="46">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="47">        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
+</span><span data-line="48">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="49">
+<div class="viewcode-block" id="TypeIDType.__repr__">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid/index.html#activemodel.types.TypeIDType.__repr__">[docs]</a>
+</span><span data-line="50">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="51">        <span class="c1"># Customize __repr__ to ensure that auto-generated code e.g. from alembic includes</span>
+</span><span data-line="52">        <span class="c1"># the right __init__ params (otherwise by default prefix will be omitted because</span>
+</span><span data-line="53">        <span class="c1"># uuid.__init__ does not have such an argument).</span>
+</span><span data-line="54">        <span class="c1"># TODO this makes it so inspected code does NOT include the suffix</span>
+</span><span data-line="55">        <span class="k">return</span> <span class="n">generic_repr</span><span class="p">(</span>
+</span><span data-line="56">            <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="57">            <span class="n">to_inspect</span><span class="o">=</span><span class="n">TypeID</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">),</span>
+</span><span data-line="58">        <span class="p">)</span></div>
+
+</span><span data-line="59">
+<div class="viewcode-block" id="TypeIDType.process_bind_param">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid/index.html#activemodel.types.TypeIDType.process_bind_param">[docs]</a>
+</span><span data-line="60">    <span class="k">def</span><span class="w"> </span><span class="nf">process_bind_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
+</span><span data-line="61"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="62"><span class="sd">        This is run when a search query is built or ...</span>
+</span><span data-line="63"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="64">
+</span><span data-line="65">        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="66">            <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="67">
+</span><span data-line="68">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">UUID</span><span class="p">):</span>
+</span><span data-line="69">            <span class="c1"># then it&#39;s a UUID class, such as UUID(&#39;01942886-7afc-7129-8f57-db09137ed002&#39;)</span>
+</span><span data-line="70">            <span class="k">return</span> <span class="n">value</span>
+</span><span data-line="71">
+</span><span data-line="72">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">):</span>
+</span><span data-line="73">            <span class="c1"># then it&#39;s a TypeID such as &#39;user_01h45ytscbebyvny4gc8cr8ma2&#39;</span>
+</span><span data-line="74">            <span class="n">value</span> <span class="o">=</span> <span class="n">TypeID</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span data-line="75">
+</span><span data-line="76">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span data-line="77">            <span class="c1"># no prefix, raw UUID, let&#39;s coerce it into a UUID which SQLAlchemy can handle</span>
+</span><span data-line="78">            <span class="c1"># ex: &#39;01942886-7afc-7129-8f57-db09137ed002&#39;</span>
+</span><span data-line="79">            <span class="c1"># if an invalid uuid is passed, `ValueError(&#39;badly formed hexadecimal UUID string&#39;)` will be raised</span>
+</span><span data-line="80">            <span class="k">return</span> <span class="n">UUID</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span data-line="81">
+</span><span data-line="82">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TypeID</span><span class="p">):</span>
+</span><span data-line="83">            <span class="c1"># TODO in what case could this None prefix ever occur?</span>
+</span><span data-line="84">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="85">                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="86">                    <span class="k">raise</span> <span class="n">TypeIDValidationError</span><span class="p">(</span>
+</span><span data-line="87">                        <span class="s2">&quot;Must have a valid prefix set on the class&quot;</span>
+</span><span data-line="88">                    <span class="p">)</span>
+</span><span data-line="89">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="90">                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">prefix</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">:</span>
+</span><span data-line="91">                    <span class="k">raise</span> <span class="n">TypeIDValidationError</span><span class="p">(</span>
+</span><span data-line="92">                        <span class="sa">f</span><span class="s2">&quot;Expected &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&#39; but got &#39;</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+</span><span data-line="93">                    <span class="p">)</span>
+</span><span data-line="94">
+</span><span data-line="95">            <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">uuid</span>
+</span><span data-line="96">
+</span><span data-line="97">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected input type&quot;</span><span class="p">)</span></div>
+
+</span><span data-line="98">
+<div class="viewcode-block" id="TypeIDType.process_result_value">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid/index.html#activemodel.types.TypeIDType.process_result_value">[docs]</a>
+</span><span data-line="99">    <span class="k">def</span><span class="w"> </span><span class="nf">process_result_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
+</span><span data-line="100">        <span class="s2">&quot;convert a raw UUID, without a prefix, to a TypeID with the correct prefix&quot;</span>
+</span><span data-line="101">
+</span><span data-line="102">        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="103">            <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="104">
+</span><span data-line="105">        <span class="k">return</span> <span class="n">TypeID</span><span class="o">.</span><span class="n">from_uuid</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span></div>
+
+</span><span data-line="106">
+</span><span data-line="107">    <span class="c1"># def coerce_compared_value(self, op, value):</span>
+</span><span data-line="108">    <span class="c1">#     &quot;&quot;&quot;</span>
+</span><span data-line="109">    <span class="c1">#     This method is called when SQLAlchemy needs to compare a column to a value.</span>
+</span><span data-line="110">    <span class="c1">#     By returning self, we indicate that this type can handle TypeID instances.</span>
+</span><span data-line="111">    <span class="c1">#     &quot;&quot;&quot;</span>
+</span><span data-line="112">    <span class="c1">#     if isinstance(value, TypeID):</span>
+</span><span data-line="113">    <span class="c1">#         return self</span>
+</span><span data-line="114">
+</span><span data-line="115">    <span class="c1">#     return super().coerce_compared_value(op, value)</span>
+</span><span data-line="116">
+</span><span data-line="117">    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="TypeIDType.__get_pydantic_core_schema__">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid/index.html#activemodel.types.TypeIDType.__get_pydantic_core_schema__">[docs]</a>
+</span><span data-line="118">    <span class="k">def</span><span class="w"> </span><span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
+</span><span data-line="119">        <span class="bp">cls</span><span class="p">,</span> <span class="n">_core_schema</span><span class="p">:</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">CoreSchema</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetJsonSchemaHandler</span>
+</span><span data-line="120">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoreSchema</span><span class="p">:</span>
+</span><span data-line="121"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="122"><span class="sd">        This fixes the following error: &#39;Unable to serialize unknown type&#39; by telling pydantic how to serialize this field.</span>
+</span><span data-line="123">
+</span><span data-line="124"><span class="sd">        Note that TypeIDType MUST be the type of the field in SQLModel otherwise you&#39;ll get serialization errors.</span>
+</span><span data-line="125"><span class="sd">        This is done automatically for the mixin but for any relationship fields you&#39;ll need to specify the type explicitly.</span>
+</span><span data-line="126">
+</span><span data-line="127"><span class="sd">        - https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88</span>
+</span><span data-line="128"><span class="sd">        - https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py</span>
+</span><span data-line="129"><span class="sd">        - https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14</span>
+</span><span data-line="130"><span class="sd">        - https://github.com/pydantic/pydantic/issues/10060</span>
+</span><span data-line="131"><span class="sd">        - https://github.com/fastapi/fastapi/discussions/10027</span>
+</span><span data-line="132"><span class="sd">        - https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50</span>
+</span><span data-line="133"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="134">
+</span><span data-line="135">        <span class="k">def</span><span class="w"> </span><span class="nf">convert_from_string</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">TypeID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeID</span><span class="p">:</span>
+</span><span data-line="136">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TypeID</span><span class="p">):</span>
+</span><span data-line="137">                <span class="k">return</span> <span class="n">value</span>
+</span><span data-line="138">
+</span><span data-line="139">            <span class="k">return</span> <span class="n">TypeID</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span data-line="140">
+</span><span data-line="141">        <span class="n">from_uuid_schema</span> <span class="o">=</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">chain_schema</span><span class="p">(</span>
+</span><span data-line="142">            <span class="p">[</span>
+</span><span data-line="143">                <span class="c1"># TODO not sure how this is different from the UUID schema, should try it  out.</span>
+</span><span data-line="144">                <span class="c1"># core_schema.is_instance_schema(TypeID),</span>
+</span><span data-line="145">                <span class="c1"># core_schema.uuid_schema(),</span>
+</span><span data-line="146">                <span class="n">core_schema</span><span class="o">.</span><span class="n">no_info_plain_validator_function</span><span class="p">(</span>
+</span><span data-line="147">                    <span class="n">convert_from_string</span><span class="p">,</span>
+</span><span data-line="148">                    <span class="n">json_schema_input_schema</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">str_schema</span><span class="p">(),</span>
+</span><span data-line="149">                <span class="p">),</span>
+</span><span data-line="150">            <span class="p">]</span>
+</span><span data-line="151">        <span class="p">)</span>
+</span><span data-line="152">
+</span><span data-line="153">        <span class="k">return</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">json_or_python_schema</span><span class="p">(</span>
+</span><span data-line="154">            <span class="n">json_schema</span><span class="o">=</span><span class="n">from_uuid_schema</span><span class="p">,</span>
+</span><span data-line="155">            <span class="c1"># TODO in the the future we could add more exact types</span>
+</span><span data-line="156">            <span class="c1"># metadata=core_schema.str_schema(</span>
+</span><span data-line="157">            <span class="c1">#     pattern=&quot;^[0-9a-f]{24}$&quot;,</span>
+</span><span data-line="158">            <span class="c1">#     min_length=24,</span>
+</span><span data-line="159">            <span class="c1">#     max_length=24,</span>
+</span><span data-line="160">            <span class="c1"># ),</span>
+</span><span data-line="161">            <span class="c1"># metadata={</span>
+</span><span data-line="162">            <span class="c1">#     &quot;pydantic_js_input_core_schema&quot;: core_schema.str_schema(</span>
+</span><span data-line="163">            <span class="c1">#         pattern=&quot;^[0-9a-f]{24}$&quot;,</span>
+</span><span data-line="164">            <span class="c1">#         min_length=24,</span>
+</span><span data-line="165">            <span class="c1">#         max_length=24,</span>
+</span><span data-line="166">            <span class="c1">#     )</span>
+</span><span data-line="167">            <span class="c1"># },</span>
+</span><span data-line="168">            <span class="n">python_schema</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">union_schema</span><span class="p">([</span><span class="n">from_uuid_schema</span><span class="p">]),</span>
+</span><span data-line="169">            <span class="n">serialization</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">plain_serializer_function_ser_schema</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+</span><span data-line="170">        <span class="p">)</span></div>
+
+</span><span data-line="171">
+</span><span data-line="172">    <span class="c1"># TODO I have a feeling that the `serialization` param in the above method solves this for us.</span>
+</span><span data-line="173">    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="TypeIDType.__get_pydantic_json_schema__">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid/index.html#activemodel.types.TypeIDType.__get_pydantic_json_schema__">[docs]</a>
+</span><span data-line="174">    <span class="k">def</span><span class="w"> </span><span class="nf">__get_pydantic_json_schema__</span><span class="p">(</span>
+</span><span data-line="175">        <span class="bp">cls</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">CoreSchema</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetJsonSchemaHandler</span>
+</span><span data-line="176">    <span class="p">):</span>
+</span><span data-line="177"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="178"><span class="sd">        Called when generating the openapi schema. This overrides the `function-plain` type which</span>
+</span><span data-line="179"><span class="sd">        is generated by the `no_info_plain_validator_function`.</span>
+</span><span data-line="180">
+</span><span data-line="181"><span class="sd">        This logic seems to be a hot part of the codebase, so I&#39;d expect this to break as pydantic</span>
+</span><span data-line="182"><span class="sd">        fastapi continue to evolve.</span>
+</span><span data-line="183">
+</span><span data-line="184"><span class="sd">        Note that this method can return multiple types. A return value can be as simple as:</span>
+</span><span data-line="185">
+</span><span data-line="186"><span class="sd">        &gt;&gt;&gt; {&quot;type&quot;: &quot;string&quot;}</span>
+</span><span data-line="187">
+</span><span data-line="188"><span class="sd">        Or, you could return a more specific JSON schema type:</span>
+</span><span data-line="189">
+</span><span data-line="190"><span class="sd">        &gt;&gt;&gt; core_schema.uuid_schema()</span>
+</span><span data-line="191">
+</span><span data-line="192"><span class="sd">        The problem with using something like uuid_schema is the specific patterns</span>
+</span><span data-line="193">
+</span><span data-line="194"><span class="sd">        https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153</span>
+</span><span data-line="195"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="196">
+</span><span data-line="197">        <span class="k">return</span> <span class="p">{</span>
+</span><span data-line="198">            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+</span><span data-line="199">            <span class="c1"># TODO implement a more strict pattern in regex</span>
+</span><span data-line="200">            <span class="c1">#      https://github.com/jetify-com/typeid/blob/3d182feed5687c21bb5ab93d5f457ff96749b68b/spec/README.md?plain=1#L38</span>
+</span><span data-line="201">            <span class="c1"># &quot;pattern&quot;: &quot;^[0-9a-f]{24}$&quot;,</span>
+</span><span data-line="202">            <span class="c1"># &quot;minLength&quot;: 24,</span>
+</span><span data-line="203">            <span class="c1"># &quot;maxLength&quot;: 24,</span>
+</span><span data-line="204">        <span class="p">}</span></div>
+</div>
+
+</span></pre></div>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../../../_static/shibuya.js?v=cac61aee"></script></body>
+</html>

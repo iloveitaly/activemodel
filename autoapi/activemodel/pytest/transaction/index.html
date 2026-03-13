@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>activemodel.pytest.transaction - activemodel documentation</title><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="activemodel.pytest.truncate" href="../truncate/index.html" /><link rel="prev" title="activemodel.pytest.plugin" href="../plugin/index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="activemodel.pytest.transaction"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../../../index.html">
+      <img class="light-logo" src="../../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../index.html">API Reference</a></li><li class="link"><a href="../../../../changelog.html">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">activemodel</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../base_model/index.html">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/index.html">activemodel.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../logger/index.html">activemodel.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mixins/index.html">activemodel.mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../mixins/pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">activemodel.pytest</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../factories/index.html">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#activemodel.pytest.transaction.factory_exists"><code class="docutils literal notranslate"><span class="pre">factory_exists</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.transaction.polyfactory_exists"><code class="docutils literal notranslate"><span class="pre">polyfactory_exists</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.transaction.set_factory_session"><code class="docutils literal notranslate"><span class="pre">set_factory_session()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.transaction.set_polyfactory_session"><code class="docutils literal notranslate"><span class="pre">set_polyfactory_session()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.transaction.set_factory_sessions"><code class="docutils literal notranslate"><span class="pre">set_factory_sessions()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.transaction.test_session"><code class="docutils literal notranslate"><span class="pre">test_session()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.transaction.database_truncate_session"><code class="docutils literal notranslate"><span class="pre">database_truncate_session()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.transaction.database_reset_transaction"><code class="docutils literal notranslate"><span class="pre">database_reset_transaction()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../../index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../index.html"><span itemprop="name">API Reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">activemodel.pytest</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="4" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">activemodel.pytest.transaction</strong>
+        <meta itemprop="position" content="5" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="module-activemodel.pytest.transaction">
+<span id="activemodel-pytest-transaction"></span><h1>activemodel.pytest.transaction<a class="headerlink" href="#module-activemodel.pytest.transaction" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.pytest.transaction.factory_exists" title="activemodel.pytest.transaction.factory_exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">factory_exists</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.pytest.transaction.polyfactory_exists" title="activemodel.pytest.transaction.polyfactory_exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">polyfactory_exists</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.pytest.transaction.set_factory_session" title="activemodel.pytest.transaction.set_factory_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_factory_session</span></code></a>(session)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.pytest.transaction.set_polyfactory_session" title="activemodel.pytest.transaction.set_polyfactory_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_polyfactory_session</span></code></a>(session)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.pytest.transaction.set_factory_sessions" title="activemodel.pytest.transaction.set_factory_sessions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_factory_sessions</span></code></a>(session)</p></td>
+<td><p>set all supported model factories to use the provided session</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.pytest.transaction.test_session" title="activemodel.pytest.transaction.test_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_session</span></code></a>()</p></td>
+<td><p>Configures a session-global database session for a test.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.pytest.transaction.database_truncate_session" title="activemodel.pytest.transaction.database_truncate_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">database_truncate_session</span></code></a>()</p></td>
+<td><p>Provides a database session for testing when using a truncation cleaning strategy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.pytest.transaction.database_reset_transaction" title="activemodel.pytest.transaction.database_reset_transaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">database_reset_transaction</span></code></a>()</p></td>
+<td><p>Wrap all database interactions for a given test in a nested transaction and roll it back after the test.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="activemodel.pytest.transaction.factory_exists">
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.transaction.</span></span><span class="sig-name descname"><span class="pre">factory_exists</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/transaction.html#factory_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.transaction.factory_exists" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="activemodel.pytest.transaction.polyfactory_exists">
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.transaction.</span></span><span class="sig-name descname"><span class="pre">polyfactory_exists</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/transaction.html#polyfactory_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.transaction.polyfactory_exists" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.pytest.transaction.set_factory_session">
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.transaction.</span></span><span class="sig-name descname"><span class="pre">set_factory_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/transaction.html#set_factory_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.transaction.set_factory_session" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.pytest.transaction.set_polyfactory_session">
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.transaction.</span></span><span class="sig-name descname"><span class="pre">set_polyfactory_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/transaction.html#set_polyfactory_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.transaction.set_polyfactory_session" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.pytest.transaction.set_factory_sessions">
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.transaction.</span></span><span class="sig-name descname"><span class="pre">set_factory_sessions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/transaction.html#set_factory_sessions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.transaction.set_factory_sessions" title="Link to this definition">¶</a></dt>
+<dd><p>set all supported model factories to use the provided session</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.pytest.transaction.test_session">
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.transaction.</span></span><span class="sig-name descname"><span class="pre">test_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/transaction.html#test_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.transaction.test_session" title="Link to this definition">¶</a></dt>
+<dd><p>Configures a session-global database session for a test.</p>
+<p>Use this as a fixture using <cite>db_session</cite>. This method is meant to be used as a context manager.</p>
+<p>This is useful for tests that need to interact with the database multiple times before calling application code
+that uses the objects. This is intended to be used outside of an integration test. Integration tests generally
+do not use database transactions to clean the database and instead use truncation. The transaction fixture
+configures a session, which is then used here. This method requires that this global test session is already
+configured. If the transaction fixture is not used, then there is no session available for use and this will fail.</p>
+<p>ActiveModelFactory.save() does this automatically, but if you need to manually create objects
+and persist them to a DB, you can run into issues with the simple <cite>expunge()</cite> call
+used to reassociate an object with a new session. If there are more complex relationships
+this approach will fail and give you detached object errors.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">test_session</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">test_the_thing</span><span class="p">():</span>
+</span><span data-line="3"><span class="gp">&gt;&gt;&gt; </span>    <span class="k">with</span> <span class="n">test_session</span><span class="p">():</span>
+</span><span data-line="4"><span class="gp">... </span>        <span class="n">obj</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span><span data-line="5"><span class="gp">... </span>        <span class="n">obj2</span> <span class="o">=</span> <span class="n">MyModelFactory</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>More information: <a class="reference external" href="https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b">https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.pytest.transaction.database_truncate_session">
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.transaction.</span></span><span class="sig-name descname"><span class="pre">database_truncate_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/transaction.html#database_truncate_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.transaction.database_truncate_session" title="Link to this definition">¶</a></dt>
+<dd><p>Provides a database session for testing when using a truncation cleaning strategy.</p>
+<p>When not using a transaction cleaning strategy, no global test session is set</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.pytest.transaction.database_reset_transaction">
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.transaction.</span></span><span class="sig-name descname"><span class="pre">database_reset_transaction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/transaction.html#database_reset_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.transaction.database_reset_transaction" title="Link to this definition">¶</a></dt>
+<dd><p>Wrap all database interactions for a given test in a nested transaction and roll it back after the test.</p>
+<p>This is provided as a function, not a fixture, since you’ll need to determine when a integration test is run. Here’s
+an example of how to build a fixture from this method:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">database_reset_transaction</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="n">database_reset_transaction</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">database_reset_transaction</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Transaction-based DB cleaning does <em>not</em> work if the DB mutations are happening in a separate process because the
+same session is not shared across python processes. For this scenario, use the truncate method.</p>
+<p>Note that using <cite>fork</cite> as a multiprocess start method is dangerous. Use spawn. This link has more documentation
+around this topic:</p>
+<p><a class="reference external" href="https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py">https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py</a></p>
+<p>References:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created">https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created</a></p></li>
+<li><p><a class="reference external" href="https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/">https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/</a></p></li>
+<li><p><a class="reference external" href="https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77">https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77</a></p></li>
+<li><p><a class="reference external" href="https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46">https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46</a></p></li>
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn">https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn</a></p></li>
+</ul>
+<p>Using a named SAVEPOINT does not give us anything extra, so we are not using it.</p>
+</dd></dl>
+
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="../plugin/index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">activemodel.pytest.plugin</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="../truncate/index.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">activemodel.pytest.truncate</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../../../../_static/shibuya.js?v=cac61aee"></script></body>
+</html>

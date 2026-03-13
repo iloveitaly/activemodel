@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>activemodel.pytest.factories - activemodel documentation</title><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><link rel="next" title="activemodel.pytest.plugin" href="../plugin/index.html" /><link rel="prev" title="activemodel.pytest" href="../index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="activemodel.pytest.factories"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../../../index.html">
+      <img class="light-logo" src="../../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../../../_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../index.html">API Reference</a></li><li class="link"><a href="../../../../changelog.html">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">activemodel</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../base_model/index.html">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/index.html">activemodel.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../logger/index.html">activemodel.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../mixins/index.html">activemodel.mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../mixins/pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html">activemodel.pytest</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../transaction/index.html">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#activemodel.pytest.factories.SQLModelFactory"><code class="docutils literal notranslate"><span class="pre">SQLModelFactory</span></code></a><ul>
+<li><a class="reference internal" href="#activemodel.pytest.factories.SQLModelFactory.__is_base_factory__"><code class="docutils literal notranslate">__is_base_factory__</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.factories.SQLModelFactory.should_set_field_value"><code class="docutils literal notranslate">should_set_field_value()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#activemodel.pytest.factories.ActiveModelFactory"><code class="docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code></a><ul>
+<li><a class="reference internal" href="#activemodel.pytest.factories.ActiveModelFactory.__is_base_factory__"><code class="docutils literal notranslate">__is_base_factory__</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.factories.ActiveModelFactory.__sqlalchemy_session__"><code class="docutils literal notranslate">__sqlalchemy_session__</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.factories.ActiveModelFactory.save"><code class="docutils literal notranslate">save()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.factories.ActiveModelFactory.post_save"><code class="docutils literal notranslate">post_save()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.factories.ActiveModelFactory.foreign_key_typeid"><code class="docutils literal notranslate">foreign_key_typeid()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.pytest.factories.ActiveModelFactory.should_set_field_value"><code class="docutils literal notranslate">should_set_field_value()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../../index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../index.html"><span itemprop="name">API Reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">activemodel.pytest</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="4" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">activemodel.pytest.factories</strong>
+        <meta itemprop="position" content="5" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="module-activemodel.pytest.factories">
+<span id="activemodel-pytest-factories"></span><h1>activemodel.pytest.factories<a class="headerlink" href="#module-activemodel.pytest.factories" title="Link to this heading">¶</a></h1>
+<p>Notes on polyfactory:</p>
+<p>1. is_supported_type validates that the class can be used to generate a factory
+<a class="reference external" href="https://github.com/litestar-org/polyfactory/issues/655#issuecomment-2727450854">https://github.com/litestar-org/polyfactory/issues/655#issuecomment-2727450854</a></p>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.pytest.factories.SQLModelFactory" title="activemodel.pytest.factories.SQLModelFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SQLModelFactory</span></code></a></p></td>
+<td><p>Base factory for SQLModel models:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.pytest.factories.ActiveModelFactory" title="activemodel.pytest.factories.ActiveModelFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code></a></p></td>
+<td><p>Base factory for SQLModel models:</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.SQLModelFactory">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.pytest.factories.</span></span><span class="sig-name descname"><span class="pre">SQLModelFactory</span></span><span class="sig-paren">[</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">]</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#SQLModelFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.SQLModelFactory" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">polyfactory.factories.pydantic_factory.ModelFactory</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Base factory for SQLModel models:</p>
+<ol class="arabic simple">
+<li><p>Ability to ignore all relationship fks</p></li>
+<li><p>Option to ignore all pks</p></li>
+</ol>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.SQLModelFactory.__is_base_factory__">
+<span class="sig-name descname"><span class="pre">__is_base_factory__</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#SQLModelFactory.__is_base_factory__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.SQLModelFactory.__is_base_factory__" title="Link to this definition">¶</a></dt>
+<dd><p>Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.SQLModelFactory.should_set_field_value">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">should_set_field_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">polyfactory.field_meta.FieldMeta</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#SQLModelFactory.should_set_field_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.SQLModelFactory.should_set_field_value" title="Link to this definition">¶</a></dt>
+<dd><p>Determine whether to set a value for a given field_name.
+This is an override of BaseFactory.should_set_field_value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_meta</strong> – FieldMeta instance.</p></li>
+<li><p><strong>kwargs</strong> – Any kwargs passed to the factory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A boolean determining whether a value should be set for the given field_meta.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.ActiveModelFactory">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.pytest.factories.</span></span><span class="sig-name descname"><span class="pre">ActiveModelFactory</span></span><span class="sig-paren">[</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">]</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#ActiveModelFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.ActiveModelFactory" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#activemodel.pytest.factories.SQLModelFactory" title="activemodel.pytest.factories.SQLModelFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SQLModelFactory</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Base factory for SQLModel models:</p>
+<ol class="arabic simple">
+<li><p>Ability to ignore all relationship fks</p></li>
+<li><p>Option to ignore all pks</p></li>
+</ol>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.ActiveModelFactory.__is_base_factory__">
+<span class="sig-name descname"><span class="pre">__is_base_factory__</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#ActiveModelFactory.__is_base_factory__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.ActiveModelFactory.__is_base_factory__" title="Link to this definition">¶</a></dt>
+<dd><p>Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.ActiveModelFactory.__sqlalchemy_session__">
+<span class="sig-name descname"><span class="pre">__sqlalchemy_session__</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#ActiveModelFactory.__sqlalchemy_session__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.ActiveModelFactory.__sqlalchemy_session__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.ActiveModelFactory.save">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../truncate/index.html#activemodel.pytest.truncate.T" title="activemodel.pytest.truncate.T"><span class="pre">T</span></a></span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#ActiveModelFactory.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.ActiveModelFactory.save" title="Link to this definition">¶</a></dt>
+<dd><p>Builds and persists a new model to the database.</p>
+<p>Where this gets tricky, is this can be called multiple times within the same callstack. This can happen when
+a factory uses other factories to create relationships. This is fine if <cite>__sqlalchemy_session__</cite> is set, but
+if it’s not (in the case of a truncation DB strategy) you’ll run into issues.</p>
+<p>In a truncation strategy, the __sqlalchemy_session__ is set to None.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.ActiveModelFactory.post_save">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">post_save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../truncate/index.html#activemodel.pytest.truncate.T" title="activemodel.pytest.truncate.T"><span class="pre">T</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../truncate/index.html#activemodel.pytest.truncate.T" title="activemodel.pytest.truncate.T"><span class="pre">T</span></a></span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#ActiveModelFactory.post_save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.ActiveModelFactory.post_save" title="Link to this definition">¶</a></dt>
+<dd><p>Post-save hook for performing additional actions after the model has been saved to the database. This is useful
+for cases where you need to perform additional operations that require the model be persisted in the database.</p>
+<p>The implementation of this method should return a refreshed instance of the model if that’s necessary. For
+example, if your post_save hook triggers another factory save(), the current model will likely be expired
+and detached, leading to a DetachedInstanceError when accessing it later.</p>
+<p>To avoid this, return <cite>model.refresh()</cite> at the end of your implementation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.ActiveModelFactory.foreign_key_typeid">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">foreign_key_typeid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#ActiveModelFactory.foreign_key_typeid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.ActiveModelFactory.foreign_key_typeid" title="Link to this definition">¶</a></dt>
+<dd><p>Return a random type id for the foreign key on this model.</p>
+<p>This is helpful for generating TypeIDs for testing 404s, parsing, manually settings, etc</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.pytest.factories.ActiveModelFactory.should_set_field_value">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">should_set_field_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">polyfactory.field_meta.FieldMeta</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/factories.html#ActiveModelFactory.should_set_field_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.factories.ActiveModelFactory.should_set_field_value" title="Link to this definition">¶</a></dt>
+<dd><p>Determine whether to set a value for a given field_name.
+This is an override of BaseFactory.should_set_field_value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_meta</strong> – FieldMeta instance.</p></li>
+<li><p><strong>kwargs</strong> – Any kwargs passed to the factory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A boolean determining whether a value should be set for the given field_meta.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="../index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">activemodel.pytest</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="../plugin/index.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">activemodel.pytest.plugin</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../../../../_static/shibuya.js?v=cac61aee"></script></body>
+</html>

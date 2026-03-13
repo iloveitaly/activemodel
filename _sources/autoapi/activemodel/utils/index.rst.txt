@@ -1,0 +1,31 @@
+activemodel.utils
+=================
+
+.. py:module:: activemodel.utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   activemodel.utils.compile_sql
+   activemodel.utils.raw_sql_exec
+   activemodel.utils.hash_function_code
+
+
+Module Contents
+---------------
+
+.. py:function:: compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) -> str
+
+   convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
+
+
+.. py:function:: raw_sql_exec(raw_query: str)
+
+.. py:function:: hash_function_code(func)
+
+   get sha of a function to easily assert that it hasn't changed
+
+

@@ -1,0 +1,63 @@
+activemodel.cli
+===============
+
+.. py:module:: activemodel.cli
+
+.. autoapi-nested-parse::
+
+   This module provides utilities for generating Protocol type definitions for SQLAlchemy's
+   SelectOfScalar methods, as well as formatting and fixing Python files using ruff.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   activemodel.cli.logger
+   activemodel.cli.QUERY_WRAPPER_CLASS_NAME
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   activemodel.cli.format_python_file
+   activemodel.cli.fix_python_file
+   activemodel.cli.generate_sqlalchemy_protocol
+
+
+Package Contents
+----------------
+
+.. py:data:: logger
+
+.. py:data:: QUERY_WRAPPER_CLASS_NAME
+
+.. py:function:: format_python_file(file_path: str | pathlib.Path) -> bool
+
+   Format a Python file using ruff.
+
+   :param file_path: Path to the Python file to format
+
+   :returns: True if formatting was successful, False otherwise
+   :rtype: bool
+
+
+.. py:function:: fix_python_file(file_path: str | pathlib.Path) -> bool
+
+   Fix linting issues in a Python file using ruff.
+
+   :param file_path: Path to the Python file to fix
+
+   :returns: True if fixing was successful, False otherwise
+   :rtype: bool
+
+
+.. py:function:: generate_sqlalchemy_protocol()
+
+   Generate Protocol type definitions for SQLAlchemy SelectOfScalar methods
+
+

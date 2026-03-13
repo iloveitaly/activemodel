@@ -1,0 +1,103 @@
+activemodel.query_wrapper
+=========================
+
+.. py:module:: activemodel.query_wrapper
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   activemodel.query_wrapper.QueryWrapper
+
+
+Module Contents
+---------------
+
+.. py:class:: QueryWrapper[T: sqlmodel.SQLModel](cls: T, *args)
+
+   Bases: :py:obj:`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`\ [\ :py:obj:`T`\ ]
+
+
+   Make it easy to run queries off of a model
+
+
+   .. py:attribute:: target
+      :type:  sqlmodel.sql.expression.SelectOfScalar[T]
+
+
+   .. py:method:: first()
+
+
+   .. py:method:: last()
+
+
+   .. py:method:: one()
+
+      requires exactly one result in the dataset
+
+
+
+   .. py:method:: all()
+
+
+   .. py:method:: count()
+
+      I did some basic tests
+
+
+
+   .. py:method:: scalar()
+
+      >>>
+
+
+
+   .. py:method:: exec()
+
+
+   .. py:method:: delete()
+
+
+   .. py:method:: exists() -> bool
+
+      Return True if the current query yields at least one row.
+
+      Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
+      the current target for efficiency. Keeps the original target intact.
+
+
+
+   .. py:method:: __getattr__(name)
+
+      This implements the magic that forwards function calls to sqlalchemy.
+
+
+
+   .. py:method:: sql()
+
+      Output the raw SQL of the query for debugging
+
+
+
+   .. py:method:: sample() -> T | None
+                  sample(n: Literal[1]) -> T | None
+                  sample(n: int) -> list[T]
+
+      Return a random sample of rows from the current query.
+
+      :param n: Number of rows to return. Defaults to 1.
+      :type n: int
+      :param Behavior:
+      :param --------:
+      :param - Returns a single model instance when ``n == 1`` (or ``None`` if no rows):
+      :param - Returns a list[Model] when ``n > 1`` (possibly empty list when no rows):
+      :param - Sampling is performed by appending an ``ORDER BY RANDOM()`` / ``func.random()``: and ``LIMIT n`` clause to the existing query target.
+      :param - Keeps original query intact (does not mutate ``self.target``) so further: chaining works as expected.
+
+
+
+   .. py:method:: __repr__() -> str
+
+
