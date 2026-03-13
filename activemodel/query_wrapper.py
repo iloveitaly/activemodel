@@ -63,7 +63,7 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         I did some basic tests
         """
         with get_session() as session:
-            return session.scalar(sm.select(sm.func.count()).select_from(self.target))
+            return session.scalar(sm.select(sm.func.count()).select_from(self.target.subquery()))
 
     # TODO typing is broken here
     # TODO would be great to define a default return type if nothing is found

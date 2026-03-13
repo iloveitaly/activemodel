@@ -39,7 +39,7 @@ class PydanticJSONMixin:
           after loading from the database.
         """
         # TODO do we need to inspect sa_type
-        for field_name, field_info in self.model_fields.items():
+        for field_name, field_info in type(self).model_fields.items():
             raw_value = getattr(self, field_name, None)
 
             # if the field is not set on the model, we can avoid doing anything with it

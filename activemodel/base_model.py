@@ -323,7 +323,7 @@ class BaseModel(SQLModel):
         assert len(args) > 0, "Must pass at least one field name"
 
         for field_name in args:
-            if field_name not in self.model_fields:
+            if field_name not in type(self).model_fields:
                 raise ValueError(f"Field '{field_name}' does not exist in the model.")
 
             # check if the field exists
