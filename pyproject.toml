@@ -12,7 +12,7 @@ dependencies = [
 ]
 authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
 keywords = ["sqlmodel", "orm", "activerecord", "activemodel", "sqlalchemy"]
-urls = { "Repository" = "https://github.com/iloveitaly/activemodel" }
+urls = { "Repository" = "https://github.com/iloveitaly/activemodel", "Documentation" = "https://iloveitaly.github.io/activemodel/" }
 
 [project.optional-dependencies]
 docs = [
