@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.18.0](https://github.com/iloveitaly/activemodel/compare/v0.17.0...v0.18.0) (2026-03-13)
+
+
+### Features
+
+* **docs:** add Sphinx documentation and deploy workflow ([#56](https://github.com/iloveitaly/activemodel/issues/56)) ([596de09](https://github.com/iloveitaly/activemodel/commit/596de099cfd1e5489904c8b49431d7f883590b9a))
+
+
+### Bug Fixes
+
+* deprecation warnings ([#52](https://github.com/iloveitaly/activemodel/issues/52)) ([7291f18](https://github.com/iloveitaly/activemodel/commit/7291f186f42758eccf73478782ce758c66fa64ac))
+* include post_save in the same fixture session ([#54](https://github.com/iloveitaly/activemodel/issues/54)) ([c92c675](https://github.com/iloveitaly/activemodel/commit/c92c6755f03b6d9203b13dbdafd3f3bdca992162))
+
 ## [0.17.0](https://github.com/iloveitaly/activemodel/compare/v0.16.0...v0.17.0) (2026-03-13)
 
 
