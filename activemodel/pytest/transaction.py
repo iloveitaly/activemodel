@@ -81,6 +81,7 @@ def test_session():
     else:
         raise ValueError("No test session available")
 
+test_session.__test__ = False
 
 def database_truncate_session():
     """
