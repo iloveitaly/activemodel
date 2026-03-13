@@ -11,8 +11,8 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.field_meta import FieldMeta
 from typeid import TypeID
 
-from activemodel.session_manager import global_session
 from activemodel.logger import logger
+from activemodel.session_manager import global_session
 
 # TODO not currently used
 # def type_id_provider(cls, field_meta):
@@ -73,14 +73,19 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
 
         with global_session(cls.__sqlalchemy_session__):
             model = cls.build(*args, **kwargs).save()
-        return cls.post_save(model)
+
+            # running post_save *inside* the same session context is essential so any lazy references work properly
+            result = cls.post_save(model)
+
+            return result
 
     @classmethod
     def post_save(cls, model: T) -> T:
         """
-        Post-save hook for performing additional actions after the model has been saved to the database.
+        Post-save hook for performing additional actions after the model has been saved to the database. This is useful
+        for cases where you need to perform additional operations that require the model be persisted in the database.
 
-        This is useful for cases where you need to perform additional operations that require the model be persisted in the database.
+        The implementation of this method should return a refreshed instance of the model if that's necessary.
         """
         return model
 
