@@ -186,5 +186,5 @@ github_repo_permissions_create:
 github_repo_set_metadata:
   gh repo edit \
     --description "$(yq  '.project.description' pyproject.toml)" \
-    --homepage "$(yq '.project.urls.Repository' pyproject.toml)" \
+    --homepage "$(yq '.project.urls.Documentation' pyproject.toml)" \
     --add-topic "$(yq '.project.keywords | join(",")' pyproject.toml)"

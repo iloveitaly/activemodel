@@ -63,6 +63,7 @@ myst_heading_anchors = 3
 
 # 4. Theme & Appearance (Shibuya)
 html_theme = "shibuya"
+html_baseurl = "https://iloveitaly.github.io/activemodel/"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 
