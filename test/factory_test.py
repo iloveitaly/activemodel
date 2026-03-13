@@ -52,8 +52,25 @@ class ExampleWithTrackingFactory(ActiveModelFactory[ExampleRecord]):
         cls.post_save_model_id = None
 
 
+class ExampleWithIdRelationshipPostSaveFactory(ActiveModelFactory[ExampleWithId]):
+    __model__ = ExampleWithId
+
+    @classmethod
+    def post_save(cls, model: ExampleWithId) -> ExampleWithId:
+        # Access relationship to ensure model is not detached
+        assert model.another_example is not None
+        assert model.another_example.note == "test"
+        return model
+
+
 class ExampleRelatedModelFactory(ActiveModelFactory[ExampleRelatedModel]):
     __model__ = ExampleRelatedModel
+
+
+def test_post_save_has_access_to_relationships(create_and_wipe_database):
+    """post_save hook should have access to relationships and not raise DetachedInstanceError."""
+    another = AnotherExampleFactory.save(note="test")
+    ExampleWithIdRelationshipPostSaveFactory.save(another_example_id=another.id)
 
 
 class CreateRelatedModelOnPostSaveExampleRecordFactory(
