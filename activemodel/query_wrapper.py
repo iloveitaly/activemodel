@@ -1,6 +1,7 @@
+from typing import Literal, overload
+
 import sqlmodel as sm
 from sqlmodel.sql.expression import SelectOfScalar
-from typing import overload, Literal
 
 from activemodel.types.sqlalchemy_protocol import SQLAlchemyQueryMethods
 
@@ -14,8 +15,11 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
     """
 
     target: SelectOfScalar[T]
+    _model_cls: T
 
     def __init__(self, cls: T, *args) -> None:
+        self._model_cls = cls
+
         # TODO add generics here
         # self.target: SelectOfScalar[T] = sql.select(cls)
 
@@ -27,9 +31,21 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
 
     # TODO the .exec results should be handled in one shot
 
+    def _pk_attr(self):
+        pk_col = self._model_cls.primary_key_column()  # type: ignore[attr-defined]
+        return getattr(self._model_cls, pk_col.name)
+
     def first(self):
+        pk_attr = self._pk_attr()
+        stmt = self.target.order_by(pk_attr.desc()).limit(1)
         with get_session() as session:
-            return session.exec(self.target).first()
+            return session.exec(stmt).first()
+
+    def last(self):
+        pk_attr = self._pk_attr()
+        stmt = self.target.order_by(pk_attr.asc()).limit(1)
+        with get_session() as session:
+            return session.exec(stmt).first()
 
     def one(self):
         "requires exactly one result in the dataset"
