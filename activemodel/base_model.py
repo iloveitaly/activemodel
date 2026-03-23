@@ -55,6 +55,7 @@ class BaseModel(SQLModel):
 
         Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
         Delete: before_delete, after_delete, around_delete
+        Load: after_load
 
     around_* hooks must be context managers (method returning a CM or a CM attribute).
     Ordering (create): before_create -> before_save -> (enter around_save) -> persist -> after_create -> after_save -> (exit around_save)
@@ -282,6 +283,9 @@ class BaseModel(SQLModel):
             if issubclass(self.__class__, PydanticJSONMixin):
                 self.__class__.__transform_dict_to_pydantic__(self)
 
+            # Hook for custom post-load initialization.
+            self._call_hook("after_load")
+
         return self
 
     # TODO shouldn't this be handled by pydantic?
@@ -412,7 +416,10 @@ class BaseModel(SQLModel):
         statement = select(cls).filter(*args).filter_by(**kwargs)
 
         with get_session() as session:
-            return session.exec(statement).first()
+            instance = session.exec(statement).first()
+            if instance is not None:
+                instance._call_hook("after_load")
+            return instance
 
     @classmethod
     def one_or_none(cls, *args: t.Any, **kwargs: t.Any):
@@ -425,7 +432,10 @@ class BaseModel(SQLModel):
         statement = select(cls).filter(*args).filter_by(**kwargs)
 
         with get_session() as session:
-            return session.exec(statement).one_or_none()
+            instance = session.exec(statement).one_or_none()
+            if instance is not None:
+                instance._call_hook("after_load")
+            return instance
 
     @classmethod
     def one(cls, *args: t.Any, **kwargs: t.Any):
@@ -437,7 +447,10 @@ class BaseModel(SQLModel):
         statement = select(cls).filter(*args).filter_by(**kwargs)
 
         with get_session() as session:
-            return session.exec(statement).one()
+            instance = session.exec(statement).one()
+            if instance is not None:
+                instance._call_hook("after_load")
+            return instance
 
     @classmethod
     def __process_filter_args__(cls, *args: t.Any, **kwargs: t.Any):
@@ -463,6 +476,7 @@ class BaseModel(SQLModel):
 
             # TODO do we need this or can we just return results?
             for result in results:
+                result._call_hook("after_load")
                 yield result
 
     @classmethod
@@ -476,4 +490,7 @@ class BaseModel(SQLModel):
         query = sm.select(cls).order_by(sa.sql.func.random()).limit(1)
 
         with get_session() as session:
-            return session.exec(query).one()
+            instance = session.exec(query).one()
+            if instance is not None:
+                instance._call_hook("after_load")
+            return instance

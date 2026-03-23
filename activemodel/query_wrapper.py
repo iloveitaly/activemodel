@@ -1,4 +1,4 @@
-from typing import Literal, overload
+from typing import Literal, overload, cast
 
 import sqlmodel as sm
 from sqlmodel.sql.expression import SelectOfScalar
@@ -31,6 +31,16 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
 
     # TODO the .exec results should be handled in one shot
 
+    def _post_load(self, obj: T | None) -> T | None:
+        """Runs BaseModel's `after_load` hook on a loaded instance (if present)."""
+        if obj is None:
+            return None
+
+        call_hook = getattr(obj, "_call_hook", None)
+        if callable(call_hook):
+            call_hook("after_load")
+        return obj
+
     def _pk_attr(self):
         pk_col = self._model_cls.primary_key_column()  # type: ignore[attr-defined]
         return getattr(self._model_cls, pk_col.name)
@@ -39,24 +49,24 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.desc()).limit(1)
         with get_session() as session:
-            return session.exec(stmt).first()
+            return self._post_load(session.exec(stmt).first())
 
     def last(self):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.asc()).limit(1)
         with get_session() as session:
-            return session.exec(stmt).first()
+            return self._post_load(session.exec(stmt).first())
 
     def one(self):
         "requires exactly one result in the dataset"
         with get_session() as session:
-            return session.exec(self.target).one()
+            return self._post_load(session.exec(self.target).one())
 
     def all(self):
         with get_session() as session:
             result = session.exec(self.target)
             for row in result:
-                yield row
+                yield self._post_load(row)  # type: ignore[misc]
 
     def count(self):
         """
@@ -163,9 +173,14 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
 
         if n == 1:
             # Return the single instance or None
-            return result[0] if result else None
+            loaded = result[0] if result else None
+            return self._post_load(loaded)
 
-        return result
+        return [
+            cast(T, loaded)
+            for loaded in (self._post_load(item) for item in result)
+            if loaded is not None
+        ]
 
     def __repr__(self) -> str:
         # TODO we should improve structure of this a bit more, maybe wrap in <> or something?
