@@ -55,11 +55,13 @@ class BaseModel(SQLModel):
 
         Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
         Delete: before_delete, after_delete, around_delete
+        Read: after_find
 
     around_* hooks must be context managers (method returning a CM or a CM attribute).
     Ordering (create): before_create -> before_save -> (enter around_save) -> persist -> after_create -> after_save -> (exit around_save)
     Ordering (update): before_update -> before_save -> (enter around_save) -> persist -> after_update -> after_save -> (exit around_save)
     Delete: before_delete -> (enter around_delete) -> delete -> after_delete -> (exit around_delete)
+    Read: finder/query method -> after_find
 
         # TODO document this in activemodel, this is an interesting edge case
     # https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a
@@ -250,6 +252,32 @@ class BaseModel(SQLModel):
                 )
             method()
 
+    @classmethod
+    def _run_after_find_hook(cls, instance: t.Any):
+        """Run the Rails-style `after_find` hook for model instances only.
+
+        This helper exists because `after_find` is different from the save/delete
+        hooks above:
+
+        - it is not tied to a single persistence entrypoint, so multiple finder and
+          query methods need the same behavior
+        - some query paths return `None` or scalar values, which should pass
+          through untouched
+        - the hook should run while the SQLAlchemy session is still active so model
+          callbacks can safely touch lazy relationships
+
+        Centralizing that logic keeps the finder methods small and prevents each
+        query path from re-implementing the same guards.
+        """
+        if instance is None:
+            return None
+
+        if not isinstance(instance, BaseModel):
+            return instance
+
+        instance._call_hook("after_find")
+        return instance
+
     def _get_around_context_manager(self, name: str) -> t.ContextManager | None:
         obj = getattr(self, name, None)
         if obj is None:
@@ -333,6 +361,7 @@ class BaseModel(SQLModel):
         "set of fields that are modified"
 
         insp = inspect(self)
+        assert insp is not None
 
         return {attr.key for attr in insp.attrs if attr.history.has_changes()}
 
@@ -412,7 +441,8 @@ class BaseModel(SQLModel):
         statement = select(cls).filter(*args).filter_by(**kwargs)
 
         with get_session() as session:
-            return session.exec(statement).first()
+            result = session.exec(statement).first()
+            return cls._run_after_find_hook(result)
 
     @classmethod
     def one_or_none(cls, *args: t.Any, **kwargs: t.Any):
@@ -425,7 +455,8 @@ class BaseModel(SQLModel):
         statement = select(cls).filter(*args).filter_by(**kwargs)
 
         with get_session() as session:
-            return session.exec(statement).one_or_none()
+            result = session.exec(statement).one_or_none()
+            return cls._run_after_find_hook(result)
 
     @classmethod
     def one(cls, *args: t.Any, **kwargs: t.Any):
@@ -437,7 +468,8 @@ class BaseModel(SQLModel):
         statement = select(cls).filter(*args).filter_by(**kwargs)
 
         with get_session() as session:
-            return session.exec(statement).one()
+            result = session.exec(statement).one()
+            return cls._run_after_find_hook(result)
 
     @classmethod
     def __process_filter_args__(cls, *args: t.Any, **kwargs: t.Any):
@@ -463,7 +495,7 @@ class BaseModel(SQLModel):
 
             # TODO do we need this or can we just return results?
             for result in results:
-                yield result
+                yield cls._run_after_find_hook(result)
 
     @classmethod
     def sample(cls):
@@ -476,4 +508,5 @@ class BaseModel(SQLModel):
         query = sm.select(cls).order_by(sa.sql.func.random()).limit(1)
 
         with get_session() as session:
-            return session.exec(query).one()
+            result = session.exec(query).one()
+            return cls._run_after_find_hook(result)

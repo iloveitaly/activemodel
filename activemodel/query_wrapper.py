@@ -39,31 +39,36 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.desc()).limit(1)
         with get_session() as session:
-            return session.exec(stmt).first()
+            result = session.exec(stmt).first()
+            return self._model_cls._run_after_find_hook(result)
 
     def last(self):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.asc()).limit(1)
         with get_session() as session:
-            return session.exec(stmt).first()
+            result = session.exec(stmt).first()
+            return self._model_cls._run_after_find_hook(result)
 
     def one(self):
         "requires exactly one result in the dataset"
         with get_session() as session:
-            return session.exec(self.target).one()
+            result = session.exec(self.target).one()
+            return self._model_cls._run_after_find_hook(result)
 
     def all(self):
         with get_session() as session:
             result = session.exec(self.target)
             for row in result:
-                yield row
+                yield self._model_cls._run_after_find_hook(row)
 
     def count(self):
         """
         I did some basic tests
         """
         with get_session() as session:
-            return session.scalar(sm.select(sm.func.count()).select_from(self.target.subquery()))
+            return session.scalar(
+                sm.select(sm.func.count()).select_from(self.target.subquery())
+            )
 
     # TODO typing is broken here
     # TODO would be great to define a default return type if nothing is found
@@ -161,11 +166,12 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         with get_session() as session:
             result = list(session.exec(randomized))
 
-        if n == 1:
-            # Return the single instance or None
-            return result[0] if result else None
+        processed_result = [self._model_cls._run_after_find_hook(row) for row in result]
 
-        return result
+        if n == 1:
+            return processed_result[0] if processed_result else None
+        else:
+            return processed_result
 
     def __repr__(self) -> str:
         # TODO we should improve structure of this a bit more, maybe wrap in <> or something?
