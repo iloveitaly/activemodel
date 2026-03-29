@@ -10,6 +10,8 @@ Docs are bad:
 
 TODO
 
+- [ ] nested sessions, across lazy loaded relationships, cause weird session issues https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b
+- [ ] make `BaseModel.refresh()` match Rails `reload` semantics for `after_find` / `after_initialize` without breaking SQLAlchemy session identity behavior
 - [ ] nested sessions, maybe only with connections
 - [ ] tests for polyfactory support, setting session across all factories
 - [ ] sessions in tests, they don't work right now
@@ -63,4 +65,24 @@ There should be a better way to add unique keys
         # users should never see two schemas with the same name
         UniqueConstraint("note_type", "doctor_id", name="doctor_and_note_type_unique"),
     )
+```
+
+we should have the ability to do this:
+
+```
+def test_create_checkout_session_rejects_when_booked_in_past(client, db_session):
+    screening = ScreeningFactory.save()
+    screening.booked_datetime = SystemDateTime.now().add(days=-1).py_datetime()
+    screening.save()
+
+    response = client.post(
+        api_app.url_path_for("create_checkout_session"),
+        json={
+            "screening_id": str(screening.id),
+            "ticket_count": 1,
+        },
+        headers={"host": screening.distribution.domain},
+    )
+
+    assert_status(response, status.HTTP_400_BAD_REQUEST)
 ```
