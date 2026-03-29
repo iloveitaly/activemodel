@@ -1,3 +1,4 @@
+import typing as t
 from typing import Literal, overload
 
 import sqlmodel as sm
@@ -35,31 +36,35 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         pk_col = self._model_cls.primary_key_column()  # type: ignore[attr-defined]
         return getattr(self._model_cls, pk_col.name)
 
+    def _run_after_load_hooks(self, instance: t.Any):
+        model_cls = t.cast(t.Any, self._model_cls)
+        return model_cls._run_after_load_hooks(instance)
+
     def first(self):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.desc()).limit(1)
         with get_session() as session:
             result = session.exec(stmt).first()
-            return self._model_cls._run_after_find_hook(result)
+            return self._run_after_load_hooks(result)
 
     def last(self):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.asc()).limit(1)
         with get_session() as session:
             result = session.exec(stmt).first()
-            return self._model_cls._run_after_find_hook(result)
+            return self._run_after_load_hooks(result)
 
     def one(self):
         "requires exactly one result in the dataset"
         with get_session() as session:
             result = session.exec(self.target).one()
-            return self._model_cls._run_after_find_hook(result)
+            return self._run_after_load_hooks(result)
 
     def all(self):
         with get_session() as session:
             result = session.exec(self.target)
             for row in result:
-                yield self._model_cls._run_after_find_hook(row)
+                yield self._run_after_load_hooks(row)
 
     def count(self):
         """
@@ -166,7 +171,7 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         with get_session() as session:
             result = list(session.exec(randomized))
 
-        processed_result = [self._model_cls._run_after_find_hook(row) for row in result]
+        processed_result = [self._run_after_load_hooks(row) for row in result]
 
         if n == 1:
             return processed_result[0] if processed_result else None

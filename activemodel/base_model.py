@@ -55,13 +55,14 @@ class BaseModel(SQLModel):
 
         Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
         Delete: before_delete, after_delete, around_delete
-        Read: after_find
+        Read: after_find, after_initialize
 
     around_* hooks must be context managers (method returning a CM or a CM attribute).
     Ordering (create): before_create -> before_save -> (enter around_save) -> persist -> after_create -> after_save -> (exit around_save)
     Ordering (update): before_update -> before_save -> (enter around_save) -> persist -> after_update -> after_save -> (exit around_save)
     Delete: before_delete -> (enter around_delete) -> delete -> after_delete -> (exit around_delete)
-    Read: finder/query method -> after_find
+    Read: finder/query method -> after_find -> after_initialize
+    Construction: Model(...) -> after_initialize
 
         # TODO document this in activemodel, this is an interesting edge case
     # https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a
@@ -69,6 +70,10 @@ class BaseModel(SQLModel):
     """
 
     __table_args__ = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        type(self)._run_after_initialize_hook(self)
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
@@ -278,6 +283,29 @@ class BaseModel(SQLModel):
         instance._call_hook("after_find")
         return instance
 
+    @classmethod
+    def _run_after_initialize_hook(cls, instance: t.Any):
+        """Run the Rails-style `after_initialize` hook for model instances only.
+
+        This helper mirrors the `after_find` guard behavior because some shared
+        query paths can return `None` or scalar values instead of ORM model
+        instances.
+        """
+        if instance is None:
+            return None
+
+        if not isinstance(instance, BaseModel):
+            return instance
+
+        instance._call_hook("after_initialize")
+        return instance
+
+    @classmethod
+    def _run_after_load_hooks(cls, instance: t.Any):
+        """Run DB-load callbacks in Rails order for model instances only."""
+        instance = cls._run_after_find_hook(instance)
+        return cls._run_after_initialize_hook(instance)
+
     def _get_around_context_manager(self, name: str) -> t.ContextManager | None:
         obj = getattr(self, name, None)
         if obj is None:
@@ -442,7 +470,7 @@ class BaseModel(SQLModel):
 
         with get_session() as session:
             result = session.exec(statement).first()
-            return cls._run_after_find_hook(result)
+            return cls._run_after_load_hooks(result)
 
     @classmethod
     def one_or_none(cls, *args: t.Any, **kwargs: t.Any):
@@ -456,7 +484,7 @@ class BaseModel(SQLModel):
 
         with get_session() as session:
             result = session.exec(statement).one_or_none()
-            return cls._run_after_find_hook(result)
+            return cls._run_after_load_hooks(result)
 
     @classmethod
     def one(cls, *args: t.Any, **kwargs: t.Any):
@@ -469,7 +497,7 @@ class BaseModel(SQLModel):
 
         with get_session() as session:
             result = session.exec(statement).one()
-            return cls._run_after_find_hook(result)
+            return cls._run_after_load_hooks(result)
 
     @classmethod
     def __process_filter_args__(cls, *args: t.Any, **kwargs: t.Any):
@@ -495,7 +523,7 @@ class BaseModel(SQLModel):
 
             # TODO do we need this or can we just return results?
             for result in results:
-                yield cls._run_after_find_hook(result)
+                yield cls._run_after_load_hooks(result)
 
     @classmethod
     def sample(cls):
@@ -509,4 +537,4 @@ class BaseModel(SQLModel):
 
         with get_session() as session:
             result = session.exec(query).one()
-            return cls._run_after_find_hook(result)
+            return cls._run_after_load_hooks(result)
