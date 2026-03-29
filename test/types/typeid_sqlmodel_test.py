@@ -7,7 +7,6 @@ from test.models import TYPEID_PREFIX, ExampleWithId
 from test.utils import temporary_tables
 
 
-
 def test_get_through_prefixed_uid():
     type_uid = TypeID(prefix=TYPEID_PREFIX)
 

@@ -7,7 +7,6 @@ from activemodel import get_engine
 from sqlmodel import SQLModel
 
 
-
 def database_url():
     """
     This is also used by alembic logic as well, which is why it's extracted out

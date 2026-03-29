@@ -1,4 +1,3 @@
-
 from test.models import UpsertTestModel
 
 
