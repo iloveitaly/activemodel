@@ -217,8 +217,14 @@ data-aria-dark="Switch to auto color mode">
 <p>SQLModel is <em>not</em> an ORM. It’s a SQL query builder and a schema definition tool. This drives me nuts because the developer ergonomics are terrible because of this.</p>
 <p>This package provides a thin wrapper around SQLModel that provides a more ActiveRecord-like interface with things like:</p>
 <ul class="simple">
-<li><p>Timestamp column mixins</p></li>
-<li><p>Lifecycle hooks</p></li>
+<li><p><strong>ActiveRecord-style Query &amp; Persistence API</strong>: Fluent methods like <code class="docutils literal notranslate"><span class="pre">save()</span></code>, <code class="docutils literal notranslate"><span class="pre">where()</span></code>, <code class="docutils literal notranslate"><span class="pre">find_or_create_by()</span></code>, and <code class="docutils literal notranslate"><span class="pre">upsert()</span></code> for intuitive database operations.</p></li>
+<li><p><strong>Implicit Session Management</strong>: Automatically handles database sessions, eliminating boilerplate and making database interactions feel “magic”.</p></li>
+<li><p><strong>Stripe-style IDs (TypeID)</strong>: Native support for type-safe, prefixed, and sortable UUIDs with a built-in <code class="docutils literal notranslate"><span class="pre">TypeIDMixin</span></code>.</p></li>
+<li><p><strong>Timestamp Column Mixins</strong>: Standard <code class="docutils literal notranslate"><span class="pre">created_at</span></code> and <code class="docutils literal notranslate"><span class="pre">updated_at</span></code> tracking out of the box.</p></li>
+<li><p><strong>Lifecycle Hooks</strong>: Rails-style callbacks like <code class="docutils literal notranslate"><span class="pre">before_save</span></code>, <code class="docutils literal notranslate"><span class="pre">after_create</span></code>, and <code class="docutils literal notranslate"><span class="pre">around_delete</span></code>.</p></li>
+<li><p><strong>Automatic DB Comments</strong>: Syncs class and field-level docstrings directly to database table and column comments for better self-documentation.</p></li>
+<li><p><strong>Soft Deletion</strong>: Easily mark records as deleted with a <code class="docutils literal notranslate"><span class="pre">deleted_at</span></code> timestamp using the <code class="docutils literal notranslate"><span class="pre">SoftDeletionMixin</span></code>.</p></li>
+<li><p><strong>Smart Table &amp; Constraint Naming</strong>: Consistent snake_case table names and standardized naming conventions for indexes and constraints.</p></li>
 </ul>
 <blockquote>
 <div><p>[!TIP]
