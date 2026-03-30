@@ -4,9 +4,7 @@
 
 * [activemodel.base_model](base_model/index.md)
 * [activemodel.celery](celery/index.md)
-* [activemodel.cli](cli/index.md)
 * [activemodel.errors](errors/index.md)
-* [activemodel.logger](logger/index.md)
 * [activemodel.mixins](mixins/index.md)
 * [activemodel.patches](patches/index.md)
 * [activemodel.pytest](pytest/index.md)
@@ -126,11 +124,11 @@ Helps quickly build a many-to-one or one-to-one relationship.
 >>> other_model = Relationship()
 ```
 
-#### *classmethod* select(\*args)
+#### *classmethod* select(\*args: Any)
 
 create a query wrapper to easily run sqlmodel queries on this model
 
-#### *classmethod* where(\*args)
+#### *classmethod* where(\*args: Any)
 
 convenience method to avoid having to write .select().where() in order to add conditions
 

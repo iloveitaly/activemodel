@@ -15,16 +15,16 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: QueryWrapper[T: sqlmodel.SQLModel](cls: T, *args)
+.. py:class:: QueryWrapper[TModel: sqlmodel.SQLModel](cls: type[TModel], *args: Any)
 
-   Bases: :py:obj:`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`\ [\ :py:obj:`T`\ ]
+   Bases: :py:obj:`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`\ [\ :py:obj:`TModel`\ ]
 
 
-   Make it easy to run queries off of a model
+   Make it easy to run queries on a model.
 
 
    .. py:attribute:: target
-      :type:  sqlmodel.sql.expression.SelectOfScalar[T]
+      :type:  sqlmodel.sql.expression.SelectOfScalar[TModel]
 
 
    .. py:method:: first()
@@ -67,6 +67,8 @@ Module Contents
       Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
       the current target for efficiency. Keeps the original target intact.
 
+      SQLAlchemy exists works differently and does not return a simple boolean.
+
 
 
    .. py:method:: __getattr__(name)
@@ -81,9 +83,8 @@ Module Contents
 
 
 
-   .. py:method:: sample() -> T | None
-                  sample(n: Literal[1]) -> T | None
-                  sample(n: int) -> list[T]
+   .. py:method:: sample() -> TModel | None
+                  sample(n: int) -> list[TModel]
 
       Return a random sample of rows from the current query.
 

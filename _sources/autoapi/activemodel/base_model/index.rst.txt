@@ -126,7 +126,7 @@ Module Contents
 
 
 
-   .. py:method:: select(*args)
+   .. py:method:: select(*args: Any)
       :classmethod:
 
 
@@ -134,7 +134,7 @@ Module Contents
 
 
 
-   .. py:method:: where(*args)
+   .. py:method:: where(*args: Any)
       :classmethod:
 
 

@@ -117,11 +117,11 @@ Helps quickly build a many-to-one or one-to-one relationship.
 >>> other_model = Relationship()
 ```
 
-#### *classmethod* select(\*args)
+#### *classmethod* select(\*args: Any)
 
 create a query wrapper to easily run sqlmodel queries on this model
 
-#### *classmethod* where(\*args)
+#### *classmethod* where(\*args: Any)
 
 convenience method to avoid having to write .select().where() in order to add conditions
 

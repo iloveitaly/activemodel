@@ -12,9 +12,7 @@ Submodules
 
    /autoapi/activemodel/base_model/index
    /autoapi/activemodel/celery/index
-   /autoapi/activemodel/cli/index
    /autoapi/activemodel/errors/index
-   /autoapi/activemodel/logger/index
    /autoapi/activemodel/mixins/index
    /autoapi/activemodel/patches/index
    /autoapi/activemodel/pytest/index
@@ -140,7 +138,7 @@ Package Contents
 
 
 
-   .. py:method:: select(*args)
+   .. py:method:: select(*args: Any)
       :classmethod:
 
 
@@ -148,7 +146,7 @@ Package Contents
 
 
 
-   .. py:method:: where(*args)
+   .. py:method:: where(*args: Any)
       :classmethod:
 
 
