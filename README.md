@@ -105,6 +105,66 @@ DB operations on each test.](#pytest)
 
 ## Usage
 
+### Lifecycle Hooks
+
+`BaseModel` supports a small Rails-style lifecycle hook system.
+
+The implemented hooks today are:
+
+* Create/update: `before_create`, `after_create`, `before_update`, `after_update`, `before_save`, `after_save`, `around_save`
+* Delete: `before_delete`, `after_delete`, `around_delete`
+* Read: `after_find`, `after_initialize`
+
+Hook methods are optional. If a method with one of those names exists on the model, ActiveModel will call it at the appropriate time.
+
+```python
+from contextlib import contextmanager
+
+from activemodel import BaseModel
+
+
+class User(BaseModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    email: str
+
+    def before_save(self):
+        self.email = self.email.strip().lower()
+
+    def after_find(self):
+        print(f"loaded user {self.id}")
+
+    def after_initialize(self):
+        print(f"initialized user {self.id}")
+
+    @contextmanager
+    def around_save(self):
+        print("before save")
+        yield
+        print("after save")
+```
+
+Some important semantics:
+
+* `after_initialize` runs on plain construction, so `User(email="a@example.com")` will trigger it even before the record is saved.
+* Database-backed finder/query loads run `after_find` and then `after_initialize`.
+* `after_find` is not called for plain construction.
+* `find_or_initialize_by()` follows the Rails-style split: the existing-record path runs `after_find` then `after_initialize`, while the new-instance path only runs `after_initialize`.
+* `around_save` and `around_delete` must be context managers.
+
+Current ordering is:
+
+* Create: `before_create -> before_save -> around_save -> after_create -> after_save`
+* Update: `before_update -> before_save -> around_save -> after_update -> after_save`
+* Delete: `before_delete -> around_delete -> after_delete`
+* DB load: `after_find -> after_initialize`
+* Plain construction: `after_initialize`
+
+There is one important scope limit to know about:
+
+* `refresh()` does **not** currently replay Rails-style read callbacks. It refreshes the object from the database, but it does not currently trigger `after_find` / `after_initialize` the way Rails `reload` effectively does.
+
+Also note that `after_find` / `after_initialize` only run for model instances. Lower-level query paths that return `None`, counts, scalars, or raw SQLAlchemy result objects are outside that contract.
+
 ### Pytest
 
 TODO detail out truncation and transactions

@@ -54,7 +54,9 @@ def test_table_comments(create_and_wipe_database):
         """)
         )
 
-        table_comment = result.fetchone()[0]
+        row = result.fetchone()
+        assert row is not None
+        table_comment = row[0]
         assert table_comment == "Expected table comment"
 
 
@@ -69,7 +71,9 @@ def get_column_comment(table_name, column_name):
             """
             )
         )
-        return result.fetchone()[0]
+        row = result.fetchone()
+        assert row is not None
+        return row[0]
 
 
 def test_column_comments(create_and_wipe_database):

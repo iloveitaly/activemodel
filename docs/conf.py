@@ -1,5 +1,3 @@
-import os
-import sys
 from datetime import datetime
 
 # 1. Basic Project Info
@@ -9,17 +7,17 @@ author = "Michael Bianco"
 
 # 2. Extensions
 extensions = [
-    "myst_parser",           # Enable Markdown
-    "sphinx_design",         # UI Components (Grids/Cards)
-    "sphinx_copybutton",     # Code copy button
-    "sphinx.ext.autodoc",    # API doc generation
-    "sphinx.ext.napoleon",   # Support for Google-style docstrings
-    "sphinx.ext.viewcode",   # View source code
-    "sphinx.ext.intersphinx",# Link to external docs
-    "autoapi.extension",     # Auto-generate API reference
-    "sphinx_autodoc_typehints", # Clean up type hints
-    "sphinx_paramlinks",     # Direct links to parameters
-    "sphinx_llm.txt",        # LLM-friendly documentation
+    "myst_parser",  # Enable Markdown
+    "sphinx_design",  # UI Components (Grids/Cards)
+    "sphinx_copybutton",  # Code copy button
+    "sphinx.ext.autodoc",  # API doc generation
+    "sphinx.ext.napoleon",  # Support for Google-style docstrings
+    "sphinx.ext.viewcode",  # View source code
+    "sphinx.ext.intersphinx",  # Link to external docs
+    "autoapi.extension",  # Auto-generate API reference
+    "sphinx_autodoc_typehints",  # Clean up type hints
+    "sphinx_paramlinks",  # Direct links to parameters
+    "sphinx_llm.txt",  # LLM-friendly documentation
 ]
 
 # Configure AutoAPI
@@ -50,13 +48,13 @@ source_suffix = {
 }
 
 myst_enable_extensions = [
-    "colon_fence",           # Use ::: for directives (much cleaner MD)
-    "deflist",               # Support for definition lists
-    "substitution",          # Use {{ variables }} in Markdown
-    "tasklist",              # Enable GitHub-style checkboxes
-    "attrs_block",           # CSS classes directly in markdown
-    "attrs_inline",          # CSS classes inline
-    "smartquotes",           # Typographic curly quotes
+    "colon_fence",  # Use ::: for directives (much cleaner MD)
+    "deflist",  # Support for definition lists
+    "substitution",  # Use {{ variables }} in Markdown
+    "tasklist",  # Enable GitHub-style checkboxes
+    "attrs_block",  # CSS classes directly in markdown
+    "attrs_inline",  # CSS classes inline
+    "smartquotes",  # Typographic curly quotes
 ]
 
 # Support heading anchors in MyST for README includes

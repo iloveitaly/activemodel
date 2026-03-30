@@ -1,3 +1,4 @@
+import typing as t
 from typing import Literal, overload
 
 import sqlmodel as sm
@@ -35,35 +36,44 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         pk_col = self._model_cls.primary_key_column()  # type: ignore[attr-defined]
         return getattr(self._model_cls, pk_col.name)
 
+    def _run_after_load_hooks(self, instance: t.Any):
+        model_cls = t.cast(t.Any, self._model_cls)
+        return model_cls._run_after_load_hooks(instance)
+
     def first(self):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.desc()).limit(1)
         with get_session() as session:
-            return session.exec(stmt).first()
+            result = session.exec(stmt).first()
+            return self._run_after_load_hooks(result)
 
     def last(self):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.asc()).limit(1)
         with get_session() as session:
-            return session.exec(stmt).first()
+            result = session.exec(stmt).first()
+            return self._run_after_load_hooks(result)
 
     def one(self):
         "requires exactly one result in the dataset"
         with get_session() as session:
-            return session.exec(self.target).one()
+            result = session.exec(self.target).one()
+            return self._run_after_load_hooks(result)
 
     def all(self):
         with get_session() as session:
             result = session.exec(self.target)
             for row in result:
-                yield row
+                yield self._run_after_load_hooks(row)
 
     def count(self):
         """
         I did some basic tests
         """
         with get_session() as session:
-            return session.scalar(sm.select(sm.func.count()).select_from(self.target.subquery()))
+            return session.scalar(
+                sm.select(sm.func.count()).select_from(self.target.subquery())
+            )
 
     # TODO typing is broken here
     # TODO would be great to define a default return type if nothing is found
@@ -161,11 +171,12 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         with get_session() as session:
             result = list(session.exec(randomized))
 
-        if n == 1:
-            # Return the single instance or None
-            return result[0] if result else None
+        processed_result = [self._run_after_load_hooks(row) for row in result]
 
-        return result
+        if n == 1:
+            return processed_result[0] if processed_result else None
+        else:
+            return processed_result
 
     def __repr__(self) -> str:
         # TODO we should improve structure of this a bit more, maybe wrap in <> or something?

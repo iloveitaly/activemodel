@@ -21,7 +21,7 @@ class TimestampsMixin:
     >>>    pass
 
     Notes:
-    
+
     - Originally pulled from: https://github.com/tiangolo/sqlmodel/issues/252
     - Related issue: https://github.com/fastapi/sqlmodel/issues/539
     """
