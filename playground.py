@@ -3,12 +3,12 @@
 import sqlalchemy as sa
 import sqlmodel as sm
 from activemodel.session_manager import get_session
-from test.models import *
+from tests.models import *
 
 from sqlmodel import SQLModel
 from activemodel import get_engine
 import activemodel
-from test.utils import database_url
+from tests.utils import database_url
 
 activemodel.init(database_url())
 
