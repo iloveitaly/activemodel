@@ -1,6 +1,5 @@
 import typing as t
-import typing as t
-from typing import Literal, overload
+from typing import overload
 
 import sqlmodel as sm
 from sqlmodel.sql.expression import SelectOfScalar
@@ -99,7 +98,7 @@ class QueryWrapper[TModel: sm.SQLModel](SQLAlchemyQueryMethods[TModel]):
         with get_session() as session:
             return session.delete(self.target)
 
-    def exists(self) -> bool:  # pyright: ignore[reportIncompatibleMethodOverride]
+    def exists(self) -> bool:
         """Return True if the current query yields at least one row.
 
         Uses the SQLAlchemy exists() construct against a LIMIT 1 version of

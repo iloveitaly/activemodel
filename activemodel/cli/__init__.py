@@ -7,6 +7,7 @@ from pathlib import Path
 from string.templatelib import Template
 from typing import Any
 
+from activemodel.query_wrapper import QueryWrapper
 from sqlmodel.sql.expression import SelectOfScalar
 
 logger = logging.getLogger(__name__)
@@ -85,11 +86,30 @@ def _render_stub_method(name: str, method: Any) -> str:
     return _render_template(t"def {name}(self{parameters}) -> QueryWrapper[T]: ...")
 
 
+def _iter_query_wrapper_method_names() -> set[str]:
+    method_names: set[str] = set()
+
+    for name, value in QueryWrapper.__dict__.items():
+        if name.startswith("_"):
+            continue
+
+        if not inspect.isfunction(value) and not inspect.ismethoddescriptor(value):
+            continue
+
+        method_names.add(name)
+
+    return method_names
+
+
 def _iter_select_methods() -> list[tuple[str, Any]]:
     methods: list[tuple[str, Any]] = []
+    query_wrapper_method_names = _iter_query_wrapper_method_names()
 
     for name, method in inspect.getmembers(SelectOfScalar):
         if name.startswith("_"):
+            continue
+
+        if name in query_wrapper_method_names:
             continue
 
         if not inspect.isfunction(method) and not inspect.ismethod(method):
