@@ -137,3 +137,23 @@ dmypy.json
 tmp/
 
 /test/migrations/versions
+
+# START AI INSTRUCTION IGNORES
+/.claude/commands/standalone-python-scripts.md
+/.claude/commands/write-or-update-readme.md
+/.claude/rules/general.md
+/.claude/rules/python.md
+/.cursor/commands/standalone-python-scripts.md
+/.cursor/commands/write-or-update-readme.md
+/.cursor/rules/general.mdc
+/.cursor/rules/python.mdc
+/.gemini/commands/standalone-python-scripts.toml
+/.gemini/commands/write-or-update-readme.toml
+/.github/copilot-instructions.md
+/.github/instructions/python.instructions.md
+/.github/prompts/standalone-python-scripts.prompt.md
+/.github/prompts/write-or-update-readme.prompt.md
+/.opencode/commands/standalone-python-scripts.md
+/.opencode/commands/write-or-update-readme.md
+/AGENTS.md
+# END AI INSTRUCTION IGNORES
