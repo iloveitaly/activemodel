@@ -107,6 +107,66 @@
 > 
 > ## Usage
 > 
+> ### Lifecycle Hooks
+> 
+> `BaseModel` supports a small Rails-style lifecycle hook system.
+> 
+> The implemented hooks today are:
+> 
+> * Create/update: `before_create`, `after_create`, `before_update`, `after_update`, `before_save`, `after_save`, `around_save`
+> * Delete: `before_delete`, `after_delete`, `around_delete`
+> * Read: `after_find`, `after_initialize`
+> 
+> Hook methods are optional. If a method with one of those names exists on the model, ActiveModel will call it at the appropriate time.
+> 
+> ```python
+> from contextlib import contextmanager
+> 
+> from activemodel import BaseModel
+> 
+> 
+> class User(BaseModel, table=True):
+>     id: int | None = Field(default=None, primary_key=True)
+>     email: str
+> 
+>     def before_save(self):
+>         self.email = self.email.strip().lower()
+> 
+>     def after_find(self):
+>         print(f"loaded user {self.id}")
+> 
+>     def after_initialize(self):
+>         print(f"initialized user {self.id}")
+> 
+>     @contextmanager
+>     def around_save(self):
+>         print("before save")
+>         yield
+>         print("after save")
+> ```
+> 
+> Some important semantics:
+> 
+> * `after_initialize` runs on plain construction, so `User(email="a@example.com")` will trigger it even before the record is saved.
+> * Database-backed finder/query loads run `after_find` and then `after_initialize`.
+> * `after_find` is not called for plain construction.
+> * `find_or_initialize_by()` follows the Rails-style split: the existing-record path runs `after_find` then `after_initialize`, while the new-instance path only runs `after_initialize`.
+> * `around_save` and `around_delete` must be context managers.
+> 
+> Current ordering is:
+> 
+> * Create: `before_create -> before_save -> around_save -> after_create -> after_save`
+> * Update: `before_update -> before_save -> around_save -> after_update -> after_save`
+> * Delete: `before_delete -> around_delete -> after_delete`
+> * DB load: `after_find -> after_initialize`
+> * Plain construction: `after_initialize`
+> 
+> There is one important scope limit to know about:
+> 
+> * `refresh()` does **not** currently replay Rails-style read callbacks. It refreshes the object from the database, but it does not currently trigger `after_find` / `after_initialize` the way Rails `reload` effectively does.
+> 
+> Also note that `after_find` / `after_initialize` only run for model instances. Lower-level query paths that return `None`, counts, scalars, or raw SQLAlchemy result objects are outside that contract.
+> 
 > ### Pytest
 > 
 > TODO detail out truncation and transactions
@@ -346,29 +406,29 @@
 - [Home](index.html.md): <div class="title-with-logo">
 - [API Reference](autoapi/index.html.md): This page contains auto-generated API reference documentation <sup>[1](#f1)</sup>.
 - [activemodel](autoapi/activemodel/index.html.md): * [activemodel.base_model](base_model/index.md)
-- [activemodel.patches](autoapi/activemodel/patches/index.html.md): * [activemodel.patches.get_column_from_field_patch](get_column_from_field_patch/index.md)
-- [activemodel.logger](autoapi/activemodel/logger/index.html.md): | [`logger`](#activemodel.logger.logger)   |    |
-- [activemodel.pytest](autoapi/activemodel/pytest/index.html.md): * [activemodel.pytest.factories](factories/index.md)
-- [activemodel.cli](autoapi/activemodel/cli/index.html.md): This module provides utilities for generating Protocol type definitions for SQLAlchemy’s
-- [activemodel.celery](autoapi/activemodel/celery/index.html.md): Do not import unless you have Celery/Kombu installed.
-- [activemodel.utils](autoapi/activemodel/utils/index.html.md): | [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, he...
-- [activemodel.mixins](autoapi/activemodel/mixins/index.html.md): * [activemodel.mixins.pydantic_json](pydantic_json/index.md)
 - [activemodel.query_wrapper](autoapi/activemodel/query_wrapper/index.html.md): | [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries off of a...
-- [activemodel.session_manager](autoapi/activemodel/session_manager/index.html.md): Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it ea...
-- [activemodel.types](autoapi/activemodel/types/index.html.md): * [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.md)
-- [activemodel.errors](autoapi/activemodel/errors/index.html.md): | [`TypeIDValidationError`](#activemodel.errors.TypeIDValidationError)   | Raised when a TypeID is i...
 - [activemodel.base_model](autoapi/activemodel/base_model/index.html.md): | [`POSTGRES_INDEXES_NAMING_CONVENTION`](#activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION)...
-- [activemodel.types.sqlalchemy_protocol](autoapi/activemodel/types/sqlalchemy_protocol/index.html.md): | [`SQLAlchemyQueryMethods`](#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)   | Base...
-- [activemodel.types.typeid_patch](autoapi/activemodel/types/typeid_patch/index.html.md): Pydantic v2 support for TypeID.
-- [activemodel.types.typeid](autoapi/activemodel/types/typeid/index.html.md): Lifted from: [https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py](https:/...
-- [activemodel.mixins.timestamps](autoapi/activemodel/mixins/timestamps/index.html.md): | [`TimestampsMixin`](#activemodel.mixins.timestamps.TimestampsMixin)   | Simple created at and upda...
+- [activemodel.cli](autoapi/activemodel/cli/index.html.md): This module provides utilities for generating Protocol type definitions for SQLAlchemy’s
+- [activemodel.types](autoapi/activemodel/types/index.html.md): * [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.md)
+- [activemodel.session_manager](autoapi/activemodel/session_manager/index.html.md): Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it ea...
+- [activemodel.errors](autoapi/activemodel/errors/index.html.md): | [`TypeIDValidationError`](#activemodel.errors.TypeIDValidationError)   | Raised when a TypeID is i...
+- [activemodel.patches](autoapi/activemodel/patches/index.html.md): * [activemodel.patches.get_column_from_field_patch](get_column_from_field_patch/index.md)
+- [activemodel.mixins](autoapi/activemodel/mixins/index.html.md): * [activemodel.mixins.pydantic_json](pydantic_json/index.md)
+- [activemodel.pytest](autoapi/activemodel/pytest/index.html.md): * [activemodel.pytest.factories](factories/index.md)
+- [activemodel.utils](autoapi/activemodel/utils/index.html.md): | [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, he...
+- [activemodel.celery](autoapi/activemodel/celery/index.html.md): Do not import unless you have Celery/Kombu installed.
+- [activemodel.logger](autoapi/activemodel/logger/index.html.md): | [`logger`](#activemodel.logger.logger)   |    |
+- [activemodel.pytest.transaction](autoapi/activemodel/pytest/transaction/index.html.md): | [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
+- [activemodel.pytest.plugin](autoapi/activemodel/pytest/plugin/index.html.md): Pytest plugin integration for activemodel.
+- [activemodel.pytest.truncate](autoapi/activemodel/pytest/truncate/index.html.md): | [`T`](#activemodel.pytest.truncate.T)   |    |
+- [activemodel.pytest.factories](autoapi/activemodel/pytest/factories/index.html.md): Notes on polyfactory:
+- [activemodel.mixins.typeid](autoapi/activemodel/mixins/typeid/index.html.md): | [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID prima...
 - [activemodel.mixins.pydantic_json](autoapi/activemodel/mixins/pydantic_json/index.html.md): Need to store nested Pydantic models in PostgreSQL using FastAPI and SQLModel.
 - [activemodel.mixins.soft_delete](autoapi/activemodel/mixins/soft_delete/index.html.md): | [`SoftDeletionMixin`](#activemodel.mixins.soft_delete.SoftDeletionMixin)   |    |
-- [activemodel.mixins.typeid](autoapi/activemodel/mixins/typeid/index.html.md): | [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID prima...
-- [activemodel.pytest.truncate](autoapi/activemodel/pytest/truncate/index.html.md): | [`T`](#activemodel.pytest.truncate.T)   |    |
-- [activemodel.pytest.plugin](autoapi/activemodel/pytest/plugin/index.html.md): Pytest plugin integration for activemodel.
-- [activemodel.pytest.transaction](autoapi/activemodel/pytest/transaction/index.html.md): | [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
-- [activemodel.pytest.factories](autoapi/activemodel/pytest/factories/index.html.md): Notes on polyfactory:
+- [activemodel.mixins.timestamps](autoapi/activemodel/mixins/timestamps/index.html.md): | [`TimestampsMixin`](#activemodel.mixins.timestamps.TimestampsMixin)   | Simple created at and upda...
 - [activemodel.patches.get_column_from_field_patch](autoapi/activemodel/patches/get_column_from_field_patch/index.html.md): Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fie...
+- [activemodel.types.typeid_patch](autoapi/activemodel/types/typeid_patch/index.html.md): Pydantic v2 support for TypeID.
+- [activemodel.types.typeid](autoapi/activemodel/types/typeid/index.html.md): Lifted from: [https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py](https:/...
+- [activemodel.types.sqlalchemy_protocol](autoapi/activemodel/types/sqlalchemy_protocol/index.html.md): | [`SQLAlchemyQueryMethods`](#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)   | Base...
 - [Changelog](changelog.html.md): * **docs:** add Sphinx documentation and deploy workflow ([#56](https://github.com/iloveitaly/active...
 - [ActiveModel: ORM Wrapper for SQLModel](getting-started.html.md): [![Release Notes](https://img.shields.io/github/release/iloveitaly/activemodel)](https://github.com/...

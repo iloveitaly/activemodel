@@ -151,221 +151,232 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <h1>Source code for activemodel.query_wrapper</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">overload</span>
-</span><span data-line="2">
-</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
-</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel.sql.expression</span><span class="w"> </span><span class="kn">import</span> <span class="n">SelectOfScalar</span>
-</span><span data-line="5">
-</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types.sqlalchemy_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemyQueryMethods</span>
-</span><span data-line="7">
-</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">.session_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session</span>
-</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_sql</span>
-</span><span data-line="10">
+<span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">overload</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel.sql.expression</span><span class="w"> </span><span class="kn">import</span> <span class="n">SelectOfScalar</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types.sqlalchemy_protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemyQueryMethods</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">.session_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_sql</span>
 </span><span data-line="11">
+</span><span data-line="12">
 <div class="viewcode-block" id="QueryWrapper">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper">[docs]</a>
-</span><span data-line="12"><span class="k">class</span><span class="w"> </span><span class="nc">QueryWrapper</span><span class="p">[</span><span class="n">T</span><span class="p">:</span> <span class="n">sm</span><span class="o">.</span><span class="n">SQLModel</span><span class="p">](</span><span class="n">SQLAlchemyQueryMethods</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-</span><span data-line="13"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="14"><span class="sd">    Make it easy to run queries off of a model</span>
-</span><span data-line="15"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="16">
+</span><span data-line="13"><span class="k">class</span><span class="w"> </span><span class="nc">QueryWrapper</span><span class="p">[</span><span class="n">T</span><span class="p">:</span> <span class="n">sm</span><span class="o">.</span><span class="n">SQLModel</span><span class="p">](</span><span class="n">SQLAlchemyQueryMethods</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+</span><span data-line="14"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="15"><span class="sd">    Make it easy to run queries off of a model</span>
+</span><span data-line="16"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="17">
 <div class="viewcode-block" id="QueryWrapper.target">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.target">[docs]</a>
-</span><span data-line="17">    <span class="n">target</span><span class="p">:</span> <span class="n">SelectOfScalar</span><span class="p">[</span><span class="n">T</span><span class="p">]</span></div>
+</span><span data-line="18">    <span class="n">target</span><span class="p">:</span> <span class="n">SelectOfScalar</span><span class="p">[</span><span class="n">T</span><span class="p">]</span></div>
 
-</span><span data-line="18">    <span class="n">_model_cls</span><span class="p">:</span> <span class="n">T</span>
-</span><span data-line="19">
-</span><span data-line="20">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="21">        <span class="bp">self</span><span class="o">.</span><span class="n">_model_cls</span> <span class="o">=</span> <span class="bp">cls</span>
-</span><span data-line="22">
-</span><span data-line="23">        <span class="c1"># TODO add generics here</span>
-</span><span data-line="24">        <span class="c1"># self.target: SelectOfScalar[T] = sql.select(cls)</span>
-</span><span data-line="25">
-</span><span data-line="26">        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
-</span><span data-line="27">            <span class="c1"># very naive, let&#39;s assume the args are specific select statements</span>
-</span><span data-line="28">            <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">select_from</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-</span><span data-line="29">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="30">            <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-</span><span data-line="31">
-</span><span data-line="32">    <span class="c1"># TODO the .exec results should be handled in one shot</span>
-</span><span data-line="33">
-</span><span data-line="34">    <span class="k">def</span><span class="w"> </span><span class="nf">_pk_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="35">        <span class="n">pk_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_cls</span><span class="o">.</span><span class="n">primary_key_column</span><span class="p">()</span>  <span class="c1"># type: ignore[attr-defined]</span>
-</span><span data-line="36">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_cls</span><span class="p">,</span> <span class="n">pk_col</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="37">
+</span><span data-line="19">    <span class="n">_model_cls</span><span class="p">:</span> <span class="n">T</span>
+</span><span data-line="20">
+</span><span data-line="21">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="22">        <span class="bp">self</span><span class="o">.</span><span class="n">_model_cls</span> <span class="o">=</span> <span class="bp">cls</span>
+</span><span data-line="23">
+</span><span data-line="24">        <span class="c1"># TODO add generics here</span>
+</span><span data-line="25">        <span class="c1"># self.target: SelectOfScalar[T] = sql.select(cls)</span>
+</span><span data-line="26">
+</span><span data-line="27">        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+</span><span data-line="28">            <span class="c1"># very naive, let&#39;s assume the args are specific select statements</span>
+</span><span data-line="29">            <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">select_from</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span data-line="30">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="31">            <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span data-line="32">
+</span><span data-line="33">    <span class="c1"># TODO the .exec results should be handled in one shot</span>
+</span><span data-line="34">
+</span><span data-line="35">    <span class="k">def</span><span class="w"> </span><span class="nf">_pk_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="36">        <span class="n">pk_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_cls</span><span class="o">.</span><span class="n">primary_key_column</span><span class="p">()</span>  <span class="c1"># type: ignore[attr-defined]</span>
+</span><span data-line="37">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_cls</span><span class="p">,</span> <span class="n">pk_col</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="38">
+</span><span data-line="39">    <span class="k">def</span><span class="w"> </span><span class="nf">_run_after_load_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
+</span><span data-line="40">        <span class="n">model_cls</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_cls</span><span class="p">)</span>
+</span><span data-line="41">        <span class="k">return</span> <span class="n">model_cls</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</span><span data-line="42">
 <div class="viewcode-block" id="QueryWrapper.first">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.first">[docs]</a>
-</span><span data-line="38">    <span class="k">def</span><span class="w"> </span><span class="nf">first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="39">        <span class="n">pk_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_attr</span><span class="p">()</span>
-</span><span data-line="40">        <span class="n">stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">pk_attr</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span data-line="41">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="42">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span></div>
-
-</span><span data-line="43">
-<div class="viewcode-block" id="QueryWrapper.last">
-<a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.last">[docs]</a>
-</span><span data-line="44">    <span class="k">def</span><span class="w"> </span><span class="nf">last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="45">        <span class="n">pk_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_attr</span><span class="p">()</span>
-</span><span data-line="46">        <span class="n">stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">pk_attr</span><span class="o">.</span><span class="n">asc</span><span class="p">())</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span data-line="47">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="48">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span></div>
+</span><span data-line="43">    <span class="k">def</span><span class="w"> </span><span class="nf">first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="44">        <span class="n">pk_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_attr</span><span class="p">()</span>
+</span><span data-line="45">        <span class="n">stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">pk_attr</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="46">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="47">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+</span><span data-line="48">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
 </span><span data-line="49">
+<div class="viewcode-block" id="QueryWrapper.last">
+<a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.last">[docs]</a>
+</span><span data-line="50">    <span class="k">def</span><span class="w"> </span><span class="nf">last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="51">        <span class="n">pk_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_attr</span><span class="p">()</span>
+</span><span data-line="52">        <span class="n">stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">pk_attr</span><span class="o">.</span><span class="n">asc</span><span class="p">())</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="53">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="54">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+</span><span data-line="55">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+</span><span data-line="56">
 <div class="viewcode-block" id="QueryWrapper.one">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.one">[docs]</a>
-</span><span data-line="50">    <span class="k">def</span><span class="w"> </span><span class="nf">one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="51">        <span class="s2">&quot;requires exactly one result in the dataset&quot;</span>
-</span><span data-line="52">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="53">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span></div>
+</span><span data-line="57">    <span class="k">def</span><span class="w"> </span><span class="nf">one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="58">        <span class="s2">&quot;requires exactly one result in the dataset&quot;</span>
+</span><span data-line="59">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="60">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+</span><span data-line="61">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
-</span><span data-line="54">
+</span><span data-line="62">
 <div class="viewcode-block" id="QueryWrapper.all">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.all">[docs]</a>
-</span><span data-line="55">    <span class="k">def</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="56">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="57">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
-</span><span data-line="58">            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-</span><span data-line="59">                <span class="k">yield</span> <span class="n">row</span></div>
+</span><span data-line="63">    <span class="k">def</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="64">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="65">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+</span><span data-line="66">            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+</span><span data-line="67">                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">row</span><span class="p">)</span></div>
 
-</span><span data-line="60">
+</span><span data-line="68">
 <div class="viewcode-block" id="QueryWrapper.count">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.count">[docs]</a>
-</span><span data-line="61">    <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="62"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="63"><span class="sd">        I did some basic tests</span>
-</span><span data-line="64"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="65">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="66">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">())</span><span class="o">.</span><span class="n">select_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">subquery</span><span class="p">()))</span></div>
+</span><span data-line="69">    <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="70"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="71"><span class="sd">        I did some basic tests</span>
+</span><span data-line="72"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="73">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="74">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span>
+</span><span data-line="75">                <span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">())</span><span class="o">.</span><span class="n">select_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">subquery</span><span class="p">())</span>
+</span><span data-line="76">            <span class="p">)</span></div>
 
-</span><span data-line="67">
-</span><span data-line="68">    <span class="c1"># TODO typing is broken here</span>
-</span><span data-line="69">    <span class="c1"># TODO would be great to define a default return type if nothing is found</span>
+</span><span data-line="77">
+</span><span data-line="78">    <span class="c1"># TODO typing is broken here</span>
+</span><span data-line="79">    <span class="c1"># TODO would be great to define a default return type if nothing is found</span>
 <div class="viewcode-block" id="QueryWrapper.scalar">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.scalar">[docs]</a>
-</span><span data-line="70">    <span class="k">def</span><span class="w"> </span><span class="nf">scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="71"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="72"><span class="sd">        &gt;&gt;&gt;</span>
-</span><span data-line="73"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="74">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="75">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span></div>
+</span><span data-line="80">    <span class="k">def</span><span class="w"> </span><span class="nf">scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="81"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="82"><span class="sd">        &gt;&gt;&gt;</span>
+</span><span data-line="83"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="84">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="85">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span></div>
 
-</span><span data-line="76">
+</span><span data-line="86">
 <div class="viewcode-block" id="QueryWrapper.exec">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.exec">[docs]</a>
-</span><span data-line="77">    <span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="78">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="79">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span></div>
+</span><span data-line="87">    <span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="88">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="89">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span></div>
 
-</span><span data-line="80">
+</span><span data-line="90">
 <div class="viewcode-block" id="QueryWrapper.delete">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.delete">[docs]</a>
-</span><span data-line="81">    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="82">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="83">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span></div>
+</span><span data-line="91">    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="92">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="93">            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span></div>
 
-</span><span data-line="84">
+</span><span data-line="94">
 <div class="viewcode-block" id="QueryWrapper.exists">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.exists">[docs]</a>
-</span><span data-line="85">    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="86"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the current query yields at least one row.</span>
-</span><span data-line="87">
-</span><span data-line="88"><span class="sd">        Uses the SQLAlchemy exists() construct against a LIMIT 1 version of</span>
-</span><span data-line="89"><span class="sd">        the current target for efficiency. Keeps the original target intact.</span>
-</span><span data-line="90"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="91">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="92">            <span class="n">exists_stmt</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">))</span>
-</span><span data-line="93">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="n">exists_stmt</span><span class="p">)</span>
-</span><span data-line="94">            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+</span><span data-line="95">    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="96"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the current query yields at least one row.</span>
+</span><span data-line="97">
+</span><span data-line="98"><span class="sd">        Uses the SQLAlchemy exists() construct against a LIMIT 1 version of</span>
+</span><span data-line="99"><span class="sd">        the current target for efficiency. Keeps the original target intact.</span>
+</span><span data-line="100"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="101">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="102">            <span class="n">exists_stmt</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">))</span>
+</span><span data-line="103">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="n">exists_stmt</span><span class="p">)</span>
+</span><span data-line="104">            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
-</span><span data-line="95">
+</span><span data-line="105">
 <div class="viewcode-block" id="QueryWrapper.__getattr__">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.__getattr__">[docs]</a>
-</span><span data-line="96">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-</span><span data-line="97"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="98"><span class="sd">        This implements the magic that forwards function calls to sqlalchemy.</span>
-</span><span data-line="99"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="100">
-</span><span data-line="101">        <span class="c1"># TODO prefer methods defined in this class</span>
-</span><span data-line="102">
-</span><span data-line="103">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-</span><span data-line="104">            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="105">
-</span><span data-line="106">        <span class="n">sqlalchemy_target</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-</span><span data-line="107">
-</span><span data-line="108">        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">sqlalchemy_target</span><span class="p">):</span>
-</span><span data-line="109">
-</span><span data-line="110">            <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="111">                <span class="n">result</span> <span class="o">=</span> <span class="n">sqlalchemy_target</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="112">                <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">result</span>  <span class="c1"># type: ignore[assignment]</span>
-</span><span data-line="113">                <span class="k">return</span> <span class="bp">self</span>
-</span><span data-line="114">
-</span><span data-line="115">            <span class="k">return</span> <span class="n">wrapper</span>
-</span><span data-line="116">
-</span><span data-line="117">        <span class="c1"># If the attribute or method is not defined in this class,</span>
-</span><span data-line="118">        <span class="c1"># delegate the call to the `target` object</span>
-</span><span data-line="119">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
-
-</span><span data-line="120">
-<div class="viewcode-block" id="QueryWrapper.sql">
-<a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.sql">[docs]</a>
-</span><span data-line="121">    <span class="k">def</span><span class="w"> </span><span class="nf">sql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="122"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="123"><span class="sd">        Output the raw SQL of the query for debugging</span>
-</span><span data-line="124"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="125">
-</span><span data-line="126">        <span class="k">return</span> <span class="n">compile_sql</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span></div>
-
-</span><span data-line="127">
-</span><span data-line="128">    <span class="nd">@overload</span>
-<div class="viewcode-block" id="QueryWrapper.sample">
-<a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.sample">[docs]</a>
-</span><span data-line="129">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+</span><span data-line="106">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span data-line="107"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="108"><span class="sd">        This implements the magic that forwards function calls to sqlalchemy.</span>
+</span><span data-line="109"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="110">
+</span><span data-line="111">        <span class="c1"># TODO prefer methods defined in this class</span>
+</span><span data-line="112">
+</span><span data-line="113">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span data-line="114">            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="115">
+</span><span data-line="116">        <span class="n">sqlalchemy_target</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span><span data-line="117">
+</span><span data-line="118">        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">sqlalchemy_target</span><span class="p">):</span>
+</span><span data-line="119">
+</span><span data-line="120">            <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="121">                <span class="n">result</span> <span class="o">=</span> <span class="n">sqlalchemy_target</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="122">                <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">result</span>  <span class="c1"># type: ignore[assignment]</span>
+</span><span data-line="123">                <span class="k">return</span> <span class="bp">self</span>
+</span><span data-line="124">
+</span><span data-line="125">            <span class="k">return</span> <span class="n">wrapper</span>
+</span><span data-line="126">
+</span><span data-line="127">        <span class="c1"># If the attribute or method is not defined in this class,</span>
+</span><span data-line="128">        <span class="c1"># delegate the call to the `target` object</span>
+</span><span data-line="129">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
 </span><span data-line="130">
-</span><span data-line="131">    <span class="nd">@overload</span>
-</span><span data-line="132">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-</span><span data-line="133">
-</span><span data-line="134">    <span class="nd">@overload</span>
-</span><span data-line="135">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
-</span><span data-line="136">
-</span><span data-line="137">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-</span><span data-line="138"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a random sample of rows from the current query.</span>
-</span><span data-line="139">
-</span><span data-line="140"><span class="sd">        Parameters</span>
-</span><span data-line="141"><span class="sd">        ----------</span>
-</span><span data-line="142"><span class="sd">        n: int</span>
-</span><span data-line="143"><span class="sd">            Number of rows to return. Defaults to 1.</span>
-</span><span data-line="144">
-</span><span data-line="145"><span class="sd">        Behavior</span>
-</span><span data-line="146"><span class="sd">        --------</span>
-</span><span data-line="147"><span class="sd">        - Returns a single model instance when ``n == 1`` (or ``None`` if no rows)</span>
-</span><span data-line="148"><span class="sd">        - Returns a list[Model] when ``n &gt; 1`` (possibly empty list when no rows)</span>
-</span><span data-line="149"><span class="sd">        - Sampling is performed by appending an ``ORDER BY RANDOM()`` / ``func.random()``</span>
-</span><span data-line="150"><span class="sd">          and ``LIMIT n`` clause to the existing query target.</span>
-</span><span data-line="151"><span class="sd">        - Keeps original query intact (does not mutate ``self.target``) so further</span>
-</span><span data-line="152"><span class="sd">          chaining works as expected.</span>
-</span><span data-line="153"><span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="QueryWrapper.sql">
+<a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.sql">[docs]</a>
+</span><span data-line="131">    <span class="k">def</span><span class="w"> </span><span class="nf">sql</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="132"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="133"><span class="sd">        Output the raw SQL of the query for debugging</span>
+</span><span data-line="134"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="135">
+</span><span data-line="136">        <span class="k">return</span> <span class="n">compile_sql</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span></div>
+
+</span><span data-line="137">
+</span><span data-line="138">    <span class="nd">@overload</span>
+<div class="viewcode-block" id="QueryWrapper.sample">
+<a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.sample">[docs]</a>
+</span><span data-line="139">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+
+</span><span data-line="140">
+</span><span data-line="141">    <span class="nd">@overload</span>
+</span><span data-line="142">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+</span><span data-line="143">
+</span><span data-line="144">    <span class="nd">@overload</span>
+</span><span data-line="145">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
+</span><span data-line="146">
+</span><span data-line="147">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+</span><span data-line="148"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a random sample of rows from the current query.</span>
+</span><span data-line="149">
+</span><span data-line="150"><span class="sd">        Parameters</span>
+</span><span data-line="151"><span class="sd">        ----------</span>
+</span><span data-line="152"><span class="sd">        n: int</span>
+</span><span data-line="153"><span class="sd">            Number of rows to return. Defaults to 1.</span>
 </span><span data-line="154">
-</span><span data-line="155">        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span data-line="156">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n must be &gt;= 1&quot;</span><span class="p">)</span>
-</span><span data-line="157">
-</span><span data-line="158">        <span class="c1"># Build a new randomized limited query leaving self.target untouched</span>
-</span><span data-line="159">        <span class="n">randomized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">random</span><span class="p">())</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-</span><span data-line="160">
-</span><span data-line="161">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="162">            <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">randomized</span><span class="p">))</span>
-</span><span data-line="163">
-</span><span data-line="164">        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-</span><span data-line="165">            <span class="c1"># Return the single instance or None</span>
-</span><span data-line="166">            <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span data-line="155"><span class="sd">        Behavior</span>
+</span><span data-line="156"><span class="sd">        --------</span>
+</span><span data-line="157"><span class="sd">        - Returns a single model instance when ``n == 1`` (or ``None`` if no rows)</span>
+</span><span data-line="158"><span class="sd">        - Returns a list[Model] when ``n &gt; 1`` (possibly empty list when no rows)</span>
+</span><span data-line="159"><span class="sd">        - Sampling is performed by appending an ``ORDER BY RANDOM()`` / ``func.random()``</span>
+</span><span data-line="160"><span class="sd">          and ``LIMIT n`` clause to the existing query target.</span>
+</span><span data-line="161"><span class="sd">        - Keeps original query intact (does not mutate ``self.target``) so further</span>
+</span><span data-line="162"><span class="sd">          chaining works as expected.</span>
+</span><span data-line="163"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="164">
+</span><span data-line="165">        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span data-line="166">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n must be &gt;= 1&quot;</span><span class="p">)</span>
 </span><span data-line="167">
-</span><span data-line="168">        <span class="k">return</span> <span class="n">result</span>
-</span><span data-line="169">
+</span><span data-line="168">        <span class="c1"># Build a new randomized limited query leaving self.target untouched</span>
+</span><span data-line="169">        <span class="n">randomized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">random</span><span class="p">())</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span><span data-line="170">
+</span><span data-line="171">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="172">            <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">randomized</span><span class="p">))</span>
+</span><span data-line="173">
+</span><span data-line="174">        <span class="n">processed_result</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+</span><span data-line="175">
+</span><span data-line="176">        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span data-line="177">            <span class="k">return</span> <span class="n">processed_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">processed_result</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span data-line="178">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="179">            <span class="k">return</span> <span class="n">processed_result</span>
+</span><span data-line="180">
 <div class="viewcode-block" id="QueryWrapper.__repr__">
 <a class="viewcode-back" href="../../autoapi/activemodel/query_wrapper/index.html#activemodel.query_wrapper.QueryWrapper.__repr__">[docs]</a>
-</span><span data-line="170">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="171">        <span class="c1"># TODO we should improve structure of this a bit more, maybe wrap in &lt;&gt; or something?</span>
-</span><span data-line="172">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Current SQL:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sql</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
+</span><span data-line="181">    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="182">        <span class="c1"># TODO we should improve structure of this a bit more, maybe wrap in &lt;&gt; or something?</span>
+</span><span data-line="183">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Current SQL:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sql</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
 </div>
 
 </span></pre></div>

@@ -32,7 +32,7 @@ Module Contents
    - https://github.com/fastapi/sqlmodel/discussions/1213
    - Implementation lifted from: https://github.com/AlexanderZharyuk/billing-service/blob/3c8aaf19ab7546b97cc4db76f60335edec9fc79d/src/models.py#L24
 
-.. py:class:: BaseModel(**data: Any)
+.. py:class:: BaseModel(*args, **kwargs)
 
    Bases: :py:obj:`sqlmodel.SQLModel`
 
@@ -52,11 +52,14 @@ Module Contents
 
        Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
        Delete: before_delete, after_delete, around_delete
+       Read: after_find, after_initialize
 
    around_* hooks must be context managers (method returning a CM or a CM attribute).
    Ordering (create): before_create -> before_save -> (enter around_save) -> persist -> after_create -> after_save -> (exit around_save)
    Ordering (update): before_update -> before_save -> (enter around_save) -> persist -> after_update -> after_save -> (exit around_save)
    Delete: before_delete -> (enter around_delete) -> delete -> after_delete -> (exit around_delete)
+   Read: finder/query method -> after_find -> after_initialize
+   Construction: Model(...) -> after_initialize
 
        # TODO document this in activemodel, this is an interesting edge case
    # https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a

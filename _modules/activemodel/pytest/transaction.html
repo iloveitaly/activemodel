@@ -252,86 +252,88 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="82">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No test session available&quot;</span><span class="p">)</span></div>
 
 </span><span data-line="83">
-</span><span data-line="84"><span class="n">test_session</span><span class="o">.</span><span class="n">__test__</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="85">
+</span><span data-line="84">
+</span><span data-line="85"><span class="n">test_session</span><span class="o">.</span><span class="n">__test__</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="86">
+</span><span data-line="87">
 <div class="viewcode-block" id="database_truncate_session">
 <a class="viewcode-back" href="../../../autoapi/activemodel/pytest/transaction/index.html#activemodel.pytest.database_truncate_session">[docs]</a>
-</span><span data-line="86"><span class="k">def</span><span class="w"> </span><span class="nf">database_truncate_session</span><span class="p">():</span>
-</span><span data-line="87"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="88"><span class="sd">    Provides a database session for testing when using a truncation cleaning strategy.</span>
-</span><span data-line="89">
-</span><span data-line="90"><span class="sd">    When not using a transaction cleaning strategy, no global test session is set</span>
-</span><span data-line="91"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="92">    <span class="k">with</span> <span class="n">test_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="93">        <span class="k">yield</span> <span class="n">session</span></div>
+</span><span data-line="88"><span class="k">def</span><span class="w"> </span><span class="nf">database_truncate_session</span><span class="p">():</span>
+</span><span data-line="89"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="90"><span class="sd">    Provides a database session for testing when using a truncation cleaning strategy.</span>
+</span><span data-line="91">
+</span><span data-line="92"><span class="sd">    When not using a transaction cleaning strategy, no global test session is set</span>
+</span><span data-line="93"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="94">    <span class="k">with</span> <span class="n">test_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="95">        <span class="k">yield</span> <span class="n">session</span></div>
 
-</span><span data-line="94">
-</span><span data-line="95">
+</span><span data-line="96">
+</span><span data-line="97">
 <div class="viewcode-block" id="database_reset_transaction">
 <a class="viewcode-back" href="../../../autoapi/activemodel/pytest/transaction/index.html#activemodel.pytest.database_reset_transaction">[docs]</a>
-</span><span data-line="96"><span class="k">def</span><span class="w"> </span><span class="nf">database_reset_transaction</span><span class="p">():</span>
-</span><span data-line="97"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="98"><span class="sd">    Wrap all database interactions for a given test in a nested transaction and roll it back after the test.</span>
-</span><span data-line="99">
-</span><span data-line="100"><span class="sd">    This is provided as a function, not a fixture, since you&#39;ll need to determine when a integration test is run. Here&#39;s</span>
-</span><span data-line="101"><span class="sd">    an example of how to build a fixture from this method:</span>
-</span><span data-line="102">
-</span><span data-line="103"><span class="sd">    &gt;&gt;&gt; from activemodel.pytest import database_reset_transaction</span>
-</span><span data-line="104"><span class="sd">    &gt;&gt;&gt; database_reset_transaction = pytest.fixture(scope=&quot;function&quot;, autouse=True)(database_reset_transaction)</span>
-</span><span data-line="105">
-</span><span data-line="106"><span class="sd">    Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process because the</span>
-</span><span data-line="107"><span class="sd">    same session is not shared across python processes. For this scenario, use the truncate method.</span>
-</span><span data-line="108">
-</span><span data-line="109"><span class="sd">    Note that using `fork` as a multiprocess start method is dangerous. Use spawn. This link has more documentation</span>
-</span><span data-line="110"><span class="sd">    around this topic:</span>
-</span><span data-line="111">
-</span><span data-line="112"><span class="sd">    https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py</span>
+</span><span data-line="98"><span class="k">def</span><span class="w"> </span><span class="nf">database_reset_transaction</span><span class="p">():</span>
+</span><span data-line="99"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="100"><span class="sd">    Wrap all database interactions for a given test in a nested transaction and roll it back after the test.</span>
+</span><span data-line="101">
+</span><span data-line="102"><span class="sd">    This is provided as a function, not a fixture, since you&#39;ll need to determine when a integration test is run. Here&#39;s</span>
+</span><span data-line="103"><span class="sd">    an example of how to build a fixture from this method:</span>
+</span><span data-line="104">
+</span><span data-line="105"><span class="sd">    &gt;&gt;&gt; from activemodel.pytest import database_reset_transaction</span>
+</span><span data-line="106"><span class="sd">    &gt;&gt;&gt; database_reset_transaction = pytest.fixture(scope=&quot;function&quot;, autouse=True)(database_reset_transaction)</span>
+</span><span data-line="107">
+</span><span data-line="108"><span class="sd">    Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process because the</span>
+</span><span data-line="109"><span class="sd">    same session is not shared across python processes. For this scenario, use the truncate method.</span>
+</span><span data-line="110">
+</span><span data-line="111"><span class="sd">    Note that using `fork` as a multiprocess start method is dangerous. Use spawn. This link has more documentation</span>
+</span><span data-line="112"><span class="sd">    around this topic:</span>
 </span><span data-line="113">
-</span><span data-line="114"><span class="sd">    References:</span>
+</span><span data-line="114"><span class="sd">    https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py</span>
 </span><span data-line="115">
-</span><span data-line="116"><span class="sd">    - https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created</span>
-</span><span data-line="117"><span class="sd">    - https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/</span>
-</span><span data-line="118"><span class="sd">    - https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77</span>
-</span><span data-line="119"><span class="sd">    - https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46</span>
-</span><span data-line="120"><span class="sd">    - https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn</span>
-</span><span data-line="121">
-</span><span data-line="122"><span class="sd">    Using a named SAVEPOINT does not give us anything extra, so we are not using it.</span>
-</span><span data-line="123"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="124">
-</span><span data-line="125">    <span class="n">engine</span> <span class="o">=</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_engine</span><span class="p">()</span>
+</span><span data-line="116"><span class="sd">    References:</span>
+</span><span data-line="117">
+</span><span data-line="118"><span class="sd">    - https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created</span>
+</span><span data-line="119"><span class="sd">    - https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/</span>
+</span><span data-line="120"><span class="sd">    - https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77</span>
+</span><span data-line="121"><span class="sd">    - https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46</span>
+</span><span data-line="122"><span class="sd">    - https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn</span>
+</span><span data-line="123">
+</span><span data-line="124"><span class="sd">    Using a named SAVEPOINT does not give us anything extra, so we are not using it.</span>
+</span><span data-line="125"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="126">
-</span><span data-line="127">    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;starting global database transaction&quot;</span><span class="p">)</span>
+</span><span data-line="127">    <span class="n">engine</span> <span class="o">=</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_engine</span><span class="p">()</span>
 </span><span data-line="128">
-</span><span data-line="129">    <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
-</span><span data-line="130">        <span class="n">transaction</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">begin_nested</span><span class="p">()</span>
-</span><span data-line="131">
-</span><span data-line="132">        <span class="k">if</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">session_connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="133">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;global session already set&quot;</span><span class="p">)</span>
-</span><span data-line="134">
-</span><span data-line="135">        <span class="c1"># NOTE we very intentionally do NOT</span>
-</span><span data-line="136">        <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">session_connection</span> <span class="o">=</span> <span class="n">connection</span>
-</span><span data-line="137">
-</span><span data-line="138">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="139">            <span class="k">with</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">model_factory_session</span><span class="p">:</span>
-</span><span data-line="140">                <span class="c1"># set global database sessions for model factories to avoid lazy loading issues</span>
-</span><span data-line="141">                <span class="n">set_factory_session</span><span class="p">(</span><span class="n">model_factory_session</span><span class="p">)</span>
-</span><span data-line="142">                <span class="n">set_polyfactory_session</span><span class="p">(</span><span class="n">model_factory_session</span><span class="p">)</span>
-</span><span data-line="143">
-</span><span data-line="144">                <span class="n">test_session_token</span> <span class="o">=</span> <span class="n">_test_session</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">model_factory_session</span><span class="p">)</span>
+</span><span data-line="129">    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;starting global database transaction&quot;</span><span class="p">)</span>
+</span><span data-line="130">
+</span><span data-line="131">    <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+</span><span data-line="132">        <span class="n">transaction</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">begin_nested</span><span class="p">()</span>
+</span><span data-line="133">
+</span><span data-line="134">        <span class="k">if</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">session_connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="135">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;global session already set&quot;</span><span class="p">)</span>
+</span><span data-line="136">
+</span><span data-line="137">        <span class="c1"># NOTE we very intentionally do NOT</span>
+</span><span data-line="138">        <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">session_connection</span> <span class="o">=</span> <span class="n">connection</span>
+</span><span data-line="139">
+</span><span data-line="140">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="141">            <span class="k">with</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">model_factory_session</span><span class="p">:</span>
+</span><span data-line="142">                <span class="c1"># set global database sessions for model factories to avoid lazy loading issues</span>
+</span><span data-line="143">                <span class="n">set_factory_session</span><span class="p">(</span><span class="n">model_factory_session</span><span class="p">)</span>
+</span><span data-line="144">                <span class="n">set_polyfactory_session</span><span class="p">(</span><span class="n">model_factory_session</span><span class="p">)</span>
 </span><span data-line="145">
-</span><span data-line="146">                <span class="k">try</span><span class="p">:</span>
-</span><span data-line="147">                    <span class="k">yield</span>
-</span><span data-line="148">                <span class="k">finally</span><span class="p">:</span>
-</span><span data-line="149">                    <span class="n">_test_session</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">test_session_token</span><span class="p">)</span>
-</span><span data-line="150">        <span class="k">finally</span><span class="p">:</span>
-</span><span data-line="151">            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;rolling back transaction&quot;</span><span class="p">)</span>
-</span><span data-line="152">
-</span><span data-line="153">            <span class="n">transaction</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+</span><span data-line="146">                <span class="n">test_session_token</span> <span class="o">=</span> <span class="n">_test_session</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">model_factory_session</span><span class="p">)</span>
+</span><span data-line="147">
+</span><span data-line="148">                <span class="k">try</span><span class="p">:</span>
+</span><span data-line="149">                    <span class="k">yield</span>
+</span><span data-line="150">                <span class="k">finally</span><span class="p">:</span>
+</span><span data-line="151">                    <span class="n">_test_session</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">test_session_token</span><span class="p">)</span>
+</span><span data-line="152">        <span class="k">finally</span><span class="p">:</span>
+</span><span data-line="153">            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;rolling back transaction&quot;</span><span class="p">)</span>
 </span><span data-line="154">
-</span><span data-line="155">            <span class="c1"># TODO is this necessary? unclear</span>
-</span><span data-line="156">            <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span data-line="157">
-</span><span data-line="158">            <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">session_connection</span> <span class="o">=</span> <span class="kc">None</span></div>
+</span><span data-line="155">            <span class="n">transaction</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+</span><span data-line="156">
+</span><span data-line="157">            <span class="c1"># TODO is this necessary? unclear</span>
+</span><span data-line="158">            <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span data-line="159">
+</span><span data-line="160">            <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">session_connection</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">

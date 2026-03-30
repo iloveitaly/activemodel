@@ -281,7 +281,7 @@ data-aria-dark="Switch to auto color mode">
 <h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="activemodel.BaseModel">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.</span></span><span class="sig-name descname"><span class="pre">BaseModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/activemodel/base_model.html#BaseModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.BaseModel" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.</span></span><span class="sig-name descname"><span class="pre">BaseModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/activemodel/base_model.html#BaseModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.BaseModel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">sqlmodel.SQLModel</span></code></p>
 <p>Base model class to inherit from so we can hate python less.</p>
 <p>Some notes:</p>
@@ -296,12 +296,15 @@ data-aria-dark="Switch to auto color mode">
 <p>Here’s how hooks work:</p>
 <blockquote>
 <div><p>Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
-Delete: before_delete, after_delete, around_delete</p>
+Delete: before_delete, after_delete, around_delete
+Read: after_find, after_initialize</p>
 </div></blockquote>
 <p>around_* hooks must be context managers (method returning a CM or a CM attribute).
 Ordering (create): before_create -&gt; before_save -&gt; (enter around_save) -&gt; persist -&gt; after_create -&gt; after_save -&gt; (exit around_save)
 Ordering (update): before_update -&gt; before_save -&gt; (enter around_save) -&gt; persist -&gt; after_update -&gt; after_save -&gt; (exit around_save)
-Delete: before_delete -&gt; (enter around_delete) -&gt; delete -&gt; after_delete -&gt; (exit around_delete)</p>
+Delete: before_delete -&gt; (enter around_delete) -&gt; delete -&gt; after_delete -&gt; (exit around_delete)
+Read: finder/query method -&gt; after_find -&gt; after_initialize
+Construction: Model(…) -&gt; after_initialize</p>
 <blockquote>
 <div><p># TODO document this in activemodel, this is an interesting edge case</p>
 </div></blockquote>

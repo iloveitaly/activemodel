@@ -121,6 +121,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#getting-started">Getting Started</a></li>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#lifecycle-hooks">Lifecycle Hooks</a></li>
 <li><a class="reference internal" href="#pytest">Pytest</a></li>
 <li><a class="reference internal" href="#integrating-alembic">Integrating Alembic</a></li>
 <li><a class="reference internal" href="#query-wrapper">Query Wrapper</a></li>
@@ -297,6 +298,63 @@ DB operations on each test.</a></p>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<section id="lifecycle-hooks">
+<h3>Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">BaseModel</span></code> supports a small Rails-style lifecycle hook system.</p>
+<p>The implemented hooks today are:</p>
+<ul class="simple">
+<li><p>Create/update: <code class="docutils literal notranslate"><span class="pre">before_create</span></code>, <code class="docutils literal notranslate"><span class="pre">after_create</span></code>, <code class="docutils literal notranslate"><span class="pre">before_update</span></code>, <code class="docutils literal notranslate"><span class="pre">after_update</span></code>, <code class="docutils literal notranslate"><span class="pre">before_save</span></code>, <code class="docutils literal notranslate"><span class="pre">after_save</span></code>, <code class="docutils literal notranslate"><span class="pre">around_save</span></code></p></li>
+<li><p>Delete: <code class="docutils literal notranslate"><span class="pre">before_delete</span></code>, <code class="docutils literal notranslate"><span class="pre">after_delete</span></code>, <code class="docutils literal notranslate"><span class="pre">around_delete</span></code></p></li>
+<li><p>Read: <code class="docutils literal notranslate"><span class="pre">after_find</span></code>, <code class="docutils literal notranslate"><span class="pre">after_initialize</span></code></p></li>
+</ul>
+<p>Hook methods are optional. If a method with one of those names exists on the model, ActiveModel will call it at the appropriate time.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="4">
+</span><span data-line="5">
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="7">    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="8">    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="9">
+</span><span data-line="10">    <span class="k">def</span><span class="w"> </span><span class="nf">before_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="11">        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span data-line="12">
+</span><span data-line="13">    <span class="k">def</span><span class="w"> </span><span class="nf">after_find</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="14">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;loaded user </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="15">
+</span><span data-line="16">    <span class="k">def</span><span class="w"> </span><span class="nf">after_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="17">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;initialized user </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="18">
+</span><span data-line="19">    <span class="nd">@contextmanager</span>
+</span><span data-line="20">    <span class="k">def</span><span class="w"> </span><span class="nf">around_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="21">        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;before save&quot;</span><span class="p">)</span>
+</span><span data-line="22">        <span class="k">yield</span>
+</span><span data-line="23">        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;after save&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Some important semantics:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">after_initialize</span></code> runs on plain construction, so <code class="docutils literal notranslate"><span class="pre">User(email=&quot;a&#64;example.com&quot;)</span></code> will trigger it even before the record is saved.</p></li>
+<li><p>Database-backed finder/query loads run <code class="docutils literal notranslate"><span class="pre">after_find</span></code> and then <code class="docutils literal notranslate"><span class="pre">after_initialize</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">after_find</span></code> is not called for plain construction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">find_or_initialize_by()</span></code> follows the Rails-style split: the existing-record path runs <code class="docutils literal notranslate"><span class="pre">after_find</span></code> then <code class="docutils literal notranslate"><span class="pre">after_initialize</span></code>, while the new-instance path only runs <code class="docutils literal notranslate"><span class="pre">after_initialize</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">around_save</span></code> and <code class="docutils literal notranslate"><span class="pre">around_delete</span></code> must be context managers.</p></li>
+</ul>
+<p>Current ordering is:</p>
+<ul class="simple">
+<li><p>Create: <code class="docutils literal notranslate"><span class="pre">before_create</span> <span class="pre">-&gt;</span> <span class="pre">before_save</span> <span class="pre">-&gt;</span> <span class="pre">around_save</span> <span class="pre">-&gt;</span> <span class="pre">after_create</span> <span class="pre">-&gt;</span> <span class="pre">after_save</span></code></p></li>
+<li><p>Update: <code class="docutils literal notranslate"><span class="pre">before_update</span> <span class="pre">-&gt;</span> <span class="pre">before_save</span> <span class="pre">-&gt;</span> <span class="pre">around_save</span> <span class="pre">-&gt;</span> <span class="pre">after_update</span> <span class="pre">-&gt;</span> <span class="pre">after_save</span></code></p></li>
+<li><p>Delete: <code class="docutils literal notranslate"><span class="pre">before_delete</span> <span class="pre">-&gt;</span> <span class="pre">around_delete</span> <span class="pre">-&gt;</span> <span class="pre">after_delete</span></code></p></li>
+<li><p>DB load: <code class="docutils literal notranslate"><span class="pre">after_find</span> <span class="pre">-&gt;</span> <span class="pre">after_initialize</span></code></p></li>
+<li><p>Plain construction: <code class="docutils literal notranslate"><span class="pre">after_initialize</span></code></p></li>
+</ul>
+<p>There is one important scope limit to know about:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">refresh()</span></code> does <strong>not</strong> currently replay Rails-style read callbacks. It refreshes the object from the database, but it does not currently trigger <code class="docutils literal notranslate"><span class="pre">after_find</span></code> / <code class="docutils literal notranslate"><span class="pre">after_initialize</span></code> the way Rails <code class="docutils literal notranslate"><span class="pre">reload</span></code> effectively does.</p></li>
+</ul>
+<p>Also note that <code class="docutils literal notranslate"><span class="pre">after_find</span></code> / <code class="docutils literal notranslate"><span class="pre">after_initialize</span></code> only run for model instances. Lower-level query paths that return <code class="docutils literal notranslate"><span class="pre">None</span></code>, counts, scalars, or raw SQLAlchemy result objects are outside that contract.</p>
+</section>
 <section id="pytest">
 <h3>Pytest<a class="headerlink" href="#pytest" title="Link to this heading">¶</a></h3>
 <p>TODO detail out truncation and transactions</p>

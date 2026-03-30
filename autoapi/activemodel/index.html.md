@@ -30,7 +30,7 @@
 
 ## Package Contents
 
-### *class* activemodel.BaseModel(\*\*data: Any)
+### *class* activemodel.BaseModel(\*args, \*\*kwargs)
 
 Bases: `sqlmodel.SQLModel`
 
@@ -49,11 +49,14 @@ Here’s how hooks work:
 
 > Create/Update: before_create, after_create, before_update, after_update, before_save, after_save, around_save
 > Delete: before_delete, after_delete, around_delete
+> Read: after_find, after_initialize
 
 around_\* hooks must be context managers (method returning a CM or a CM attribute).
 Ordering (create): before_create -> before_save -> (enter around_save) -> persist -> after_create -> after_save -> (exit around_save)
 Ordering (update): before_update -> before_save -> (enter around_save) -> persist -> after_update -> after_save -> (exit around_save)
 Delete: before_delete -> (enter around_delete) -> delete -> after_delete -> (exit around_delete)
+Read: finder/query method -> after_find -> after_initialize
+Construction: Model(…) -> after_initialize
 
 > # TODO document this in activemodel, this is an interesting edge case
 
