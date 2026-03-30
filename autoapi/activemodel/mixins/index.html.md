@@ -11,7 +11,7 @@
 
 | [`PydanticJSONMixin`](#activemodel.mixins.PydanticJSONMixin)   | By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.   |
 |----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| [`SoftDeletionMixin`](#activemodel.mixins.SoftDeletionMixin)   |                                                                                                                    |
+| [`SoftDeletionMixin`](#activemodel.mixins.SoftDeletionMixin)   | Soft delete records by setting deleted_at instead of removing the row.                                             |
 | [`TimestampsMixin`](#activemodel.mixins.TimestampsMixin)       | Simple created at and updated at timestamps. Mix them into your model:                                             |
 
 ## Functions
@@ -48,9 +48,15 @@ Transforms dictionary fields into Pydantic models upon loading.
 
 ### *class* activemodel.mixins.SoftDeletionMixin
 
-#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime)* *= None*
+Soft delete records by setting deleted_at instead of removing the row.
 
-#### soft_delete()
+Call soft_delete() to timestamp the record and persist that change.
+
+#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+#### soft_delete() → [T](../pytest/truncate/index.md#activemodel.pytest.truncate.T)
+
+Timestamp deleted_at and persist the record.
 
 ### *class* activemodel.mixins.TimestampsMixin
 

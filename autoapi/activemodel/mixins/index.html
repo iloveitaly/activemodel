@@ -37,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../alembic.html">Alembic Integration</a></li><li class="link"><a href="../../index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -67,6 +67,7 @@ data-aria-dark="Switch to auto color mode">
       <div class="sy-scrollbar p-6">
         <div class="globaltoc" data-expand-depth="0"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../alembic.html">Alembic Integration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html">activemodel</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../base_model/index.html">activemodel.base_model</a></li>
@@ -232,7 +233,7 @@ data-aria-dark="Switch to auto color mode">
 <td><p>By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin" title="activemodel.mixins.SoftDeletionMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SoftDeletionMixin</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Soft delete records by setting <cite>deleted_at</cite> instead of removing the row.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.mixins.TimestampsMixin" title="activemodel.mixins.TimestampsMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimestampsMixin</span></code></a></p></td>
 <td><p>Simple created at and updated at timestamps. Mix them into your model:</p></td>
@@ -286,15 +287,18 @@ after loading from the database.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="activemodel.mixins.SoftDeletionMixin">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">SoftDeletionMixin</span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/soft_delete.html#SoftDeletionMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.SoftDeletionMixin" title="Link to this definition">¶</a></dt>
-<dd><dl class="py attribute">
+<dd><p>Soft delete records by setting <cite>deleted_at</cite> instead of removing the row.</p>
+<p>Call <cite>soft_delete()</cite> to timestamp the record and persist that change.</p>
+<dl class="py attribute">
 <dt class="sig sig-object py" id="activemodel.mixins.SoftDeletionMixin.deleted_at">
-<span class="sig-name descname"><span class="pre">deleted_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime.datetime</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#activemodel.mixins.SoftDeletionMixin.deleted_at" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">deleted_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime.datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#activemodel.mixins.SoftDeletionMixin.deleted_at" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.mixins.SoftDeletionMixin.soft_delete">
-<span class="sig-name descname"><span class="pre">soft_delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/mixins/soft_delete.html#SoftDeletionMixin.soft_delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.SoftDeletionMixin.soft_delete" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">soft_delete</span></span><span class="sig-paren">[</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="soft_delete/index.html#activemodel.mixins.soft_delete.SoftDeleteRecord" title="activemodel.mixins.soft_delete.SoftDeleteRecord"><span class="pre">SoftDeleteRecord</span></a></span></em><span class="sig-paren">]</span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../pytest/truncate/index.html#activemodel.pytest.truncate.T" title="activemodel.pytest.truncate.T"><span class="pre">T</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/soft_delete.html#SoftDeletionMixin.soft_delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.SoftDeletionMixin.soft_delete" title="Link to this definition">¶</a></dt>
+<dd><p>Timestamp <cite>deleted_at</cite> and persist the record.</p>
+</dd></dl>
 
 </dd></dl>
 

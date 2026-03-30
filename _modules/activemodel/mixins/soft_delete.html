@@ -37,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../alembic.html">Alembic Integration</a></li><li class="link"><a href="../../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -67,6 +67,7 @@ data-aria-dark="Switch to auto color mode">
       <div class="sy-scrollbar p-6">
         <div class="globaltoc" data-expand-depth="0"><ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../alembic.html">Alembic Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../autoapi/activemodel/index.html">activemodel</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/base_model/index.html">activemodel.base_model</a></li>
@@ -149,30 +150,55 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <h1>Source code for activemodel.mixins.soft_delete</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-</span><span data-line="2">
-</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sa</span>
-</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
-</span><span data-line="5">
+<span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span><span class="p">,</span> <span class="n">datetime</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">Self</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sa</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
 </span><span data-line="6">
+</span><span data-line="7">
+<div class="viewcode-block" id="SoftDeleteRecord">
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeleteRecord">[docs]</a>
+</span><span data-line="8"><span class="k">class</span><span class="w"> </span><span class="nc">SoftDeleteRecord</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<div class="viewcode-block" id="SoftDeleteRecord.deleted_at">
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeleteRecord.deleted_at">[docs]</a>
+</span><span data-line="9">    <span class="n">deleted_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span></div>
+
+</span><span data-line="10">
+<div class="viewcode-block" id="SoftDeleteRecord.save">
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeleteRecord.save">[docs]</a>
+</span><span data-line="11">    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span> <span class="o">...</span></div>
+</div>
+
+</span><span data-line="12">
+</span><span data-line="13">
 <div class="viewcode-block" id="SoftDeletionMixin">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeletionMixin">[docs]</a>
-</span><span data-line="7"><span class="k">class</span><span class="w"> </span><span class="nc">SoftDeletionMixin</span><span class="p">:</span>
+</span><span data-line="14"><span class="k">class</span><span class="w"> </span><span class="nc">SoftDeletionMixin</span><span class="p">:</span>
+</span><span data-line="15"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="16"><span class="sd">    Soft delete records by setting `deleted_at` instead of removing the row.</span>
+</span><span data-line="17">
+</span><span data-line="18"><span class="sd">    Call `soft_delete()` to timestamp the record and persist that change.</span>
+</span><span data-line="19"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="20">
 <div class="viewcode-block" id="SoftDeletionMixin.deleted_at">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeletionMixin.deleted_at">[docs]</a>
-</span><span data-line="8">    <span class="n">deleted_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-</span><span data-line="9">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="10">        <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span data-line="11">        <span class="c1"># TODO https://github.com/fastapi/sqlmodel/discussions/1228</span>
-</span><span data-line="12">        <span class="n">sa_type</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
-</span><span data-line="13">    <span class="p">)</span></div>
+</span><span data-line="21">    <span class="n">deleted_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span data-line="22">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="23">        <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="24">        <span class="c1"># TODO https://github.com/fastapi/sqlmodel/discussions/1228</span>
+</span><span data-line="25">        <span class="n">sa_type</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
+</span><span data-line="26">    <span class="p">)</span></div>
 
-</span><span data-line="14">
+</span><span data-line="27">
 <div class="viewcode-block" id="SoftDeletionMixin.soft_delete">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeletionMixin.soft_delete">[docs]</a>
-</span><span data-line="15">    <span class="k">def</span><span class="w"> </span><span class="nf">soft_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="16">        <span class="bp">self</span><span class="o">.</span><span class="n">deleted_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-</span><span data-line="17">        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Soft deletion is not implemented&quot;</span><span class="p">)</span></div>
+</span><span data-line="28">    <span class="k">def</span><span class="w"> </span><span class="nf">soft_delete</span><span class="p">[</span><span class="n">T</span><span class="p">:</span> <span class="n">SoftDeleteRecord</span><span class="p">](</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span data-line="29"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Timestamp `deleted_at` and persist the record.&quot;&quot;&quot;</span>
+</span><span data-line="30">
+</span><span data-line="31">        <span class="bp">self</span><span class="o">.</span><span class="n">deleted_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+</span><span data-line="32">        <span class="c1"># TODO we should limit the fields updated to just `deleted_at`</span>
+</span><span data-line="33">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
 </div>
 
 </span></pre></div>

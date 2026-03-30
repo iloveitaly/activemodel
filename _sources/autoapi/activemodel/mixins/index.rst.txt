@@ -65,13 +65,21 @@ Package Contents
 
 .. py:class:: SoftDeletionMixin
 
+   Soft delete records by setting `deleted_at` instead of removing the row.
+
+   Call `soft_delete()` to timestamp the record and persist that change.
+
+
    .. py:attribute:: deleted_at
-      :type:  datetime.datetime
+      :type:  datetime.datetime | None
       :value: None
 
 
 
-   .. py:method:: soft_delete()
+   .. py:method:: soft_delete[T: SoftDeleteRecord]() -> T
+
+      Timestamp `deleted_at` and persist the record.
+
 
 
 .. py:class:: TimestampsMixin
