@@ -10,6 +10,7 @@ from test.models import ExampleRecord, UpsertTestModel
 
 
 def test_basic_types(create_and_wipe_database):
+    ExampleRecord(something="typed").save()
     qw = ExampleRecord.select()
 
     sm_query = sm.select(ExampleRecord)
@@ -24,6 +25,24 @@ def test_basic_types(create_and_wipe_database):
 
     all_records_list = list(all_records)
     assert_type(all_records_list, list[ExampleRecord])
+
+    assert_type(qw.first(), ExampleRecord | None)
+    assert_type(qw.last(), ExampleRecord | None)
+    assert_type(qw.one(), ExampleRecord)
+    assert_type(qw.sample(), ExampleRecord | None)
+    assert_type(qw.sample(2), list[ExampleRecord])
+    assert_type(
+        ExampleRecord.select().where(ExampleRecord.something == "typed"),
+        QueryWrapper[ExampleRecord],
+    )
+    assert_type(
+        ExampleRecord.select().order_by(ExampleRecord.id).limit(1),
+        QueryWrapper[ExampleRecord],
+    )
+    assert_type(
+        ExampleRecord.select().filter_by(something="typed"),
+        QueryWrapper[ExampleRecord],
+    )
 
 
 def test_scalar_single_column(create_and_wipe_database):

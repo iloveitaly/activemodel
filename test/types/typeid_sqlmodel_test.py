@@ -1,4 +1,5 @@
 import json
+from typing import assert_type
 
 from pydantic import BaseModel as PydanticBaseModel
 from typeid import TypeID
@@ -12,6 +13,7 @@ def test_get_through_prefixed_uid():
 
     with temporary_tables():
         record = ExampleWithId.get(type_uid)
+        assert_type(record, ExampleWithId | None)
         assert record is None
 
 
@@ -20,6 +22,7 @@ def test_get_through_prefixed_uid_as_str():
 
     with temporary_tables():
         record = ExampleWithId.get(str(type_uid))
+        assert_type(record, ExampleWithId | None)
         assert record is None
 
 
@@ -28,6 +31,7 @@ def test_get_through_plain_uid_as_str(create_and_wipe_database):
 
     # pass uid as string. Ex: '01942886-7afc-7129-8f57-db09137ed002'
     record = ExampleWithId.get(str(type_uid.uuid))
+    assert_type(record, ExampleWithId | None)
     assert record is None
 
 
@@ -35,6 +39,7 @@ def test_get_through_plain_uid(create_and_wipe_database):
     type_uid = TypeID(prefix=TYPEID_PREFIX)
 
     record = ExampleWithId.get(type_uid.uuid)
+    assert_type(record, ExampleWithId | None)
     assert record is None
 
 
