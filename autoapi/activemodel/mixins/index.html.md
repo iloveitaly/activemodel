@@ -9,10 +9,9 @@
 
 ## Classes
 
-| [`PydanticJSONMixin`](#activemodel.mixins.PydanticJSONMixin)   | By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.   |
-|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| [`SoftDeletionMixin`](#activemodel.mixins.SoftDeletionMixin)   | Soft delete records by setting deleted_at instead of removing the row.                                             |
-| [`TimestampsMixin`](#activemodel.mixins.TimestampsMixin)       | Simple created at and updated at timestamps. Mix them into your model:                                             |
+| [`SoftDeletionMixin`](#activemodel.mixins.SoftDeletionMixin)   | Soft delete records by setting deleted_at instead of removing the row.   |
+|----------------------------------------------------------------|--------------------------------------------------------------------------|
+| [`TimestampsMixin`](#activemodel.mixins.TimestampsMixin)       | Simple created at and updated at timestamps. Mix them into your model:   |
 
 ## Functions
 
@@ -20,31 +19,6 @@
 |------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
 
 ## Package Contents
-
-### *class* activemodel.mixins.PydanticJSONMixin
-
-By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.
-
-This mixin, combined with a custom serializer (\_serialize_pydantic_model), fixes that issue.
-
-```pycon
->>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
->>>    list_field: list[SubObject] = Field(sa_type=JSONB()
-```
-
-Notes:
-
-- Tuples of pydantic models are not supported, only lists.
-- Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]
-
-#### \_\_transform_dict_to_pydantic_\_()
-
-Transforms dictionary fields into Pydantic models upon loading.
-
-- Reconstructor only runs once, when the object is loaded.
-- We manually call this method on save(), etc to ensure the pydantic types are maintained
-- set_committed_value sets Pydantic models as committed, avoiding setattr marking fields as modified
-  after loading from the database.
 
 ### *class* activemodel.mixins.SoftDeletionMixin
 

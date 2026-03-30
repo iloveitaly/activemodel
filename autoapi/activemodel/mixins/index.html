@@ -121,10 +121,6 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
-<li><a class="reference internal" href="#activemodel.mixins.PydanticJSONMixin"><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code></a><ul>
-<li><a class="reference internal" href="#activemodel.mixins.PydanticJSONMixin.__transform_dict_to_pydantic__"><code class="docutils literal notranslate">__transform_dict_to_pydantic__()</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin"><code class="docutils literal notranslate"><span class="pre">SoftDeletionMixin</span></code></a><ul>
 <li><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin.deleted_at"><code class="docutils literal notranslate">deleted_at</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin.soft_delete"><code class="docutils literal notranslate">soft_delete()</span></code></a></li>
@@ -229,13 +225,10 @@ data-aria-dark="Switch to auto color mode">
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.mixins.PydanticJSONMixin" title="activemodel.mixins.PydanticJSONMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code></a></p></td>
-<td><p>By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin" title="activemodel.mixins.SoftDeletionMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SoftDeletionMixin</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin" title="activemodel.mixins.SoftDeletionMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SoftDeletionMixin</span></code></a></p></td>
 <td><p>Soft delete records by setting <cite>deleted_at</cite> instead of removing the row.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.mixins.TimestampsMixin" title="activemodel.mixins.TimestampsMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimestampsMixin</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.mixins.TimestampsMixin" title="activemodel.mixins.TimestampsMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimestampsMixin</span></code></a></p></td>
 <td><p>Simple created at and updated at timestamps. Mix them into your model:</p></td>
 </tr>
 </tbody>
@@ -256,34 +249,6 @@ data-aria-dark="Switch to auto color mode">
 </section>
 <section id="package-contents">
 <h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="activemodel.mixins.PydanticJSONMixin">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">PydanticJSONMixin</span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.PydanticJSONMixin" title="Link to this definition">¶</a></dt>
-<dd><p>By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.</p>
-<p>This mixin, combined with a custom serializer (<cite>_serialize_pydantic_model</cite>), fixes that issue.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">ExampleWithJSON</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span>   <span class="n">list_field</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SubObject</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">()</span>
-</span></pre></div>
-</div>
-<p>Notes:</p>
-<ul class="simple">
-<li><p>Tuples of pydantic models are not supported, only lists.</p></li>
-<li><p>Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]</p></li>
-</ul>
-<dl class="py method">
-<dt class="sig sig-object py" id="activemodel.mixins.PydanticJSONMixin.__transform_dict_to_pydantic__">
-<span class="sig-name descname"><span class="pre">__transform_dict_to_pydantic__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.__transform_dict_to_pydantic__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.PydanticJSONMixin.__transform_dict_to_pydantic__" title="Link to this definition">¶</a></dt>
-<dd><p>Transforms dictionary fields into Pydantic models upon loading.</p>
-<ul class="simple">
-<li><p>Reconstructor only runs once, when the object is loaded.</p></li>
-<li><p>We manually call this method on save(), etc to ensure the pydantic types are maintained</p></li>
-<li><p><cite>set_committed_value</cite> sets Pydantic models as committed, avoiding <cite>setattr</cite> marking fields as modified
-after loading from the database.</p></li>
-</ul>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="activemodel.mixins.SoftDeletionMixin">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">SoftDeletionMixin</span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/soft_delete.html#SoftDeletionMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.SoftDeletionMixin" title="Link to this definition">¶</a></dt>
