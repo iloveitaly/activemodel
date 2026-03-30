@@ -13,6 +13,7 @@ def compile_sql(target: SelectOfScalar) -> str:
     return str(compiled)
 
 
+# TODO wait so why isn't this typed?
 # TODO document further, lots of risks here
 def raw_sql_exec(raw_query: str):
     with get_session() as session:

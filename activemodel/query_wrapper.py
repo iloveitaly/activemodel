@@ -1,4 +1,5 @@
 import typing as t
+import typing as t
 from typing import Literal, overload
 
 import sqlmodel as sm
@@ -10,15 +11,15 @@ from .session_manager import get_session
 from .utils import compile_sql
 
 
-class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
+class QueryWrapper[TModel: sm.SQLModel](SQLAlchemyQueryMethods[TModel]):
     """
-    Make it easy to run queries off of a model
+    Make it easy to run queries on a model.
     """
 
-    target: SelectOfScalar[T]
-    _model_cls: T
+    target: SelectOfScalar[TModel]
+    _model_cls: type[TModel]
 
-    def __init__(self, cls: T, *args) -> None:
+    def __init__(self, cls: type[TModel], *args: t.Any) -> None:
         self._model_cls = cls
 
         # TODO add generics here
@@ -35,6 +36,12 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
     def _pk_attr(self):
         pk_col = self._model_cls.primary_key_column()  # type: ignore[attr-defined]
         return getattr(self._model_cls, pk_col.name)
+
+    @overload
+    def _run_after_load_hooks(self, instance: None) -> None: ...
+
+    @overload
+    def _run_after_load_hooks[T](self, instance: T) -> T: ...
 
     def _run_after_load_hooks(self, instance: t.Any):
         model_cls = t.cast(t.Any, self._model_cls)
@@ -92,11 +99,13 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         with get_session() as session:
             return session.delete(self.target)
 
-    def exists(self) -> bool:
+    def exists(self) -> bool:  # pyright: ignore[reportIncompatibleMethodOverride]
         """Return True if the current query yields at least one row.
 
         Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
         the current target for efficiency. Keeps the original target intact.
+
+        SQLAlchemy exists works differently and does not return a simple boolean.
         """
         with get_session() as session:
             exists_stmt = sm.select(sm.exists(self.target))
@@ -136,15 +145,12 @@ class QueryWrapper[T: sm.SQLModel](SQLAlchemyQueryMethods[T]):
         return compile_sql(self.target)
 
     @overload
-    def sample(self) -> T | None: ...
+    def sample(self) -> TModel | None: ...
 
     @overload
-    def sample(self, n: Literal[1]) -> T | None: ...
+    def sample(self, n: int) -> list[TModel]: ...
 
-    @overload
-    def sample(self, n: int) -> list[T]: ...
-
-    def sample(self, n: int = 1) -> T | None | list[T]:
+    def sample(self, n: int = 1) -> TModel | None | list[TModel]:
         """Return a random sample of rows from the current query.
 
         Parameters

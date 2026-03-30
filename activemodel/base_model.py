@@ -73,7 +73,7 @@ class BaseModel(SQLModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        type(self)._run_after_initialize_hook(self)
+        self._call_hook("after_initialize")
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
@@ -151,12 +151,12 @@ class BaseModel(SQLModel):
         )
 
     @classmethod
-    def select(cls, *args):
+    def select(cls, *args: t.Any):
         "create a query wrapper to easily run sqlmodel queries on this model"
-        return QueryWrapper[cls](cls, *args)
+        return QueryWrapper(cls, *args)
 
     @classmethod
-    def where(cls, *args):
+    def where(cls, *args: t.Any):
         "convenience method to avoid having to write .select().where() in order to add conditions"
         return cls.select().where(*args)
 
@@ -258,6 +258,14 @@ class BaseModel(SQLModel):
             method()
 
     @classmethod
+    @t.overload
+    def _run_after_find_hook(cls, instance: None) -> None: ...
+
+    @classmethod
+    @t.overload
+    def _run_after_find_hook[T](cls, instance: T) -> T: ...
+
+    @classmethod
     def _run_after_find_hook(cls, instance: t.Any):
         """Run the Rails-style `after_find` hook for model instances only.
 
@@ -270,13 +278,7 @@ class BaseModel(SQLModel):
           through untouched
         - the hook should run while the SQLAlchemy session is still active so model
           callbacks can safely touch lazy relationships
-
-        Centralizing that logic keeps the finder methods small and prevents each
-        query path from re-implementing the same guards.
         """
-        if instance is None:
-            return None
-
         if not isinstance(instance, BaseModel):
             return instance
 
@@ -284,27 +286,21 @@ class BaseModel(SQLModel):
         return instance
 
     @classmethod
-    def _run_after_initialize_hook(cls, instance: t.Any):
-        """Run the Rails-style `after_initialize` hook for model instances only.
+    @t.overload
+    def _run_after_load_hooks(cls, instance: None) -> None: ...
 
-        This helper mirrors the `after_find` guard behavior because some shared
-        query paths can return `None` or scalar values instead of ORM model
-        instances.
-        """
-        if instance is None:
-            return None
+    @classmethod
+    @t.overload
+    def _run_after_load_hooks[T](cls, instance: T) -> T: ...
 
+    @classmethod
+    def _run_after_load_hooks(cls, instance: t.Any | None):
         if not isinstance(instance, BaseModel):
             return instance
 
+        instance = cls._run_after_find_hook(instance)
         instance._call_hook("after_initialize")
         return instance
-
-    @classmethod
-    def _run_after_load_hooks(cls, instance: t.Any):
-        """Run DB-load callbacks in Rails order for model instances only."""
-        instance = cls._run_after_find_hook(instance)
-        return cls._run_after_initialize_hook(instance)
 
     def _get_around_context_manager(self, name: str) -> t.ContextManager | None:
         obj = getattr(self, name, None)
