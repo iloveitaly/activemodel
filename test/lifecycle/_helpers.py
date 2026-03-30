@@ -120,11 +120,13 @@ class AfterFindModelWithRelationships(BaseModel, table=True):
 class AfterInitializeModel(BaseModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str | None = None
+    initialized_name: str | None = Field(default=None)
 
     def after_find(self):
         events.append(f"after_find:{self.name}")
 
     def after_initialize(self):
+        self.initialized_name = f"initialized:{self.name}"
         events.append(f"after_initialize:{self.name}")
 
 
