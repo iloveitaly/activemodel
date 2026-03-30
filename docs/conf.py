@@ -79,6 +79,7 @@ html_theme_options = {
     "dark_logo": "_static/logo-nav.png",
     "nav_links": [
         {"title": "Getting Started", "url": "getting-started"},
+        {"title": "Alembic Integration", "url": "alembic"},
         {"title": "API Reference", "url": "autoapi/index"},
         {"title": "Changelog", "url": "changelog"},
     ],
