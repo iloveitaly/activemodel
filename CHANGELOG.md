@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.0](https://github.com/iloveitaly/activemodel/compare/v0.18.0...v0.19.0) (2026-03-30)
+
+
+### Features
+
+* after_find and after_initialize ([#66](https://github.com/iloveitaly/activemodel/issues/66)) ([607c2c1](https://github.com/iloveitaly/activemodel/commit/607c2c1b6fc1925bc8028978ac29d601c42afb90))
+
 ## [0.18.0](https://github.com/iloveitaly/activemodel/compare/v0.17.0...v0.18.0) (2026-03-13)
 
 
