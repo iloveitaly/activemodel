@@ -100,8 +100,10 @@ class DeleteModel(BaseModel, table=True):
 class AfterFindModel(BaseModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str | None = None
+    found_name: str | None = Field(default=None)
 
     def after_find(self):
+        self.found_name = f"found:{self.name}"
         events.append(f"after_find:{self.name}")
 
 
