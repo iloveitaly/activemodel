@@ -16,8 +16,14 @@ SQLModel is *not* an ORM. It's a SQL query builder and a schema definition tool.
 
 This package provides a thin wrapper around SQLModel that provides a more ActiveRecord-like interface with things like:
 
-* Timestamp column mixins
-* Lifecycle hooks
+* **ActiveRecord-style Query & Persistence API**: Fluent methods like `save()`, `where()`, `find_or_create_by()`, and `upsert()` for intuitive database operations.
+* **Implicit Session Management**: Automatically handles database sessions, eliminating boilerplate and making database interactions feel "magic".
+* **Stripe-style IDs (TypeID)**: Native support for type-safe, prefixed, and sortable UUIDs with a built-in `TypeIDMixin`.
+* **Timestamp Column Mixins**: Standard `created_at` and `updated_at` tracking out of the box.
+* **Lifecycle Hooks**: Rails-style callbacks like `before_save`, `after_create`, and `around_delete`.
+* **Automatic DB Comments**: Syncs class and field-level docstrings directly to database table and column comments for better self-documentation.
+* **Soft Deletion**: Easily mark records as deleted with a `deleted_at` timestamp using the `SoftDeletionMixin`.
+* **Smart Table & Constraint Naming**: Consistent snake_case table names and standardized naming conventions for indexes and constraints.
 
 > [!TIP]
 > This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this. 
