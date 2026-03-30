@@ -1,146 +1,188 @@
-"""
-This module provides utilities for generating Protocol type definitions for SQLAlchemy's
-SelectOfScalar methods, as well as formatting and fixing Python files using ruff.
-"""
+"""Generate the QueryWrapper SQLAlchemy protocol modules."""
 
 import inspect
 import logging
-import os
 import subprocess
 from pathlib import Path
-from typing import Any  # already imported in header of generated file
+from string.templatelib import Template
+from typing import Any
 
-import sqlmodel as sm
 from sqlmodel.sql.expression import SelectOfScalar
 
-from test.test_wrapper import QueryWrapper
-
-# Set up logging
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-QUERY_WRAPPER_CLASS_NAME = QueryWrapper.__name__
+REGENERATE_COMMAND = "uv run python -m activemodel.cli"
+PROTOCOL_DIR = Path(__file__).resolve().parent.parent / "types"
+RUNTIME_PROTOCOL_PATH = PROTOCOL_DIR / "sqlalchemy_protocol.py"
+STUB_PROTOCOL_PATH = PROTOCOL_DIR / "sqlalchemy_protocol.pyi"
 
 
-def format_python_file(file_path: str | Path) -> bool:
-    """
-    Format a Python file using ruff.
+def _render_template(template: Template) -> str:
+    rendered: list[str] = []
 
-    Args:
-        file_path: Path to the Python file to format
+    for index, string_part in enumerate(template.strings):
+        rendered.append(string_part)
 
-    Returns:
-        bool: True if formatting was successful, False otherwise
-    """
+        if index >= len(template.interpolations):
+            continue
+
+        rendered.append(str(template.interpolations[index].value))
+
+    return "".join(rendered)
+
+
+def _run_ruff(command: list[str], *, description: str) -> None:
+    subprocess.run(command, check=True)
+    logger.info("%s: %s", description, command[-1])
+
+
+def _render_parameter(parameter: inspect.Parameter) -> str:
+    if parameter.kind is inspect.Parameter.VAR_POSITIONAL:
+        return f"*{parameter.name}: Any"
+
+    if parameter.kind is inspect.Parameter.VAR_KEYWORD:
+        return f"**{parameter.name}: Any"
+
+    if parameter.default is inspect.Parameter.empty:
+        return f"{parameter.name}: Any"
+
+    return f"{parameter.name}: Any = ..."
+
+
+def _render_parameters(signature: inspect.Signature) -> str:
+    rendered: list[str] = []
+    inserted_keyword_separator = False
+
+    for parameter in list(signature.parameters.values())[1:]:
+        if parameter.kind is inspect.Parameter.KEYWORD_ONLY:
+            if not inserted_keyword_separator:
+                rendered.append("*")
+                inserted_keyword_separator = True
+
+            rendered.append(_render_parameter(parameter))
+            continue
+
+        if parameter.kind is inspect.Parameter.VAR_POSITIONAL:
+            inserted_keyword_separator = True
+
+        rendered.append(_render_parameter(parameter))
+
+    if not rendered:
+        return ""
+
+    return ", " + ", ".join(rendered)
+
+
+def _render_stub_method(name: str, method: Any) -> str:
     try:
-        subprocess.run(["ruff", "format", str(file_path)], check=True)
-        logger.info(f"Formatted file using ruff at {file_path}")
-        return True
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Error running ruff to format the file: {e}")
-        return False
-
-
-def fix_python_file(file_path: str | Path) -> bool:
-    """
-    Fix linting issues in a Python file using ruff.
-
-    Args:
-        file_path: Path to the Python file to fix
-
-    Returns:
-        bool: True if fixing was successful, False otherwise
-    """
-    try:
-        subprocess.run(["ruff", "check", str(file_path), "--fix"], check=True)
-        logger.info(f"Fixed linting issues using ruff at {file_path}")
-        return True
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Error running ruff to fix the file: {e}")
-        return False
-
-
-def generate_sqlalchemy_protocol():
-    """Generate Protocol type definitions for SQLAlchemy SelectOfScalar methods"""
-    logger.info("Starting SQLAlchemy protocol generation")
-
-    header = """
-# IMPORTANT: This file is auto-generated. Do not edit directly.
-
-from typing import Protocol, TypeVar, Any, Generic
-import sqlmodel as sm
-from sqlalchemy.sql.base import _NoArg
-
-T = TypeVar('T', bound=sm.SQLModel, covariant=True)
-
-class SQLAlchemyQueryMethods(Protocol, Generic[T]):
-    \"""Protocol defining SQLAlchemy query methods forwarded by QueryWrapper.__getattr__\"""
-"""
-    # Initialize output list for generated method signatures
-    output: list = []
-
-    try:
-        # Get all methods from SelectOfScalar
-        methods = inspect.getmembers(SelectOfScalar)
-        logger.debug(f"Discovered {len(methods)} methods from SelectOfScalar")
-
-        for name, method in methods:
-            # Skip private/dunder methods
-            if name.startswith("_"):
-                continue
-
-            if not inspect.isfunction(method) and not inspect.ismethod(method):
-                logger.debug(f"Skipping non-method: {name}")
-                continue
-
-            logger.debug(f"Processing method: {name}")
-            try:
-                signature = inspect.signature(method)
-                params = []
-
-                # Process parameters, skipping 'self'
-                for param_name, param in list(signature.parameters.items())[1:]:
-                    if param.kind == param.VAR_POSITIONAL:
-                        params.append(f"*{param_name}: Any")
-                    elif param.kind == param.VAR_KEYWORD:
-                        params.append(f"**{param_name}: Any")
-                    else:
-                        if param.default is inspect.Parameter.empty:
-                            params.append(f"{param_name}: Any")
-                        else:
-                            default_repr = repr(param.default)
-                            params.append(f"{param_name}: Any = {default_repr}")
-
-                params_str = ", ".join(params)
-                output.append(
-                    f'    def {name}(self, {params_str}) -> "{QUERY_WRAPPER_CLASS_NAME}[T]": ...'
-                )
-            except (ValueError, TypeError) as e:
-                logger.warning(f"Could not get signature for {name}: {e}")
-                # Some methods might not have proper signatures
-                output.append(
-                    f'    def {name}(self, *args: Any, **kwargs: Any) -> "{QUERY_WRAPPER_CLASS_NAME}[T]": ...'
-                )
-
-        # Write the output to a file
-        protocol_path = (
-            Path(__file__).parent.parent / "types" / "sqlalchemy_protocol.py"
+        signature = inspect.signature(method)
+    except ValueError | TypeError:
+        return _render_template(
+            t"def {name}(self, *args: Any, **kwargs: Any) -> QueryWrapper[T]: ..."
         )
 
-        # Ensure directory exists
-        os.makedirs(protocol_path.parent, exist_ok=True)
+    parameters = _render_parameters(signature)
+    return _render_template(t"def {name}(self{parameters}) -> QueryWrapper[T]: ...")
 
-        with open(protocol_path, "w") as f:
-            f.write(header + "\n".join(output))
 
-        logger.info(f"Generated SQLAlchemy protocol at {protocol_path}")
+def _iter_select_methods() -> list[tuple[str, Any]]:
+    methods: list[tuple[str, Any]] = []
 
-        # Format and fix the generated file with ruff
-        format_python_file(protocol_path)
-        fix_python_file(protocol_path)
-    except Exception as e:
-        logger.error(f"Error generating SQLAlchemy protocol: {e}", exc_info=True)
-        raise
+    for name, method in inspect.getmembers(SelectOfScalar):
+        if name.startswith("_"):
+            continue
+
+        if not inspect.isfunction(method) and not inspect.ismethod(method):
+            continue
+
+        methods.append((name, method))
+
+    return methods
+
+
+def _join_lines(lines: list[str]) -> str:
+    return "\n".join(lines) + "\n"
+
+
+def _render_runtime_module() -> str:
+    return _join_lines(
+        [
+            '"""',
+            "Auto-generated runtime companion for `sqlalchemy_protocol.pyi`.",
+            "",
+            "This module stays intentionally minimal so `activemodel.query_wrapper` can",
+            "import `SQLAlchemyQueryMethods` at runtime without importing `QueryWrapper`.",
+            "Type checkers should read `sqlalchemy_protocol.pyi` for the generated method",
+            "signatures forwarded through `QueryWrapper.__getattr__`.",
+            "",
+            _render_template(
+                t"Do not edit this file directly. Run `{REGENERATE_COMMAND}` to regenerate both"
+            ),
+            "files.",
+            '"""',
+            "",
+            "from typing import Protocol",
+            "",
+            "import sqlmodel as sm",
+            "",
+            "",
+            "class SQLAlchemyQueryMethods[T: sm.SQLModel](Protocol):",
+            '    """Runtime protocol placeholder for QueryWrapper\'s forwarded methods."""',
+            "",
+            "    pass",
+        ]
+    )
+
+
+def _render_stub_module() -> str:
+    methods = _iter_select_methods()
+    method_lines = [_render_stub_method(name, method) for name, method in methods]
+    rendered_methods = [f"    {line}" for line in method_lines] or ["    pass"]
+
+    return _join_lines(
+        [
+            '"""',
+            "Auto-generated type stub for QueryWrapper's forwarded SQLAlchemy methods.",
+            "",
+            "`sqlalchemy_protocol.py` is the runtime module imported by the package.",
+            "This stub carries the generated method signatures used by type checkers for",
+            "methods forwarded through `QueryWrapper.__getattr__`.",
+            "",
+            _render_template(
+                t"Do not edit this file directly. Run `{REGENERATE_COMMAND}` to regenerate both"
+            ),
+            "files.",
+            '"""',
+            "",
+            "from typing import Any, Protocol",
+            "",
+            "import sqlmodel as sm",
+            "",
+            "from ..query_wrapper import QueryWrapper",
+            "",
+            "",
+            "class SQLAlchemyQueryMethods[T: sm.SQLModel](Protocol):",
+            '    """Type-checker protocol for SQLAlchemy methods forwarded by QueryWrapper."""',
+            "",
+            *rendered_methods,
+        ]
+    )
+
+
+def _write_protocol_module(path: Path, content: str) -> None:
+    path.write_text(content, encoding="utf-8")
+    _run_ruff(["ruff", "check", str(path), "--fix"], description="ruff check")
+    _run_ruff(["ruff", "format", str(path)], description="ruff format")
+
+
+def generate_sqlalchemy_protocol() -> None:
+    """Generate the runtime module and stub for QueryWrapper SQLAlchemy methods."""
+    logger.info("generating sqlalchemy protocol files")
+
+    PROTOCOL_DIR.mkdir(parents=True, exist_ok=True)
+
+    _write_protocol_module(RUNTIME_PROTOCOL_PATH, _render_runtime_module())
+    _write_protocol_module(STUB_PROTOCOL_PATH, _render_stub_module())
 
 
 if __name__ == "__main__":
