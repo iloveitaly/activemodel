@@ -1,4 +1,3 @@
-import pytest
 from activemodel import is_database_empty
 from tests.models import ExampleRecord
 
