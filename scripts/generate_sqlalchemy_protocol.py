@@ -3,17 +3,23 @@
 import inspect
 import logging
 import subprocess
+import sys
 from pathlib import Path
 from string.templatelib import Template
 from typing import Any
 
+# Ensure we can import from activemodel
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from activemodel.query_wrapper import QueryWrapper
 from sqlmodel.sql.expression import SelectOfScalar
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-REGENERATE_COMMAND = "uv run python -m activemodel.cli"
-PROTOCOL_DIR = Path(__file__).resolve().parent.parent / "types"
+REGENERATE_COMMAND = "uv run python scripts/generate_sqlalchemy_protocol.py"
+ROOT_DIR = Path(__file__).resolve().parent.parent
+PROTOCOL_DIR = ROOT_DIR / "activemodel" / "types"
 RUNTIME_PROTOCOL_PATH = PROTOCOL_DIR / "sqlalchemy_protocol.py"
 STUB_PROTOCOL_PATH = PROTOCOL_DIR / "sqlalchemy_protocol.pyi"
 

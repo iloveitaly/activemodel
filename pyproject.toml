@@ -37,6 +37,8 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 # avoids the src/ directory structure
 module-root = ""
+source-exclude = ["scripts/"]
+wheel-exclude = ["scripts/"]
 
 # https://github.com/astral-sh/uv/issues/5200
 [tool.uv]
@@ -61,10 +63,20 @@ dev = [
 ]
 
 [tool.pyright]
-exclude = ["examples/", "playground/", "tmp/", ".venv/", "tests/migrations/"]
+exclude = [
+    "examples/",
+    "playground/",
+    "tmp/",
+    ".venv/",
+    "tests/migrations/",
+    "scripts/",
+    "build/",
+    "dist/",
+]
 
 [tool.pytest.ini_options]
 addopts = "--cov --cov-report=term-missing --cov-report=html:tmp/htmlcov"
+norecursedirs = ["scripts"]
 
 [tool.coverage.run]
 plugins = ["covdefaults"]
@@ -74,4 +86,11 @@ source = ["activemodel"]
 fail_under = 50
 
 [tool.ruff]
-extend-exclude = ["playground.py", "playground/", "tests/migrations/"]
+extend-exclude = [
+    "playground.py",
+    "playground/",
+    "tests/migrations/",
+    "scripts/",
+    "build/",
+    "dist/",
+]
