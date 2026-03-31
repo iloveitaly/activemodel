@@ -158,16 +158,16 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="6"><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
 </span><span data-line="7"><span class="kn">import</span><span class="w"> </span><span class="nn">contextvars</span>
 </span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
-</span><span data-line="10">
-</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">decouple</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
+</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span data-line="10"><span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
+</span><span data-line="11">
 </span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 </span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Engine</span><span class="p">,</span> <span class="n">inspect</span>
 </span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">SQLModel</span><span class="p">,</span> <span class="n">create_engine</span>
 </span><span data-line="15">
 <div class="viewcode-block" id="ACTIVEMODEL_LOG_SQL">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.ACTIVEMODEL_LOG_SQL">[docs]</a>
-</span><span data-line="16"><span class="n">ACTIVEMODEL_LOG_SQL</span> <span class="o">=</span> <span class="n">config</span><span class="p">(</span><span class="s2">&quot;ACTIVEMODEL_LOG_SQL&quot;</span><span class="p">,</span> <span class="n">cast</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+</span><span data-line="16"><span class="n">ACTIVEMODEL_LOG_SQL</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ACTIVEMODEL_LOG_SQL&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">)</span></div>
 
 </span><span data-line="17">
 </span><span data-line="18">
