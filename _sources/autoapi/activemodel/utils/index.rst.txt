@@ -12,6 +12,7 @@ Functions
    activemodel.utils.compile_sql
    activemodel.utils.raw_sql_exec
    activemodel.utils.hash_function_code
+   activemodel.utils.is_database_empty
 
 
 Module Contents
@@ -27,5 +28,12 @@ Module Contents
 .. py:function:: hash_function_code(func)
 
    get sha of a function to easily assert that it hasn't changed
+
+
+.. py:function:: is_database_empty(exclude: list[type] = []) -> bool
+
+   Check if any table in the database has records using Model.count().
+
+   Useful for detecting an empty database state to run operations such as seeding, etc.
 
 

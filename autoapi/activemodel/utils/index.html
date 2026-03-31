@@ -122,6 +122,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#activemodel.utils.compile_sql"><code class="docutils literal notranslate"><span class="pre">compile_sql()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.utils.raw_sql_exec"><code class="docutils literal notranslate"><span class="pre">raw_sql_exec()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.utils.hash_function_code"><code class="docutils literal notranslate"><span class="pre">hash_function_code()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.utils.is_database_empty"><code class="docutils literal notranslate"><span class="pre">is_database_empty()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -213,6 +214,9 @@ data-aria-dark="Switch to auto color mode">
 <tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.hash_function_code" title="activemodel.utils.hash_function_code"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash_function_code</span></code></a>(func)</p></td>
 <td><p>get sha of a function to easily assert that it hasn't changed</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.utils.is_database_empty" title="activemodel.utils.is_database_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_database_empty</span></code></a>(→ bool)</p></td>
+<td><p>Check if any table in the database has records using Model.count().</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -234,6 +238,13 @@ data-aria-dark="Switch to auto color mode">
 <dt class="sig sig-object py" id="activemodel.utils.hash_function_code">
 <span class="sig-prename descclassname"><span class="pre">activemodel.utils.</span></span><span class="sig-name descname"><span class="pre">hash_function_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/utils.html#hash_function_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.utils.hash_function_code" title="Link to this definition">¶</a></dt>
 <dd><p>get sha of a function to easily assert that it hasn’t changed</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.utils.is_database_empty">
+<span class="sig-prename descclassname"><span class="pre">activemodel.utils.</span></span><span class="sig-name descname"><span class="pre">is_database_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/utils.html#is_database_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.utils.is_database_empty" title="Link to this definition">¶</a></dt>
+<dd><p>Check if any table in the database has records using Model.count().</p>
+<p>Useful for detecting an empty database state to run operations such as seeding, etc.</p>
 </dd></dl>
 
 </section>

@@ -25,6 +25,7 @@
 |-----------------------------------------------------------------|---------------------------------------------------------------------|
 | [`get_session`](#activemodel.get_session)()                     | alias to get a database session without importing SessionManager    |
 | [`init`](#activemodel.init)(database_url, \*[, engine_options]) | configure activemodel to connect to a specific database             |
+| [`is_database_empty`](#activemodel.is_database_empty)(→ bool)   | Check if any table in the database has records using Model.count(). |
 
 ## Package Contents
 
@@ -246,3 +247,9 @@ alias to get a database session without importing SessionManager
 ### activemodel.init(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
 
 configure activemodel to connect to a specific database
+
+### activemodel.is_database_empty(exclude: [list](https://docs.python.org/3/library/stdtypes.html#list)[[type](https://docs.python.org/3/library/functions.html#type)] = []) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Check if any table in the database has records using Model.count().
+
+Useful for detecting an empty database state to run operations such as seeding, etc.
