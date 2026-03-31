@@ -10,6 +10,7 @@ from typing import get_args, get_origin
 import typing
 import types
 from pydantic import BaseModel as PydanticBaseModel
+from sqlalchemy import event
 from sqlalchemy.orm import reconstructor, attributes
 
 
@@ -28,80 +29,155 @@ class PydanticJSONMixin:
     - Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]
     """
 
+    def __init_subclass__(cls, **kwargs):
+        """Register per-model SQLAlchemy instance events when a mapped subclass is declared.
+
+        `load` fires after SQLAlchemy first constructs an instance from query results.
+        `refresh` fires after SQLAlchemy reloads one or more attributes on an existing
+        instance, including `session.refresh(...)` and expired-attribute reloads.
+        """
+        super().__init_subclass__(**kwargs)
+
+        if getattr(cls, "_pydantic_json_events_registered", False):
+            return
+
+        # `load` runs once for an ORM-created instance, after the initial column values exist.
+        event.listen(
+            cls,
+            "load",
+            cls._rehydrate_pydantic_json_on_load,
+            restore_load_context=True,
+        )
+
+        # `refresh` runs when SQLAlchemy repopulates an existing instance from a query.
+        event.listen(
+            cls,
+            "refresh",
+            cls._rehydrate_pydantic_json_on_refresh,
+            restore_load_context=True,
+        )
+
+        # Preserve SQLAlchemy's loader context in case the hook touches unloaded state.
+
+        cls._pydantic_json_events_registered = True
+
+    @staticmethod
+    def _is_pydantic_model_class(model_cls) -> bool:
+        """Return whether the resolved annotation is a concrete Pydantic model class."""
+        return isinstance(model_cls, type) and issubclass(model_cls, PydanticBaseModel)
+
+    @classmethod
+    def _resolve_pydantic_field_info(cls, annotation):
+        """Normalize a field annotation into list/single-model metadata for rehydration."""
+        origin = get_origin(annotation)
+
+        if origin in (dict, tuple):
+            return False, None
+
+        annotation_args = get_args(annotation)
+        is_top_level_list = origin is list
+        model_cls = annotation
+
+        if origin in (typing.Union, types.UnionType):
+            # Only simple optional unions are eligible for automatic Pydantic coercion.
+            non_none_types = [t for t in annotation_args if t is not type(None)]
+
+            if len(non_none_types) != 1:
+                return False, None
+
+            model_cls = non_none_types[0]
+
+        model_cls_origin = get_origin(model_cls)
+
+        if (
+            model_cls_origin is list
+            and len(list_annotation_args := get_args(model_cls)) == 1
+        ):
+            model_cls = list_annotation_args[0]
+            model_cls_origin = get_origin(model_cls)
+            is_top_level_list = True
+
+        if model_cls_origin in (list, tuple):
+            return False, None
+
+        return is_top_level_list, model_cls
+
+    @classmethod
+    def _rehydrate_pydantic_json_on_load(cls, target, context):
+        """Handle the SQLAlchemy `load` event for newly materialized ORM instances."""
+        target.__transform_dict_to_pydantic__()
+
+    @classmethod
+    def _rehydrate_pydantic_json_on_refresh(cls, target, context, attrs_to_refresh):
+        """Handle the SQLAlchemy `refresh` event for existing ORM instances.
+
+        SQLAlchemy passes the refreshed attribute names when it has them, which lets us
+        limit the rehydration work to the fields that were just repopulated.
+        """
+        # SQLAlchemy tells us which attributes were refreshed, so avoid touching unrelated fields.
+        field_names = set(attrs_to_refresh) if attrs_to_refresh else None
+        target.__transform_dict_to_pydantic__(field_names=field_names)
+
     @reconstructor
-    def __transform_dict_to_pydantic__(self):
+    def __transform_dict_to_pydantic__(self, field_names: set[str] | None = None):
         """
         Transforms dictionary fields into Pydantic models upon loading.
 
-        - Reconstructor only runs once, when the object is loaded.
-        - We manually call this method on save(), etc to ensure the pydantic types are maintained
+                - Reconstructor is SQLAlchemy's class-decorator form of the `load` event.
+                - It only runs for the initial ORM load, not for later `refresh` events.
+                - The dedicated `refresh` listener above covers reloads of existing instances.
+                - We manually call this method on save(), etc to ensure the pydantic types are maintained
         - `set_committed_value` sets Pydantic models as committed, avoiding `setattr` marking fields as modified
           after loading from the database.
         """
         # TODO do we need to inspect sa_type
-        for field_name, field_info in type(self).model_fields.items():
+        model_fields = getattr(type(self), "model_fields")
+
+        for field_name, field_info in model_fields.items():
+            if field_names is not None and field_name not in field_names:
+                continue
+
             raw_value = getattr(self, field_name, None)
 
             # if the field is not set on the model, we can avoid doing anything with it
             if raw_value is None:
                 continue
 
-            annotation = field_info.annotation
-            origin = get_origin(annotation)
+            is_top_level_list, model_cls = self._resolve_pydantic_field_info(
+                field_info.annotation
+            )
 
-            # e.g. `dict` or `dict[str, str]`, we don't want to do anything with these
-            if origin in (dict, tuple):
+            if model_cls is None:
                 continue
 
-            annotation_args = get_args(annotation)
-            is_top_level_list = origin is list
-            model_cls = annotation
-
-            # TODO not sure what was going on here...
-            # if origin is not None:
-            #     assert annotation.__class__ == origin
-
-            # UnionType is only one way of defining an optional. If older typing syntax is used `Tuple[str] | None` the
-            # type annotation is different: `typing.Optional[typing.Tuple[float, float]]`. This is why we check both
-            # types below.
-
-            # e.g. SomePydanticModel | None or list[SomePydanticModel] | None
-            # annotation_args are (type, NoneType) in this case. Remove NoneType.
-            if origin in (typing.Union, types.UnionType):
-                non_none_types = [t for t in annotation_args if t is not type(None)]
-
-                if len(non_none_types) == 1:
-                    model_cls = non_none_types[0]
-                else:
-                    # if there's more than one non-none type, it isn't meant to be serialized to JSON
-                    pass
-
-            model_cls_origin = get_origin(model_cls)
-
-            # e.g. list[SomePydanticModel] | None, we have to unpack it
-            # model_cls will print as a list, but it contains a subtype if you dig into it
-            if (
-                model_cls_origin is list
-                and len(list_annotation_args := get_args(model_cls)) == 1
-            ):
-                model_cls = list_annotation_args[0]
-                model_cls_origin = get_origin(model_cls)
-
-                is_top_level_list = True
-
-            # e.g. list[SomePydanticModel] or list[SomePydanticModel] | None
-            # iterate through the list and run each item through the pydantic model
             if is_top_level_list:
-                if isinstance(raw_value, list) and issubclass(
-                    model_cls, PydanticBaseModel
+                if not isinstance(raw_value, list) or not self._is_pydantic_model_class(
+                    model_cls
                 ):
-                    parsed_value = [model_cls(**item) for item in raw_value]
+                    continue
+
+                # Preserve already-hydrated items so repeated load/refresh hooks stay idempotent.
+                parsed_value = []
+                needs_update = False
+
+                for item in raw_value:
+                    if isinstance(item, model_cls):
+                        parsed_value.append(item)
+                        continue
+
+                    needs_update = True
+                    parsed_value.append(model_cls(**item))
+
+                if needs_update:
                     attributes.set_committed_value(self, field_name, parsed_value)
+
                 continue
 
-            if model_cls_origin in (list, tuple):
+            if not self._is_pydantic_model_class(model_cls):
                 continue
 
-            # single class
-            if issubclass(model_cls, PydanticBaseModel):
+            if isinstance(raw_value, model_cls):
+                continue
+
+            if isinstance(raw_value, dict):
                 attributes.set_committed_value(self, field_name, model_cls(**raw_value))
