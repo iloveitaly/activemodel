@@ -25,6 +25,10 @@ test:
 docs-build:
     uv run sphinx-build -b html docs docs/_build/html
 
+# Run the types generation script
+generate-types:
+    uv run python scripts/generate_sqlalchemy_protocol.py
+
 # Serve documentation with live reload
 docs-serve:
     uv run sphinx-autobuild docs docs/_build/html --port 8000 --watch activemodel

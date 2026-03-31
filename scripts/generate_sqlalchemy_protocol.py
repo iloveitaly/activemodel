@@ -17,7 +17,7 @@ from sqlmodel.sql.expression import SelectOfScalar
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-REGENERATE_COMMAND = "uv run python scripts/generate_sqlalchemy_protocol.py"
+REGENERATE_COMMAND = "just generate-types"
 ROOT_DIR = Path(__file__).resolve().parent.parent
 PROTOCOL_DIR = ROOT_DIR / "activemodel" / "types"
 RUNTIME_PROTOCOL_PATH = PROTOCOL_DIR / "sqlalchemy_protocol.py"
