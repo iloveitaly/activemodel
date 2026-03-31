@@ -19,7 +19,7 @@ from tests.models import AnotherExample, ExampleWithComputedProperty
 class CustomTupleType(UserDefinedType):
     """Custom SQLAlchemy type for testing tuple serialization."""
 
-    def get_col_spec(self):
+    def get_col_spec(self, **kw):
         return "TEXT"
 
     def bind_processor(self, dialect):
@@ -217,3 +217,26 @@ def test_json_object_update(create_and_wipe_database):
     # verify changes persisted
     assert fresh_example.list_field[0].name == "updated"
     assert fresh_example.object_field.value == 42
+
+
+def test_refresh_discards_unflushed_nested_json_mutation(create_and_wipe_database):
+    sub_object = SubObject(name="test", value=1)
+
+    example = ExampleWithJSONB(
+        list_field=[sub_object],
+        generic_list_field=[{"one": "two"}],
+        object_field=sub_object,
+        unstructured_field={"one": "two"},
+        semi_structured_field={"one": "two"},
+        tuple_field=(1.0, 2.0),
+    ).save()
+
+    example.list_field[0].name = "updated"
+
+    # In-place nested mutation is not tracked, so a refresh should replace it with DB state.
+    assert not instance_state(example).modified
+
+    example.refresh()
+
+    assert isinstance(example.list_field[0], SubObject)
+    assert example.list_field[0].name == "test"
