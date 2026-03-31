@@ -29,11 +29,21 @@ Notes:
 - Tuples of pydantic models are not supported, only lists.
 - Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]
 
-#### \_\_transform_dict_to_pydantic_\_()
+#### *classmethod* \_\_init_subclass_\_(\*\*kwargs)
+
+Register per-model SQLAlchemy instance events when a mapped subclass is declared.
+
+load fires after SQLAlchemy first constructs an instance from query results.
+refresh fires after SQLAlchemy reloads one or more attributes on an existing
+instance, including session.refresh(…) and expired-attribute reloads.
+
+#### \_\_transform_dict_to_pydantic_\_(field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None)
 
 Transforms dictionary fields into Pydantic models upon loading.
 
-- Reconstructor only runs once, when the object is loaded.
-- We manually call this method on save(), etc to ensure the pydantic types are maintained
+> - Reconstructor is SQLAlchemy’s class-decorator form of the load event.
+> - It only runs for the initial ORM load, not for later refresh events.
+> - The dedicated refresh listener above covers reloads of existing instances.
+> - We manually call this method on save(), etc to ensure the pydantic types are maintained
 - set_committed_value sets Pydantic models as committed, avoiding setattr marking fields as modified
   after loading from the database.

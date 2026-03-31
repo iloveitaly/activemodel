@@ -120,6 +120,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin"><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code></a><ul>
+<li><a class="reference internal" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.__init_subclass__"><code class="docutils literal notranslate">__init_subclass__()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__"><code class="docutils literal notranslate">__transform_dict_to_pydantic__()</span></code></a></li>
 </ul>
 </li>
@@ -236,12 +237,27 @@ data-aria-dark="Switch to auto color mode">
 <li><p>Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]</p></li>
 </ul>
 <dl class="py method">
+<dt class="sig sig-object py" id="activemodel.mixins.pydantic_json.PydanticJSONMixin.__init_subclass__">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__init_subclass__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.__init_subclass__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.__init_subclass__" title="Link to this definition">¶</a></dt>
+<dd><p>Register per-model SQLAlchemy instance events when a mapped subclass is declared.</p>
+<p><cite>load</cite> fires after SQLAlchemy first constructs an instance from query results.
+<cite>refresh</cite> fires after SQLAlchemy reloads one or more attributes on an existing
+instance, including <cite>session.refresh(…)</cite> and expired-attribute reloads.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__">
-<span class="sig-name descname"><span class="pre">__transform_dict_to_pydantic__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.__transform_dict_to_pydantic__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__transform_dict_to_pydantic__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.__transform_dict_to_pydantic__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__" title="Link to this definition">¶</a></dt>
 <dd><p>Transforms dictionary fields into Pydantic models upon loading.</p>
-<ul class="simple">
-<li><p>Reconstructor only runs once, when the object is loaded.</p></li>
+<blockquote>
+<div><ul class="simple">
+<li><p>Reconstructor is SQLAlchemy’s class-decorator form of the <cite>load</cite> event.</p></li>
+<li><p>It only runs for the initial ORM load, not for later <cite>refresh</cite> events.</p></li>
+<li><p>The dedicated <cite>refresh</cite> listener above covers reloads of existing instances.</p></li>
 <li><p>We manually call this method on save(), etc to ensure the pydantic types are maintained</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
 <li><p><cite>set_committed_value</cite> sets Pydantic models as committed, avoiding <cite>setattr</cite> marking fields as modified
 after loading from the database.</p></li>
 </ul>
