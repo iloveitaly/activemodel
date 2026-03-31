@@ -61,7 +61,7 @@ dev = [
 ]
 
 [tool.pyright]
-exclude = ["examples/", "playground/", "tmp/", ".venv/"]
+exclude = ["examples/", "playground/", "tmp/", ".venv/", "tests/migrations/"]
 
 [tool.pytest.ini_options]
 addopts = "--cov --cov-report=term-missing --cov-report=html:tmp/htmlcov"
@@ -74,4 +74,4 @@ source = ["activemodel"]
 fail_under = 50
 
 [tool.ruff]
-extend-exclude = ["playground.py", "playground/"]
+extend-exclude = ["playground.py", "playground/", "tests/migrations/"]
