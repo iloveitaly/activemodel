@@ -21,6 +21,9 @@ def test_migrations():
     migrations_path = test_root / "migrations"
     versions_path = migrations_path / "versions"
 
+    # ensure the directory exists (it might be ignored by git)
+    versions_path.mkdir(parents=True, exist_ok=True)
+
     # remove all existing migration files
     for file in os.listdir(str(versions_path)):
         os.remove(str(versions_path / file))

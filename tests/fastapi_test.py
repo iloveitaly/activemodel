@@ -4,7 +4,6 @@ import pytest
 import sqlalchemy
 from fastapi import Depends, FastAPI, Path, Request
 from fastapi.testclient import TestClient
-from starlette.testclient import TestClient
 
 from activemodel.session_manager import aglobal_session
 from activemodel.types.typeid import TypeIDType
@@ -45,7 +44,7 @@ def fake_client():
 
 
 def test_openapi_generation():
-    openapi = fake_app().openapi()
+    fake_app().openapi()
 
 
 def test_typeid_input_parsing(create_and_wipe_database):
@@ -67,7 +66,7 @@ def test_typeid_invalid_prefix_match(create_and_wipe_database):
     # we'll need to
 
     with pytest.raises(sqlalchemy.exc.StatementError):
-        response = client.post("/example/user_01h45ytscbebyvny4gc8cr8ma2")
+        client.post("/example/user_01h45ytscbebyvny4gc8cr8ma2")
 
 
 def test_computed_property(create_and_wipe_database):
