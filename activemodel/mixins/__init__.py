@@ -4,6 +4,7 @@ from .timestamps import TimestampsMixin
 from .typeid import TypeIDMixin
 
 __all__ = [
+    "PydanticJSONMixin",
     "SoftDeletionMixin",
     "TimestampsMixin",
     "TypeIDMixin",
