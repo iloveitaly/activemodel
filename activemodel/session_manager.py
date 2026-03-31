@@ -6,14 +6,14 @@ database environment when testing.
 import contextlib
 import contextvars
 import json
+import os
 import typing as t
 
-from decouple import config
 from pydantic import BaseModel
 from sqlalchemy import Connection, Engine, inspect
 from sqlmodel import Session, SQLModel, create_engine
 
-ACTIVEMODEL_LOG_SQL = config("ACTIVEMODEL_LOG_SQL", cast=bool, default=False)
+ACTIVEMODEL_LOG_SQL = os.environ.get("ACTIVEMODEL_LOG_SQL", "").strip().lower() in ("true", "1", "t", "yes")
 
 
 def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str | None:

@@ -12,7 +12,6 @@ name = "activemodel"
 version = "0.18.0"
 source = { editable = "." }
 dependencies = [
-    { name = "python-decouple-typed" },
     { name = "sqlmodel" },
     { name = "textcase" },
     { name = "typeid-python" },
@@ -55,7 +54,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=2.0.0" },
-    { name = "python-decouple-typed", specifier = ">=3.11.0" },
     { name = "shibuya", marker = "extra == 'docs'" },
     { name = "sphinx", marker = "extra == 'docs'", specifier = ">=7.1.2" },
     { name = "sphinx-autoapi", marker = "extra == 'docs'" },
@@ -1292,14 +1290,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e6/d2/80606077b7fa8784417687f494ff801d7ab817d9a17fc94305811d5919bb/pytest_watcher-0.6.3.tar.gz", hash = "sha256:842dc904264df0ad2d5264153a66bb452fccfa46598cd6e0a5ef1d19afed9b13", size = 601878, upload-time = "2026-01-10T23:28:18.805Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/fc/3f/172d73600ad2771774cda108efb813fc724fc345e5240a81a1085f1ade5d/pytest_watcher-0.6.3-py3-none-any.whl", hash = "sha256:83e7748c933087e8276edb6078663e6afa9926434b4fd8b85cf6b32b1d5bec89", size = 12431, upload-time = "2026-01-10T23:28:17.64Z" },
-]
-
-[[package]]
-name = "python-decouple-typed"
-version = "3.11.0"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9d/ca/fc5a6119146651cbfbb4aae333a2e6f69844161092c450b10e97064f5e75/python_decouple_typed-3.11.0-py3-none-any.whl", hash = "sha256:967665073aec7a861844e0d9d21768324d3d819311574702cf5be7403a18da58", size = 11440, upload-time = "2023-12-17T14:43:22.043Z" },
 ]
 
 [[package]]
