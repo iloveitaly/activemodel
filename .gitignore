@@ -136,7 +136,7 @@ dmypy.json
 # i like having temporary files specified locally vs globally
 tmp/
 
-/test/migrations/versions
+/tests/migrations/versions
 
 # START AI INSTRUCTION IGNORES
 /.claude/commands/standalone-python-scripts.md
