@@ -25,8 +25,6 @@ autoapi_dirs = ["../activemodel"]
 autoapi_type = "python"
 autoapi_ignore = [
     "*/logger.py",
-    "*/cli/__init__.py",
-    "*/cli/*.py",
 ]
 autoapi_options = [
     "members",
