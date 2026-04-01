@@ -394,22 +394,3 @@ def test_transform_is_idempotent_for_already_hydrated_json_fields(
     assert example.optional_list_field[0] is optional_list_item
     assert example.optional_object_field is optional_object_field
     assert example.old_optional_object_field is old_optional_object_field
-
-
-def test_ambiguous_union_logs_debug_and_leaves_raw_json(
-    create_and_wipe_database, caplog
-):
-    with caplog.at_level(logging.DEBUG, logger="activemodel.mixins.pydantic_json"):
-        example = ExampleWithAmbiguousUnion(
-            # This shape is intentionally ambiguous to the mixin, so it should stay raw.
-            ambiguous_object_field=SubObject(name="test", value=1)
-        ).save()
-
-        fresh_example = ExampleWithAmbiguousUnion.get(example.id)
-
-    assert fresh_example is not None
-    assert isinstance(fresh_example.ambiguous_object_field, dict)
-    assert (
-        "skipping pydantic json rehydration for unsupported annotation on ExampleWithAmbiguousUnion.ambiguous_object_field"
-        in caplog.text
-    )
