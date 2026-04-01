@@ -150,196 +150,233 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <h1>Source code for activemodel.mixins.pydantic_json</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="2"><span class="sd">Need to store nested Pydantic models in PostgreSQL using FastAPI and SQLModel.</span>
-</span><span data-line="3">
-</span><span data-line="4"><span class="sd">SQLModel lacks a direct JSONField equivalent (like Tortoise ORM&#39;s JSONField), making it tricky to handle nested model data as JSON in the DB.</span>
-</span><span data-line="5">
-</span><span data-line="6"><span class="sd">Extensive discussion on the problem: https://github.com/fastapi/sqlmodel/issues/63</span>
-</span><span data-line="7"><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Rehydrate JSON-backed SQLModel fields into Pydantic objects after ORM loads.</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="sd">SQLModel persists JSON columns as plain Python `dict` / `list` values when rows are</span>
+</span><span data-line="4"><span class="sd">loaded from the database. This module restores the annotated Pydantic shapes on the</span>
+</span><span data-line="5"><span class="sd">model instance after SQLAlchemy load and refresh operations.</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="sd">Supported annotations are intentionally narrow:</span>
 </span><span data-line="8">
-</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_args</span><span class="p">,</span> <span class="n">get_origin</span>
-</span><span data-line="10"><span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
-</span><span data-line="11"><span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
-</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
-</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">event</span>
-</span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">reconstructor</span><span class="p">,</span> <span class="n">attributes</span>
-</span><span data-line="15">
+</span><span data-line="9"><span class="sd">- `SubModel`</span>
+</span><span data-line="10"><span class="sd">- `SubModel | None`</span>
+</span><span data-line="11"><span class="sd">- `list[SubModel]`</span>
+</span><span data-line="12"><span class="sd">- `list[SubModel] | None`</span>
+</span><span data-line="13">
+</span><span data-line="14"><span class="sd">Raw `dict` and tuple-shaped fields are left alone, and ambiguous unions are treated as</span>
+</span><span data-line="15"><span class="sd">out of scope instead of being coerced heuristically.</span>
 </span><span data-line="16">
+</span><span data-line="17"><span class="sd">Background: https://github.com/fastapi/sqlmodel/issues/63</span>
+</span><span data-line="18"><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="19">
+</span><span data-line="20"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_args</span><span class="p">,</span> <span class="n">get_origin</span>
+</span><span data-line="21"><span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+</span><span data-line="22"><span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
+</span><span data-line="23"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
+</span><span data-line="24"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">event</span>
+</span><span data-line="25"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">reconstructor</span><span class="p">,</span> <span class="n">attributes</span>
+</span><span data-line="26">
+</span><span data-line="27">
 <div class="viewcode-block" id="PydanticJSONMixin">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.PydanticJSONMixin">[docs]</a>
-</span><span data-line="17"><span class="k">class</span><span class="w"> </span><span class="nc">PydanticJSONMixin</span><span class="p">:</span>
-</span><span data-line="18"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="19"><span class="sd">    By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.</span>
-</span><span data-line="20">
-</span><span data-line="21"><span class="sd">    This mixin, combined with a custom serializer (`_serialize_pydantic_model`), fixes that issue.</span>
-</span><span data-line="22">
-</span><span data-line="23"><span class="sd">    &gt;&gt;&gt; class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):</span>
-</span><span data-line="24"><span class="sd">    &gt;&gt;&gt;    list_field: list[SubObject] = Field(sa_type=JSONB()</span>
-</span><span data-line="25">
-</span><span data-line="26"><span class="sd">    Notes:</span>
-</span><span data-line="27">
-</span><span data-line="28"><span class="sd">    - Tuples of pydantic models are not supported, only lists.</span>
-</span><span data-line="29"><span class="sd">    - Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]</span>
-</span><span data-line="30"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="28"><span class="k">class</span><span class="w"> </span><span class="nc">PydanticJSONMixin</span><span class="p">:</span>
+</span><span data-line="29"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="30"><span class="sd">    Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.</span>
 </span><span data-line="31">
+</span><span data-line="32"><span class="sd">    This mixin is paired with the engine-level JSON serializer so the same field can:</span>
+</span><span data-line="33">
+</span><span data-line="34"><span class="sd">    1. persist Pydantic models as JSON on write</span>
+</span><span data-line="35"><span class="sd">    2. come back as Pydantic models on load or refresh</span>
+</span><span data-line="36">
+</span><span data-line="37"><span class="sd">    &gt;&gt;&gt; class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):</span>
+</span><span data-line="38"><span class="sd">    &gt;&gt;&gt;    list_field: list[SubObject] = Field(sa_type=JSONB()</span>
+</span><span data-line="39">
+</span><span data-line="40"><span class="sd">    Supported field annotations:</span>
+</span><span data-line="41">
+</span><span data-line="42"><span class="sd">    - `SubModel`</span>
+</span><span data-line="43"><span class="sd">    - `SubModel | None`</span>
+</span><span data-line="44"><span class="sd">    - `list[SubModel]`</span>
+</span><span data-line="45"><span class="sd">    - `list[SubModel] | None`</span>
+</span><span data-line="46">
+</span><span data-line="47"><span class="sd">    Not supported:</span>
+</span><span data-line="48">
+</span><span data-line="49"><span class="sd">    - tuples of Pydantic models</span>
+</span><span data-line="50"><span class="sd">    - nested lists such as `list[list[SubModel]]`</span>
+</span><span data-line="51"><span class="sd">    - ambiguous unions with multiple non-`None` JSON shapes</span>
+</span><span data-line="52"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="53">
 <div class="viewcode-block" id="PydanticJSONMixin.__init_subclass__">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.PydanticJSONMixin.__init_subclass__">[docs]</a>
-</span><span data-line="32">    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="33"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Register per-model SQLAlchemy instance events when a mapped subclass is declared.</span>
-</span><span data-line="34">
-</span><span data-line="35"><span class="sd">        `load` fires after SQLAlchemy first constructs an instance from query results.</span>
-</span><span data-line="36"><span class="sd">        `refresh` fires after SQLAlchemy reloads one or more attributes on an existing</span>
-</span><span data-line="37"><span class="sd">        instance, including `session.refresh(...)` and expired-attribute reloads.</span>
-</span><span data-line="38"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="39">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="40">
-</span><span data-line="41">        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_pydantic_json_events_registered&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-</span><span data-line="42">            <span class="k">return</span>
-</span><span data-line="43">
-</span><span data-line="44">        <span class="c1"># `load` runs once for an ORM-created instance, after the initial column values exist.</span>
-</span><span data-line="45">        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span>
-</span><span data-line="46">            <span class="bp">cls</span><span class="p">,</span>
-</span><span data-line="47">            <span class="s2">&quot;load&quot;</span><span class="p">,</span>
-</span><span data-line="48">            <span class="bp">cls</span><span class="o">.</span><span class="n">_rehydrate_pydantic_json_on_load</span><span class="p">,</span>
-</span><span data-line="49">            <span class="n">restore_load_context</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span data-line="50">        <span class="p">)</span>
-</span><span data-line="51">
-</span><span data-line="52">        <span class="c1"># `refresh` runs when SQLAlchemy repopulates an existing instance from a query.</span>
-</span><span data-line="53">        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span>
-</span><span data-line="54">            <span class="bp">cls</span><span class="p">,</span>
-</span><span data-line="55">            <span class="s2">&quot;refresh&quot;</span><span class="p">,</span>
-</span><span data-line="56">            <span class="bp">cls</span><span class="o">.</span><span class="n">_rehydrate_pydantic_json_on_refresh</span><span class="p">,</span>
-</span><span data-line="57">            <span class="n">restore_load_context</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span data-line="58">        <span class="p">)</span>
-</span><span data-line="59">
-</span><span data-line="60">        <span class="c1"># Preserve SQLAlchemy&#39;s loader context in case the hook touches unloaded state.</span>
-</span><span data-line="61">
-</span><span data-line="62">        <span class="bp">cls</span><span class="o">.</span><span class="n">_pydantic_json_events_registered</span> <span class="o">=</span> <span class="kc">True</span></div>
-
-</span><span data-line="63">
-</span><span data-line="64">    <span class="nd">@staticmethod</span>
-</span><span data-line="65">    <span class="k">def</span><span class="w"> </span><span class="nf">_is_pydantic_model_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="66"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the resolved annotation is a concrete Pydantic model class.&quot;&quot;&quot;</span>
-</span><span data-line="67">        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">model_cls</span><span class="p">,</span> <span class="n">PydanticBaseModel</span><span class="p">)</span>
+</span><span data-line="54">    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="55"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Register per-model SQLAlchemy instance events when a mapped subclass is declared.</span>
+</span><span data-line="56">
+</span><span data-line="57"><span class="sd">        `load` fires after SQLAlchemy first constructs an instance from query results.</span>
+</span><span data-line="58"><span class="sd">        `refresh` fires after SQLAlchemy reloads one or more attributes on an existing</span>
+</span><span data-line="59"><span class="sd">        instance, including `session.refresh(...)` and expired-attribute reloads.</span>
+</span><span data-line="60">
+</span><span data-line="61"><span class="sd">        The listeners are attached once per concrete model class so every mapped subclass</span>
+</span><span data-line="62"><span class="sd">        gets the same rehydration behavior automatically.</span>
+</span><span data-line="63"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="64">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="65">
+</span><span data-line="66">        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_pydantic_json_events_registered&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+</span><span data-line="67">            <span class="k">return</span>
 </span><span data-line="68">
-</span><span data-line="69">    <span class="nd">@classmethod</span>
-</span><span data-line="70">    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_pydantic_field_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">annotation</span><span class="p">):</span>
-</span><span data-line="71"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize a field annotation into list/single-model metadata for rehydration.&quot;&quot;&quot;</span>
-</span><span data-line="72">        <span class="n">origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
-</span><span data-line="73">
-</span><span data-line="74">        <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="75">            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+</span><span data-line="69">        <span class="c1"># `load` runs once for an ORM-created instance, after the initial column values exist.</span>
+</span><span data-line="70">        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span>
+</span><span data-line="71">            <span class="bp">cls</span><span class="p">,</span>
+</span><span data-line="72">            <span class="s2">&quot;load&quot;</span><span class="p">,</span>
+</span><span data-line="73">            <span class="bp">cls</span><span class="o">.</span><span class="n">_rehydrate_pydantic_json_on_load</span><span class="p">,</span>
+</span><span data-line="74">            <span class="n">restore_load_context</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="75">        <span class="p">)</span>
 </span><span data-line="76">
-</span><span data-line="77">        <span class="n">annotation_args</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
-</span><span data-line="78">        <span class="n">is_top_level_list</span> <span class="o">=</span> <span class="n">origin</span> <span class="ow">is</span> <span class="nb">list</span>
-</span><span data-line="79">        <span class="n">model_cls</span> <span class="o">=</span> <span class="n">annotation</span>
-</span><span data-line="80">
-</span><span data-line="81">        <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">):</span>
-</span><span data-line="82">            <span class="c1"># Only simple optional unions are eligible for automatic Pydantic coercion.</span>
-</span><span data-line="83">            <span class="n">non_none_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">annotation_args</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span>
+</span><span data-line="77">        <span class="c1"># `refresh` runs when SQLAlchemy repopulates an existing instance from a query.</span>
+</span><span data-line="78">        <span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span>
+</span><span data-line="79">            <span class="bp">cls</span><span class="p">,</span>
+</span><span data-line="80">            <span class="s2">&quot;refresh&quot;</span><span class="p">,</span>
+</span><span data-line="81">            <span class="bp">cls</span><span class="o">.</span><span class="n">_rehydrate_pydantic_json_on_refresh</span><span class="p">,</span>
+</span><span data-line="82">            <span class="n">restore_load_context</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="83">        <span class="p">)</span>
 </span><span data-line="84">
-</span><span data-line="85">            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_none_types</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-</span><span data-line="86">                <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
-</span><span data-line="87">
-</span><span data-line="88">            <span class="n">model_cls</span> <span class="o">=</span> <span class="n">non_none_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span data-line="89">
-</span><span data-line="90">        <span class="n">model_cls_origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span>
-</span><span data-line="91">
-</span><span data-line="92">        <span class="k">if</span> <span class="p">(</span>
-</span><span data-line="93">            <span class="n">model_cls_origin</span> <span class="ow">is</span> <span class="nb">list</span>
-</span><span data-line="94">            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_annotation_args</span> <span class="o">:=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">model_cls</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
-</span><span data-line="95">        <span class="p">):</span>
-</span><span data-line="96">            <span class="n">model_cls</span> <span class="o">=</span> <span class="n">list_annotation_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span data-line="97">            <span class="n">model_cls_origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span>
-</span><span data-line="98">            <span class="n">is_top_level_list</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="99">
-</span><span data-line="100">        <span class="k">if</span> <span class="n">model_cls_origin</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="101">            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
-</span><span data-line="102">
-</span><span data-line="103">        <span class="k">return</span> <span class="n">is_top_level_list</span><span class="p">,</span> <span class="n">model_cls</span>
-</span><span data-line="104">
-</span><span data-line="105">    <span class="nd">@classmethod</span>
-</span><span data-line="106">    <span class="k">def</span><span class="w"> </span><span class="nf">_rehydrate_pydantic_json_on_load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
-</span><span data-line="107"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the SQLAlchemy `load` event for newly materialized ORM instances.&quot;&quot;&quot;</span>
-</span><span data-line="108">        <span class="n">target</span><span class="o">.</span><span class="n">__transform_dict_to_pydantic__</span><span class="p">()</span>
-</span><span data-line="109">
-</span><span data-line="110">    <span class="nd">@classmethod</span>
-</span><span data-line="111">    <span class="k">def</span><span class="w"> </span><span class="nf">_rehydrate_pydantic_json_on_refresh</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">attrs_to_refresh</span><span class="p">):</span>
-</span><span data-line="112"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the SQLAlchemy `refresh` event for existing ORM instances.</span>
-</span><span data-line="113">
-</span><span data-line="114"><span class="sd">        SQLAlchemy passes the refreshed attribute names when it has them, which lets us</span>
-</span><span data-line="115"><span class="sd">        limit the rehydration work to the fields that were just repopulated.</span>
-</span><span data-line="116"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="117">        <span class="c1"># SQLAlchemy tells us which attributes were refreshed, so avoid touching unrelated fields.</span>
-</span><span data-line="118">        <span class="n">field_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">attrs_to_refresh</span><span class="p">)</span> <span class="k">if</span> <span class="n">attrs_to_refresh</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span data-line="119">        <span class="n">target</span><span class="o">.</span><span class="n">__transform_dict_to_pydantic__</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">field_names</span><span class="p">)</span>
-</span><span data-line="120">
-</span><span data-line="121">    <span class="nd">@reconstructor</span>
+</span><span data-line="85">        <span class="c1"># Preserve SQLAlchemy&#39;s loader context in case the hook touches unloaded state.</span>
+</span><span data-line="86">
+</span><span data-line="87">        <span class="bp">cls</span><span class="o">.</span><span class="n">_pydantic_json_events_registered</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+</span><span data-line="88">
+</span><span data-line="89">    <span class="nd">@staticmethod</span>
+</span><span data-line="90">    <span class="k">def</span><span class="w"> </span><span class="nf">_is_pydantic_model_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="91"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the resolved annotation is a concrete Pydantic model class.&quot;&quot;&quot;</span>
+</span><span data-line="92">        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">model_cls</span><span class="p">,</span> <span class="n">PydanticBaseModel</span><span class="p">)</span>
+</span><span data-line="93">
+</span><span data-line="94">    <span class="nd">@classmethod</span>
+</span><span data-line="95">    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_pydantic_field_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">annotation</span><span class="p">):</span>
+</span><span data-line="96"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize a supported annotation into list/single-model rehydration metadata.</span>
+</span><span data-line="97">
+</span><span data-line="98"><span class="sd">        This helper only accepts the narrow annotation shapes the mixin promises to</span>
+</span><span data-line="99"><span class="sd">        support. Unsupported or ambiguous annotations return `(False, None)` so the</span>
+</span><span data-line="100"><span class="sd">        caller leaves the raw JSON value untouched.</span>
+</span><span data-line="101"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="102">        <span class="n">origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+</span><span data-line="103">
+</span><span data-line="104">        <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="105">            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+</span><span data-line="106">
+</span><span data-line="107">        <span class="n">annotation_args</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+</span><span data-line="108">        <span class="n">is_top_level_list</span> <span class="o">=</span> <span class="n">origin</span> <span class="ow">is</span> <span class="nb">list</span>
+</span><span data-line="109">        <span class="n">model_cls</span> <span class="o">=</span> <span class="n">annotation</span>
+</span><span data-line="110">
+</span><span data-line="111">        <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">):</span>
+</span><span data-line="112">            <span class="c1"># Only simple optional unions are eligible for automatic Pydantic coercion.</span>
+</span><span data-line="113">            <span class="n">non_none_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">annotation_args</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span>
+</span><span data-line="114">
+</span><span data-line="115">            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_none_types</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+</span><span data-line="116">                <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+</span><span data-line="117">
+</span><span data-line="118">            <span class="n">model_cls</span> <span class="o">=</span> <span class="n">non_none_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span data-line="119">
+</span><span data-line="120">        <span class="n">model_cls_origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span>
+</span><span data-line="121">
+</span><span data-line="122">        <span class="k">if</span> <span class="p">(</span>
+</span><span data-line="123">            <span class="n">model_cls_origin</span> <span class="ow">is</span> <span class="nb">list</span>
+</span><span data-line="124">            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_annotation_args</span> <span class="o">:=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">model_cls</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span data-line="125">        <span class="p">):</span>
+</span><span data-line="126">            <span class="n">model_cls</span> <span class="o">=</span> <span class="n">list_annotation_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span data-line="127">            <span class="n">model_cls_origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">model_cls</span><span class="p">)</span>
+</span><span data-line="128">            <span class="n">is_top_level_list</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="129">
+</span><span data-line="130">        <span class="k">if</span> <span class="n">model_cls_origin</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="131">            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+</span><span data-line="132">
+</span><span data-line="133">        <span class="k">return</span> <span class="n">is_top_level_list</span><span class="p">,</span> <span class="n">model_cls</span>
+</span><span data-line="134">
+</span><span data-line="135">    <span class="nd">@classmethod</span>
+</span><span data-line="136">    <span class="k">def</span><span class="w"> </span><span class="nf">_rehydrate_pydantic_json_on_load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+</span><span data-line="137"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the SQLAlchemy `load` event for newly materialized ORM instances.</span>
+</span><span data-line="138">
+</span><span data-line="139"><span class="sd">        This is the first chance to replace raw JSON payloads from the result row with</span>
+</span><span data-line="140"><span class="sd">        Pydantic objects on the in-memory model.</span>
+</span><span data-line="141"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="142">        <span class="n">target</span><span class="o">.</span><span class="n">__transform_dict_to_pydantic__</span><span class="p">()</span>
+</span><span data-line="143">
+</span><span data-line="144">    <span class="nd">@classmethod</span>
+</span><span data-line="145">    <span class="k">def</span><span class="w"> </span><span class="nf">_rehydrate_pydantic_json_on_refresh</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">attrs_to_refresh</span><span class="p">):</span>
+</span><span data-line="146"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the SQLAlchemy `refresh` event for existing ORM instances.</span>
+</span><span data-line="147">
+</span><span data-line="148"><span class="sd">        SQLAlchemy passes the refreshed attribute names when it has them, which lets us</span>
+</span><span data-line="149"><span class="sd">        limit the rehydration work to the fields that were just repopulated.</span>
+</span><span data-line="150">
+</span><span data-line="151"><span class="sd">        This is what keeps Pydantic JSON fields stable after expire-on-commit and</span>
+</span><span data-line="152"><span class="sd">        partial `session.refresh(..., attribute_names=[...])` calls.</span>
+</span><span data-line="153"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="154">        <span class="c1"># SQLAlchemy tells us which attributes were refreshed, so avoid touching unrelated fields.</span>
+</span><span data-line="155">        <span class="n">field_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">attrs_to_refresh</span><span class="p">)</span> <span class="k">if</span> <span class="n">attrs_to_refresh</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span data-line="156">        <span class="n">target</span><span class="o">.</span><span class="n">__transform_dict_to_pydantic__</span><span class="p">(</span><span class="n">field_names</span><span class="o">=</span><span class="n">field_names</span><span class="p">)</span>
+</span><span data-line="157">
+</span><span data-line="158">    <span class="nd">@reconstructor</span>
 <div class="viewcode-block" id="PydanticJSONMixin.__transform_dict_to_pydantic__">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.PydanticJSONMixin.__transform_dict_to_pydantic__">[docs]</a>
-</span><span data-line="122">    <span class="k">def</span><span class="w"> </span><span class="nf">__transform_dict_to_pydantic__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span data-line="123"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="124"><span class="sd">        Transforms dictionary fields into Pydantic models upon loading.</span>
-</span><span data-line="125">
-</span><span data-line="126"><span class="sd">                - Reconstructor is SQLAlchemy&#39;s class-decorator form of the `load` event.</span>
-</span><span data-line="127"><span class="sd">                - It only runs for the initial ORM load, not for later `refresh` events.</span>
-</span><span data-line="128"><span class="sd">                - The dedicated `refresh` listener above covers reloads of existing instances.</span>
-</span><span data-line="129"><span class="sd">                - We manually call this method on save(), etc to ensure the pydantic types are maintained</span>
-</span><span data-line="130"><span class="sd">        - `set_committed_value` sets Pydantic models as committed, avoiding `setattr` marking fields as modified</span>
-</span><span data-line="131"><span class="sd">          after loading from the database.</span>
-</span><span data-line="132"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="133">        <span class="c1"># TODO do we need to inspect sa_type</span>
-</span><span data-line="134">        <span class="n">model_fields</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="s2">&quot;model_fields&quot;</span><span class="p">)</span>
-</span><span data-line="135">
-</span><span data-line="136">        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_info</span> <span class="ow">in</span> <span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="137">            <span class="k">if</span> <span class="n">field_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">field_names</span><span class="p">:</span>
-</span><span data-line="138">                <span class="k">continue</span>
-</span><span data-line="139">
-</span><span data-line="140">            <span class="n">raw_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span data-line="141">
-</span><span data-line="142">            <span class="c1"># if the field is not set on the model, we can avoid doing anything with it</span>
-</span><span data-line="143">            <span class="k">if</span> <span class="n">raw_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="144">                <span class="k">continue</span>
-</span><span data-line="145">
-</span><span data-line="146">            <span class="n">is_top_level_list</span><span class="p">,</span> <span class="n">model_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_pydantic_field_info</span><span class="p">(</span>
-</span><span data-line="147">                <span class="n">field_info</span><span class="o">.</span><span class="n">annotation</span>
-</span><span data-line="148">            <span class="p">)</span>
-</span><span data-line="149">
-</span><span data-line="150">            <span class="k">if</span> <span class="n">model_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="151">                <span class="k">continue</span>
-</span><span data-line="152">
-</span><span data-line="153">            <span class="k">if</span> <span class="n">is_top_level_list</span><span class="p">:</span>
-</span><span data-line="154">                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pydantic_model_class</span><span class="p">(</span>
-</span><span data-line="155">                    <span class="n">model_cls</span>
-</span><span data-line="156">                <span class="p">):</span>
-</span><span data-line="157">                    <span class="k">continue</span>
-</span><span data-line="158">
-</span><span data-line="159">                <span class="c1"># Preserve already-hydrated items so repeated load/refresh hooks stay idempotent.</span>
-</span><span data-line="160">                <span class="n">parsed_value</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="161">                <span class="n">needs_update</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="159">    <span class="k">def</span><span class="w"> </span><span class="nf">__transform_dict_to_pydantic__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="160"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="161"><span class="sd">        Replace raw JSON payloads on the instance with annotated Pydantic objects.</span>
 </span><span data-line="162">
-</span><span data-line="163">                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">raw_value</span><span class="p">:</span>
-</span><span data-line="164">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">model_cls</span><span class="p">):</span>
-</span><span data-line="165">                        <span class="n">parsed_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-</span><span data-line="166">                        <span class="k">continue</span>
-</span><span data-line="167">
-</span><span data-line="168">                    <span class="n">needs_update</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="169">                    <span class="n">parsed_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">))</span>
-</span><span data-line="170">
-</span><span data-line="171">                <span class="k">if</span> <span class="n">needs_update</span><span class="p">:</span>
-</span><span data-line="172">                    <span class="n">attributes</span><span class="o">.</span><span class="n">set_committed_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">parsed_value</span><span class="p">)</span>
-</span><span data-line="173">
-</span><span data-line="174">                <span class="k">continue</span>
-</span><span data-line="175">
-</span><span data-line="176">            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pydantic_model_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">):</span>
-</span><span data-line="177">                <span class="k">continue</span>
+</span><span data-line="163"><span class="sd">        `@reconstructor` is SQLAlchemy&#39;s class-decorator form of the `load` event, so</span>
+</span><span data-line="164"><span class="sd">        this method runs automatically for the initial ORM load. The dedicated refresh</span>
+</span><span data-line="165"><span class="sd">        listener above reuses the same logic for later reloads of an existing instance.</span>
+</span><span data-line="166">
+</span><span data-line="167"><span class="sd">        `set_committed_value` is used so the converted value becomes the instance&#39;s</span>
+</span><span data-line="168"><span class="sd">        committed state instead of looking like a user mutation.</span>
+</span><span data-line="169"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="170">        <span class="c1"># TODO do we need to inspect sa_type</span>
+</span><span data-line="171">        <span class="n">model_fields</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="s2">&quot;model_fields&quot;</span><span class="p">)</span>
+</span><span data-line="172">
+</span><span data-line="173">        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_info</span> <span class="ow">in</span> <span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="174">            <span class="k">if</span> <span class="n">field_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">field_names</span><span class="p">:</span>
+</span><span data-line="175">                <span class="k">continue</span>
+</span><span data-line="176">
+</span><span data-line="177">            <span class="n">raw_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 </span><span data-line="178">
-</span><span data-line="179">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_value</span><span class="p">,</span> <span class="n">model_cls</span><span class="p">):</span>
-</span><span data-line="180">                <span class="k">continue</span>
-</span><span data-line="181">
-</span><span data-line="182">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span data-line="183">                <span class="n">attributes</span><span class="o">.</span><span class="n">set_committed_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">raw_value</span><span class="p">))</span></div>
+</span><span data-line="179">            <span class="c1"># if the field is not set on the model, we can avoid doing anything with it</span>
+</span><span data-line="180">            <span class="k">if</span> <span class="n">raw_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="181">                <span class="k">continue</span>
+</span><span data-line="182">
+</span><span data-line="183">            <span class="n">is_top_level_list</span><span class="p">,</span> <span class="n">model_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_pydantic_field_info</span><span class="p">(</span>
+</span><span data-line="184">                <span class="n">field_info</span><span class="o">.</span><span class="n">annotation</span>
+</span><span data-line="185">            <span class="p">)</span>
+</span><span data-line="186">
+</span><span data-line="187">            <span class="k">if</span> <span class="n">model_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="188">                <span class="k">continue</span>
+</span><span data-line="189">
+</span><span data-line="190">            <span class="k">if</span> <span class="n">is_top_level_list</span><span class="p">:</span>
+</span><span data-line="191">                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pydantic_model_class</span><span class="p">(</span>
+</span><span data-line="192">                    <span class="n">model_cls</span>
+</span><span data-line="193">                <span class="p">):</span>
+</span><span data-line="194">                    <span class="k">continue</span>
+</span><span data-line="195">
+</span><span data-line="196">                <span class="c1"># Preserve already-hydrated items so repeated load/refresh hooks stay idempotent.</span>
+</span><span data-line="197">                <span class="n">parsed_value</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="198">                <span class="n">needs_update</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="199">
+</span><span data-line="200">                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">raw_value</span><span class="p">:</span>
+</span><span data-line="201">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">model_cls</span><span class="p">):</span>
+</span><span data-line="202">                        <span class="n">parsed_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span data-line="203">                        <span class="k">continue</span>
+</span><span data-line="204">
+</span><span data-line="205">                    <span class="n">needs_update</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="206">                    <span class="n">parsed_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">))</span>
+</span><span data-line="207">
+</span><span data-line="208">                <span class="k">if</span> <span class="n">needs_update</span><span class="p">:</span>
+</span><span data-line="209">                    <span class="n">attributes</span><span class="o">.</span><span class="n">set_committed_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">parsed_value</span><span class="p">)</span>
+</span><span data-line="210">
+</span><span data-line="211">                <span class="k">continue</span>
+</span><span data-line="212">
+</span><span data-line="213">            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pydantic_model_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">):</span>
+</span><span data-line="214">                <span class="k">continue</span>
+</span><span data-line="215">
+</span><span data-line="216">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_value</span><span class="p">,</span> <span class="n">model_cls</span><span class="p">):</span>
+</span><span data-line="217">                <span class="k">continue</span>
+</span><span data-line="218">
+</span><span data-line="219">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span data-line="220">                <span class="n">attributes</span><span class="o">.</span><span class="n">set_committed_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">raw_value</span><span class="p">))</span></div>
 </div>
 
 </span></pre></div>
