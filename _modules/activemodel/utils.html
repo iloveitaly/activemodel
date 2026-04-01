@@ -157,7 +157,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="5">
 </span><span data-line="6">
 <div class="viewcode-block" id="compile_sql">
-<a class="viewcode-back" href="../../autoapi/activemodel/utils/index.html#activemodel.compile_sql">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/utils/index.html#activemodel.utils.compile_sql">[docs]</a>
 </span><span data-line="7"><span class="k">def</span><span class="w"> </span><span class="nf">compile_sql</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">SelectOfScalar</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span data-line="8">    <span class="s2">&quot;convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries&quot;</span>
 </span><span data-line="9">
@@ -171,7 +171,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="16"><span class="c1"># TODO wait so why isn&#39;t this typed?</span>
 </span><span data-line="17"><span class="c1"># TODO document further, lots of risks here</span>
 <div class="viewcode-block" id="raw_sql_exec">
-<a class="viewcode-back" href="../../autoapi/activemodel/utils/index.html#activemodel.raw_sql_exec">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/utils/index.html#activemodel.utils.raw_sql_exec">[docs]</a>
 </span><span data-line="18"><span class="k">def</span><span class="w"> </span><span class="nf">raw_sql_exec</span><span class="p">(</span><span class="n">raw_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 </span><span data-line="19">    <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
 </span><span data-line="20">        <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="n">raw_query</span><span class="p">))</span></div>
@@ -179,7 +179,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="21">
 </span><span data-line="22">
 <div class="viewcode-block" id="hash_function_code">
-<a class="viewcode-back" href="../../autoapi/activemodel/utils/index.html#activemodel.hash_function_code">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/utils/index.html#activemodel.utils.hash_function_code">[docs]</a>
 </span><span data-line="23"><span class="k">def</span><span class="w"> </span><span class="nf">hash_function_code</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 </span><span data-line="24">    <span class="s2">&quot;get sha of a function to easily assert that it hasn&#39;t changed&quot;</span>
 </span><span data-line="25">
@@ -192,7 +192,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="31">
 </span><span data-line="32">
 <div class="viewcode-block" id="is_database_empty">
-<a class="viewcode-back" href="../../autoapi/activemodel/utils/index.html#activemodel.is_database_empty">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/utils/index.html#activemodel.utils.is_database_empty">[docs]</a>
 </span><span data-line="33"><span class="k">def</span><span class="w"> </span><span class="nf">is_database_empty</span><span class="p">(</span><span class="n">exclude</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span data-line="34"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="35"><span class="sd">    Check if any table in the database has records using Model.count().</span>

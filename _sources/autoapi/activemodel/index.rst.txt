@@ -39,7 +39,6 @@ Functions
    activemodel.get_engine
    activemodel.get_session
    activemodel.init
-   activemodel.is_database_empty
 
 
 Package Contents
@@ -336,12 +335,5 @@ Package Contents
 .. py:function:: init(database_url: str, *, engine_options: dict[str, Any] | None = None)
 
    configure activemodel to connect to a specific database
-
-
-.. py:function:: is_database_empty(exclude: list[type] = []) -> bool
-
-   Check if any table in the database has records using Model.count().
-
-   Useful for detecting an empty database state to run operations such as seeding, etc.
 
 
