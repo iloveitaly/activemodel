@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Examples - activemodel documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Integrating Alembic" href="alembic.html" /><link rel="prev" title="ActiveModel: ORM Wrapper for SQLModel" href="getting-started.html" />
+      <link rel="canonical" href="https://iloveitaly.github.io/activemodel/examples.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://iloveitaly.github.io/activemodel/examples.html"/>
+  <meta property="og:title" content="Examples"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      <img class="light-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="getting-started.html">Getting Started</a></li><li class="link"><a href="alembic.html">Alembic Integration</a></li><li class="link"><a href="autoapi/index.html">API Reference</a></li><li class="link"><a href="changelog.html">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alembic.html">Alembic Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/activemodel/index.html">activemodel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/base_model/index.html">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/mixins/index.html">activemodel.mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/factories/index.html">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/transaction/index.html">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#advanced-field-types-and-configuration">Advanced Field Types and Configuration</a><ul>
+<li><a class="reference internal" href="#custom-sqlalchemy-types-and-datetimes">Custom SQLAlchemy Types and Datetimes</a></li>
+<li><a class="reference internal" href="#defaults-exclusions-and-constraints">Defaults, Exclusions, and Constraints</a></li>
+<li><a class="reference internal" href="#advanced-typeid-usage">Advanced TypeID Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#structured-json-with-pydantic-models">Structured JSON with Pydantic Models</a><ul>
+<li><a class="reference internal" href="#single-model-column">Single Model Column</a></li>
+<li><a class="reference internal" href="#list-of-models-column">List of Models Column</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lifecycle-hooks">Lifecycle Hooks</a><ul>
+<li><a class="reference internal" href="#basic-validation-and-defaults">Basic Validation and Defaults</a></li>
+<li><a class="reference internal" href="#advanced-hooks-immutable-fields">Advanced Hooks: Immutable Fields</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#factories-with-polyfactory">Factories with Polyfactory</a><ul>
+<li><a class="reference internal" href="#complex-data-generation-and-datetimes">Complex Data Generation and Datetimes</a></li>
+<li><a class="reference internal" href="#recursive-factory-dependencies">Recursive Factory Dependencies</a></li>
+<li><a class="reference internal" href="#complex-post-save-logic">Complex Post-Save Logic</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#standard-model-example">Standard Model Example</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Examples</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <div class="copy-page-wrapper relative pb-4 lg:absolute lg:top-8 lg:right-6 xl:right-12">
+  <div id="copy-page-trigger">
+    <button
+      type="button"
+      class="js-copy px-3 py-1 inline-flex items-center gap-1"
+      data-url="https://iloveitaly.github.io/activemodel/_sources/examples.md.txt"
+    >
+      <i class="i-lucide" data-icon="copy"></i>
+      <span>Copy page</span>
+    </button>
+    <button class="js-menu px-2 py-1" type="button" aria-label="More actions"
+      aria-haspopup="menu" aria-expanded="false" aria-controls="copy-page-content">
+      <i class="i-lucide chevron-down"></i>
+    </button>
+  </div>
+  <div id="copy-page-content" role="menu" aria-orientation="vertical" aria-hidden="true">
+    <div role="presentation">
+      <div class="flex flex-col" role="group">
+        <button class="js-copy" type="button" role="menuitem"
+          data-url="https://iloveitaly.github.io/activemodel/_sources/examples.md.txt">
+          <span class="iconify-icon">
+            <i class="i-lucide" data-icon="copy"></i>
+          </span>
+          <span>Copy page</span>
+        </button>
+        <a role="menuitem" href="https://iloveitaly.github.io/activemodel/_sources/examples.md.txt" target="_blank" rel="nofollow"><iconify-icon icon="bi:markdown"></iconify-icon>
+            <span>View as Markdown</span></a><a role="menuitem" href="https://chatgpt.com/?hints=search&q=Read%20https%3A//iloveitaly.github.io/activemodel/_sources/examples.md.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:openai"></iconify-icon>
+          <span>Open in ChatGPT</span>
+        </a><a role="menuitem" href="https://claude.ai/new?q=Read%20https%3A//iloveitaly.github.io/activemodel/_sources/examples.md.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:claude"></iconify-icon>
+          <span>Open in Claude</span>
+        </a></div>
+    </div>
+  </div>
+</div><article class="yue" role="main">
+          <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h1>
+<p>This section provides practical examples of how to use <code class="docutils literal notranslate"><span class="pre">activemodel</span></code> in your projects, demonstrating common patterns for structured data, lifecycle management, testing, and complex schema definitions.</p>
+<section id="advanced-field-types-and-configuration">
+<h2>Advanced Field Types and Configuration<a class="headerlink" href="#advanced-field-types-and-configuration" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> leverages <code class="docutils literal notranslate"><span class="pre">SQLModel</span></code> and <code class="docutils literal notranslate"><span class="pre">SQLAlchemy</span></code> to support complex column types, constraints, and schema configurations.</p>
+<section id="custom-sqlalchemy-types-and-datetimes">
+<h3>Custom SQLAlchemy Types and Datetimes<a class="headerlink" href="#custom-sqlalchemy-types-and-datetimes" title="Link to this heading">¶</a></h3>
+<p>You can map specific fields to underlying SQLAlchemy types using <code class="docutils literal notranslate"><span class="pre">sa_type</span></code>. This is especially useful for timezone-aware datetimes and advanced PostgreSQL types.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sa</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy_postgres_point</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointType</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="k">class</span><span class="w"> </span><span class="nc">LocationEvent</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="9">    <span class="c1"># Timezone-aware datetimes using sa_type</span>
+</span><span data-line="10">    <span class="n">booked_datetime</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span data-line="11">        <span class="n">sa_type</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+</span><span data-line="12">    <span class="p">)</span>
+</span><span data-line="13">    
+</span><span data-line="14">    <span class="c1"># Custom PostgreSQL Types (e.g. Point)</span>
+</span><span data-line="15">    <span class="n">location</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span data-line="16">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+</span><span data-line="17">        <span class="n">sa_type</span><span class="o">=</span><span class="n">PointType</span>
+</span><span data-line="18">    <span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="defaults-exclusions-and-constraints">
+<h3>Defaults, Exclusions, and Constraints<a class="headerlink" href="#defaults-exclusions-and-constraints" title="Link to this heading">¶</a></h3>
+<p>Control schema visibility and enforce constraints directly within the <code class="docutils literal notranslate"><span class="pre">Field</span></code> definition.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="k">class</span><span class="w"> </span><span class="nc">Product</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="5">    <span class="c1"># Require values greater than zero</span>
+</span><span data-line="6">    <span class="n">price_cents</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">gt</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span data-line="7">    
+</span><span data-line="8">    <span class="c1"># Exclude internal fields from Pydantic schemas (e.g. FastAPI responses)</span>
+</span><span data-line="9">    <span class="n">stripe_account_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="10">    
+</span><span data-line="11">    <span class="c1"># Define max lengths and index the column</span>
+</span><span data-line="12">    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="advanced-typeid-usage">
+<h3>Advanced TypeID Usage<a class="headerlink" href="#advanced-typeid-usage" title="Link to this heading">¶</a></h3>
+<p>While <code class="docutils literal notranslate"><span class="pre">TypeIDMixin</span></code> handles the primary key, you can use <code class="docutils literal notranslate"><span class="pre">TypeIDType</span></code> and the <code class="docutils literal notranslate"><span class="pre">.foreign_key()</span></code> helper to manage related IDs securely, and even enforce prefixes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDType</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Relationship</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">Distribution</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;dst&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="7">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="k">class</span><span class="w"> </span><span class="nc">Screening</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;scr&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="10">    <span class="c1"># Standard Foreign Key relationship definition helper</span>
+</span><span data-line="11">    <span class="n">distribution_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">=</span> <span class="n">Distribution</span><span class="o">.</span><span class="n">foreign_key</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="12">    <span class="n">distribution</span><span class="p">:</span> <span class="n">Distribution</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">()</span>
+</span><span data-line="13">
+</span><span data-line="14">    <span class="c1"># Enforce a specific TypeID prefix on a field</span>
+</span><span data-line="15">    <span class="n">merged_into_screening_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span data-line="16">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+</span><span data-line="17">        <span class="n">sa_type</span><span class="o">=</span><span class="n">TypeIDType</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;scr&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+</span><span data-line="18">    <span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="structured-json-with-pydantic-models">
+<h2>Structured JSON with Pydantic Models<a class="headerlink" href="#structured-json-with-pydantic-models" title="Link to this heading">¶</a></h2>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code>, you can store complex Pydantic models or lists of models in PostgreSQL <code class="docutils literal notranslate"><span class="pre">JSONB</span></code> columns. The mixin handles serialization and deserialization automatically.</p>
+<section id="single-model-column">
+<h3>Single Model Column<a class="headerlink" href="#single-model-column" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">,</span> <span class="n">TimestampsMixin</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="k">class</span><span class="w"> </span><span class="nc">UserActionAuditData</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
+</span><span data-line="8">    <span class="n">ip_address</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="9">    <span class="n">build_version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="10">    <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="11">
+</span><span data-line="12"><span class="k">class</span><span class="w"> </span><span class="nc">RefundChoice</span><span class="p">(</span>
+</span><span data-line="13">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="14">    <span class="n">TimestampsMixin</span><span class="p">,</span>
+</span><span data-line="15">    <span class="n">PydanticJSONMixin</span><span class="p">,</span>
+</span><span data-line="16">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;rc&quot;</span><span class="p">),</span>
+</span><span data-line="17">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="18"><span class="p">):</span>
+</span><span data-line="19">    <span class="n">chosen_info</span><span class="p">:</span> <span class="n">UserActionAuditData</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
+</span><span data-line="20">    <span class="s2">&quot;audit data about the user&#39;s choice stored as structured JSON&quot;</span>
+</span></pre></div>
+</div>
+</section>
+<section id="list-of-models-column">
+<h3>List of Models Column<a class="headerlink" href="#list-of-models-column" title="Link to this heading">¶</a></h3>
+<p>You can also store a list of Pydantic models. This is useful for things like transcripts, audit logs, or line items.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="k">class</span><span class="w"> </span><span class="nc">TranscriptEntry</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
+</span><span data-line="8">    <span class="n">speaker</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="9">    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="10">    <span class="n">startTime</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># in milliseconds</span>
+</span><span data-line="11">    <span class="n">endTime</span><span class="p">:</span> <span class="nb">int</span>    <span class="c1"># in milliseconds</span>
+</span><span data-line="12">
+</span><span data-line="13"><span class="k">class</span><span class="w"> </span><span class="nc">AIVisitTranscript</span><span class="p">(</span>
+</span><span data-line="14">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="15">    <span class="n">PydanticJSONMixin</span><span class="p">,</span>
+</span><span data-line="16">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;ai_vt&quot;</span><span class="p">),</span>
+</span><span data-line="17">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="18"><span class="p">):</span>
+</span><span data-line="19">    <span class="c1"># The mixin will convert this list of dicts to a list of TranscriptEntry objects</span>
+</span><span data-line="20">    <span class="n">transcript_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TranscriptEntry</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="lifecycle-hooks">
+<h2>Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> supports several lifecycle hooks that allow you to execute logic at specific points in a model’s lifecycle.</p>
+<section id="basic-validation-and-defaults">
+<h3>Basic Validation and Defaults<a class="headerlink" href="#basic-validation-and-defaults" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span><span class="p">,</span> <span class="n">TimestampsMixin</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">Screening</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TimestampsMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;scr&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="7">    <span class="n">funding_goal</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span data-line="8">    <span class="n">funding_ending_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span data-line="9">
+</span><span data-line="10">    <span class="k">def</span><span class="w"> </span><span class="nf">before_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="11"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a default ending date only on creation.&quot;&quot;&quot;</span>
+</span><span data-line="12">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">funding_ending_at</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="13">            <span class="bp">self</span><span class="o">.</span><span class="n">funding_ending_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</span><span data-line="14">
+</span><span data-line="15">    <span class="k">def</span><span class="w"> </span><span class="nf">before_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="16"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Prevent saving invalid data.&quot;&quot;&quot;</span>
+</span><span data-line="17">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">funding_goal</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="18">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Funding goal must be non-negative.&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="advanced-hooks-immutable-fields">
+<h3>Advanced Hooks: Immutable Fields<a class="headerlink" href="#advanced-hooks-immutable-fields" title="Link to this heading">¶</a></h3>
+<p>You can use <code class="docutils literal notranslate"><span class="pre">before_save</span></code> to enforce immutability or perform complex validations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="k">def</span><span class="w"> </span><span class="nf">hash_prompt</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="7">    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">prompt</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="k">class</span><span class="w"> </span><span class="nc">LLMResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;llr&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="10">    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="11">    <span class="n">prompt_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="12">
+</span><span data-line="13">    <span class="k">def</span><span class="w"> </span><span class="nf">before_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="14">        <span class="n">new_hash</span> <span class="o">=</span> <span class="n">hash_prompt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span>
+</span><span data-line="15">        
+</span><span data-line="16">        <span class="c1"># Enforce that the prompt cannot be changed once saved</span>
+</span><span data-line="17">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_hash</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_hash</span> <span class="o">!=</span> <span class="n">new_hash</span><span class="p">:</span>
+</span><span data-line="18">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Prompts should never be modified once they are cached&quot;</span><span class="p">)</span>
+</span><span data-line="19">
+</span><span data-line="20">        <span class="bp">self</span><span class="o">.</span><span class="n">prompt_hash</span> <span class="o">=</span> <span class="n">new_hash</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="factories-with-polyfactory">
+<h2>Factories with Polyfactory<a class="headerlink" href="#factories-with-polyfactory" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> integrates with <a class="reference external" href="https://polyfactory.litestar.dev/">polyfactory</a> via <code class="docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code>. This is powerful for generating complex, related test data automatically.</p>
+<section id="complex-data-generation-and-datetimes">
+<h3>Complex Data Generation and Datetimes<a class="headerlink" href="#complex-data-generation-and-datetimes" title="Link to this heading">¶</a></h3>
+<p>Factories can use <code class="docutils literal notranslate"><span class="pre">BaseFactory.__faker__</span></code> for generating rich mock data and dynamic values using <code class="docutils literal notranslate"><span class="pre">Use</span></code>. We also recommend utilizing robust datetime libraries like <code class="docutils literal notranslate"><span class="pre">whenever</span></code> for generating timestamps.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseFactory</span><span class="p">,</span> <span class="n">Use</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">whenever</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instant</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActiveModelFactory</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">app.models.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">UserFactory</span><span class="p">(</span><span class="n">ActiveModelFactory</span><span class="p">[</span><span class="n">User</span><span class="p">]):</span>
+</span><span data-line="7">    <span class="c1"># Static defaults</span>
+</span><span data-line="8">    <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;active&quot;</span>
+</span><span data-line="9">
+</span><span data-line="10">    <span class="c1"># Using Faker for random structured data</span>
+</span><span data-line="11">    <span class="n">name</span> <span class="o">=</span> <span class="n">BaseFactory</span><span class="o">.</span><span class="n">__faker__</span><span class="o">.</span><span class="n">name</span>
+</span><span data-line="12">    <span class="n">email</span> <span class="o">=</span> <span class="n">BaseFactory</span><span class="o">.</span><span class="n">__faker__</span><span class="o">.</span><span class="n">email</span>
+</span><span data-line="13">    
+</span><span data-line="14">    <span class="c1"># Using Use() to execute a function dynamically for each build</span>
+</span><span data-line="15">    <span class="c1"># Combining with `whenever` for timezone-aware datetimes</span>
+</span><span data-line="16">    <span class="n">last_active_at</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span>
+</span><span data-line="17">        <span class="k">lambda</span><span class="p">:</span> <span class="n">Instant</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">to_system_tz</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">py_datetime</span><span class="p">()</span>
+</span><span data-line="18">    <span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="recursive-factory-dependencies">
+<h3>Recursive Factory Dependencies<a class="headerlink" href="#recursive-factory-dependencies" title="Link to this heading">¶</a></h3>
+<p>You can use <code class="docutils literal notranslate"><span class="pre">post_build</span></code> to automatically create and associate related models if they aren’t provided.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActiveModelFactory</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">app.models.order</span><span class="w"> </span><span class="kn">import</span> <span class="n">TicketReservationOrder</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="k">class</span><span class="w"> </span><span class="nc">TicketReservationOrderFactory</span><span class="p">(</span><span class="n">ActiveModelFactory</span><span class="p">[</span><span class="n">TicketReservationOrder</span><span class="p">]):</span>
+</span><span data-line="5"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="6"><span class="sd">    Advanced factory that automatically handles recursive dependencies.</span>
+</span><span data-line="7"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="8">    <span class="n">ticket_count</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span data-line="9">
+</span><span data-line="10">    <span class="nd">@classmethod</span>
+</span><span data-line="11">    <span class="k">def</span><span class="w"> </span><span class="nf">post_build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+</span><span data-line="12"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="13"><span class="sd">        Automatically ensure the order has a Distribution and a Screening.</span>
+</span><span data-line="14"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="15">        <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">distribution_id</span><span class="p">:</span>
+</span><span data-line="16">            <span class="c1"># Recursively use another factory</span>
+</span><span data-line="17">            <span class="kn">from</span><span class="w"> </span><span class="nn">.distribution</span><span class="w"> </span><span class="kn">import</span> <span class="n">DistributionFactory</span>
+</span><span data-line="18">            <span class="n">model</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">DistributionFactory</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span><span data-line="19">            <span class="n">model</span><span class="o">.</span><span class="n">distribution_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">id</span>
+</span><span data-line="20">
+</span><span data-line="21">        <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">screening_id</span><span class="p">:</span>
+</span><span data-line="22">            <span class="c1"># Create a screening associated with the same distribution</span>
+</span><span data-line="23">            <span class="kn">from</span><span class="w"> </span><span class="nn">.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScreeningFactory</span>
+</span><span data-line="24">            <span class="n">model</span><span class="o">.</span><span class="n">screening</span> <span class="o">=</span> <span class="n">ScreeningFactory</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+</span><span data-line="25">                <span class="n">distribution_id</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">distribution_id</span>
+</span><span data-line="26">            <span class="p">)</span>
+</span><span data-line="27">            <span class="n">model</span><span class="o">.</span><span class="n">screening_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">screening</span><span class="o">.</span><span class="n">id</span>
+</span><span data-line="28">
+</span><span data-line="29">        <span class="c1"># Always save the model at the end of post_build in an ActiveModelFactory</span>
+</span><span data-line="30">        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span></pre></div>
+</div>
+</section>
+<section id="complex-post-save-logic">
+<h3>Complex Post-Save Logic<a class="headerlink" href="#complex-post-save-logic" title="Link to this heading">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">post_save</span></code> for actions that require the record to already have an ID or for complex side effects.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">class</span><span class="w"> </span><span class="nc">FullyFundedScreeningFactory</span><span class="p">(</span><span class="n">ActiveModelFactory</span><span class="p">[</span><span class="n">Screening</span><span class="p">]):</span>
+</span><span data-line="2">    <span class="nd">@classmethod</span>
+</span><span data-line="3">    <span class="k">def</span><span class="w"> </span><span class="nf">post_save</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+</span><span data-line="4"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="5"><span class="sd">        After creating a screening, automatically create enough </span>
+</span><span data-line="6"><span class="sd">        paid orders to reach the funding goal.</span>
+</span><span data-line="7"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="8">        <span class="kn">from</span><span class="w"> </span><span class="nn">.order</span><span class="w"> </span><span class="kn">import</span> <span class="n">TicketReservationOrderFactory</span>
+</span><span data-line="9">        
+</span><span data-line="10">        <span class="n">ticket_count</span> <span class="o">=</span> <span class="mi">10</span> 
+</span><span data-line="11">        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ticket_count</span><span class="p">):</span>
+</span><span data-line="12">            <span class="n">TicketReservationOrderFactory</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+</span><span data-line="13">                <span class="n">screening_id</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span data-line="14">                <span class="n">status</span><span class="o">=</span><span class="s2">&quot;paid&quot;</span>
+</span><span data-line="15">            <span class="p">)</span>
+</span><span data-line="16">        
+</span><span data-line="17">        <span class="c1"># Refresh to ensure any computed fields/relationships are updated</span>
+</span><span data-line="18">        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="standard-model-example">
+<h2>Standard Model Example<a class="headerlink" href="#standard-model-example" title="Link to this heading">¶</a></h2>
+<p>A typical model combining common mixins:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="3">    <span class="n">PydanticJSONMixin</span><span class="p">,</span>
+</span><span data-line="4">    <span class="n">SoftDeletionMixin</span><span class="p">,</span>
+</span><span data-line="5">    <span class="n">TimestampsMixin</span><span class="p">,</span>
+</span><span data-line="6">    <span class="n">TypeIDMixin</span><span class="p">,</span>
+</span><span data-line="7"><span class="p">)</span>
+</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDType</span>
+</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Relationship</span>
+</span><span data-line="10">
+</span><span data-line="11"><span class="k">class</span><span class="w"> </span><span class="nc">Partner</span><span class="p">(</span>
+</span><span data-line="12">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="13">    <span class="n">TimestampsMixin</span><span class="p">,</span>
+</span><span data-line="14">    <span class="n">SoftDeletionMixin</span><span class="p">,</span>
+</span><span data-line="15">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;prt&quot;</span><span class="p">),</span>
+</span><span data-line="16">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="17"><span class="p">):</span>
+</span><span data-line="18"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="19"><span class="sd">    Comprehensive model example with TypeID, Timestamps, and Soft Delete.</span>
+</span><span data-line="20"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="21">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="22">    <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="23">    
+</span><span data-line="24">    <span class="c1"># Using foreign_key() helper for clean relationship definitions</span>
+</span><span data-line="25">    <span class="n">doctor_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">=</span> <span class="n">Doctor</span><span class="o">.</span><span class="n">foreign_key</span><span class="p">()</span>
+</span><span data-line="26">    <span class="n">doctor</span><span class="p">:</span> <span class="n">Doctor</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">()</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="getting-started.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">ActiveModel: ORM Wrapper for SQLModel</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="alembic.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Integrating Alembic</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/design-tabs.js?v=f930bc37"></script>
+      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+</html>
