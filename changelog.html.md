@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.19.0](https://github.com/iloveitaly/activemodel/compare/v0.18.0...v0.19.0) (2026-04-01)
+
+### Features
+
+* **activemodel:** add debug log for unsupported pydantic rehydration ([7a4fbf2](https://github.com/iloveitaly/activemodel/commit/7a4fbf221236bd8060fc90547c450947e64fb39a))
+* add is_database_empty utility to detect unseeded state ([49c0336](https://github.com/iloveitaly/activemodel/commit/49c03364208120c11bf0761d0efa53bee254d62c))
+* after_find and after_initialize ([#66](https://github.com/iloveitaly/activemodel/issues/66)) ([607c2c1](https://github.com/iloveitaly/activemodel/commit/607c2c1b6fc1925bc8028978ac29d601c42afb90))
+* **mixins:** export PydanticJSONMixin in package init ([894955c](https://github.com/iloveitaly/activemodel/commit/894955cb720526c7db3cb54cadc3e70feec2edda))
+* **model:** implement soft delete logic in SoftDeletionMixin ([fac58eb](https://github.com/iloveitaly/activemodel/commit/fac58ebf0829124de65d365d46745a794f43741c))
+
+### Documentation
+
+* add documentation for coding and command standards ([1779152](https://github.com/iloveitaly/activemodel/commit/177915269e8a442d1f87ee8f5ae8a14f628e0e45))
+* add guide for alembic integration ([362f2c0](https://github.com/iloveitaly/activemodel/commit/362f2c0f8eee1bd065d4597e09f882c93c5cfe5b))
+* include cli modules in documentation API reference ([67c9722](https://github.com/iloveitaly/activemodel/commit/67c97226580cb28b1606ba3bfb2a090c6194f515))
+* update instruction on how to regenerate type stubs ([4de339f](https://github.com/iloveitaly/activemodel/commit/4de339fafc048716a5d8b782ca893376543cc604))
+* update README with detailed feature list ([e800e0c](https://github.com/iloveitaly/activemodel/commit/e800e0c074bf7871eed25e4c0acae50791496ced))
+
 ## [0.18.0](https://github.com/iloveitaly/activemodel/compare/v0.17.0...v0.18.0) (2026-03-13)
 
 ### Features
