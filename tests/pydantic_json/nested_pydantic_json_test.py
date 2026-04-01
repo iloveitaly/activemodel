@@ -314,7 +314,9 @@ def test_refresh_discards_flagged_but_unflushed_nested_json_mutation(
     assert not instance_state(example).modified
 
 
-def test_partial_refresh_rehydrates_only_requested_json_fields(create_and_wipe_database):
+def test_partial_refresh_rehydrates_only_requested_json_fields(
+    create_and_wipe_database,
+):
     example = ExampleWithJSONB(
         list_field=[SubObject(name="list_original", value=1)],
         generic_list_field=[{"one": "two"}],
@@ -408,6 +410,6 @@ def test_ambiguous_union_logs_debug_and_leaves_raw_json(
     assert fresh_example is not None
     assert isinstance(fresh_example.ambiguous_object_field, dict)
     assert (
-        "skipping pydantic json rehydration for ExampleWithAmbiguousUnion.ambiguous_object_field: ambiguous union annotation"
+        "skipping pydantic json rehydration for unsupported annotation on ExampleWithAmbiguousUnion.ambiguous_object_field"
         in caplog.text
     )

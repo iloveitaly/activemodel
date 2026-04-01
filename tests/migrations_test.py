@@ -47,7 +47,9 @@ def test_migrations():
 
     # Inspect the migration file if needed
     migration_files = sorted(
-        path for path in versions_path.iterdir() if path.is_file() and path.suffix == ".py"
+        path
+        for path in versions_path.iterdir()
+        if path.is_file() and path.suffix == ".py"
     )
     migration_path = migration_files[-1]
 
