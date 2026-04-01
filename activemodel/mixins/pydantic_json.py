@@ -1,9 +1,20 @@
-"""
-Need to store nested Pydantic models in PostgreSQL using FastAPI and SQLModel.
+"""Rehydrate JSON-backed SQLModel fields into Pydantic objects after ORM loads.
 
-SQLModel lacks a direct JSONField equivalent (like Tortoise ORM's JSONField), making it tricky to handle nested model data as JSON in the DB.
+SQLModel persists JSON columns as plain Python `dict` / `list` values when rows are
+loaded from the database. This module restores the annotated Pydantic shapes on the
+model instance after SQLAlchemy load and refresh operations.
 
-Extensive discussion on the problem: https://github.com/fastapi/sqlmodel/issues/63
+Supported annotations are intentionally narrow:
+
+- `SubModel`
+- `SubModel | None`
+- `list[SubModel]`
+- `list[SubModel] | None`
+
+Raw `dict` and tuple-shaped fields are left alone, and ambiguous unions are treated as
+out of scope instead of being coerced heuristically.
+
+Background: https://github.com/fastapi/sqlmodel/issues/63
 """
 
 from typing import get_args, get_origin
@@ -16,17 +27,28 @@ from sqlalchemy.orm import reconstructor, attributes
 
 class PydanticJSONMixin:
     """
-    By default, SQLModel does not convert JSONB columns into pydantic models when they are loaded from the database.
+    Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.
 
-    This mixin, combined with a custom serializer (`_serialize_pydantic_model`), fixes that issue.
+    This mixin is paired with the engine-level JSON serializer so the same field can:
+
+    1. persist Pydantic models as JSON on write
+    2. come back as Pydantic models on load or refresh
 
     >>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
     >>>    list_field: list[SubObject] = Field(sa_type=JSONB()
 
-    Notes:
+    Supported field annotations:
 
-    - Tuples of pydantic models are not supported, only lists.
-    - Nested lists of pydantic models are not supported, e.g. list[list[SubObject]]
+    - `SubModel`
+    - `SubModel | None`
+    - `list[SubModel]`
+    - `list[SubModel] | None`
+
+    Not supported:
+
+    - tuples of Pydantic models
+    - nested lists such as `list[list[SubModel]]`
+    - ambiguous unions with multiple non-`None` JSON shapes
     """
 
     def __init_subclass__(cls, **kwargs):
@@ -35,6 +57,9 @@ class PydanticJSONMixin:
         `load` fires after SQLAlchemy first constructs an instance from query results.
         `refresh` fires after SQLAlchemy reloads one or more attributes on an existing
         instance, including `session.refresh(...)` and expired-attribute reloads.
+
+        The listeners are attached once per concrete model class so every mapped subclass
+        gets the same rehydration behavior automatically.
         """
         super().__init_subclass__(**kwargs)
 
@@ -68,7 +93,12 @@ class PydanticJSONMixin:
 
     @classmethod
     def _resolve_pydantic_field_info(cls, annotation):
-        """Normalize a field annotation into list/single-model metadata for rehydration."""
+        """Normalize a supported annotation into list/single-model rehydration metadata.
+
+        This helper only accepts the narrow annotation shapes the mixin promises to
+        support. Unsupported or ambiguous annotations return `(False, None)` so the
+        caller leaves the raw JSON value untouched.
+        """
         origin = get_origin(annotation)
 
         if origin in (dict, tuple):
@@ -104,7 +134,11 @@ class PydanticJSONMixin:
 
     @classmethod
     def _rehydrate_pydantic_json_on_load(cls, target, context):
-        """Handle the SQLAlchemy `load` event for newly materialized ORM instances."""
+        """Handle the SQLAlchemy `load` event for newly materialized ORM instances.
+
+        This is the first chance to replace raw JSON payloads from the result row with
+        Pydantic objects on the in-memory model.
+        """
         target.__transform_dict_to_pydantic__()
 
     @classmethod
@@ -113,6 +147,9 @@ class PydanticJSONMixin:
 
         SQLAlchemy passes the refreshed attribute names when it has them, which lets us
         limit the rehydration work to the fields that were just repopulated.
+
+        This is what keeps Pydantic JSON fields stable after expire-on-commit and
+        partial `session.refresh(..., attribute_names=[...])` calls.
         """
         # SQLAlchemy tells us which attributes were refreshed, so avoid touching unrelated fields.
         field_names = set(attrs_to_refresh) if attrs_to_refresh else None
@@ -121,14 +158,14 @@ class PydanticJSONMixin:
     @reconstructor
     def __transform_dict_to_pydantic__(self, field_names: set[str] | None = None):
         """
-        Transforms dictionary fields into Pydantic models upon loading.
+        Replace raw JSON payloads on the instance with annotated Pydantic objects.
 
-                - Reconstructor is SQLAlchemy's class-decorator form of the `load` event.
-                - It only runs for the initial ORM load, not for later `refresh` events.
-                - The dedicated `refresh` listener above covers reloads of existing instances.
-                - We manually call this method on save(), etc to ensure the pydantic types are maintained
-        - `set_committed_value` sets Pydantic models as committed, avoiding `setattr` marking fields as modified
-          after loading from the database.
+        `@reconstructor` is SQLAlchemy's class-decorator form of the `load` event, so
+        this method runs automatically for the initial ORM load. The dedicated refresh
+        listener above reuses the same logic for later reloads of an existing instance.
+
+        `set_committed_value` is used so the converted value becomes the instance's
+        committed state instead of looking like a user mutation.
         """
         # TODO do we need to inspect sa_type
         model_fields = getattr(type(self), "model_fields")
