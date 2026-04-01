@@ -20,6 +20,7 @@ class RecordWithPayloads(
     table=True,
 ):
     payloads: list[NestedPayload] = Field(sa_type=JSONB)
+    primary_payload: NestedPayload = Field(sa_type=JSONB)
 
 
 class TrackerWithObservedValues(
@@ -32,10 +33,12 @@ class TrackerWithObservedValues(
 
 def test_sibling_save_preserves_list_of_pydantic_models(create_and_wipe_database):
     record = RecordWithPayloads(
-        payloads=[NestedPayload(external_id="payload_123", is_enabled=True)]
+        payloads=[NestedPayload(external_id="payload_123", is_enabled=True)],
+        primary_payload=NestedPayload(external_id="primary_123", is_enabled=True),
     ).save()
     tracker = TrackerWithObservedValues(observed_values=[]).save()
 
+    # Use one shared session so the tracker save can expire the already-loaded record.
     with global_session():
         record = RecordWithPayloads.get(record.id)
         tracker = TrackerWithObservedValues.get(tracker.id)
@@ -56,7 +59,8 @@ def test_flag_modified_preserves_nested_json_across_sibling_save(
     create_and_wipe_database,
 ):
     record = RecordWithPayloads(
-        payloads=[NestedPayload(external_id="payload_123", is_enabled=True)]
+        payloads=[NestedPayload(external_id="payload_123", is_enabled=True)],
+        primary_payload=NestedPayload(external_id="primary_123", is_enabled=True),
     ).save()
     tracker = TrackerWithObservedValues(observed_values=[]).save()
 
@@ -67,9 +71,11 @@ def test_flag_modified_preserves_nested_json_across_sibling_save(
         assert record is not None
         assert tracker is not None
 
+        # In-place JSON mutation is not tracked automatically.
         record.payloads[0].external_id = "payload_updated"
         assert not instance_state(record).modified
 
+        # `flag_modified` is the opt-in hook that tells SQLAlchemy to persist the JSON field.
         record.flag_modified("payloads")
         assert instance_state(record).modified
 
@@ -88,3 +94,27 @@ def test_flag_modified_preserves_nested_json_across_sibling_save(
     assert fresh_record is not None
     assert isinstance(fresh_record.payloads[0], NestedPayload)
     assert fresh_record.payloads[0].external_id == "payload_updated"
+
+
+def test_sibling_save_preserves_scalar_pydantic_model(create_and_wipe_database):
+    record = RecordWithPayloads(
+        payloads=[NestedPayload(external_id="payload_123", is_enabled=True)],
+        primary_payload=NestedPayload(external_id="primary_123", is_enabled=True),
+    ).save()
+    tracker = TrackerWithObservedValues(observed_values=[]).save()
+
+    # This is the scalar-object branch of the same sibling-expiration behavior as the list test above.
+    with global_session():
+        record = RecordWithPayloads.get(record.id)
+        tracker = TrackerWithObservedValues.get(tracker.id)
+
+        assert record is not None
+        assert tracker is not None
+        assert isinstance(record.primary_payload, NestedPayload)
+
+        tracker.observed_values.append("value_1")
+        tracker.flag_modified("observed_values")
+        tracker.save()
+
+        assert isinstance(record.primary_payload, NestedPayload)
+        assert record.primary_payload.external_id == "primary_123"

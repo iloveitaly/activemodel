@@ -12,6 +12,7 @@ from sqlmodel import Field, Session
 from activemodel import BaseModel
 from sqlalchemy.dialects.postgresql import JSON
 from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
+from activemodel.session_manager import get_engine
 from activemodel.session_manager import global_session
 from tests.models import AnotherExample, ExampleWithComputedProperty
 
@@ -166,6 +167,42 @@ def test_simple_json_object(create_and_wipe_database):
     assert fresh_example.object_field.value == 1
 
 
+def test_optional_pydantic_json_fields_preserve_none(create_and_wipe_database):
+    example = ExampleWithJSONB(
+        list_field=[SubObject(name="test", value=1)],
+        generic_list_field=[{"one": "two"}],
+        # `None` here exercises the optional rehydration path on save, refresh, and reload.
+        optional_list_field=None,
+        object_field=SubObject(name="test", value=1),
+        unstructured_field={"one": "two"},
+        semi_structured_field={"one": "two"},
+        optional_object_field=None,
+        old_optional_object_field=None,
+        tuple_field=(1.0, 2.0),
+        optional_tuple=None,
+    ).save()
+
+    assert example.optional_list_field is None
+    assert example.optional_object_field is None
+    assert example.old_optional_object_field is None
+    assert example.optional_tuple is None
+
+    example.refresh()
+
+    assert example.optional_list_field is None
+    assert example.optional_object_field is None
+    assert example.old_optional_object_field is None
+    assert example.optional_tuple is None
+
+    fresh_example = ExampleWithJSONB.get(example.id)
+
+    assert fresh_example is not None
+    assert fresh_example.optional_list_field is None
+    assert fresh_example.optional_object_field is None
+    assert fresh_example.old_optional_object_field is None
+    assert fresh_example.optional_tuple is None
+
+
 def test_json_object_update(create_and_wipe_database):
     "if we update a entry in a list of json objects, does the change persist?"
 
@@ -240,3 +277,111 @@ def test_refresh_discards_unflushed_nested_json_mutation(create_and_wipe_databas
 
     assert isinstance(example.list_field[0], SubObject)
     assert example.list_field[0].name == "test"
+
+
+def test_refresh_discards_flagged_but_unflushed_nested_json_mutation(
+    create_and_wipe_database,
+):
+    sub_object = SubObject(name="test", value=1)
+
+    example = ExampleWithJSONB(
+        list_field=[sub_object],
+        generic_list_field=[{"one": "two"}],
+        object_field=sub_object,
+        unstructured_field={"one": "two"},
+        semi_structured_field={"one": "two"},
+        tuple_field=(1.0, 2.0),
+    ).save()
+
+    example.list_field[0].name = "updated"
+
+    # Dirty tracking is not the same as persistence; refresh should still replace DB-backed state.
+    example.flag_modified("list_field")
+
+    assert instance_state(example).modified
+
+    example.refresh()
+
+    assert isinstance(example.list_field[0], SubObject)
+    assert example.list_field[0].name == "test"
+    assert not instance_state(example).modified
+
+
+def test_partial_refresh_rehydrates_only_requested_json_fields(create_and_wipe_database):
+    example = ExampleWithJSONB(
+        list_field=[SubObject(name="list_original", value=1)],
+        generic_list_field=[{"one": "two"}],
+        object_field=SubObject(name="object_original", value=1),
+        unstructured_field={"one": "two"},
+        semi_structured_field={"one": "two"},
+        optional_object_field=SubObject(name="optional_original", value=1),
+        tuple_field=(1.0, 2.0),
+    ).save()
+
+    with Session(get_engine()) as session:
+        # Keep one instance alive while a separate session changes the row underneath it.
+        refreshed_example = session.get(ExampleWithJSONB, example.id)
+
+        assert refreshed_example is not None
+        assert isinstance(refreshed_example.object_field, SubObject)
+        assert isinstance(refreshed_example.optional_object_field, SubObject)
+
+        # Snapshot the untouched field so we can prove partial refresh leaves it alone in memory.
+        original_optional_object = refreshed_example.optional_object_field
+
+        with Session(get_engine()) as update_session:
+            stored_example = update_session.get(ExampleWithJSONB, example.id)
+
+            assert stored_example is not None
+
+            stored_example.object_field = SubObject(name="object_updated", value=2)
+            stored_example.optional_object_field = SubObject(
+                name="optional_updated", value=2
+            )
+            update_session.commit()
+
+        # Only reload `object_field`; `optional_object_field` should keep its old in-memory object.
+        session.refresh(refreshed_example, attribute_names=["object_field"])
+
+        assert isinstance(refreshed_example.object_field, SubObject)
+        assert refreshed_example.object_field.name == "object_updated"
+
+        # A partial refresh should leave unrelated fields untouched in memory.
+        assert refreshed_example.optional_object_field is original_optional_object
+        assert refreshed_example.optional_object_field.name == "optional_original"
+
+
+def test_transform_is_idempotent_for_already_hydrated_json_fields(
+    create_and_wipe_database,
+):
+    sub_object = SubObject(name="test", value=1)
+
+    example = ExampleWithJSONB(
+        list_field=[sub_object],
+        generic_list_field=[{"one": "two"}],
+        optional_list_field=[sub_object],
+        object_field=sub_object,
+        unstructured_field={"one": "two"},
+        semi_structured_field={"one": "two"},
+        optional_object_field=sub_object,
+        old_optional_object_field=sub_object,
+        tuple_field=(1.0, 2.0),
+        optional_tuple=(1.0, 2.0),
+    ).save()
+
+    # Capture object identity so this test proves rehydration is a no-op for already-parsed fields.
+    list_item = example.list_field[0]
+    object_field = example.object_field
+    assert example.optional_list_field is not None
+    optional_list_item = example.optional_list_field[0]
+    optional_object_field = example.optional_object_field
+    old_optional_object_field = example.old_optional_object_field
+
+    example.__transform_dict_to_pydantic__()
+
+    assert example.list_field[0] is list_item
+    assert example.object_field is object_field
+    assert example.optional_list_field is not None
+    assert example.optional_list_field[0] is optional_list_item
+    assert example.optional_object_field is optional_object_field
+    assert example.old_optional_object_field is old_optional_object_field
