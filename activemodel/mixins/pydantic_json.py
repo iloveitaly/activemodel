@@ -23,6 +23,7 @@ import types
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import event
 from sqlalchemy.orm import reconstructor, attributes
+from ..logger import logger
 
 
 class PydanticJSONMixin:
@@ -185,6 +186,9 @@ class PydanticJSONMixin:
             )
 
             if model_cls is None:
+                logger.debug(
+                    f"skipping pydantic json rehydration for unsupported annotation on {type(self).__name__}.{field_name}"
+                )
                 continue
 
             if is_top_level_list:
