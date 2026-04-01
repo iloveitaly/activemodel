@@ -29,7 +29,7 @@ from sqlmodel._compat import (  # type: ignore[attr-defined]
     UndefinedType,
     is_field_noneable,
 )
-from sqlmodel.main import get_sqlalchemy_type, _get_sqlmodel_field_value
+from sqlmodel.main import _get_sqlmodel_field_value
 
 from activemodel.utils import hash_function_code
 
@@ -58,7 +58,7 @@ def get_column_from_field(field: Any) -> Column:  # type: ignore
             sa_column.comment = field_comment
         # </Change>
         return sa_column
-    sa_type = get_sqlalchemy_type(field)
+    sa_type = sqlmodel.main.get_sqlalchemy_type(field)
     primary_key = _get_sqlmodel_field_value(field_info, "primary_key", Undefined)
     if primary_key is Undefined:
         primary_key = False
