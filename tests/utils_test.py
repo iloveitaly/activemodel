@@ -1,4 +1,4 @@
-from activemodel import is_database_empty
+from activemodel.utils import is_database_empty
 from tests.models import ExampleRecord
 
 
