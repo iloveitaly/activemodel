@@ -9,7 +9,7 @@ from sqlmodel import Field, Relationship
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
 from activemodel.mixins.timestamps import TimestampsMixin
-from activemodel.types.typeid import TypeIDType
+from typeid import TypeID
 
 TYPEID_PREFIX = "myid"
 
@@ -30,17 +30,17 @@ class AnotherExample(BaseModel, TypeIDMixin("myotherid"), table=True):
 class ExampleWithId(BaseModel, TypeIDMixin(TYPEID_PREFIX), table=True):
     "example table with foreign keys"
 
-    another_example_id: TypeIDType = AnotherExample.foreign_key(nullable=True)
+    another_example_id: TypeID = AnotherExample.foreign_key(nullable=True)
     another_example: AnotherExample = Relationship()
 
-    example_record_id: TypeIDType = ExampleRecord.foreign_key(nullable=True)
+    example_record_id: TypeID = ExampleRecord.foreign_key(nullable=True)
     example_record: ExampleRecord = Relationship()
 
 
 class ExampleWithComputedProperty(
     BaseModel, TypeIDMixin("example_computed"), table=True
 ):
-    another_example_id: TypeIDType = AnotherExample.foreign_key()
+    another_example_id: TypeID = AnotherExample.foreign_key()
     another_example: AnotherExample = Relationship()
 
     @computed_field
@@ -66,5 +66,5 @@ class ExampleRelatedModel(BaseModel, TypeIDMixin("related_model"), table=True):
     Test model with a foreign key relationship to ExampleRecord, used to test related model creation in factories.
     """
 
-    example_record_id: TypeIDType = ExampleRecord.foreign_key(index=True)
+    example_record_id: TypeID = ExampleRecord.foreign_key(index=True)
     example_record: ExampleRecord = Relationship()

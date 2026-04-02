@@ -6,7 +6,7 @@ from fastapi import Depends, FastAPI, Path, Request
 from fastapi.testclient import TestClient
 
 from activemodel.session_manager import aglobal_session
-from activemodel.types.typeid import TypeIDType
+from typeid import TypeID
 from tests.models import AnotherExample, ExampleWithComputedProperty, ExampleWithId
 
 
@@ -29,7 +29,7 @@ def fake_app():
     @api_app.post("/example/{example_id}")
     async def get_record(
         request: Request,
-        example_id: Annotated[TypeIDType, Path()],
+        example_id: Annotated[TypeID, Path()],
     ) -> ExampleWithId:
         example = ExampleWithId.get(id=example_id)
         assert example

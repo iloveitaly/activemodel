@@ -137,7 +137,7 @@ class BaseModel(SQLModel):
 
         Helps quickly build a many-to-one or one-to-one relationship.
 
-        >>> other_model_id: int = OtherModel.foreign_key()
+        >>> other_model_id: TypeID = OtherModel.foreign_key()
         >>> other_model = Relationship()
         """
 
