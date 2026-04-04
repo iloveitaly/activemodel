@@ -71,12 +71,8 @@ def test_flag_modified_preserves_nested_json_across_sibling_save(
         assert record is not None
         assert tracker is not None
 
-        # In-place JSON mutation is not tracked automatically.
+        # Auto-tracking marks the field dirty on in-place mutation.
         record.payloads[0].external_id = "payload_updated"
-        assert not instance_state(record).modified
-
-        # `flag_modified` is the opt-in hook that tells SQLAlchemy to persist the JSON field.
-        record.flag_modified("payloads")
         assert instance_state(record).modified
 
         # The sibling save commits the shared session, so the flagged JSON mutation must survive

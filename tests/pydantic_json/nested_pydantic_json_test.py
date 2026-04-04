@@ -2,7 +2,7 @@
 By default, fast API does not handle converting JSONB to and from Pydantic models.
 """
 
-import logging
+import gc
 from typing import Optional, Tuple
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy.dialects.postgresql import JSONB
@@ -228,30 +228,14 @@ def test_json_object_update(create_and_wipe_database):
     # saving serializes the pydantic model and reloads it, which must not mark the object as dirty!
     assert not instance_state(example).modified
 
-    # modify a nested object
+    # modify nested objects -- auto-tracked, no flag_modified needed
     example.list_field[0].name = "updated"
-
-    # the field will *not* be marked as dirty by default
-    assert not instance_state(example).modified
-
-    # so we have to force it to be dirty
-    example.flag_modified("list_field")
-
-    example.object_field.value = 42
     assert instance_state(example).modified
 
+    example.object_field.value = 42
     example.save()
 
     assert example.list_field[0].name == "updated"
-
-    # NOTE this should be inverted, but we are asserting against the current behavior of `object_field` state not being updated
-    assert example.object_field.value != 42
-
-    # now, let's mark it as modified
-    example.object_field.value = 42
-    example.flag_modified("object_field")
-    example.save()
-
     assert example.object_field.value == 42
 
     # refresh from database
@@ -277,8 +261,8 @@ def test_refresh_discards_unflushed_nested_json_mutation(create_and_wipe_databas
 
     example.list_field[0].name = "updated"
 
-    # In-place nested mutation is not tracked, so a refresh should replace it with DB state.
-    assert not instance_state(example).modified
+    # Auto-tracking marks the field dirty, but since we haven't saved, refresh discards it.
+    assert instance_state(example).modified
 
     example.refresh()
 
@@ -302,9 +286,8 @@ def test_refresh_discards_flagged_but_unflushed_nested_json_mutation(
 
     example.list_field[0].name = "updated"
 
+    # Auto-tracked -- dirty without explicit flag_modified.
     # Dirty tracking is not the same as persistence; refresh should still replace DB-backed state.
-    example.flag_modified("list_field")
-
     assert instance_state(example).modified
 
     example.refresh()
@@ -394,3 +377,168 @@ def test_transform_is_idempotent_for_already_hydrated_json_fields(
     assert example.optional_list_field[0] is optional_list_item
     assert example.optional_object_field is optional_object_field
     assert example.old_optional_object_field is old_optional_object_field
+
+
+def _make_example(extra_items: int = 0) -> ExampleWithJSONB:
+    """Create and save a minimal ExampleWithJSONB for tracking tests."""
+    items = [SubObject(name="item_0", value=0)] + [
+        SubObject(name=f"item_{i}", value=i) for i in range(1, extra_items + 1)
+    ]
+    return ExampleWithJSONB(
+        list_field=items,
+        generic_list_field=[{"key": "val"}],
+        object_field=SubObject(name="original", value=1),
+        unstructured_field={"k": "v"},
+        semi_structured_field={"k": "v"},
+        tuple_field=(1.0, 2.0),
+    ).save()
+
+
+def test_tracked_list_append_marks_dirty(create_and_wipe_database):
+    example = _make_example()
+    assert not instance_state(example).modified
+
+    example.list_field.append(SubObject(name="appended", value=99))
+    assert instance_state(example).modified
+
+    example.save()
+    fresh = ExampleWithJSONB.one(example.id)
+    assert len(fresh.list_field) == 2
+    assert fresh.list_field[-1].name == "appended"
+
+
+def test_tracked_list_pop_marks_dirty(create_and_wipe_database):
+    example = _make_example(extra_items=1)
+    assert not instance_state(example).modified
+
+    example.list_field.pop()
+    assert instance_state(example).modified
+
+    example.save()
+    fresh = ExampleWithJSONB.one(example.id)
+    assert len(fresh.list_field) == 1
+
+
+def test_tracked_list_remove_marks_dirty(create_and_wipe_database):
+    example = _make_example(extra_items=1)
+    assert not instance_state(example).modified
+
+    # remove() uses ==; Pydantic __eq__ compares field values.
+    example.list_field.remove(SubObject(name="item_1", value=1))
+    assert instance_state(example).modified
+
+    example.save()
+    fresh = ExampleWithJSONB.one(example.id)
+    assert len(fresh.list_field) == 1
+    assert fresh.list_field[0].name == "item_0"
+
+
+def test_tracked_list_clear_marks_dirty(create_and_wipe_database):
+    example = _make_example()
+    assert not instance_state(example).modified
+
+    example.list_field.clear()
+    assert instance_state(example).modified
+
+    example.save()
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_field == []
+
+
+def test_tracked_list_extend_marks_dirty(create_and_wipe_database):
+    example = _make_example()
+    assert not instance_state(example).modified
+
+    example.list_field.extend(
+        [SubObject(name="ext_1", value=10), SubObject(name="ext_2", value=11)]
+    )
+    assert instance_state(example).modified
+
+    example.save()
+    fresh = ExampleWithJSONB.one(example.id)
+    assert len(fresh.list_field) == 3
+    assert fresh.list_field[1].name == "ext_1"
+
+
+def test_tracked_list_setitem_marks_dirty(create_and_wipe_database):
+    example = _make_example()
+    assert not instance_state(example).modified
+
+    example.list_field[0] = SubObject(name="replaced", value=42)
+    assert instance_state(example).modified
+
+    example.save()
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_field[0].name == "replaced"
+    assert fresh.list_field[0].value == 42
+
+
+def test_tracked_list_iadd_marks_dirty(create_and_wipe_database):
+    example = _make_example()
+    assert not instance_state(example).modified
+
+    example.list_field += [SubObject(name="iadd", value=7)]
+    assert instance_state(example).modified
+
+    example.save()
+    fresh = ExampleWithJSONB.one(example.id)
+    assert len(fresh.list_field) == 2
+    assert fresh.list_field[-1].name == "iadd"
+
+
+def test_tracked_pydantic_preserves_isinstance_and_model_dump(create_and_wipe_database):
+    example = _make_example()
+
+    # __class__ swap must not break standard Pydantic/isinstance contracts.
+    assert isinstance(example.object_field, SubObject)
+    assert isinstance(example.list_field[0], SubObject)
+    assert example.object_field.model_dump() == {"name": "original", "value": 1}
+    assert example.list_field[0].model_dump() == {"name": "item_0", "value": 0}
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert isinstance(fresh.object_field, SubObject)
+    assert isinstance(fresh.list_field[0], SubObject)
+    assert fresh.object_field.model_dump() == {"name": "original", "value": 1}
+
+
+def test_tracking_survives_save_cycle(create_and_wipe_database):
+    "tracking weakrefs are re-attached after save() refreshes the instance"
+    example = _make_example()
+
+    example.object_field.value = 10
+    example.save()
+    assert example.object_field.value == 10
+
+    # After save() the instance is refreshed and tracking is re-attached; a second
+    # mutation must also auto-track without needing flag_modified.
+    example.object_field.value = 20
+    assert instance_state(example).modified
+
+    example.save()
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.object_field.value == 20
+
+
+def test_replace_entire_field_persists_without_flag_modified(create_and_wipe_database):
+    "replacing a JSONB field outright goes through SQLAlchemy instrumentation, not our tracking"
+    example = _make_example()
+
+    example.object_field = SubObject(name="replaced", value=99)
+    assert instance_state(example).modified
+
+    example.save()
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.object_field.name == "replaced"
+    assert fresh.object_field.value == 99
+
+
+def test_orphaned_tracked_object_does_not_raise(create_and_wipe_database):
+    "mutating a tracked Pydantic object after its parent is GC'd is a silent no-op"
+    example = _make_example()
+    orphan = example.object_field
+
+    del example
+    gc.collect()
+
+    # weakref is now dead; __setattr__ should resolve to None and skip flag_modified.
+    orphan.name = "mutated after gc"
