@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.1](https://github.com/iloveitaly/activemodel/compare/v0.19.0...v0.19.1) (2026-04-05)
+
+
+### Documentation
+
+* add examples page and link in navigation ([#70](https://github.com/iloveitaly/activemodel/issues/70)) ([6228270](https://github.com/iloveitaly/activemodel/commit/6228270b6f35419a46ac4c48fc883a0268236b03))
+
 ## [0.19.0](https://github.com/iloveitaly/activemodel/compare/v0.18.0...v0.19.0) (2026-04-01)
 
 
