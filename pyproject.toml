@@ -5,7 +5,7 @@ description = "SQLModel with developer ergonomics. Make SQLModel act like Active
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "sqlmodel==0.0.37",
+    "sqlmodel==0.0.38",
     "textcase>=0.4.0",
     "typeid-python==0.3.3",
 ]
