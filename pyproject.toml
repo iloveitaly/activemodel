@@ -14,6 +14,9 @@ keywords = ["sqlmodel", "orm", "activerecord", "activemodel", "sqlalchemy"]
 urls = { "Repository" = "https://github.com/iloveitaly/activemodel", "Documentation" = "https://iloveitaly.github.io/activemodel/" }
 
 [project.optional-dependencies]
+extras = [
+    "whenever>=0.9.5",
+]
 docs = [
     "sphinx>=7.1.2",
     "shibuya",
@@ -60,6 +63,7 @@ dev = [
     "coverage>=7.13.4",
     "pytest-cov>=7.0.0",
     "covdefaults>=2.3.0",
+    "activemodel[extras]",
 ]
 
 [tool.pyright]
