@@ -1642,15 +1642,15 @@ wheels = [
 
 [[package]]
 name = "sphinx-llm"
-version = "0.3.0"
+version = "0.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "sphinx" },
     { name = "sphinx-markdown-builder" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3c/69/128ba4687f19974c3a87816482a0fad49b69698bb980c467dd18919d0829/sphinx_llm-0.3.0.tar.gz", hash = "sha256:a994676ee914a5b0415d6607aec9578eb004fc61aaa2b13d27dc8a6729c97791", size = 271045, upload-time = "2026-02-06T09:28:53.047Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/59/23/fe184bf9c6761c2cd04dc5b5456b717f626143663a3004f628636a2f7b0e/sphinx_llm-0.4.1.tar.gz", hash = "sha256:0789185dcbbecc00b5e25aa3db6342b98dad6a9def96088a9e50fa0203fda090", size = 280250, upload-time = "2026-04-02T09:09:18.881Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/60/153e9130dd8bf49fb5b7a5f89dda851de5aa87eea45e00f93c30d2b52a45/sphinx_llm-0.3.0-py3-none-any.whl", hash = "sha256:4e89d7978d4bc8f755fe89e24e2c0e3a90e60fa6b8740119c9b4a9fd274dff9e", size = 22335, upload-time = "2026-02-06T09:28:51.419Z" },
+    { url = "https://files.pythonhosted.org/packages/31/2b/a54c49b42b25a6eb6039daf882f06488812c28e32734e944b2f7b6f82554/sphinx_llm-0.4.1-py3-none-any.whl", hash = "sha256:d7c8ee2a6335636b628ea2b26cd1e1dee1f0cf9c40fe51b20f201af1c05b95f5", size = 28453, upload-time = "2026-04-02T09:09:17.632Z" },
 ]
 
 [[package]]
