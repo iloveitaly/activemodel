@@ -6,6 +6,7 @@ from sqlmodel import Field, Session
 from activemodel import BaseModel
 from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
 from activemodel.session_manager import global_session
+from tests.models import ExampleRecord
 
 
 class NestedPayload(PydanticBaseModel):
@@ -23,62 +24,52 @@ class RecordWithPayloads(
     primary_payload: NestedPayload = Field(sa_type=JSONB)
 
 
-class TrackerWithObservedValues(
-    BaseModel,
-    TypeIDMixin("pydantic_json_tracker"),
-    table=True,
-):
-    observed_values: list[str] = Field(sa_type=JSONB, default_factory=list)
-
-
 def test_sibling_save_preserves_list_of_pydantic_models(create_and_wipe_database):
     record = RecordWithPayloads(
         payloads=[NestedPayload(external_id="payload_123", is_enabled=True)],
         primary_payload=NestedPayload(external_id="primary_123", is_enabled=True),
     ).save()
-    tracker = TrackerWithObservedValues(observed_values=[]).save()
+    sibling_record = ExampleRecord(something="before").save()
 
-    # Use one shared session so the tracker save can expire the already-loaded record.
+    # Use one shared session so the sibling save can expire the already-loaded record.
     with global_session():
         record = RecordWithPayloads.get(record.id)
-        tracker = TrackerWithObservedValues.get(tracker.id)
+        sibling_record = ExampleRecord.get(sibling_record.id)
 
         assert record is not None
-        assert tracker is not None
-        assert Session.object_session(record) is Session.object_session(tracker)
+        assert sibling_record is not None
+        assert Session.object_session(record) is Session.object_session(sibling_record)
         assert isinstance(record.payloads[0], NestedPayload)
 
-        tracker.observed_values.append("value_1")
-        tracker.flag_modified("observed_values")
-        tracker.save()
+        # Updating a regular column guarantees the sibling save performs a real flush.
+        sibling_record.something = "after"
+        sibling_record.save()
 
         assert isinstance(record.payloads[0], NestedPayload)
 
 
-def test_flag_modified_preserves_nested_json_across_sibling_save(
+def test_nested_json_mutation_persists_across_sibling_save(
     create_and_wipe_database,
 ):
     record = RecordWithPayloads(
         payloads=[NestedPayload(external_id="payload_123", is_enabled=True)],
         primary_payload=NestedPayload(external_id="primary_123", is_enabled=True),
     ).save()
-    tracker = TrackerWithObservedValues(observed_values=[]).save()
+    sibling_record = ExampleRecord(something="before").save()
 
     with global_session():
         record = RecordWithPayloads.get(record.id)
-        tracker = TrackerWithObservedValues.get(tracker.id)
+        sibling_record = ExampleRecord.get(sibling_record.id)
 
         assert record is not None
-        assert tracker is not None
+        assert sibling_record is not None
 
         record.payloads[0].external_id = "payload_updated"
 
-        # The sibling save commits the shared session; the before_flush handler detects the
-        # in-place mutation on record and flushes it together with tracker's changes.
-        # any expiration/reload path and still come back as a Pydantic object.
-        tracker.observed_values.append("value_1")
-        tracker.flag_modified("observed_values")
-        tracker.save()
+        # The sibling save commits the shared session; the before_commit handler must detect
+        # the in-place JSON mutation on record before expire-on-commit reloads it.
+        sibling_record.something = "after"
+        sibling_record.save()
 
         assert isinstance(record.payloads[0], NestedPayload)
         assert record.payloads[0].external_id == "payload_updated"
@@ -107,22 +98,21 @@ def test_sibling_save_preserves_list_and_scalar_pydantic_mutations(
         ],
         primary_payload=NestedPayload(external_id="primary_123", is_enabled=True),
     ).save()
-    tracker = TrackerWithObservedValues(observed_values=[]).save()
+    sibling_record = ExampleRecord(something="before").save()
 
     with global_session():
         origin_record = RecordWithPayloads.get(record.id)
-        tracker = TrackerWithObservedValues.get(tracker.id)
+        sibling_record = ExampleRecord.get(sibling_record.id)
 
         assert origin_record is not None
-        assert tracker is not None
+        assert sibling_record is not None
 
         origin_record.payloads[0].external_id = "payload_updated"
         origin_record.primary_payload.external_id = "primary_updated"
 
         # Saving a sibling in the shared session expires origin_record and must not wipe either mutation.
-        tracker.observed_values.append("value_1")
-        tracker.flag_modified("observed_values")
-        tracker.save()
+        sibling_record.something = "after"
+        sibling_record.save()
 
         assert isinstance(origin_record.payloads[0], NestedPayload)
         assert isinstance(origin_record.payloads[1], NestedPayload)
@@ -148,20 +138,20 @@ def test_sibling_save_preserves_scalar_pydantic_model(create_and_wipe_database):
         payloads=[NestedPayload(external_id="payload_123", is_enabled=True)],
         primary_payload=NestedPayload(external_id="primary_123", is_enabled=True),
     ).save()
-    tracker = TrackerWithObservedValues(observed_values=[]).save()
+    sibling_record = ExampleRecord(something="before").save()
 
     # This is the scalar-object branch of the same sibling-expiration behavior as the list test above.
     with global_session():
         record = RecordWithPayloads.get(record.id)
-        tracker = TrackerWithObservedValues.get(tracker.id)
+        sibling_record = ExampleRecord.get(sibling_record.id)
 
         assert record is not None
-        assert tracker is not None
+        assert sibling_record is not None
         assert isinstance(record.primary_payload, NestedPayload)
 
-        tracker.observed_values.append("value_1")
-        tracker.flag_modified("observed_values")
-        tracker.save()
+        # Updating a regular column on a sibling record guarantees the save performs a real flush.
+        sibling_record.something = "after"
+        sibling_record.save()
 
         assert isinstance(record.primary_payload, NestedPayload)
         assert record.primary_payload.external_id == "primary_123"
