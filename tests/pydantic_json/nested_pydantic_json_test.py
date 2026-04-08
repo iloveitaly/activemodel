@@ -2,7 +2,6 @@
 By default, fast API does not handle converting JSONB to and from Pydantic models.
 """
 
-import gc
 from typing import Optional, Tuple
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy.dialects.postgresql import JSONB
@@ -37,9 +36,15 @@ class CustomTupleType(UserDefinedType):
         return process_value
 
 
+class InnerObject(PydanticBaseModel):
+    label: str
+    score: float = 0.0
+
+
 class SubObject(PydanticBaseModel):
     name: str
     value: int
+    inner: InnerObject | None = None
 
 
 class ExampleWithJSONB(
@@ -228,10 +233,8 @@ def test_json_object_update(create_and_wipe_database):
     # saving serializes the pydantic model and reloads it, which must not mark the object as dirty!
     assert not instance_state(example).modified
 
-    # modify nested objects -- auto-tracked, no flag_modified needed
+    # modify nested objects -- auto-detected before flush, no flag_modified needed
     example.list_field[0].name = "updated"
-    assert instance_state(example).modified
-
     example.object_field.value = 42
     example.save()
 
@@ -261,9 +264,7 @@ def test_refresh_discards_unflushed_nested_json_mutation(create_and_wipe_databas
 
     example.list_field[0].name = "updated"
 
-    # Auto-tracking marks the field dirty, but since we haven't saved, refresh discards it.
-    assert instance_state(example).modified
-
+    # Mutation is detected before flush, but since we haven't saved, refresh discards it.
     example.refresh()
 
     assert isinstance(example.list_field[0], SubObject)
@@ -286,10 +287,7 @@ def test_refresh_discards_flagged_but_unflushed_nested_json_mutation(
 
     example.list_field[0].name = "updated"
 
-    # Auto-tracked -- dirty without explicit flag_modified.
-    # Dirty tracking is not the same as persistence; refresh should still replace DB-backed state.
-    assert instance_state(example).modified
-
+    # Refresh should discard the in-memory mutation and replace with DB-backed state.
     example.refresh()
 
     assert isinstance(example.list_field[0], SubObject)
@@ -394,125 +392,108 @@ def _make_example(extra_items: int = 0) -> ExampleWithJSONB:
     ).save()
 
 
-def test_tracked_list_append_marks_dirty(create_and_wipe_database):
+def test_list_append_persists(create_and_wipe_database):
     example = _make_example()
     assert not instance_state(example).modified
 
     example.list_field.append(SubObject(name="appended", value=99))
-    assert instance_state(example).modified
-
     example.save()
     fresh = ExampleWithJSONB.one(example.id)
     assert len(fresh.list_field) == 2
     assert fresh.list_field[-1].name == "appended"
 
 
-def test_tracked_list_pop_marks_dirty(create_and_wipe_database):
+def test_list_pop_persists(create_and_wipe_database):
     example = _make_example(extra_items=1)
     assert not instance_state(example).modified
 
     example.list_field.pop()
-    assert instance_state(example).modified
-
     example.save()
     fresh = ExampleWithJSONB.one(example.id)
     assert len(fresh.list_field) == 1
 
 
-def test_tracked_list_remove_marks_dirty(create_and_wipe_database):
+def test_list_remove_persists(create_and_wipe_database):
     example = _make_example(extra_items=1)
     assert not instance_state(example).modified
 
     # remove() uses ==; Pydantic __eq__ compares field values.
     example.list_field.remove(SubObject(name="item_1", value=1))
-    assert instance_state(example).modified
-
     example.save()
     fresh = ExampleWithJSONB.one(example.id)
     assert len(fresh.list_field) == 1
     assert fresh.list_field[0].name == "item_0"
 
 
-def test_tracked_list_clear_marks_dirty(create_and_wipe_database):
+def test_list_clear_persists(create_and_wipe_database):
     example = _make_example()
     assert not instance_state(example).modified
 
     example.list_field.clear()
-    assert instance_state(example).modified
-
     example.save()
     fresh = ExampleWithJSONB.one(example.id)
     assert fresh.list_field == []
 
 
-def test_tracked_list_extend_marks_dirty(create_and_wipe_database):
+def test_list_extend_persists(create_and_wipe_database):
     example = _make_example()
     assert not instance_state(example).modified
 
     example.list_field.extend(
         [SubObject(name="ext_1", value=10), SubObject(name="ext_2", value=11)]
     )
-    assert instance_state(example).modified
-
     example.save()
     fresh = ExampleWithJSONB.one(example.id)
     assert len(fresh.list_field) == 3
     assert fresh.list_field[1].name == "ext_1"
 
 
-def test_tracked_list_setitem_marks_dirty(create_and_wipe_database):
+def test_list_setitem_persists(create_and_wipe_database):
     example = _make_example()
     assert not instance_state(example).modified
 
     example.list_field[0] = SubObject(name="replaced", value=42)
-    assert instance_state(example).modified
-
     example.save()
     fresh = ExampleWithJSONB.one(example.id)
     assert fresh.list_field[0].name == "replaced"
     assert fresh.list_field[0].value == 42
 
 
-def test_tracked_list_iadd_marks_dirty(create_and_wipe_database):
+def test_list_iadd_persists(create_and_wipe_database):
     example = _make_example()
     assert not instance_state(example).modified
 
     example.list_field += [SubObject(name="iadd", value=7)]
-    assert instance_state(example).modified
-
     example.save()
     fresh = ExampleWithJSONB.one(example.id)
     assert len(fresh.list_field) == 2
     assert fresh.list_field[-1].name == "iadd"
 
 
-def test_tracked_pydantic_preserves_isinstance_and_model_dump(create_and_wipe_database):
+def test_rehydrated_pydantic_preserves_isinstance_and_model_dump(create_and_wipe_database):
     example = _make_example()
 
-    # __class__ swap must not break standard Pydantic/isinstance contracts.
     assert isinstance(example.object_field, SubObject)
     assert isinstance(example.list_field[0], SubObject)
-    assert example.object_field.model_dump() == {"name": "original", "value": 1}
-    assert example.list_field[0].model_dump() == {"name": "item_0", "value": 0}
+    assert example.object_field.model_dump() == {"name": "original", "value": 1, "inner": None}
+    assert example.list_field[0].model_dump() == {"name": "item_0", "value": 0, "inner": None}
 
     fresh = ExampleWithJSONB.one(example.id)
     assert isinstance(fresh.object_field, SubObject)
     assert isinstance(fresh.list_field[0], SubObject)
-    assert fresh.object_field.model_dump() == {"name": "original", "value": 1}
+    assert fresh.object_field.model_dump() == {"name": "original", "value": 1, "inner": None}
 
 
-def test_tracking_survives_save_cycle(create_and_wipe_database):
-    "tracking weakrefs are re-attached after save() refreshes the instance"
+def test_mutation_detected_across_save_cycles(create_and_wipe_database):
+    "snapshot is re-taken after save() refreshes the instance, so a second mutation is also detected"
     example = _make_example()
 
     example.object_field.value = 10
     example.save()
     assert example.object_field.value == 10
 
-    # After save() the instance is refreshed and tracking is re-attached; a second
-    # mutation must also auto-track without needing flag_modified.
+    # After save() the snapshot is reset; a second mutation must still be detected.
     example.object_field.value = 20
-    assert instance_state(example).modified
 
     example.save()
     fresh = ExampleWithJSONB.one(example.id)
@@ -532,13 +513,115 @@ def test_replace_entire_field_persists_without_flag_modified(create_and_wipe_dat
     assert fresh.object_field.value == 99
 
 
-def test_orphaned_tracked_object_does_not_raise(create_and_wipe_database):
-    "mutating a tracked Pydantic object after its parent is GC'd is a silent no-op"
+def test_has_json_mutations_returns_true_when_mutated(create_and_wipe_database):
     example = _make_example()
-    orphan = example.object_field
+    assert not example.has_json_mutations()
 
-    del example
-    gc.collect()
+    example.object_field.value = 999
+    assert example.has_json_mutations()
 
-    # weakref is now dead; __setattr__ should resolve to None and skip flag_modified.
-    orphan.name = "mutated after gc"
+
+def test_has_json_mutations_returns_false_when_clean(create_and_wipe_database):
+    example = _make_example()
+    assert not example.has_json_mutations()
+
+    # save and re-check -- snapshot is reset, still no mutations
+    example.object_field.value = 5
+    example.save()
+    assert not example.has_json_mutations()
+
+
+def test_has_json_mutations_returns_false_after_revert_to_original(
+    create_and_wipe_database,
+):
+    "mutating then reverting to the original value should not be detected as a change"
+    example = _make_example()
+    original_value = example.object_field.value
+
+    example.object_field.value = 999
+    assert example.has_json_mutations()
+
+    example.object_field.value = original_value
+    assert not example.has_json_mutations()
+
+
+def test_detect_json_mutations_returns_field_names(create_and_wipe_database):
+    from activemodel.jsonb_snapshot import detect_json_mutations
+
+    example = _make_example()
+    assert detect_json_mutations(example) == []
+
+    example.object_field.value = 999
+    assert detect_json_mutations(example) == ["object_field"]
+
+
+def test_deep_nested_mutation_detected(create_and_wipe_database):
+    "mutating a Pydantic model inside a Pydantic model is caught by serialize-and-compare"
+    example = ExampleWithJSONB(
+        list_field=[SubObject(name="item", value=1, inner=InnerObject(label="deep", score=1.0))],
+        generic_list_field=[{"k": "v"}],
+        object_field=SubObject(name="obj", value=2, inner=InnerObject(label="nested", score=2.0)),
+        unstructured_field={"k": "v"},
+        semi_structured_field={"k": "v"},
+        tuple_field=(1.0, 2.0),
+    ).save()
+
+    # mutate two levels deep
+    example.object_field.inner.label = "changed"
+    example.list_field[0].inner.score = 99.9
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.object_field.inner.label == "changed"
+    assert fresh.list_field[0].inner.score == 99.9
+
+
+def test_no_op_save_does_not_produce_spurious_update(create_and_wipe_database):
+    "saving without mutations should not generate an UPDATE"
+    example = _make_example()
+
+    # re-save with zero changes
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.object_field == SubObject(name="original", value=1)
+    assert fresh.list_field == [SubObject(name="item_0", value=0)]
+
+
+def test_list_sort_persists(create_and_wipe_database):
+    example = _make_example(extra_items=2)
+    assert not instance_state(example).modified
+
+    example.list_field.sort(key=lambda s: s.name, reverse=True)
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert [s.name for s in fresh.list_field] == ["item_2", "item_1", "item_0"]
+
+
+def test_list_reverse_persists(create_and_wipe_database):
+    example = _make_example(extra_items=2)
+    assert not instance_state(example).modified
+
+    example.list_field.reverse()
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert [s.name for s in fresh.list_field] == ["item_2", "item_1", "item_0"]
+
+
+def test_equivalent_reassignment_does_not_produce_spurious_update(
+    create_and_wipe_database,
+):
+    "reassigning a field to a value that serializes identically should not generate an UPDATE"
+    example = _make_example()
+
+    # direct assignment of an equivalent value — SQLAlchemy will mark the field modified,
+    # but our before_commit handler should clear it since the serialized form is unchanged
+    example.object_field = SubObject(name="original", value=1, inner=None)
+    assert instance_state(example).modified
+
+    example.save()
+    assert not instance_state(example).modified
+
+

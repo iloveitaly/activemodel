@@ -71,11 +71,10 @@ def test_flag_modified_preserves_nested_json_across_sibling_save(
         assert record is not None
         assert tracker is not None
 
-        # Auto-tracking marks the field dirty on in-place mutation.
         record.payloads[0].external_id = "payload_updated"
-        assert instance_state(record).modified
 
-        # The sibling save commits the shared session, so the flagged JSON mutation must survive
+        # The sibling save commits the shared session; the before_flush handler detects the
+        # in-place mutation on record and flushes it together with tracker's changes.
         # any expiration/reload path and still come back as a Pydantic object.
         tracker.observed_values.append("value_1")
         tracker.flag_modified("observed_values")
@@ -90,6 +89,58 @@ def test_flag_modified_preserves_nested_json_across_sibling_save(
     assert fresh_record is not None
     assert isinstance(fresh_record.payloads[0], NestedPayload)
     assert fresh_record.payloads[0].external_id == "payload_updated"
+
+
+def test_sibling_save_preserves_list_and_scalar_pydantic_mutations(
+    create_and_wipe_database,
+):
+    """
+    Saving a sibling record must not wipe pending list or scalar Pydantic JSON mutations.
+
+    This causes a session flush which expires the already-loaded record with pending mutations; the expired record must not lose those mutations and must still come back as a Pydantic object on access after the flush.
+    """
+
+    record = RecordWithPayloads(
+        payloads=[
+            NestedPayload(external_id="payload_123", is_enabled=True),
+            NestedPayload(external_id="payload_456", is_enabled=False),
+        ],
+        primary_payload=NestedPayload(external_id="primary_123", is_enabled=True),
+    ).save()
+    tracker = TrackerWithObservedValues(observed_values=[]).save()
+
+    with global_session():
+        origin_record = RecordWithPayloads.get(record.id)
+        tracker = TrackerWithObservedValues.get(tracker.id)
+
+        assert origin_record is not None
+        assert tracker is not None
+
+        origin_record.payloads[0].external_id = "payload_updated"
+        origin_record.primary_payload.external_id = "primary_updated"
+
+        # Saving a sibling in the shared session expires origin_record and must not wipe either mutation.
+        tracker.observed_values.append("value_1")
+        tracker.flag_modified("observed_values")
+        tracker.save()
+
+        assert isinstance(origin_record.payloads[0], NestedPayload)
+        assert isinstance(origin_record.payloads[1], NestedPayload)
+        assert isinstance(origin_record.primary_payload, NestedPayload)
+        assert origin_record.payloads[0].external_id == "payload_updated"
+        assert origin_record.payloads[1].external_id == "payload_456"
+        assert origin_record.primary_payload.external_id == "primary_updated"
+        assert not instance_state(origin_record).modified
+
+    fresh_record = RecordWithPayloads.get(record.id)
+
+    assert fresh_record is not None
+    assert isinstance(fresh_record.payloads[0], NestedPayload)
+    assert isinstance(fresh_record.payloads[1], NestedPayload)
+    assert isinstance(fresh_record.primary_payload, NestedPayload)
+    assert fresh_record.payloads[0].external_id == "payload_updated"
+    assert fresh_record.payloads[1].external_id == "payload_456"
+    assert fresh_record.primary_payload.external_id == "primary_updated"
 
 
 def test_sibling_save_preserves_scalar_pydantic_model(create_and_wipe_database):
