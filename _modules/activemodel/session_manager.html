@@ -37,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../alembic.html">Alembic Integration</a></li><li class="link"><a href="../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../sql-logging.html">SQL Logging</a></li><li class="link"><a href="../../alembic.html">Alembic Integration</a></li><li class="link"><a href="../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../changelog.html">Changelog</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -67,6 +67,7 @@ data-aria-dark="Switch to auto color mode">
       <div class="sy-scrollbar p-6">
         <div class="globaltoc" data-expand-depth="0"><ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sql-logging.html">SQL Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../alembic.html">Alembic Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a><ul>
@@ -160,264 +161,251 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="6"><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
 </span><span data-line="7"><span class="kn">import</span><span class="w"> </span><span class="nn">contextvars</span>
 </span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span data-line="10"><span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
-</span><span data-line="11">
-</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
-</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Engine</span><span class="p">,</span> <span class="n">inspect</span>
-</span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">SQLModel</span><span class="p">,</span> <span class="n">create_engine</span>
+</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">t</span>
+</span><span data-line="10">
+</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Engine</span><span class="p">,</span> <span class="n">inspect</span>
+</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">SQLModel</span><span class="p">,</span> <span class="n">create_engine</span>
+</span><span data-line="14">
 </span><span data-line="15">
-<div class="viewcode-block" id="ACTIVEMODEL_LOG_SQL">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.ACTIVEMODEL_LOG_SQL">[docs]</a>
-</span><span data-line="16"><span class="n">ACTIVEMODEL_LOG_SQL</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ACTIVEMODEL_LOG_SQL&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span>
-</span><span data-line="17">    <span class="s2">&quot;true&quot;</span><span class="p">,</span>
-</span><span data-line="18">    <span class="s2">&quot;1&quot;</span><span class="p">,</span>
-</span><span data-line="19">    <span class="s2">&quot;t&quot;</span><span class="p">,</span>
-</span><span data-line="20">    <span class="s2">&quot;yes&quot;</span><span class="p">,</span>
-</span><span data-line="21"><span class="p">)</span></div>
-
-</span><span data-line="22">
+</span><span data-line="16"><span class="k">def</span><span class="w"> </span><span class="nf">_serialize_pydantic_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="17"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="18"><span class="sd">    Pydantic models do not serialize to JSON. You&#39;ll get an error such as:</span>
+</span><span data-line="19">
+</span><span data-line="20"><span class="sd">    &#39;TypeError: Object of type TranscriptEntry is not JSON serializable&#39;</span>
+</span><span data-line="21">
+</span><span data-line="22"><span class="sd">    https://github.com/fastapi/sqlmodel/issues/63#issuecomment-2581016387</span>
 </span><span data-line="23">
-</span><span data-line="24"><span class="k">def</span><span class="w"> </span><span class="nf">_serialize_pydantic_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="25"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="26"><span class="sd">    Pydantic models do not serialize to JSON. You&#39;ll get an error such as:</span>
+</span><span data-line="24"><span class="sd">    This custom serializer is passed to the DB engine to properly serialize pydantic models to</span>
+</span><span data-line="25"><span class="sd">    JSON for storage in a JSONB column.</span>
+</span><span data-line="26"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="27">
-</span><span data-line="28"><span class="sd">    &#39;TypeError: Object of type TranscriptEntry is not JSON serializable&#39;</span>
+</span><span data-line="28">    <span class="c1"># TODO I bet this will fail on lists with mixed types</span>
 </span><span data-line="29">
-</span><span data-line="30"><span class="sd">    https://github.com/fastapi/sqlmodel/issues/63#issuecomment-2581016387</span>
-</span><span data-line="31">
-</span><span data-line="32"><span class="sd">    This custom serializer is passed to the DB engine to properly serialize pydantic models to</span>
-</span><span data-line="33"><span class="sd">    JSON for storage in a JSONB column.</span>
-</span><span data-line="34"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="35">
-</span><span data-line="36">    <span class="c1"># TODO I bet this will fail on lists with mixed types</span>
-</span><span data-line="37">
-</span><span data-line="38">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-</span><span data-line="39">        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">()</span>
-</span><span data-line="40">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span data-line="41">        <span class="c1"># not everything in a list is a pydantic model</span>
-</span><span data-line="42">        <span class="k">def</span><span class="w"> </span><span class="nf">dump_if_model</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-</span><span data-line="43">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-</span><span data-line="44">                <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
-</span><span data-line="45">            <span class="k">return</span> <span class="n">m</span>
-</span><span data-line="46">
-</span><span data-line="47">        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="n">dump_if_model</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model</span><span class="p">])</span>
-</span><span data-line="48">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="49">        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-</span><span data-line="50">
-</span><span data-line="51">
+</span><span data-line="30">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+</span><span data-line="31">        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">()</span>
+</span><span data-line="32">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span data-line="33">        <span class="c1"># not everything in a list is a pydantic model</span>
+</span><span data-line="34">        <span class="k">def</span><span class="w"> </span><span class="nf">dump_if_model</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+</span><span data-line="35">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+</span><span data-line="36">                <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+</span><span data-line="37">            <span class="k">return</span> <span class="n">m</span>
+</span><span data-line="38">
+</span><span data-line="39">        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="n">dump_if_model</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model</span><span class="p">])</span>
+</span><span data-line="40">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="41">        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</span><span data-line="42">
+</span><span data-line="43">
 <div class="viewcode-block" id="SessionManager">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager">[docs]</a>
-</span><span data-line="52"><span class="k">class</span><span class="w"> </span><span class="nc">SessionManager</span><span class="p">:</span>
-</span><span data-line="53">    <span class="n">_instance</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SessionManager&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="54">    <span class="s2">&quot;singleton instance of SessionManager&quot;</span>
-</span><span data-line="55">
+</span><span data-line="44"><span class="k">class</span><span class="w"> </span><span class="nc">SessionManager</span><span class="p">:</span>
+</span><span data-line="45">    <span class="n">_instance</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SessionManager&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="46">    <span class="s2">&quot;singleton instance of SessionManager&quot;</span>
+</span><span data-line="47">
 <div class="viewcode-block" id="SessionManager.session_connection">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager.session_connection">[docs]</a>
-</span><span data-line="56">    <span class="n">session_connection</span><span class="p">:</span> <span class="n">Connection</span> <span class="o">|</span> <span class="kc">None</span></div>
+</span><span data-line="48">    <span class="n">session_connection</span><span class="p">:</span> <span class="n">Connection</span> <span class="o">|</span> <span class="kc">None</span></div>
 
-</span><span data-line="57">    <span class="s2">&quot;optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations&quot;</span>
-</span><span data-line="58">
-</span><span data-line="59">    <span class="nd">@classmethod</span>
+</span><span data-line="49">    <span class="s2">&quot;optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations&quot;</span>
+</span><span data-line="50">
+</span><span data-line="51">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="SessionManager.get_instance">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager.get_instance">[docs]</a>
-</span><span data-line="60">    <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span>
-</span><span data-line="61">        <span class="bp">cls</span><span class="p">,</span>
-</span><span data-line="62">        <span class="n">database_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="63">        <span class="o">*</span><span class="p">,</span>
-</span><span data-line="64">        <span class="n">engine_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="65">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SessionManager&quot;</span><span class="p">:</span>
-</span><span data-line="66">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="67">            <span class="k">assert</span> <span class="n">database_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
-</span><span data-line="68">                <span class="s2">&quot;Database URL required for first initialization&quot;</span>
-</span><span data-line="69">            <span class="p">)</span>
-</span><span data-line="70">            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">database_url</span><span class="p">,</span> <span class="n">engine_options</span><span class="o">=</span><span class="n">engine_options</span><span class="p">)</span>
-</span><span data-line="71">
-</span><span data-line="72">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span></div>
+</span><span data-line="52">    <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span>
+</span><span data-line="53">        <span class="bp">cls</span><span class="p">,</span>
+</span><span data-line="54">        <span class="n">database_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="55">        <span class="o">*</span><span class="p">,</span>
+</span><span data-line="56">        <span class="n">engine_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="57">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SessionManager&quot;</span><span class="p">:</span>
+</span><span data-line="58">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="59">            <span class="k">assert</span> <span class="n">database_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+</span><span data-line="60">                <span class="s2">&quot;Database URL required for first initialization&quot;</span>
+</span><span data-line="61">            <span class="p">)</span>
+</span><span data-line="62">            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">database_url</span><span class="p">,</span> <span class="n">engine_options</span><span class="o">=</span><span class="n">engine_options</span><span class="p">)</span>
+</span><span data-line="63">
+</span><span data-line="64">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span></div>
 
-</span><span data-line="73">
-</span><span data-line="74">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-</span><span data-line="75">        <span class="bp">self</span><span class="p">,</span> <span class="n">database_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">engine_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="76">    <span class="p">):</span>
-</span><span data-line="77">        <span class="bp">self</span><span class="o">.</span><span class="n">_database_url</span> <span class="o">=</span> <span class="n">database_url</span>
-</span><span data-line="78">        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="79">        <span class="bp">self</span><span class="o">.</span><span class="n">_engine_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">engine_options</span> <span class="ow">or</span> <span class="p">{}</span>
-</span><span data-line="80">
-</span><span data-line="81">        <span class="bp">self</span><span class="o">.</span><span class="n">session_connection</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="82">
-</span><span data-line="83">    <span class="c1"># TODO why is this type not reimported?</span>
+</span><span data-line="65">
+</span><span data-line="66">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span data-line="67">        <span class="bp">self</span><span class="p">,</span> <span class="n">database_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">engine_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="68">    <span class="p">):</span>
+</span><span data-line="69">        <span class="bp">self</span><span class="o">.</span><span class="n">_database_url</span> <span class="o">=</span> <span class="n">database_url</span>
+</span><span data-line="70">        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="71">        <span class="bp">self</span><span class="o">.</span><span class="n">_engine_options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">engine_options</span> <span class="ow">or</span> <span class="p">{}</span>
+</span><span data-line="72">
+</span><span data-line="73">        <span class="bp">self</span><span class="o">.</span><span class="n">session_connection</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="74">
+</span><span data-line="75">    <span class="c1"># TODO why is this type not reimported?</span>
 <div class="viewcode-block" id="SessionManager.get_engine">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager.get_engine">[docs]</a>
-</span><span data-line="84">    <span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Engine</span><span class="p">:</span>
-</span><span data-line="85">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="p">:</span>
-</span><span data-line="86">            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
-</span><span data-line="87">                <span class="bp">self</span><span class="o">.</span><span class="n">_database_url</span><span class="p">,</span>
-</span><span data-line="88">                <span class="c1"># NOTE very important! This enables pydantic models to be serialized for JSONB columns</span>
-</span><span data-line="89">                <span class="n">json_serializer</span><span class="o">=</span><span class="n">_serialize_pydantic_model</span><span class="p">,</span>
-</span><span data-line="90">                <span class="n">echo</span><span class="o">=</span><span class="n">ACTIVEMODEL_LOG_SQL</span><span class="p">,</span>
-</span><span data-line="91">                <span class="n">echo_pool</span><span class="o">=</span><span class="n">ACTIVEMODEL_LOG_SQL</span><span class="p">,</span>
-</span><span data-line="92">                <span class="c1"># https://docs.sqlalchemy.org/en/20/core/pooling.html#disconnect-handling-pessimistic</span>
-</span><span data-line="93">                <span class="n">pool_pre_ping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span data-line="94">                <span class="c1"># some implementations include `future=True` but it&#39;s not required anymore</span>
-</span><span data-line="95">                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_engine_options</span><span class="p">,</span>
-</span><span data-line="96">            <span class="p">)</span>
-</span><span data-line="97">
-</span><span data-line="98">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span></div>
+</span><span data-line="76">    <span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Engine</span><span class="p">:</span>
+</span><span data-line="77">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="p">:</span>
+</span><span data-line="78">            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
+</span><span data-line="79">                <span class="bp">self</span><span class="o">.</span><span class="n">_database_url</span><span class="p">,</span>
+</span><span data-line="80">                <span class="c1"># NOTE very important! This enables pydantic models to be serialized for JSONB columns</span>
+</span><span data-line="81">                <span class="n">json_serializer</span><span class="o">=</span><span class="n">_serialize_pydantic_model</span><span class="p">,</span>
+</span><span data-line="82">                <span class="c1"># https://docs.sqlalchemy.org/en/20/core/pooling.html#disconnect-handling-pessimistic</span>
+</span><span data-line="83">                <span class="n">pool_pre_ping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="84">                <span class="c1"># some implementations include `future=True` but it&#39;s not required anymore</span>
+</span><span data-line="85">                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_engine_options</span><span class="p">,</span>
+</span><span data-line="86">            <span class="p">)</span>
+</span><span data-line="87">
+</span><span data-line="88">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span></div>
 
-</span><span data-line="99">
+</span><span data-line="89">
 <div class="viewcode-block" id="SessionManager.get_session">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager.get_session">[docs]</a>
-</span><span data-line="100">    <span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="101">        <span class="s2">&quot;get a new database session, respecting any globally set sessions&quot;</span>
-</span><span data-line="102">
-</span><span data-line="103">        <span class="k">if</span> <span class="n">gsession</span> <span class="o">:=</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+</span><span data-line="90">    <span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="91">        <span class="s2">&quot;get a new database session, respecting any globally set sessions&quot;</span>
+</span><span data-line="92">
+</span><span data-line="93">        <span class="k">if</span> <span class="n">gsession</span> <span class="o">:=</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+</span><span data-line="94">
+</span><span data-line="95">            <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+</span><span data-line="96">            <span class="k">def</span><span class="w"> </span><span class="nf">_reuse_session</span><span class="p">():</span>
+</span><span data-line="97">                <span class="k">yield</span> <span class="n">gsession</span>
+</span><span data-line="98">
+</span><span data-line="99">            <span class="k">return</span> <span class="n">_reuse_session</span><span class="p">()</span>
+</span><span data-line="100">
+</span><span data-line="101">        <span class="c1"># a connection can generate nested transactions</span>
+</span><span data-line="102">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_connection</span><span class="p">:</span>
+</span><span data-line="103">            <span class="k">return</span> <span class="n">Session</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session_connection</span><span class="p">)</span>
 </span><span data-line="104">
-</span><span data-line="105">            <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-</span><span data-line="106">            <span class="k">def</span><span class="w"> </span><span class="nf">_reuse_session</span><span class="p">():</span>
-</span><span data-line="107">                <span class="k">yield</span> <span class="n">gsession</span>
-</span><span data-line="108">
-</span><span data-line="109">            <span class="k">return</span> <span class="n">_reuse_session</span><span class="p">()</span>
-</span><span data-line="110">
-</span><span data-line="111">        <span class="c1"># a connection can generate nested transactions</span>
-</span><span data-line="112">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_connection</span><span class="p">:</span>
-</span><span data-line="113">            <span class="k">return</span> <span class="n">Session</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session_connection</span><span class="p">)</span>
-</span><span data-line="114">
-</span><span data-line="115">        <span class="k">return</span> <span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_engine</span><span class="p">())</span></div>
+</span><span data-line="105">        <span class="k">return</span> <span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_engine</span><span class="p">())</span></div>
 </div>
 
-</span><span data-line="116">
-</span><span data-line="117">
-</span><span data-line="118"><span class="c1"># TODO would be great one day to type engine_options as the SQLAlchemy EngineOptions</span>
+</span><span data-line="106">
+</span><span data-line="107">
+</span><span data-line="108"><span class="c1"># TODO would be great one day to type engine_options as the SQLAlchemy EngineOptions</span>
 <div class="viewcode-block" id="init">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.init">[docs]</a>
-</span><span data-line="119"><span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="n">database_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">engine_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span data-line="120">    <span class="s2">&quot;configure activemodel to connect to a specific database&quot;</span>
-</span><span data-line="121">    <span class="k">return</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">database_url</span><span class="p">,</span> <span class="n">engine_options</span><span class="o">=</span><span class="n">engine_options</span><span class="p">)</span></div>
+</span><span data-line="109"><span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="n">database_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">engine_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="110">    <span class="s2">&quot;configure activemodel to connect to a specific database&quot;</span>
+</span><span data-line="111">    <span class="k">return</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">database_url</span><span class="p">,</span> <span class="n">engine_options</span><span class="o">=</span><span class="n">engine_options</span><span class="p">)</span></div>
 
-</span><span data-line="122">
-</span><span data-line="123">
+</span><span data-line="112">
+</span><span data-line="113">
 <div class="viewcode-block" id="table_exists">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.table_exists">[docs]</a>
-</span><span data-line="124"><span class="k">def</span><span class="w"> </span><span class="nf">table_exists</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SQLModel</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="125"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="126"><span class="sd">    Check if the table for the given model exists in the database.</span>
-</span><span data-line="127"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="128">    <span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">()</span>
-</span><span data-line="129">    <span class="k">return</span> <span class="n">inspect</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span><span class="o">.</span><span class="n">has_table</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">__tablename__</span><span class="p">)</span></div>
+</span><span data-line="114"><span class="k">def</span><span class="w"> </span><span class="nf">table_exists</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SQLModel</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="115"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="116"><span class="sd">    Check if the table for the given model exists in the database.</span>
+</span><span data-line="117"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="118">    <span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">()</span>
+</span><span data-line="119">    <span class="k">return</span> <span class="n">inspect</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span><span class="o">.</span><span class="n">has_table</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">__tablename__</span><span class="p">)</span></div>
+
+</span><span data-line="120">
+</span><span data-line="121">
+<div class="viewcode-block" id="get_engine">
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.get_engine">[docs]</a>
+</span><span data-line="122"><span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">():</span>
+</span><span data-line="123">    <span class="s2">&quot;alias to get the database engine without importing SessionManager&quot;</span>
+</span><span data-line="124">    <span class="k">return</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_engine</span><span class="p">()</span></div>
+
+</span><span data-line="125">
+</span><span data-line="126">
+<div class="viewcode-block" id="get_session">
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.get_session">[docs]</a>
+</span><span data-line="127"><span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">():</span>
+</span><span data-line="128">    <span class="s2">&quot;alias to get a database session without importing SessionManager&quot;</span>
+</span><span data-line="129">    <span class="k">return</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span></div>
 
 </span><span data-line="130">
 </span><span data-line="131">
-<div class="viewcode-block" id="get_engine">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.get_engine">[docs]</a>
-</span><span data-line="132"><span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">():</span>
-</span><span data-line="133">    <span class="s2">&quot;alias to get the database engine without importing SessionManager&quot;</span>
-</span><span data-line="134">    <span class="k">return</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_engine</span><span class="p">()</span></div>
-
-</span><span data-line="135">
-</span><span data-line="136">
-<div class="viewcode-block" id="get_session">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.get_session">[docs]</a>
-</span><span data-line="137"><span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">():</span>
-</span><span data-line="138">    <span class="s2">&quot;alias to get a database session without importing SessionManager&quot;</span>
-</span><span data-line="139">    <span class="k">return</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span></div>
-
-</span><span data-line="140">
-</span><span data-line="141">
-</span><span data-line="142"><span class="n">_session_context</span> <span class="o">=</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">[</span><span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span><span class="p">](</span>
-</span><span data-line="143">    <span class="s2">&quot;session_context&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
-</span><span data-line="144"><span class="p">)</span>
-</span><span data-line="145"><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="146"><span class="sd">This is a VERY important ContextVar, it sets a global session to be used across all ActiveModel operations by default</span>
-</span><span data-line="147"><span class="sd">and ensures get_session() uses this session as well.</span>
-</span><span data-line="148">
-</span><span data-line="149"><span class="sd">contextvars must be at the top-level of a module! You will not get a warning if you don&#39;t do this.</span>
-</span><span data-line="150"><span class="sd">ContextVar is implemented in C, so it&#39;s very special and is both thread-safe and asyncio safe. This variable gives us</span>
-</span><span data-line="151"><span class="sd">a place to persist a session to use globally across the application.</span>
-</span><span data-line="152"><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="153">
-</span><span data-line="154">
-</span><span data-line="155"><span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+</span><span data-line="132"><span class="n">_session_context</span> <span class="o">=</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">[</span><span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span><span class="p">](</span>
+</span><span data-line="133">    <span class="s2">&quot;session_context&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+</span><span data-line="134"><span class="p">)</span>
+</span><span data-line="135"><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="136"><span class="sd">This is a VERY important ContextVar, it sets a global session to be used across all ActiveModel operations by default</span>
+</span><span data-line="137"><span class="sd">and ensures get_session() uses this session as well.</span>
+</span><span data-line="138">
+</span><span data-line="139"><span class="sd">contextvars must be at the top-level of a module! You will not get a warning if you don&#39;t do this.</span>
+</span><span data-line="140"><span class="sd">ContextVar is implemented in C, so it&#39;s very special and is both thread-safe and asyncio safe. This variable gives us</span>
+</span><span data-line="141"><span class="sd">a place to persist a session to use globally across the application.</span>
+</span><span data-line="142"><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="143">
+</span><span data-line="144">
+</span><span data-line="145"><span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
 <div class="viewcode-block" id="global_session">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.global_session">[docs]</a>
-</span><span data-line="156"><span class="k">def</span><span class="w"> </span><span class="nf">global_session</span><span class="p">(</span><span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span data-line="157"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="158"><span class="sd">    Generate a session and share it across all activemodel calls.</span>
-</span><span data-line="159">
-</span><span data-line="160"><span class="sd">    Alternatively, you can pass a session to use globally into the context manager, which is helpful for migrations</span>
-</span><span data-line="161"><span class="sd">    and testing.</span>
-</span><span data-line="162">
-</span><span data-line="163"><span class="sd">    This may only be called a single time per callstack. There is one exception: if you call this multiple times</span>
-</span><span data-line="164"><span class="sd">    and pass in the same session reference, it will result in a noop.</span>
-</span><span data-line="165">
-</span><span data-line="166"><span class="sd">    In complex testing code, you&#39;ll need to be careful here. For example:</span>
+</span><span data-line="146"><span class="k">def</span><span class="w"> </span><span class="nf">global_session</span><span class="p">(</span><span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="147"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="148"><span class="sd">    Generate a session and share it across all activemodel calls.</span>
+</span><span data-line="149">
+</span><span data-line="150"><span class="sd">    Alternatively, you can pass a session to use globally into the context manager, which is helpful for migrations</span>
+</span><span data-line="151"><span class="sd">    and testing.</span>
+</span><span data-line="152">
+</span><span data-line="153"><span class="sd">    This may only be called a single time per callstack. There is one exception: if you call this multiple times</span>
+</span><span data-line="154"><span class="sd">    and pass in the same session reference, it will result in a noop.</span>
+</span><span data-line="155">
+</span><span data-line="156"><span class="sd">    In complex testing code, you&#39;ll need to be careful here. For example:</span>
+</span><span data-line="157">
+</span><span data-line="158"><span class="sd">    - Unit test using a transaction db fixture (which sets __sqlalchemy_session__)</span>
+</span><span data-line="159"><span class="sd">    - Factory has a after_save hook</span>
+</span><span data-line="160"><span class="sd">    - That hook triggers a celery job</span>
+</span><span data-line="161"><span class="sd">    - The celery job (properly) calls `with global_session()`</span>
+</span><span data-line="162"><span class="sd">    - However, since `global_session()` is already set with __sqlalchemy_session__, this will raise an error</span>
+</span><span data-line="163">
+</span><span data-line="164"><span class="sd">    Args:</span>
+</span><span data-line="165"><span class="sd">        session: Use an existing session instead of creating a new one</span>
+</span><span data-line="166"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="167">
-</span><span data-line="168"><span class="sd">    - Unit test using a transaction db fixture (which sets __sqlalchemy_session__)</span>
-</span><span data-line="169"><span class="sd">    - Factory has a after_save hook</span>
-</span><span data-line="170"><span class="sd">    - That hook triggers a celery job</span>
-</span><span data-line="171"><span class="sd">    - The celery job (properly) calls `with global_session()`</span>
-</span><span data-line="172"><span class="sd">    - However, since `global_session()` is already set with __sqlalchemy_session__, this will raise an error</span>
+</span><span data-line="168">    <span class="n">current_session</span> <span class="o">=</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span data-line="169">    <span class="k">if</span> <span class="n">current_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="170">        <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">session</span> <span class="ow">is</span> <span class="n">current_session</span><span class="p">:</span>
+</span><span data-line="171">            <span class="k">yield</span> <span class="n">current_session</span>
+</span><span data-line="172">            <span class="k">return</span>
 </span><span data-line="173">
-</span><span data-line="174"><span class="sd">    Args:</span>
-</span><span data-line="175"><span class="sd">        session: Use an existing session instead of creating a new one</span>
-</span><span data-line="176"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="177">
-</span><span data-line="178">    <span class="n">current_session</span> <span class="o">=</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span data-line="179">    <span class="k">if</span> <span class="n">current_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="180">        <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">session</span> <span class="ow">is</span> <span class="n">current_session</span><span class="p">:</span>
-</span><span data-line="181">            <span class="k">yield</span> <span class="n">current_session</span>
-</span><span data-line="182">            <span class="k">return</span>
+</span><span data-line="174">        <span class="c1"># hard fail if the global session is already set and different from the one being passed in</span>
+</span><span data-line="175">        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+</span><span data-line="176">            <span class="s2">&quot;ActiveModel: global session already set with a different session&quot;</span>
+</span><span data-line="177">        <span class="p">)</span>
+</span><span data-line="178">
+</span><span data-line="179">    <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+</span><span data-line="180">    <span class="k">def</span><span class="w"> </span><span class="nf">manage_existing_session</span><span class="p">():</span>
+</span><span data-line="181">        <span class="s2">&quot;if an existing session already exists, use it without triggering another __enter__&quot;</span>
+</span><span data-line="182">        <span class="k">yield</span> <span class="n">session</span>
 </span><span data-line="183">
-</span><span data-line="184">        <span class="c1"># hard fail if the global session is already set and different from the one being passed in</span>
-</span><span data-line="185">        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-</span><span data-line="186">            <span class="s2">&quot;ActiveModel: global session already set with a different session&quot;</span>
-</span><span data-line="187">        <span class="p">)</span>
-</span><span data-line="188">
-</span><span data-line="189">    <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-</span><span data-line="190">    <span class="k">def</span><span class="w"> </span><span class="nf">manage_existing_session</span><span class="p">():</span>
-</span><span data-line="191">        <span class="s2">&quot;if an existing session already exists, use it without triggering another __enter__&quot;</span>
-</span><span data-line="192">        <span class="k">yield</span> <span class="n">session</span>
+</span><span data-line="184">    <span class="c1"># Use provided session or create a new one</span>
+</span><span data-line="185">    <span class="n">session_context</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="186">        <span class="n">manage_existing_session</span><span class="p">()</span>
+</span><span data-line="187">        <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="188">        <span class="k">else</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
+</span><span data-line="189">    <span class="p">)</span>
+</span><span data-line="190">
+</span><span data-line="191">    <span class="k">with</span> <span class="n">session_context</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+</span><span data-line="192">        <span class="n">token</span> <span class="o">=</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </span><span data-line="193">
-</span><span data-line="194">    <span class="c1"># Use provided session or create a new one</span>
-</span><span data-line="195">    <span class="n">session_context</span> <span class="o">=</span> <span class="p">(</span>
-</span><span data-line="196">        <span class="n">manage_existing_session</span><span class="p">()</span>
-</span><span data-line="197">        <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="198">        <span class="k">else</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span>
-</span><span data-line="199">    <span class="p">)</span>
-</span><span data-line="200">
-</span><span data-line="201">    <span class="k">with</span> <span class="n">session_context</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
-</span><span data-line="202">        <span class="n">token</span> <span class="o">=</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-</span><span data-line="203">
-</span><span data-line="204">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="205">            <span class="k">yield</span> <span class="n">s</span>
-</span><span data-line="206">        <span class="k">finally</span><span class="p">:</span>
-</span><span data-line="207">            <span class="n">_session_context</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">token</span><span class="p">)</span></div>
+</span><span data-line="194">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="195">            <span class="k">yield</span> <span class="n">s</span>
+</span><span data-line="196">        <span class="k">finally</span><span class="p">:</span>
+</span><span data-line="197">            <span class="n">_session_context</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">token</span><span class="p">)</span></div>
 
-</span><span data-line="208">
-</span><span data-line="209">
+</span><span data-line="198">
+</span><span data-line="199">
 <div class="viewcode-block" id="aglobal_session">
 <a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.aglobal_session">[docs]</a>
-</span><span data-line="210"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aglobal_session</span><span class="p">():</span>
-</span><span data-line="211"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="212"><span class="sd">    Use this as a fastapi dependency to get a session that is shared across the request:</span>
-</span><span data-line="213">
-</span><span data-line="214"><span class="sd">    &gt;&gt;&gt; APIRouter(</span>
-</span><span data-line="215"><span class="sd">    &gt;&gt;&gt;     prefix=&quot;/internal/v1&quot;,</span>
-</span><span data-line="216"><span class="sd">    &gt;&gt;&gt;     dependencies=[</span>
-</span><span data-line="217"><span class="sd">    &gt;&gt;&gt;         Depends(aglobal_session),</span>
-</span><span data-line="218"><span class="sd">    &gt;&gt;&gt;     ]</span>
-</span><span data-line="219"><span class="sd">    &gt;&gt;&gt; )</span>
-</span><span data-line="220"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="221">
-</span><span data-line="222">    <span class="k">if</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="223">        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;global session already set&quot;</span><span class="p">)</span>
-</span><span data-line="224">
-</span><span data-line="225">    <span class="k">with</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
-</span><span data-line="226">        <span class="n">token</span> <span class="o">=</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-</span><span data-line="227">
-</span><span data-line="228">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="229">            <span class="k">yield</span>
-</span><span data-line="230">        <span class="k">finally</span><span class="p">:</span>
-</span><span data-line="231">            <span class="n">_session_context</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">token</span><span class="p">)</span></div>
+</span><span data-line="200"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aglobal_session</span><span class="p">():</span>
+</span><span data-line="201"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="202"><span class="sd">    Use this as a fastapi dependency to get a session that is shared across the request:</span>
+</span><span data-line="203">
+</span><span data-line="204"><span class="sd">    &gt;&gt;&gt; APIRouter(</span>
+</span><span data-line="205"><span class="sd">    &gt;&gt;&gt;     prefix=&quot;/internal/v1&quot;,</span>
+</span><span data-line="206"><span class="sd">    &gt;&gt;&gt;     dependencies=[</span>
+</span><span data-line="207"><span class="sd">    &gt;&gt;&gt;         Depends(aglobal_session),</span>
+</span><span data-line="208"><span class="sd">    &gt;&gt;&gt;     ]</span>
+</span><span data-line="209"><span class="sd">    &gt;&gt;&gt; )</span>
+</span><span data-line="210"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="211">
+</span><span data-line="212">    <span class="k">if</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="213">        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;global session already set&quot;</span><span class="p">)</span>
+</span><span data-line="214">
+</span><span data-line="215">    <span class="k">with</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+</span><span data-line="216">        <span class="n">token</span> <span class="o">=</span> <span class="n">_session_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span data-line="217">
+</span><span data-line="218">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="219">            <span class="k">yield</span>
+</span><span data-line="220">        <span class="k">finally</span><span class="p">:</span>
+</span><span data-line="221">            <span class="n">_session_context</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">token</span><span class="p">)</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">

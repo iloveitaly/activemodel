@@ -10,14 +10,6 @@ activemodel.session_manager
 
 
 
-Attributes
-----------
-
-.. autoapisummary::
-
-   activemodel.session_manager.ACTIVEMODEL_LOG_SQL
-
-
 Classes
 -------
 
@@ -41,8 +33,6 @@ Functions
 
 Module Contents
 ---------------
-
-.. py:data:: ACTIVEMODEL_LOG_SQL
 
 .. py:class:: SessionManager(database_url: str, *, engine_options: dict[str, Any] | None = None)
 

@@ -3,11 +3,6 @@
 Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it easy to mutate the
 database environment when testing.
 
-## Attributes
-
-| [`ACTIVEMODEL_LOG_SQL`](#activemodel.session_manager.ACTIVEMODEL_LOG_SQL)   |    |
-|-----------------------------------------------------------------------------|----|
-
 ## Classes
 
 | [`SessionManager`](#activemodel.session_manager.SessionManager)   |    |
@@ -24,8 +19,6 @@ database environment when testing.
 | [`aglobal_session`](#activemodel.session_manager.aglobal_session)()               | Use this as a fastapi dependency to get a session that is shared across the request: |
 
 ## Module Contents
-
-### activemodel.session_manager.ACTIVEMODEL_LOG_SQL
 
 ### *class* activemodel.session_manager.SessionManager(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
 

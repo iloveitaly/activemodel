@@ -37,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../alembic.html">Alembic Integration</a></li><li class="link"><a href="../../index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../sql-logging.html">SQL Logging</a></li><li class="link"><a href="../../../alembic.html">Alembic Integration</a></li><li class="link"><a href="../../index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -67,6 +67,7 @@ data-aria-dark="Switch to auto color mode">
       <div class="sy-scrollbar p-6">
         <div class="globaltoc" data-expand-depth="0"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sql-logging.html">SQL Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../alembic.html">Alembic Integration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
@@ -119,11 +120,9 @@ data-aria-dark="Switch to auto color mode">
       <i class="i-lucide close"></i>
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#activemodel.session_manager.ACTIVEMODEL_LOG_SQL"><code class="docutils literal notranslate"><span class="pre">ACTIVEMODEL_LOG_SQL</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.session_manager.SessionManager"><code class="docutils literal notranslate"><span class="pre">SessionManager</span></code></a><ul>
 <li><a class="reference internal" href="#activemodel.session_manager.SessionManager.session_connection"><code class="docutils literal notranslate">session_connection</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.session_manager.SessionManager.get_instance"><code class="docutils literal notranslate">get_instance()</span></code></a></li>
@@ -216,18 +215,6 @@ data-aria-dark="Switch to auto color mode">
 <span id="activemodel-session-manager"></span><h1>activemodel.session_manager<a class="headerlink" href="#module-activemodel.session_manager" title="Link to this heading">¶</a></h1>
 <p>Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it easy to mutate the
 database environment when testing.</p>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.session_manager.ACTIVEMODEL_LOG_SQL" title="activemodel.session_manager.ACTIVEMODEL_LOG_SQL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ACTIVEMODEL_LOG_SQL</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -269,11 +256,6 @@ database environment when testing.</p>
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py data">
-<dt class="sig sig-object py" id="activemodel.session_manager.ACTIVEMODEL_LOG_SQL">
-<span class="sig-prename descclassname"><span class="pre">activemodel.session_manager.</span></span><span class="sig-name descname"><span class="pre">ACTIVEMODEL_LOG_SQL</span></span><a class="reference internal" href="../../../_modules/activemodel/session_manager.html#ACTIVEMODEL_LOG_SQL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.session_manager.ACTIVEMODEL_LOG_SQL" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="activemodel.session_manager.SessionManager">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.session_manager.</span></span><span class="sig-name descname"><span class="pre">SessionManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/session_manager.html#SessionManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.session_manager.SessionManager" title="Link to this definition">¶</a></dt>
