@@ -75,14 +75,18 @@ class SessionManager:
     # TODO why is this type not reimported?
     def get_engine(self) -> Engine:
         if not self._engine:
-            self._engine = create_engine(
-                self._database_url,
+            engine_options = {
                 # NOTE very important! This enables pydantic models to be serialized for JSONB columns
-                json_serializer=_serialize_pydantic_model,
+                "json_serializer": _serialize_pydantic_model,
                 # https://docs.sqlalchemy.org/en/20/core/pooling.html#disconnect-handling-pessimistic
-                pool_pre_ping=True,
+                "pool_pre_ping": True,
                 # some implementations include `future=True` but it's not required anymore
                 **self._engine_options,
+            }
+
+            self._engine = create_engine(
+                self._database_url,
+                **engine_options,
             )
 
         return self._engine
