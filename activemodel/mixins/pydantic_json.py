@@ -22,7 +22,12 @@ import typing
 import types
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import event
-from sqlalchemy.orm import reconstructor, attributes
+from sqlalchemy.orm import attributes
+from ..jsonb_snapshot import (
+    snapshot_pydantic_fields,
+    detect_json_mutations,
+    register_before_commit_listener,
+)
 from ..logger import logger
 
 
@@ -32,11 +37,11 @@ class PydanticJSONMixin:
 
     This mixin is paired with the engine-level JSON serializer so the same field can:
 
-    1. persist Pydantic models as JSON on write
-    2. come back as Pydantic models on load or refresh
+    1. Persist Pydantic models as JSON on write
+    2. Automatically convert raw JSON to Pydantic models on load or refresh
 
     >>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
-    >>>    list_field: list[SubObject] = Field(sa_type=JSONB()
+    >>>    list_field: list[SubObject] = Field(sa_type=JSONB())
 
     Supported field annotations:
 
@@ -67,7 +72,11 @@ class PydanticJSONMixin:
         if getattr(cls, "_pydantic_json_events_registered", False):
             return
 
+        register_before_commit_listener()
+
         # `load` runs once for an ORM-created instance, after the initial column values exist.
+        # `restore_load_context=True` preserves SQLAlchemy's loader context in case the hook
+        # touches unloaded attributes (e.g. lazy relationships) during rehydration.
         event.listen(
             cls,
             "load",
@@ -83,8 +92,6 @@ class PydanticJSONMixin:
             restore_load_context=True,
         )
 
-        # Preserve SQLAlchemy's loader context in case the hook touches unloaded state.
-
         cls._pydantic_json_events_registered = True
 
     @staticmethod
@@ -99,6 +106,11 @@ class PydanticJSONMixin:
         This helper only accepts the narrow annotation shapes the mixin promises to
         support. Unsupported or ambiguous annotations return `(False, None)` so the
         caller leaves the raw JSON value untouched.
+
+        Supported annotations return a tuple of:
+
+        - `is_top_level_list`: whether the field is a list of models vs. a single model
+        - `model_cls`: the concrete model class to rehydrate to (should be pydantic, but we don't check that here)
         """
         origin = get_origin(annotation)
 
@@ -153,11 +165,10 @@ class PydanticJSONMixin:
         partial `session.refresh(..., attribute_names=[...])` calls.
         """
         # SQLAlchemy tells us which attributes were refreshed, so avoid touching unrelated fields.
-        field_names = set(attrs_to_refresh) if attrs_to_refresh else None
-        target.__transform_dict_to_pydantic__(field_names=field_names)
+        jsonb_field_names = set(attrs_to_refresh) if attrs_to_refresh else None
+        target.__transform_dict_to_pydantic__(jsonb_field_names=jsonb_field_names)
 
-    @reconstructor
-    def __transform_dict_to_pydantic__(self, field_names: set[str] | None = None):
+    def __transform_dict_to_pydantic__(self, jsonb_field_names: set[str] | None = None):
         """
         Replace raw JSON payloads on the instance with annotated Pydantic objects.
 
@@ -169,18 +180,20 @@ class PydanticJSONMixin:
         committed state instead of looking like a user mutation.
         """
         # TODO do we need to inspect sa_type
-        model_fields = getattr(type(self), "model_fields")
+        model_fields = self.model_fields
 
         for field_name, field_info in model_fields.items():
-            if field_names is not None and field_name not in field_names:
+            if jsonb_field_names is not None and field_name not in jsonb_field_names:
                 continue
 
+            # pull the "raw" (raw dict) value of the JSONB field
             raw_value = getattr(self, field_name, None)
 
             # if the field is not set on the model, we can avoid doing anything with it
             if raw_value is None:
                 continue
 
+            # i.e. `list[SubModel]` or `list[SubModel] | None`
             is_top_level_list, model_cls = self._resolve_pydantic_field_info(
                 field_info.annotation
             )
@@ -191,12 +204,21 @@ class PydanticJSONMixin:
                 )
                 continue
 
+            if not self._is_pydantic_model_class(model_cls):
+                logger.debug(
+                    f"skipping pydantic json rehydration for non-pydantic annotation on {type(self).__name__}.{field_name}: {model_cls}"
+                )
+                continue
+
             if is_top_level_list:
-                if not isinstance(raw_value, list) or not self._is_pydantic_model_class(
-                    model_cls
-                ):
+                # this is a user bug/issue
+                if not isinstance(raw_value, list):
+                    logger.warning(
+                        f"expected a list for field {type(self).__name__}.{field_name} but got {type(raw_value)}; skipping rehydration"
+                    )
                     continue
 
+                # TODO I'm very skeptical of this logic, we should test more heavily and see if we can remove + simplify it
                 # Preserve already-hydrated items so repeated load/refresh hooks stay idempotent.
                 parsed_value = []
                 needs_update = False
@@ -209,16 +231,29 @@ class PydanticJSONMixin:
                     needs_update = True
                     parsed_value.append(model_cls(**item))
 
+                if not needs_update:
+                    # Reuse the existing list reference for idempotency.
+                    parsed_value = raw_value
+
                 if needs_update:
                     attributes.set_committed_value(self, field_name, parsed_value)
 
                 continue
 
-            if not self._is_pydantic_model_class(model_cls):
-                continue
-
-            if isinstance(raw_value, model_cls):
-                continue
-
             if isinstance(raw_value, dict):
-                attributes.set_committed_value(self, field_name, model_cls(**raw_value))
+                raw_value = model_cls(**raw_value)
+                attributes.set_committed_value(self, field_name, raw_value)
+
+        snapshot_pydantic_fields(self, jsonb_field_names=jsonb_field_names)
+
+    def has_json_mutations(self) -> bool:
+        """Check whether any Pydantic JSON field has been mutated since the last snapshot.
+
+        Eagerly detects mutations by comparing current field values against their
+        serialized snapshots, and calls `flag_modified` for any that changed. Returns
+        True if at least one field was mutated.
+
+        This is an escape hatch for code that needs to know about pending JSON mutations
+        before the automatic `before_flush` detection fires.
+        """
+        return bool(detect_json_mutations(self))
