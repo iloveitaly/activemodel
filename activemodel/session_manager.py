@@ -13,7 +13,12 @@ from pydantic import BaseModel
 from sqlalchemy import Connection, Engine, inspect
 from sqlmodel import Session, SQLModel, create_engine
 
-ACTIVEMODEL_LOG_SQL = os.environ.get("ACTIVEMODEL_LOG_SQL", "").strip().lower() in ("true", "1", "t", "yes")
+ACTIVEMODEL_LOG_SQL = os.environ.get("ACTIVEMODEL_LOG_SQL", "").strip().lower() in (
+    "true",
+    "1",
+    "t",
+    "yes",
+)
 
 
 def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str | None:

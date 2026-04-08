@@ -470,18 +470,32 @@ def test_list_iadd_persists(create_and_wipe_database):
     assert fresh.list_field[-1].name == "iadd"
 
 
-def test_rehydrated_pydantic_preserves_isinstance_and_model_dump(create_and_wipe_database):
+def test_rehydrated_pydantic_preserves_isinstance_and_model_dump(
+    create_and_wipe_database,
+):
     example = _make_example()
 
     assert isinstance(example.object_field, SubObject)
     assert isinstance(example.list_field[0], SubObject)
-    assert example.object_field.model_dump() == {"name": "original", "value": 1, "inner": None}
-    assert example.list_field[0].model_dump() == {"name": "item_0", "value": 0, "inner": None}
+    assert example.object_field.model_dump() == {
+        "name": "original",
+        "value": 1,
+        "inner": None,
+    }
+    assert example.list_field[0].model_dump() == {
+        "name": "item_0",
+        "value": 0,
+        "inner": None,
+    }
 
     fresh = ExampleWithJSONB.one(example.id)
     assert isinstance(fresh.object_field, SubObject)
     assert isinstance(fresh.list_field[0], SubObject)
-    assert fresh.object_field.model_dump() == {"name": "original", "value": 1, "inner": None}
+    assert fresh.object_field.model_dump() == {
+        "name": "original",
+        "value": 1,
+        "inner": None,
+    }
 
 
 def test_mutation_detected_across_save_cycles(create_and_wipe_database):
@@ -558,9 +572,13 @@ def test_detect_json_mutations_returns_field_names(create_and_wipe_database):
 def test_deep_nested_mutation_detected(create_and_wipe_database):
     "mutating a Pydantic model inside a Pydantic model is caught by serialize-and-compare"
     example = ExampleWithJSONB(
-        list_field=[SubObject(name="item", value=1, inner=InnerObject(label="deep", score=1.0))],
+        list_field=[
+            SubObject(name="item", value=1, inner=InnerObject(label="deep", score=1.0))
+        ],
         generic_list_field=[{"k": "v"}],
-        object_field=SubObject(name="obj", value=2, inner=InnerObject(label="nested", score=2.0)),
+        object_field=SubObject(
+            name="obj", value=2, inner=InnerObject(label="nested", score=2.0)
+        ),
         unstructured_field={"k": "v"},
         semi_structured_field={"k": "v"},
         tuple_field=(1.0, 2.0),
@@ -623,5 +641,3 @@ def test_equivalent_reassignment_does_not_produce_spurious_update(
 
     example.save()
     assert not instance_state(example).modified
-
-
