@@ -6,19 +6,11 @@ database environment when testing.
 import contextlib
 import contextvars
 import json
-import os
 import typing as t
 
 from pydantic import BaseModel
 from sqlalchemy import Connection, Engine, inspect
 from sqlmodel import Session, SQLModel, create_engine
-
-ACTIVEMODEL_LOG_SQL = os.environ.get("ACTIVEMODEL_LOG_SQL", "").strip().lower() in (
-    "true",
-    "1",
-    "t",
-    "yes",
-)
 
 
 def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str | None:
@@ -87,8 +79,6 @@ class SessionManager:
                 self._database_url,
                 # NOTE very important! This enables pydantic models to be serialized for JSONB columns
                 json_serializer=_serialize_pydantic_model,
-                echo=ACTIVEMODEL_LOG_SQL,
-                echo_pool=ACTIVEMODEL_LOG_SQL,
                 # https://docs.sqlalchemy.org/en/20/core/pooling.html#disconnect-handling-pessimistic
                 pool_pre_ping=True,
                 # some implementations include `future=True` but it's not required anymore

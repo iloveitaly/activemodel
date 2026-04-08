@@ -35,6 +35,7 @@ Clean, intuitive ActiveRecord-like API designed for rapid development and less b
 :hidden:
 
 Getting Started <getting-started>
+SQL Logging <sql-logging>
 Examples <examples>
 Alembic Integration <alembic>
 API Reference <autoapi/index>
