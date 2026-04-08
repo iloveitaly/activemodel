@@ -13,6 +13,7 @@ Submodules
    /autoapi/activemodel/base_model/index
    /autoapi/activemodel/celery/index
    /autoapi/activemodel/errors/index
+   /autoapi/activemodel/jsonb_snapshot/index
    /autoapi/activemodel/mixins/index
    /autoapi/activemodel/patches/index
    /autoapi/activemodel/pytest/index

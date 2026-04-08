@@ -74,6 +74,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l3"><a class="reference internal" href="../../base_model/index.html">activemodel.base_model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../celery/index.html">activemodel.celery</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../jsonb_snapshot/index.html">activemodel.jsonb_snapshot</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../index.html">activemodel.mixins</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">activemodel.mixins.pydantic_json</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
@@ -123,6 +124,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin"><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code></a><ul>
 <li><a class="reference internal" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.__init_subclass__"><code class="docutils literal notranslate">__init_subclass__()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__"><code class="docutils literal notranslate">__transform_dict_to_pydantic__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations"><code class="docutils literal notranslate">has_json_mutations()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -240,11 +242,11 @@ out of scope instead of being coerced heuristically.</p>
 <dd><p>Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.</p>
 <p>This mixin is paired with the engine-level JSON serializer so the same field can:</p>
 <ol class="arabic simple">
-<li><p>persist Pydantic models as JSON on write</p></li>
-<li><p>come back as Pydantic models on load or refresh</p></li>
+<li><p>Persist Pydantic models as JSON on write</p></li>
+<li><p>Automatically convert raw JSON to Pydantic models on load or refresh</p></li>
 </ol>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">ExampleWithJSON</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span>   <span class="n">list_field</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SubObject</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">()</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span>   <span class="n">list_field</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SubObject</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">())</span>
 </span></pre></div>
 </div>
 <p>Supported field annotations:</p>
@@ -273,13 +275,24 @@ gets the same rehydration behavior automatically.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__">
-<span class="sig-name descname"><span class="pre">__transform_dict_to_pydantic__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.__transform_dict_to_pydantic__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__transform_dict_to_pydantic__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jsonb_field_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.__transform_dict_to_pydantic__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__" title="Link to this definition">¶</a></dt>
 <dd><p>Replace raw JSON payloads on the instance with annotated Pydantic objects.</p>
 <p><cite>&#64;reconstructor</cite> is SQLAlchemy’s class-decorator form of the <cite>load</cite> event, so
 this method runs automatically for the initial ORM load. The dedicated refresh
 listener above reuses the same logic for later reloads of an existing instance.</p>
 <p><cite>set_committed_value</cite> is used so the converted value becomes the instance’s
 committed state instead of looking like a user mutation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations">
+<span class="sig-name descname"><span class="pre">has_json_mutations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.has_json_mutations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations" title="Link to this definition">¶</a></dt>
+<dd><p>Check whether any Pydantic JSON field has been mutated since the last snapshot.</p>
+<p>Eagerly detects mutations by comparing current field values against their
+serialized snapshots, and calls <cite>flag_modified</cite> for any that changed. Returns
+True if at least one field was mutated.</p>
+<p>This is an escape hatch for code that needs to know about pending JSON mutations
+before the automatic <cite>before_flush</cite> detection fires.</p>
 </dd></dl>
 
 </dd></dl>

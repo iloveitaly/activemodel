@@ -31,12 +31,12 @@ Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.
 
 This mixin is paired with the engine-level JSON serializer so the same field can:
 
-1. persist Pydantic models as JSON on write
-2. come back as Pydantic models on load or refresh
+1. Persist Pydantic models as JSON on write
+2. Automatically convert raw JSON to Pydantic models on load or refresh
 
 ```pycon
 >>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
->>>    list_field: list[SubObject] = Field(sa_type=JSONB()
+>>>    list_field: list[SubObject] = Field(sa_type=JSONB())
 ```
 
 Supported field annotations:
@@ -63,7 +63,7 @@ instance, including session.refresh(…) and expired-attribute reloads.
 The listeners are attached once per concrete model class so every mapped subclass
 gets the same rehydration behavior automatically.
 
-#### \_\_transform_dict_to_pydantic_\_(field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+#### \_\_transform_dict_to_pydantic_\_(jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None)
 
 Replace raw JSON payloads on the instance with annotated Pydantic objects.
 
@@ -73,3 +73,14 @@ listener above reuses the same logic for later reloads of an existing instance.
 
 set_committed_value is used so the converted value becomes the instance’s
 committed state instead of looking like a user mutation.
+
+#### has_json_mutations() → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Check whether any Pydantic JSON field has been mutated since the last snapshot.
+
+Eagerly detects mutations by comparing current field values against their
+serialized snapshots, and calls flag_modified for any that changed. Returns
+True if at least one field was mutated.
+
+This is an escape hatch for code that needs to know about pending JSON mutations
+before the automatic before_flush detection fires.

@@ -6,6 +6,7 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
   * [activemodel.base_model](activemodel/base_model/index.md)
   * [activemodel.celery](activemodel/celery/index.md)
   * [activemodel.errors](activemodel/errors/index.md)
+  * [activemodel.jsonb_snapshot](activemodel/jsonb_snapshot/index.md)
   * [activemodel.mixins](activemodel/mixins/index.md)
     * [activemodel.mixins.pydantic_json](activemodel/mixins/pydantic_json/index.md)
     * [activemodel.mixins.soft_delete](activemodel/mixins/soft_delete/index.md)

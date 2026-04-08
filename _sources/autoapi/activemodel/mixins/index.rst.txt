@@ -43,11 +43,11 @@ Package Contents
 
    This mixin is paired with the engine-level JSON serializer so the same field can:
 
-   1. persist Pydantic models as JSON on write
-   2. come back as Pydantic models on load or refresh
+   1. Persist Pydantic models as JSON on write
+   2. Automatically convert raw JSON to Pydantic models on load or refresh
 
    >>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
-   >>>    list_field: list[SubObject] = Field(sa_type=JSONB()
+   >>>    list_field: list[SubObject] = Field(sa_type=JSONB())
 
    Supported field annotations:
 
@@ -78,7 +78,7 @@ Package Contents
 
 
 
-   .. py:method:: __transform_dict_to_pydantic__(field_names: set[str] | None = None)
+   .. py:method:: __transform_dict_to_pydantic__(jsonb_field_names: set[str] | None = None)
 
       Replace raw JSON payloads on the instance with annotated Pydantic objects.
 
@@ -88,6 +88,19 @@ Package Contents
 
       `set_committed_value` is used so the converted value becomes the instance's
       committed state instead of looking like a user mutation.
+
+
+
+   .. py:method:: has_json_mutations() -> bool
+
+      Check whether any Pydantic JSON field has been mutated since the last snapshot.
+
+      Eagerly detects mutations by comparing current field values against their
+      serialized snapshots, and calls `flag_modified` for any that changed. Returns
+      True if at least one field was mutated.
+
+      This is an escape hatch for code that needs to know about pending JSON mutations
+      before the automatic `before_flush` detection fires.
 
 
 

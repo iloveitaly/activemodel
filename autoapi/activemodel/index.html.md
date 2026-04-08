@@ -5,6 +5,7 @@
 * [activemodel.base_model](base_model/index.md)
 * [activemodel.celery](celery/index.md)
 * [activemodel.errors](errors/index.md)
+* [activemodel.jsonb_snapshot](jsonb_snapshot/index.md)
 * [activemodel.mixins](mixins/index.md)
 * [activemodel.patches](patches/index.md)
 * [activemodel.pytest](pytest/index.md)
