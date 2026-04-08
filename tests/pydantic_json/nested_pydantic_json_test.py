@@ -233,7 +233,7 @@ def test_json_object_update(create_and_wipe_database):
     # saving serializes the pydantic model and reloads it, which must not mark the object as dirty!
     assert not instance_state(example).modified
 
-    # modify nested objects -- auto-detected before flush, no flag_modified needed
+    # modify nested objects -- auto-detected before flush with no manual dirty-marking
     example.list_field[0].name = "updated"
     example.object_field.value = 42
     example.save()
@@ -271,7 +271,7 @@ def test_refresh_discards_unflushed_nested_json_mutation(create_and_wipe_databas
     assert example.list_field[0].name == "test"
 
 
-def test_refresh_discards_flagged_but_unflushed_nested_json_mutation(
+def test_refresh_discards_unflushed_nested_json_mutation_after_in_place_edit(
     create_and_wipe_database,
 ):
     sub_object = SubObject(name="test", value=1)
@@ -514,7 +514,7 @@ def test_mutation_detected_across_save_cycles(create_and_wipe_database):
     assert fresh.object_field.value == 20
 
 
-def test_replace_entire_field_persists_without_flag_modified(create_and_wipe_database):
+def test_replace_entire_field_persists_via_assignment_tracking(create_and_wipe_database):
     "replacing a JSONB field outright goes through SQLAlchemy instrumentation, not our tracking"
     example = _make_example()
 
