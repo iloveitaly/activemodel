@@ -2,6 +2,7 @@ import pytest
 from sqlmodel import SQLModel
 
 from activemodel.session_manager import (
+    SessionManager,
     get_engine,
     get_session,
     global_session,
@@ -143,3 +144,15 @@ def test_table_exists_after_dropping_table(create_and_wipe_database):
 
     # Recreate for cleanup
     ExampleRecord.metadata.create_all(get_engine())
+
+
+def test_session_manager_passes_engine_options_to_create_engine():
+    manager = SessionManager(
+        "sqlite://",
+        engine_options={"pool_pre_ping": False, "hide_parameters": True},
+    )
+
+    engine = manager.get_engine()
+
+    assert engine.pool._pre_ping is False
+    assert engine.hide_parameters is True
