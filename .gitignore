@@ -142,6 +142,7 @@ tmp/
 /.claude/commands/standalone-python-scripts.md
 /.claude/commands/write-or-update-readme.md
 /.claude/rules/general.md
+/.claude/rules/python-package.md
 /.claude/rules/python.md
 /.cursor/commands/standalone-python-scripts.md
 /.cursor/commands/write-or-update-readme.md
