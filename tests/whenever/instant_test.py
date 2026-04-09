@@ -21,7 +21,11 @@ def test_instant_round_trip(create_and_wipe_database):
 
 def test_instant_pydantic_serialization():
     now = Instant.now()
-    schema = WheneverSchema(instant=now, zoned_datetime="2024-01-15T12:00:00+00:00[UTC]")
+    schema = WheneverSchema(
+        instant=now,
+        plain_datetime="2024-01-15T12:00:00",
+        zoned_datetime="2024-01-15T12:00:00+00:00[UTC]",
+    )
     assert schema.instant == now
 
     json_str = schema.model_dump_json()
@@ -32,7 +36,11 @@ def test_instant_pydantic_serialization():
 def test_instant_pydantic_from_string():
     iso = "2024-01-15T12:00:00Z"
     schema = WheneverSchema.model_validate(
-        {"instant": iso, "zoned_datetime": "2024-01-15T12:00:00+00:00[UTC]"}
+        {
+            "instant": iso,
+            "plain_datetime": "2024-01-15T12:00:00",
+            "zoned_datetime": "2024-01-15T12:00:00+00:00[UTC]",
+        }
     )
     assert isinstance(schema.instant, Instant)
     assert schema.instant == Instant.parse_iso(iso)
@@ -73,5 +81,6 @@ def test_nullable_fields(create_and_wipe_database):
 
     fetched = WheneverModel.get(record.id)
     assert fetched is not None
+    assert fetched.plain_datetime is None
     assert fetched.triggered_at is None
     assert fetched.scheduled_at is None

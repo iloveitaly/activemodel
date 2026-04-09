@@ -19,7 +19,11 @@ def test_zoned_datetime_round_trip(create_and_wipe_database):
 
 def test_zoned_datetime_pydantic_serialization():
     now = ZonedDateTime.now("Europe/Amsterdam")
-    schema = WheneverSchema(instant="2024-01-15T12:00:00Z", zoned_datetime=now)
+    schema = WheneverSchema(
+        instant="2024-01-15T12:00:00Z",
+        plain_datetime="2024-01-15T12:00:00",
+        zoned_datetime=now,
+    )
     assert schema.zoned_datetime == now
 
     json_str = schema.model_dump_json()
