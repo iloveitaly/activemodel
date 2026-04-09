@@ -2,6 +2,8 @@ import json
 import typing as t
 import textcase
 from uuid import UUID
+
+import uuid_utils
 from contextlib import nullcontext
 
 import sqlalchemy as sa
@@ -458,7 +460,7 @@ class BaseModel(SQLModel):
         id_field_name = "id"
 
         # special case for getting by ID
-        if len(args) == 1 and isinstance(args[0], (int, TypeID, str, UUID)):
+        if len(args) == 1 and isinstance(args[0], (int, TypeID, str, UUID, uuid_utils.UUID)):
             kwargs[id_field_name] = args[0]
             args = ()
 
@@ -505,7 +507,7 @@ class BaseModel(SQLModel):
 
         # special case for getting by ID without having to specify the field name
         # TODO should dynamically add new pk types based on column definition
-        if len(args) == 1 and isinstance(args[0], (int, TypeID, str, UUID)):
+        if len(args) == 1 and isinstance(args[0], (int, TypeID, str, UUID, uuid_utils.UUID)):
             kwargs[id_field_name] = args[0]
             args = ()
 
