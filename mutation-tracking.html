@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Automatic JSONB Mutation Tracking - activemodel documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SQL Logging" href="sql-logging.html" /><link rel="prev" title="ActiveModel: ORM Wrapper for SQLModel" href="getting-started.html" />
+      <link rel="canonical" href="https://iloveitaly.github.io/activemodel/mutation-tracking.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://iloveitaly.github.io/activemodel/mutation-tracking.html"/>
+  <meta property="og:title" content="Automatic JSONB Mutation Tracking"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      <img class="light-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="getting-started.html">Getting Started</a></li><li class="link"><a href="sql-logging.html">SQL Logging</a></li><li class="link"><a href="alembic.html">Alembic Integration</a></li><li class="link"><a href="autoapi/index.html">API Reference</a></li><li class="link"><a href="changelog.html">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mutation Tracking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sql-logging.html">SQL Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alembic.html">Alembic Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/activemodel/index.html">activemodel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/base_model/index.html">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/jsonb_snapshot/index.html">activemodel.jsonb_snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/mixins/index.html">activemodel.mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/factories/index.html">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/transaction/index.html">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#what-is-tracked">What Is Tracked</a></li>
+<li><a class="reference internal" href="#how-it-works">How It Works</a></li>
+<li><a class="reference internal" href="#pydantic-example">Pydantic Example</a></li>
+<li><a class="reference internal" href="#raw-dict-example">Raw Dict Example</a></li>
+<li><a class="reference internal" href="#list-of-dicts-example">List Of Dicts Example</a></li>
+<li><a class="reference internal" href="#scope-limits">Scope Limits</a></li>
+<li><a class="reference internal" href="#key-api-references">Key API References</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Automatic JSONB Mutation Tracking</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <div class="copy-page-wrapper relative pb-4 lg:absolute lg:top-8 lg:right-6 xl:right-12">
+  <div id="copy-page-trigger">
+    <button
+      type="button"
+      class="js-copy px-3 py-1 inline-flex items-center gap-1"
+      data-url="https://iloveitaly.github.io/activemodel/_sources/mutation-tracking.md.txt"
+    >
+      <i class="i-lucide" data-icon="copy"></i>
+      <span>Copy page</span>
+    </button>
+    <button class="js-menu px-2 py-1" type="button" aria-label="More actions"
+      aria-haspopup="menu" aria-expanded="false" aria-controls="copy-page-content">
+      <i class="i-lucide chevron-down"></i>
+    </button>
+  </div>
+  <div id="copy-page-content" role="menu" aria-orientation="vertical" aria-hidden="true">
+    <div role="presentation">
+      <div class="flex flex-col" role="group">
+        <button class="js-copy" type="button" role="menuitem"
+          data-url="https://iloveitaly.github.io/activemodel/_sources/mutation-tracking.md.txt">
+          <span class="iconify-icon">
+            <i class="i-lucide" data-icon="copy"></i>
+          </span>
+          <span>Copy page</span>
+        </button>
+        <a role="menuitem" href="https://iloveitaly.github.io/activemodel/_sources/mutation-tracking.md.txt" target="_blank" rel="nofollow"><iconify-icon icon="bi:markdown"></iconify-icon>
+            <span>View as Markdown</span></a><a role="menuitem" href="https://chatgpt.com/?hints=search&q=Read%20https%3A//iloveitaly.github.io/activemodel/_sources/mutation-tracking.md.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:openai"></iconify-icon>
+          <span>Open in ChatGPT</span>
+        </a><a role="menuitem" href="https://claude.ai/new?q=Read%20https%3A//iloveitaly.github.io/activemodel/_sources/mutation-tracking.md.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:claude"></iconify-icon>
+          <span>Open in Claude</span>
+        </a></div>
+    </div>
+  </div>
+</div><article class="yue" role="main">
+          <section id="automatic-jsonb-mutation-tracking">
+<h1>Automatic JSONB Mutation Tracking<a class="headerlink" href="#automatic-jsonb-mutation-tracking" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> uses a serialize-and-compare strategy to detect in-place JSON mutations.</p>
+<p>After SQLAlchemy loads or refreshes a model instance, each tracked JSON field is serialized
+to a canonical JSON string and stored as a snapshot. Right before commit, the current value
+is serialized again and compared against that snapshot. If the serialized values differ,
+<code class="docutils literal notranslate"><span class="pre">activemodel</span></code> calls SQLAlchemy’s <code class="docutils literal notranslate"><span class="pre">flag_modified(...)</span></code> so the column is included in the
+<code class="docutils literal notranslate"><span class="pre">UPDATE</span></code>.</p>
+<p>This gives you ActiveRecord-style dirty tracking for complex JSON objects (either plain old py objects or Pydantic objects) without having to remember <code class="docutils literal notranslate"><span class="pre">flag_modified()</span></code> every time you mutate a nested attribute.</p>
+<section id="what-is-tracked">
+<h2>What Is Tracked<a class="headerlink" href="#what-is-tracked" title="Link to this heading">¶</a></h2>
+<p>The tracking layer currently covers:</p>
+<ul class="simple">
+<li><p>Pydantic-backed JSON fields such as <code class="docutils literal notranslate"><span class="pre">SubModel</span></code>, <code class="docutils literal notranslate"><span class="pre">SubModel</span> <span class="pre">|</span> <span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">list[SubModel]</span></code>, and <code class="docutils literal notranslate"><span class="pre">list[SubModel]</span> <span class="pre">|</span> <span class="pre">None</span></code></p></li>
+<li><p>raw <code class="docutils literal notranslate"><span class="pre">dict</span></code> fields</p></li>
+<li><p>typed <code class="docutils literal notranslate"><span class="pre">dict[...]</span></code> fields</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list[dict]</span></code> fields</p></li>
+</ul>
+<p>Rehydration is narrower than mutation tracking.</p>
+<p><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code> only rehydrates supported Pydantic annotations back into model objects on
+load and refresh. Raw <code class="docutils literal notranslate"><span class="pre">dict</span></code> and <code class="docutils literal notranslate"><span class="pre">list[dict]</span></code> values stay as plain Python containers, but they
+still participate in snapshot-based mutation tracking.</p>
+</section>
+<section id="how-it-works">
+<h2>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>a row is loaded or refreshed</p></li>
+<li><p>supported Pydantic fields are rehydrated back into Pydantic objects</p></li>
+<li><p>each tracked JSON field is serialized into a stable JSON string snapshot</p></li>
+<li><p>before commit, the current value is serialized again</p></li>
+<li><p>if the serialized value changed, the field is marked dirty with <code class="docutils literal notranslate"><span class="pre">flag_modified(...)</span></code></p></li>
+</ol>
+<p>This is why in-place changes like <code class="docutils literal notranslate"><span class="pre">model.profile.name</span> <span class="pre">=</span> <span class="pre">&quot;updated&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">model.settings[&quot;theme&quot;]</span> <span class="pre">=</span> <span class="pre">&quot;dark&quot;</span></code> can persist even though SQLAlchemy would not normally see
+those nested mutations.</p>
+</section>
+<section id="pydantic-example">
+<h2>Pydantic Example<a class="headerlink" href="#pydantic-example" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="7">
+</span><span data-line="8">
+</span><span data-line="9"><span class="k">class</span><span class="w"> </span><span class="nc">AuditEntry</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
+</span><span data-line="10">    <span class="n">actor</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="11">    <span class="n">action</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="12">
+</span><span data-line="13">
+</span><span data-line="14"><span class="k">class</span><span class="w"> </span><span class="nc">UserRecord</span><span class="p">(</span>
+</span><span data-line="15">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="16">    <span class="n">PydanticJSONMixin</span><span class="p">,</span>
+</span><span data-line="17">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;usr&quot;</span><span class="p">),</span>
+</span><span data-line="18">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="19"><span class="p">):</span>
+</span><span data-line="20">    <span class="n">profile</span><span class="p">:</span> <span class="n">AuditEntry</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
+</span><span data-line="21">
+</span><span data-line="22">
+</span><span data-line="23"><span class="n">record</span> <span class="o">=</span> <span class="n">UserRecord</span><span class="o">.</span><span class="n">one</span><span class="p">(</span><span class="s2">&quot;usr_123&quot;</span><span class="p">)</span>
+</span><span data-line="24"><span class="n">record</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;updated&quot;</span>
+</span><span data-line="25"><span class="n">record</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>The nested attribute mutation is detected automatically on commit.</p>
+</section>
+<section id="raw-dict-example">
+<h2>Raw Dict Example<a class="headerlink" href="#raw-dict-example" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="6">
+</span><span data-line="7">
+</span><span data-line="8"><span class="k">class</span><span class="w"> </span><span class="nc">FeatureFlags</span><span class="p">(</span>
+</span><span data-line="9">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="10">    <span class="n">PydanticJSONMixin</span><span class="p">,</span>
+</span><span data-line="11">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;flag&quot;</span><span class="p">),</span>
+</span><span data-line="12">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="13"><span class="p">):</span>
+</span><span data-line="14">    <span class="n">settings</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
+</span><span data-line="15">
+</span><span data-line="16">
+</span><span data-line="17"><span class="n">record</span> <span class="o">=</span> <span class="n">FeatureFlags</span><span class="o">.</span><span class="n">one</span><span class="p">(</span><span class="s2">&quot;flag_123&quot;</span><span class="p">)</span>
+</span><span data-line="18"><span class="n">record</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s2">&quot;theme&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dark&quot;</span>
+</span><span data-line="19"><span class="n">record</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">settings</span></code> stays a plain <code class="docutils literal notranslate"><span class="pre">dict</span></code>, but the in-place key mutation is still detected and persisted.</p>
+</section>
+<section id="list-of-dicts-example">
+<h2>List Of Dicts Example<a class="headerlink" href="#list-of-dicts-example" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="6">
+</span><span data-line="7">
+</span><span data-line="8"><span class="k">class</span><span class="w"> </span><span class="nc">WebhookLog</span><span class="p">(</span>
+</span><span data-line="9">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="10">    <span class="n">PydanticJSONMixin</span><span class="p">,</span>
+</span><span data-line="11">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;wh&quot;</span><span class="p">),</span>
+</span><span data-line="12">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="13"><span class="p">):</span>
+</span><span data-line="14">    <span class="n">deliveries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
+</span><span data-line="15">
+</span><span data-line="16">
+</span><span data-line="17"><span class="n">log</span> <span class="o">=</span> <span class="n">WebhookLog</span><span class="o">.</span><span class="n">one</span><span class="p">(</span><span class="s2">&quot;wh_123&quot;</span><span class="p">)</span>
+</span><span data-line="18"><span class="n">log</span><span class="o">.</span><span class="n">deliveries</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">,</span> <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;stripe&quot;</span><span class="p">})</span>
+</span><span data-line="19"><span class="n">log</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>Top-level <code class="docutils literal notranslate"><span class="pre">list[dict]</span></code> payloads are tracked, including list mutation methods and nested dict
+item updates.</p>
+</section>
+<section id="scope-limits">
+<h2>Scope Limits<a class="headerlink" href="#scope-limits" title="Link to this heading">¶</a></h2>
+<p>The current implementation intentionally does not try to support every possible JSON type shape.</p>
+<p>Notably out of scope:</p>
+<ul class="simple">
+<li><p>ambiguous unions such as <code class="docutils literal notranslate"><span class="pre">SubModel</span> <span class="pre">|</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span></code></p></li>
+<li><p>tuple-shaped JSON payloads</p></li>
+<li><p>nested list shapes such as <code class="docutils literal notranslate"><span class="pre">list[list[SubModel]]</span></code></p></li>
+</ul>
+<p>Those constraints keep rehydration rules predictable and avoid heuristic coercion.</p>
+</section>
+<section id="key-api-references">
+<h2>Key API References<a class="headerlink" href="#key-api-references" title="Link to this heading">¶</a></h2>
+<p>The best entry points are the methods and functions that explain the behavior directly in their
+docstrings:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="autoapi/activemodel/jsonb_snapshot/index.html#activemodel.jsonb_snapshot.snapshot_json_fields" title="activemodel.jsonb_snapshot.snapshot_json_fields"><code class="xref py py-func docutils literal notranslate"><span class="pre">activemodel.jsonb_snapshot.snapshot_json_fields()</span></code></a></p></li>
+<li><p><a class="reference internal" href="autoapi/activemodel/jsonb_snapshot/index.html#activemodel.jsonb_snapshot.detect_json_mutations" title="activemodel.jsonb_snapshot.detect_json_mutations"><code class="xref py py-func docutils literal notranslate"><span class="pre">activemodel.jsonb_snapshot.detect_json_mutations()</span></code></a></p></li>
+<li><p><a class="reference internal" href="autoapi/activemodel/jsonb_snapshot/index.html#activemodel.jsonb_snapshot.register_before_commit_listener" title="activemodel.jsonb_snapshot.register_before_commit_listener"><code class="xref py py-func docutils literal notranslate"><span class="pre">activemodel.jsonb_snapshot.register_before_commit_listener()</span></code></a></p></li>
+<li><p><a class="reference internal" href="autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__" title="activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__()</span></code></a></p></li>
+<li><p><a class="reference internal" href="autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations" title="activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations"><code class="xref py py-meth docutils literal notranslate"><span class="pre">activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations()</span></code></a></p></li>
+</ul>
+<p>If you want the exact implementation details, the module-level docs in
+<a class="reference internal" href="autoapi/activemodel/jsonb_snapshot/index.html#module-activemodel.jsonb_snapshot" title="activemodel.jsonb_snapshot"><code class="xref py py-mod docutils literal notranslate"><span class="pre">activemodel.jsonb_snapshot</span></code></a> and <a class="reference internal" href="autoapi/activemodel/mixins/pydantic_json/index.html#module-activemodel.mixins.pydantic_json" title="activemodel.mixins.pydantic_json"><code class="xref py py-mod docutils literal notranslate"><span class="pre">activemodel.mixins.pydantic_json</span></code></a> are the
+most direct place to read next.</p>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="getting-started.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">ActiveModel: ORM Wrapper for SQLModel</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="sql-logging.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">SQL Logging</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/design-tabs.js?v=f930bc37"></script>
+      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+</html>

@@ -303,346 +303,80 @@ configure activemodel to connect to a specific database
 
 # index.html.md
 
-# activemodel.jsonb_snapshot
-
-Serialize-and-compare snapshot tracking for JSON-backed fields.
-
-After each ORM load/refresh, each tracked JSON field is serialized to a canonical JSON
-string and stored as a snapshot. Before commit, the current value is re-serialized and
-compared; if the strings differ, flag_modified is called so SQLAlchemy includes the
-column in the UPDATE.
-
-This mirrors how Rails’ ActiveRecord handles JSON column dirty-tracking: compare the
-serialized form of the current value against the serialized form of the original, rather
-than intercepting every mutation with proxy objects.
-
-## Functions
-
-| [`snapshot_json_fields`](#activemodel.jsonb_snapshot.snapshot_json_fields)(→ None)                       | Store a serialized snapshot of each tracked JSON field on the instance.           |
-|----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
-| [`detect_json_mutations`](#activemodel.jsonb_snapshot.detect_json_mutations)(→ list[str])                | Compare current field values against snapshots, flagging any that changed.        |
-| [`register_before_commit_listener`](#activemodel.jsonb_snapshot.register_before_commit_listener)(→ None) | Register a session-level before_commit handler to detect in-place JSON mutations. |
-
-## Module Contents
-
-### activemodel.jsonb_snapshot.snapshot_json_fields(instance, jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [None](https://docs.python.org/3/library/constants.html#None)
-
-Store a serialized snapshot of each tracked JSON field on the instance.
-
-Called after rehydration so the snapshot reflects the committed database state.
-When jsonb_field_names is provided (partial refresh), only those fields are
-re-snapshotted; existing snapshots for other fields are preserved.
-
-### activemodel.jsonb_snapshot.detect_json_mutations(instance) → [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
-
-Compare current field values against snapshots, flagging any that changed.
-
-Returns a list of field names that were mutated since the last snapshot.
-Side effect: calls flag_modified on the SQLAlchemy instance for each changed field.
-
-### activemodel.jsonb_snapshot.register_before_commit_listener() → [None](https://docs.python.org/3/library/constants.html#None)
-
-Register a session-level before_commit handler to detect in-place JSON mutations.
-
-Uses before_commit (not before_flush) because SQLAlchemy skips the flush entirely
-when it sees no pending changes – meaning before_flush never fires for in-place
-mutations that haven’t been explicitly flagged. before_commit fires unconditionally,
-giving us the chance to call flag_modified before the flush decision is made.
-
-Safe to call multiple times – the listener is only registered once.
-
-
-# index.html.md
-
-# activemodel.mixins
-
-## Submodules
-
-* [activemodel.mixins.pydantic_json](pydantic_json/index.md)
-* [activemodel.mixins.soft_delete](soft_delete/index.md)
-* [activemodel.mixins.timestamps](timestamps/index.md)
-* [activemodel.mixins.typeid](typeid/index.md)
+# activemodel.query_wrapper
 
 ## Classes
 
-| [`PydanticJSONMixin`](#activemodel.mixins.PydanticJSONMixin)   | Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.   |
-|----------------------------------------------------------------|------------------------------------------------------------------------------------|
-| [`SoftDeletionMixin`](#activemodel.mixins.SoftDeletionMixin)   | Soft delete records by setting deleted_at instead of removing the row.             |
-| [`TimestampsMixin`](#activemodel.mixins.TimestampsMixin)       | Simple created at and updated at timestamps. Mix them into your model:             |
+| [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries on a model.   |
+|-------------------------------------------------------------|-------------------------------------------|
 
-## Functions
+## Module Contents
 
-| [`TypeIDMixin`](#activemodel.mixins.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
-|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+### *class* activemodel.query_wrapper.QueryWrapper(cls: [type](https://docs.python.org/3/library/functions.html#type)[TModel], \*args: Any)
 
-## Package Contents
+Bases: [`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`](../types/sqlalchemy_protocol/index.md#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)[`TModel`]
 
-### *class* activemodel.mixins.PydanticJSONMixin
+Make it easy to run queries on a model.
 
-Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.
+#### target *: sqlmodel.sql.expression.SelectOfScalar[TModel]*
 
-This mixin is paired with the engine-level JSON serializer so the same field can:
+#### first()
 
-1. Persist Pydantic models as JSON on write
-2. Automatically convert raw JSON to Pydantic models on load or refresh
+#### last()
+
+#### one()
+
+requires exactly one result in the dataset
+
+#### all()
+
+#### count()
+
+I did some basic tests
+
+#### scalar()
 
 ```pycon
->>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
->>>    list_field: list[SubObject] = Field(sa_type=JSONB())
+>>>
 ```
 
-Supported field annotations:
+#### exec()
 
-- SubModel
-- SubModel | None
-- list[SubModel]
-- list[SubModel] | None
+#### delete()
 
-These are the supported rehydration shapes. Raw dict and list[dict] fields
-stay as plain Python containers, but snapshot tracking can still detect mutations
-on them.
+#### exists() → [bool](https://docs.python.org/3/library/functions.html#bool)
 
-Not supported:
+Return True if the current query yields at least one row.
 
-- tuples of Pydantic models
-- nested lists such as list[list[SubModel]]
-- ambiguous unions with multiple non-None JSON shapes
+Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
+the current target for efficiency. Keeps the original target intact.
 
-#### *classmethod* \_\_init_subclass_\_(\*\*kwargs)
+SQLAlchemy exists works differently and does not return a simple boolean.
 
-Register per-model SQLAlchemy instance events when a mapped subclass is declared.
+#### \_\_getattr_\_(name)
 
-load fires after SQLAlchemy first constructs an instance from query results.
-refresh fires after SQLAlchemy reloads one or more attributes on an existing
-instance, including session.refresh(…) and expired-attribute reloads.
+This implements the magic that forwards function calls to sqlalchemy.
 
-The listeners are attached once per concrete model class so every mapped subclass
-gets the same rehydration behavior automatically.
+#### sql()
 
-#### \_\_transform_dict_to_pydantic_\_(jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+Output the raw SQL of the query for debugging
 
-Replace raw JSON payloads on the instance with annotated Pydantic objects.
+#### sample() → TModel | [None](https://docs.python.org/3/library/constants.html#None)
 
-@reconstructor is SQLAlchemy’s class-decorator form of the load event, so
-this method runs automatically for the initial ORM load. The dedicated refresh
-listener above reuses the same logic for later reloads of an existing instance.
+#### sample(n: [int](https://docs.python.org/3/library/functions.html#int)) → [list](https://docs.python.org/3/library/stdtypes.html#list)[TModel]
 
-set_committed_value is used so the converted value becomes the instance’s
-committed state instead of looking like a user mutation.
-
-#### has_json_mutations() → [bool](https://docs.python.org/3/library/functions.html#bool)
-
-Check whether any Pydantic JSON field has been mutated since the last snapshot.
-
-Eagerly detects mutations by comparing current field values against their
-serialized snapshots, and calls flag_modified for any that changed. Returns
-True if at least one field was mutated.
-
-This is an escape hatch for code that needs to know about pending JSON mutations
-before the automatic before_flush detection fires.
-
-### *class* activemodel.mixins.SoftDeletionMixin
-
-Soft delete records by setting deleted_at instead of removing the row.
-
-Call soft_delete() to timestamp the record and persist that change.
-
-#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
-
-#### soft_delete() → [T](../pytest/truncate/index.md#activemodel.pytest.truncate.T)
-
-Timestamp deleted_at and persist the record.
-
-### *class* activemodel.mixins.TimestampsMixin
-
-Simple created at and updated at timestamps. Mix them into your model:
-
-```pycon
->>> class MyModel(TimestampsMixin, SQLModel):
->>>    pass
-```
-
-Notes:
-
-- Originally pulled from: [https://github.com/tiangolo/sqlmodel/issues/252](https://github.com/tiangolo/sqlmodel/issues/252)
-- Related issue: [https://github.com/fastapi/sqlmodel/issues/539](https://github.com/fastapi/sqlmodel/issues/539)
-
-#### created_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
-
-#### updated_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
-
-### activemodel.mixins.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
-
-Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
-
-
-# index.html.md
-
-# activemodel.patches
-
-## Submodules
-
-* [activemodel.patches.get_column_from_field_patch](get_column_from_field_patch/index.md)
-
-
-# index.html.md
-
-# activemodel.errors
-
-## Exceptions
-
-| [`TypeIDValidationError`](#activemodel.errors.TypeIDValidationError)   | Raised when a TypeID is invalid in some way   |
-|------------------------------------------------------------------------|-----------------------------------------------|
-
-## Module Contents
-
-### *exception* activemodel.errors.TypeIDValidationError
-
-Bases: [`ValueError`](https://docs.python.org/3/library/exceptions.html#ValueError)
-
-Raised when a TypeID is invalid in some way
-
-
-# index.html.md
-
-# activemodel.celery
-
-Do not import unless you have Celery/Kombu installed.
-
-In order for TypeID objects to be properly handled by celery, a custom encoder must be registered.
-
-## Functions
-
-| [`register_celery_typeid_encoder`](#activemodel.celery.register_celery_typeid_encoder)()   | Ensures TypeID objects passed as arguments to a delayed function are properly serialized.   |
-|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
-
-## Module Contents
-
-### activemodel.celery.register_celery_typeid_encoder()
-
-Ensures TypeID objects passed as arguments to a delayed function are properly serialized.
-
-Run at the top of your celery initialization script.
-
-
-# index.html.md
-
-# activemodel.utils
-
-## Functions
-
-| [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries   |
-|---------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| [`raw_sql_exec`](#activemodel.utils.raw_sql_exec)(raw_query)        |                                                                               |
-| [`hash_function_code`](#activemodel.utils.hash_function_code)(func) | get sha of a function to easily assert that it hasn't changed                 |
-| [`is_database_empty`](#activemodel.utils.is_database_empty)(→ bool) | Check if any table in the database has records using Model.count().           |
-
-## Module Contents
-
-### activemodel.utils.compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) → [str](https://docs.python.org/3/library/stdtypes.html#str)
-
-convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
-
-### activemodel.utils.raw_sql_exec(raw_query: [str](https://docs.python.org/3/library/stdtypes.html#str))
-
-### activemodel.utils.hash_function_code(func)
-
-get sha of a function to easily assert that it hasn’t changed
-
-### activemodel.utils.is_database_empty(exclude: [list](https://docs.python.org/3/library/stdtypes.html#list)[[type](https://docs.python.org/3/library/functions.html#type)] = []) → [bool](https://docs.python.org/3/library/functions.html#bool)
-
-Check if any table in the database has records using Model.count().
-
-Useful for detecting an empty database state to run operations such as seeding, etc.
-
-
-# index.html.md
-
-# activemodel.session_manager
-
-Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it easy to mutate the
-database environment when testing.
-
-## Classes
-
-| [`SessionManager`](#activemodel.session_manager.SessionManager)   |    |
-|-------------------------------------------------------------------|----|
-
-## Functions
-
-| [`init`](#activemodel.session_manager.init)(database_url, \*[, engine_options])   | configure activemodel to connect to a specific database                              |
-|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| [`table_exists`](#activemodel.session_manager.table_exists)(→ bool)               | Check if the table for the given model exists in the database.                       |
-| [`get_engine`](#activemodel.session_manager.get_engine)()                         | alias to get the database engine without importing SessionManager                    |
-| [`get_session`](#activemodel.session_manager.get_session)()                       | alias to get a database session without importing SessionManager                     |
-| [`global_session`](#activemodel.session_manager.global_session)([session])        | Generate a session and share it across all activemodel calls.                        |
-| [`aglobal_session`](#activemodel.session_manager.aglobal_session)()               | Use this as a fastapi dependency to get a session that is shared across the request: |
-
-## Module Contents
-
-### *class* activemodel.session_manager.SessionManager(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
-
-#### session_connection *: sqlalchemy.Connection | [None](https://docs.python.org/3/library/constants.html#None)*
-
-optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations
-
-#### *classmethod* get_instance(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None) = None, , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [SessionManager](#activemodel.session_manager.SessionManager)
-
-#### get_engine() → sqlalchemy.Engine
-
-#### get_session()
-
-get a new database session, respecting any globally set sessions
-
-### activemodel.session_manager.init(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
-
-configure activemodel to connect to a specific database
-
-### activemodel.session_manager.table_exists(model: [type](https://docs.python.org/3/library/functions.html#type)[sqlmodel.SQLModel]) → [bool](https://docs.python.org/3/library/functions.html#bool)
-
-Check if the table for the given model exists in the database.
-
-### activemodel.session_manager.get_engine()
-
-alias to get the database engine without importing SessionManager
-
-### activemodel.session_manager.get_session()
-
-alias to get a database session without importing SessionManager
-
-### activemodel.session_manager.global_session(session: sqlmodel.Session | [None](https://docs.python.org/3/library/constants.html#None) = None)
-
-Generate a session and share it across all activemodel calls.
-
-Alternatively, you can pass a session to use globally into the context manager, which is helpful for migrations
-and testing.
-
-This may only be called a single time per callstack. There is one exception: if you call this multiple times
-and pass in the same session reference, it will result in a noop.
-
-In complex testing code, you’ll need to be careful here. For example:
-
-- Unit test using a transaction db fixture (which sets \_\_sqlalchemy_session_\_)
-- Factory has a after_save hook
-- That hook triggers a celery job
-- The celery job (properly) calls with global_session()
-- However, since global_session() is already set with \_\_sqlalchemy_session_\_, this will raise an error
+Return a random sample of rows from the current query.
 
 * **Parameters:**
-  **session** – Use an existing session instead of creating a new one
+  * **n** ([*int*](https://docs.python.org/3/library/functions.html#int)) – Number of rows to return. Defaults to 1.
+  * **Behavior**
+  * **--------**
+  * **rows****)** ( *- Returns a list* *[**Model* *]* *when n > 1* *(**possibly empty list when no*)
+  * **rows****)**
+  * **func.random****(****)** ( *- Sampling is performed by appending an ORDER BY RANDOM* *(* *)*  */*) – and `LIMIT n` clause to the existing query target.
+  * **further** ( *- Keeps original query intact* *(**does not mutate self.target* *)* *so*) – chaining works as expected.
 
-### *async* activemodel.session_manager.aglobal_session()
-
-Use this as a fastapi dependency to get a session that is shared across the request:
-
-```pycon
->>> APIRouter(
->>>     prefix="/internal/v1",
->>>     dependencies=[
->>>         Depends(aglobal_session),
->>>     ]
->>> )
-```
+#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
 
 
 # index.html.md
@@ -1106,6 +840,246 @@ The problem with using something like uuid_schema is the specific patterns
 
 # index.html.md
 
+# activemodel.session_manager
+
+Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it easy to mutate the
+database environment when testing.
+
+## Classes
+
+| [`SessionManager`](#activemodel.session_manager.SessionManager)   |    |
+|-------------------------------------------------------------------|----|
+
+## Functions
+
+| [`init`](#activemodel.session_manager.init)(database_url, \*[, engine_options])   | configure activemodel to connect to a specific database                              |
+|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| [`table_exists`](#activemodel.session_manager.table_exists)(→ bool)               | Check if the table for the given model exists in the database.                       |
+| [`get_engine`](#activemodel.session_manager.get_engine)()                         | alias to get the database engine without importing SessionManager                    |
+| [`get_session`](#activemodel.session_manager.get_session)()                       | alias to get a database session without importing SessionManager                     |
+| [`global_session`](#activemodel.session_manager.global_session)([session])        | Generate a session and share it across all activemodel calls.                        |
+| [`aglobal_session`](#activemodel.session_manager.aglobal_session)()               | Use this as a fastapi dependency to get a session that is shared across the request: |
+
+## Module Contents
+
+### *class* activemodel.session_manager.SessionManager(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+#### session_connection *: sqlalchemy.Connection | [None](https://docs.python.org/3/library/constants.html#None)*
+
+optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations
+
+#### *classmethod* get_instance(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None) = None, , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [SessionManager](#activemodel.session_manager.SessionManager)
+
+#### get_engine() → sqlalchemy.Engine
+
+#### get_session()
+
+get a new database session, respecting any globally set sessions
+
+### activemodel.session_manager.init(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+configure activemodel to connect to a specific database
+
+### activemodel.session_manager.table_exists(model: [type](https://docs.python.org/3/library/functions.html#type)[sqlmodel.SQLModel]) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Check if the table for the given model exists in the database.
+
+### activemodel.session_manager.get_engine()
+
+alias to get the database engine without importing SessionManager
+
+### activemodel.session_manager.get_session()
+
+alias to get a database session without importing SessionManager
+
+### activemodel.session_manager.global_session(session: sqlmodel.Session | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+Generate a session and share it across all activemodel calls.
+
+Alternatively, you can pass a session to use globally into the context manager, which is helpful for migrations
+and testing.
+
+This may only be called a single time per callstack. There is one exception: if you call this multiple times
+and pass in the same session reference, it will result in a noop.
+
+In complex testing code, you’ll need to be careful here. For example:
+
+- Unit test using a transaction db fixture (which sets \_\_sqlalchemy_session_\_)
+- Factory has a after_save hook
+- That hook triggers a celery job
+- The celery job (properly) calls with global_session()
+- However, since global_session() is already set with \_\_sqlalchemy_session_\_, this will raise an error
+
+* **Parameters:**
+  **session** – Use an existing session instead of creating a new one
+
+### *async* activemodel.session_manager.aglobal_session()
+
+Use this as a fastapi dependency to get a session that is shared across the request:
+
+```pycon
+>>> APIRouter(
+>>>     prefix="/internal/v1",
+>>>     dependencies=[
+>>>         Depends(aglobal_session),
+>>>     ]
+>>> )
+```
+
+
+# index.html.md
+
+# activemodel.errors
+
+## Exceptions
+
+| [`TypeIDValidationError`](#activemodel.errors.TypeIDValidationError)   | Raised when a TypeID is invalid in some way   |
+|------------------------------------------------------------------------|-----------------------------------------------|
+
+## Module Contents
+
+### *exception* activemodel.errors.TypeIDValidationError
+
+Bases: [`ValueError`](https://docs.python.org/3/library/exceptions.html#ValueError)
+
+Raised when a TypeID is invalid in some way
+
+
+# index.html.md
+
+# activemodel.patches
+
+## Submodules
+
+* [activemodel.patches.get_column_from_field_patch](get_column_from_field_patch/index.md)
+
+
+# index.html.md
+
+# activemodel.mixins
+
+## Submodules
+
+* [activemodel.mixins.pydantic_json](pydantic_json/index.md)
+* [activemodel.mixins.soft_delete](soft_delete/index.md)
+* [activemodel.mixins.timestamps](timestamps/index.md)
+* [activemodel.mixins.typeid](typeid/index.md)
+
+## Classes
+
+| [`PydanticJSONMixin`](#activemodel.mixins.PydanticJSONMixin)   | Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.   |
+|----------------------------------------------------------------|------------------------------------------------------------------------------------|
+| [`SoftDeletionMixin`](#activemodel.mixins.SoftDeletionMixin)   | Soft delete records by setting deleted_at instead of removing the row.             |
+| [`TimestampsMixin`](#activemodel.mixins.TimestampsMixin)       | Simple created at and updated at timestamps. Mix them into your model:             |
+
+## Functions
+
+| [`TypeIDMixin`](#activemodel.mixins.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
+|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+
+## Package Contents
+
+### *class* activemodel.mixins.PydanticJSONMixin
+
+Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.
+
+This mixin is paired with the engine-level JSON serializer so the same field can:
+
+1. Persist Pydantic models as JSON on write
+2. Automatically convert raw JSON to Pydantic models on load or refresh
+
+```pycon
+>>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
+>>>    list_field: list[SubObject] = Field(sa_type=JSONB())
+```
+
+Supported field annotations:
+
+- SubModel
+- SubModel | None
+- list[SubModel]
+- list[SubModel] | None
+
+These are the supported rehydration shapes. Raw dict and list[dict] fields
+stay as plain Python containers, but snapshot tracking can still detect mutations
+on them.
+
+Not supported:
+
+- tuples of Pydantic models
+- nested lists such as list[list[SubModel]]
+- ambiguous unions with multiple non-None JSON shapes
+
+#### *classmethod* \_\_init_subclass_\_(\*\*kwargs)
+
+Register per-model SQLAlchemy instance events when a mapped subclass is declared.
+
+load fires after SQLAlchemy first constructs an instance from query results.
+refresh fires after SQLAlchemy reloads one or more attributes on an existing
+instance, including session.refresh(…) and expired-attribute reloads.
+
+The listeners are attached once per concrete model class so every mapped subclass
+gets the same rehydration behavior automatically.
+
+#### \_\_transform_dict_to_pydantic_\_(jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+Replace raw JSON payloads on the instance with annotated Pydantic objects.
+
+@reconstructor is SQLAlchemy’s class-decorator form of the load event, so
+this method runs automatically for the initial ORM load. The dedicated refresh
+listener above reuses the same logic for later reloads of an existing instance.
+
+set_committed_value is used so the converted value becomes the instance’s
+committed state instead of looking like a user mutation.
+
+#### has_json_mutations() → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Check whether any Pydantic JSON field has been mutated since the last snapshot.
+
+Eagerly detects mutations by comparing current field values against their
+serialized snapshots, and calls flag_modified for any that changed. Returns
+True if at least one field was mutated.
+
+This is an escape hatch for code that needs to know about pending JSON mutations
+before the automatic before_flush detection fires.
+
+### *class* activemodel.mixins.SoftDeletionMixin
+
+Soft delete records by setting deleted_at instead of removing the row.
+
+Call soft_delete() to timestamp the record and persist that change.
+
+#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+#### soft_delete() → [T](../pytest/truncate/index.md#activemodel.pytest.truncate.T)
+
+Timestamp deleted_at and persist the record.
+
+### *class* activemodel.mixins.TimestampsMixin
+
+Simple created at and updated at timestamps. Mix them into your model:
+
+```pycon
+>>> class MyModel(TimestampsMixin, SQLModel):
+>>>    pass
+```
+
+Notes:
+
+- Originally pulled from: [https://github.com/tiangolo/sqlmodel/issues/252](https://github.com/tiangolo/sqlmodel/issues/252)
+- Related issue: [https://github.com/fastapi/sqlmodel/issues/539](https://github.com/fastapi/sqlmodel/issues/539)
+
+#### created_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+#### updated_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+### activemodel.mixins.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
+
+Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
+
+
+# index.html.md
+
 # activemodel.pytest
 
 ## Submodules
@@ -1209,198 +1183,106 @@ This approach has a couple of problems:
 
 # index.html.md
 
-# activemodel.query_wrapper
+# activemodel.utils
 
-## Classes
+## Functions
 
-| [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries on a model.   |
-|-------------------------------------------------------------|-------------------------------------------|
+| [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries   |
+|---------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`raw_sql_exec`](#activemodel.utils.raw_sql_exec)(raw_query)        |                                                                               |
+| [`hash_function_code`](#activemodel.utils.hash_function_code)(func) | get sha of a function to easily assert that it hasn't changed                 |
+| [`is_database_empty`](#activemodel.utils.is_database_empty)(→ bool) | Check if any table in the database has records using Model.count().           |
 
 ## Module Contents
 
-### *class* activemodel.query_wrapper.QueryWrapper(cls: [type](https://docs.python.org/3/library/functions.html#type)[TModel], \*args: Any)
+### activemodel.utils.compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) → [str](https://docs.python.org/3/library/stdtypes.html#str)
 
-Bases: [`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`](../types/sqlalchemy_protocol/index.md#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)[`TModel`]
+convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
 
-Make it easy to run queries on a model.
+### activemodel.utils.raw_sql_exec(raw_query: [str](https://docs.python.org/3/library/stdtypes.html#str))
 
-#### target *: sqlmodel.sql.expression.SelectOfScalar[TModel]*
+### activemodel.utils.hash_function_code(func)
 
-#### first()
+get sha of a function to easily assert that it hasn’t changed
 
-#### last()
+### activemodel.utils.is_database_empty(exclude: [list](https://docs.python.org/3/library/stdtypes.html#list)[[type](https://docs.python.org/3/library/functions.html#type)] = []) → [bool](https://docs.python.org/3/library/functions.html#bool)
 
-#### one()
+Check if any table in the database has records using Model.count().
 
-requires exactly one result in the dataset
-
-#### all()
-
-#### count()
-
-I did some basic tests
-
-#### scalar()
-
-```pycon
->>>
-```
-
-#### exec()
-
-#### delete()
-
-#### exists() → [bool](https://docs.python.org/3/library/functions.html#bool)
-
-Return True if the current query yields at least one row.
-
-Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
-the current target for efficiency. Keeps the original target intact.
-
-SQLAlchemy exists works differently and does not return a simple boolean.
-
-#### \_\_getattr_\_(name)
-
-This implements the magic that forwards function calls to sqlalchemy.
-
-#### sql()
-
-Output the raw SQL of the query for debugging
-
-#### sample() → TModel | [None](https://docs.python.org/3/library/constants.html#None)
-
-#### sample(n: [int](https://docs.python.org/3/library/functions.html#int)) → [list](https://docs.python.org/3/library/stdtypes.html#list)[TModel]
-
-Return a random sample of rows from the current query.
-
-* **Parameters:**
-  * **n** ([*int*](https://docs.python.org/3/library/functions.html#int)) – Number of rows to return. Defaults to 1.
-  * **Behavior**
-  * **--------**
-  * **rows****)** ( *- Returns a list* *[**Model* *]* *when n > 1* *(**possibly empty list when no*)
-  * **rows****)**
-  * **func.random****(****)** ( *- Sampling is performed by appending an ORDER BY RANDOM* *(* *)*  */*) – and `LIMIT n` clause to the existing query target.
-  * **further** ( *- Keeps original query intact* *(**does not mutate self.target* *)* *so*) – chaining works as expected.
-
-#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+Useful for detecting an empty database state to run operations such as seeding, etc.
 
 
 # index.html.md
 
-# activemodel.pytest.truncate
+# activemodel.celery
 
-## Attributes
+Do not import unless you have Celery/Kombu installed.
 
-| [`T`](#activemodel.pytest.truncate.T)   |    |
-|-----------------------------------------|----|
+In order for TypeID objects to be properly handled by celery, a custom encoder must be registered.
 
 ## Functions
 
-| [`database_reset_truncate`](#activemodel.pytest.truncate.database_reset_truncate)([preserve_tables, pytest_config])   | Transaction is most likely the better way to go, but there are some scenarios where the session override   |
-|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| [`register_celery_typeid_encoder`](#activemodel.celery.register_celery_typeid_encoder)()   | Ensures TypeID objects passed as arguments to a delayed function are properly serialized.   |
+|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
 
 ## Module Contents
 
-### activemodel.pytest.truncate.T
+### activemodel.celery.register_celery_typeid_encoder()
 
-### activemodel.pytest.truncate.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
+Ensures TypeID objects passed as arguments to a delayed function are properly serialized.
 
-Transaction is most likely the better way to go, but there are some scenarios where the session override
-logic does not work properly and you need to truncate tables back to their original state.
-
-Here’s how to do this once at the start of the test:
-
-```pycon
->>> from activemodel.pytest import database_reset_truncation
->>> def pytest_configure(config):
->>>         database_reset_truncation()
-```
-
-Or, if you want to use this as a fixture:
-
-```pycon
->>> pytest.fixture(scope="function")(database_reset_truncation)
->>> def test_the_thing(database_reset_truncation)
-```
-
-This approach has a couple of problems:
-
-* You can’t run multiple tests in parallel without separate databases
-* If you have important seed data and want to truncate those tables, the seed data will be lost
+Run at the top of your celery initialization script.
 
 
 # index.html.md
 
-# activemodel.pytest.plugin
+# activemodel.jsonb_snapshot
 
-Pytest plugin integration for activemodel.
+Serialize-and-compare snapshot tracking for JSON-backed fields.
 
-Currently provides:
+After each ORM load/refresh, each tracked JSON field is serialized to a canonical JSON
+string and stored as a snapshot. Before commit, the current value is re-serialized and
+compared; if the strings differ, flag_modified is called so SQLAlchemy includes the
+column in the UPDATE.
 
-* `db_session` fixture - quick access to a database session (see `test_session`)
-* `activemodel_preserve_tables` ini option - configure tables to preserve when using
-  `database_reset_truncate` (comma separated list or multiple lines depending on config style)
-
-Configuration examples:
-
-pytest.ini:
-
-```default
-[pytest]
-activemodel_preserve_tables = alembic_version,zip_code,seed_table
-```
-
-pyproject.toml:
-
-```default
-[tool.pytest.ini_options]
-activemodel_preserve_tables = [
-  "alembic_version",
-  "zip_code",
-  "seed_table",
-]
-```
-
-The list always implicitly includes `alembic_version` even if not specified.
+This mirrors how Rails’ ActiveRecord handles JSON column dirty-tracking: compare the
+serialized form of the current value against the serialized form of the original, rather
+than intercepting every mutation with proxy objects.
 
 ## Functions
 
-| [`pytest_addoption`](#activemodel.pytest.plugin.pytest_addoption)(→ None)   | Register custom ini options.                                                                      |
-|-----------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| [`db_session`](#activemodel.pytest.plugin.db_session)()                     | Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you |
-| [`db_truncate_session`](#activemodel.pytest.plugin.db_truncate_session)()   | Provides a database session for testing when using a truncation cleaning strategy.                |
+| [`snapshot_json_fields`](#activemodel.jsonb_snapshot.snapshot_json_fields)(→ None)                       | Store a serialized snapshot of each tracked JSON field on the instance.           |
+|----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| [`detect_json_mutations`](#activemodel.jsonb_snapshot.detect_json_mutations)(→ list[str])                | Compare current field values against snapshots, flagging any that changed.        |
+| [`register_before_commit_listener`](#activemodel.jsonb_snapshot.register_before_commit_listener)(→ None) | Register a session-level before_commit handler to detect in-place JSON mutations. |
 
 ## Module Contents
 
-### activemodel.pytest.plugin.pytest_addoption(parser: pytest.Parser) → [None](https://docs.python.org/3/library/constants.html#None)
+### activemodel.jsonb_snapshot.snapshot_json_fields(instance, jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [None](https://docs.python.org/3/library/constants.html#None)
 
-Register custom ini options.
+Store a serialized snapshot of each tracked JSON field on the instance.
 
-We treat this as a *linelist* so pyproject.toml list syntax works. Comma separated works too because
-pytest splits lines first; users can still provide one line with commas.
+Called after rehydration so the snapshot reflects the committed database state.
+When jsonb_field_names is provided (partial refresh), only those fields are
+re-snapshotted; existing snapshots for other fields are preserved.
 
-### activemodel.pytest.plugin.db_session()
+### activemodel.jsonb_snapshot.detect_json_mutations(instance) → [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
 
-Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you
-probably don’t need this because the router, job harness, etc should wrap the logic in a database session.
+Compare current field values against snapshots, flagging any that changed.
 
-If your unit test is simple (you are just creating a couple of models) you
-can most likely skip this, unless your factories or models do something more complex with nested database calls.
+Returns a list of field names that were mutated since the last snapshot.
+Side effect: calls flag_modified on the SQLAlchemy instance for each changed field.
 
-This is helpful if you are doing a lot of lazy-loaded params or need a database session to be in place
-for testing code that will run within a celery worker or something similar.
+### activemodel.jsonb_snapshot.register_before_commit_listener() → [None](https://docs.python.org/3/library/constants.html#None)
 
-```pycon
->>> def the_test(db_session):
-```
+Register a session-level before_commit handler to detect in-place JSON mutations.
 
-### activemodel.pytest.plugin.db_truncate_session()
+Uses before_commit (not before_flush) because SQLAlchemy skips the flush entirely
+when it sees no pending changes – meaning before_flush never fires for in-place
+mutations that haven’t been explicitly flagged. before_commit fires unconditionally,
+giving us the chance to call flag_modified before the flush decision is made.
 
-Provides a database session for testing when using a truncation cleaning strategy.
-
-When using a truncation cleaning strategy, no global test session is set. This means all models that are created
-are tied to a detached session, which makes it hard to mutate models after creation. This fixture fixes that problem
-by setting the session used by all model factories to a global session.
+Safe to call multiple times – the listener is only registered once.
 
 
 # index.html.md
@@ -1503,6 +1385,124 @@ Using a named SAVEPOINT does not give us anything extra, so we are not using it.
 
 # index.html.md
 
+# activemodel.pytest.plugin
+
+Pytest plugin integration for activemodel.
+
+Currently provides:
+
+* `db_session` fixture - quick access to a database session (see `test_session`)
+* `activemodel_preserve_tables` ini option - configure tables to preserve when using
+  `database_reset_truncate` (comma separated list or multiple lines depending on config style)
+
+Configuration examples:
+
+pytest.ini:
+
+```default
+[pytest]
+activemodel_preserve_tables = alembic_version,zip_code,seed_table
+```
+
+pyproject.toml:
+
+```default
+[tool.pytest.ini_options]
+activemodel_preserve_tables = [
+  "alembic_version",
+  "zip_code",
+  "seed_table",
+]
+```
+
+The list always implicitly includes `alembic_version` even if not specified.
+
+## Functions
+
+| [`pytest_addoption`](#activemodel.pytest.plugin.pytest_addoption)(→ None)   | Register custom ini options.                                                                      |
+|-----------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| [`db_session`](#activemodel.pytest.plugin.db_session)()                     | Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you |
+| [`db_truncate_session`](#activemodel.pytest.plugin.db_truncate_session)()   | Provides a database session for testing when using a truncation cleaning strategy.                |
+
+## Module Contents
+
+### activemodel.pytest.plugin.pytest_addoption(parser: pytest.Parser) → [None](https://docs.python.org/3/library/constants.html#None)
+
+Register custom ini options.
+
+We treat this as a *linelist* so pyproject.toml list syntax works. Comma separated works too because
+pytest splits lines first; users can still provide one line with commas.
+
+### activemodel.pytest.plugin.db_session()
+
+Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you
+probably don’t need this because the router, job harness, etc should wrap the logic in a database session.
+
+If your unit test is simple (you are just creating a couple of models) you
+can most likely skip this, unless your factories or models do something more complex with nested database calls.
+
+This is helpful if you are doing a lot of lazy-loaded params or need a database session to be in place
+for testing code that will run within a celery worker or something similar.
+
+```pycon
+>>> def the_test(db_session):
+```
+
+### activemodel.pytest.plugin.db_truncate_session()
+
+Provides a database session for testing when using a truncation cleaning strategy.
+
+When using a truncation cleaning strategy, no global test session is set. This means all models that are created
+are tied to a detached session, which makes it hard to mutate models after creation. This fixture fixes that problem
+by setting the session used by all model factories to a global session.
+
+
+# index.html.md
+
+# activemodel.pytest.truncate
+
+## Attributes
+
+| [`T`](#activemodel.pytest.truncate.T)   |    |
+|-----------------------------------------|----|
+
+## Functions
+
+| [`database_reset_truncate`](#activemodel.pytest.truncate.database_reset_truncate)([preserve_tables, pytest_config])   | Transaction is most likely the better way to go, but there are some scenarios where the session override   |
+|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### activemodel.pytest.truncate.T
+
+### activemodel.pytest.truncate.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+Transaction is most likely the better way to go, but there are some scenarios where the session override
+logic does not work properly and you need to truncate tables back to their original state.
+
+Here’s how to do this once at the start of the test:
+
+```pycon
+>>> from activemodel.pytest import database_reset_truncation
+>>> def pytest_configure(config):
+>>>         database_reset_truncation()
+```
+
+Or, if you want to use this as a fixture:
+
+```pycon
+>>> pytest.fixture(scope="function")(database_reset_truncation)
+>>> def test_the_thing(database_reset_truncation)
+```
+
+This approach has a couple of problems:
+
+* You can’t run multiple tests in parallel without separate databases
+* If you have important seed data and want to truncate those tables, the seed data will be lost
+
+
+# index.html.md
+
 # activemodel.pytest.factories
 
 Notes on polyfactory:
@@ -1596,6 +1596,256 @@ This is an override of BaseFactory.should_set_field_value.
   * **kwargs** – Any kwargs passed to the factory.
 * **Returns:**
   A boolean determining whether a value should be set for the given field_meta.
+
+
+# index.html.md
+
+# activemodel.mixins.typeid
+
+## Functions
+
+| [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
+|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
+
+Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
+
+
+# index.html.md
+
+# activemodel.mixins.pydantic_json
+
+Rehydrate JSON-backed SQLModel fields into Pydantic objects after ORM loads.
+
+SQLModel persists JSON columns as plain Python dict / list values when rows are
+loaded from the database. This module restores the annotated Pydantic shapes on the
+model instance after SQLAlchemy load and refresh operations.
+
+Supported annotations are intentionally narrow:
+
+- SubModel
+- SubModel | None
+- list[SubModel]
+- list[SubModel] | None
+
+Raw dict and tuple-shaped fields are left alone during rehydration, and ambiguous
+unions are treated as out of scope instead of being coerced heuristically.
+
+Snapshot-based mutation tracking is broader than rehydration and can still detect
+in-place changes on raw dict and list[dict] fields.
+
+Background: [https://github.com/fastapi/sqlmodel/issues/63](https://github.com/fastapi/sqlmodel/issues/63)
+
+## Classes
+
+| [`PydanticJSONMixin`](#activemodel.mixins.pydantic_json.PydanticJSONMixin)   | Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.   |
+|------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.mixins.pydantic_json.PydanticJSONMixin
+
+Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.
+
+This mixin is paired with the engine-level JSON serializer so the same field can:
+
+1. Persist Pydantic models as JSON on write
+2. Automatically convert raw JSON to Pydantic models on load or refresh
+
+```pycon
+>>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
+>>>    list_field: list[SubObject] = Field(sa_type=JSONB())
+```
+
+Supported field annotations:
+
+- SubModel
+- SubModel | None
+- list[SubModel]
+- list[SubModel] | None
+
+These are the supported rehydration shapes. Raw dict and list[dict] fields
+stay as plain Python containers, but snapshot tracking can still detect mutations
+on them.
+
+Not supported:
+
+- tuples of Pydantic models
+- nested lists such as list[list[SubModel]]
+- ambiguous unions with multiple non-None JSON shapes
+
+#### *classmethod* \_\_init_subclass_\_(\*\*kwargs)
+
+Register per-model SQLAlchemy instance events when a mapped subclass is declared.
+
+load fires after SQLAlchemy first constructs an instance from query results.
+refresh fires after SQLAlchemy reloads one or more attributes on an existing
+instance, including session.refresh(…) and expired-attribute reloads.
+
+The listeners are attached once per concrete model class so every mapped subclass
+gets the same rehydration behavior automatically.
+
+#### \_\_transform_dict_to_pydantic_\_(jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+Replace raw JSON payloads on the instance with annotated Pydantic objects.
+
+@reconstructor is SQLAlchemy’s class-decorator form of the load event, so
+this method runs automatically for the initial ORM load. The dedicated refresh
+listener above reuses the same logic for later reloads of an existing instance.
+
+set_committed_value is used so the converted value becomes the instance’s
+committed state instead of looking like a user mutation.
+
+#### has_json_mutations() → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Check whether any Pydantic JSON field has been mutated since the last snapshot.
+
+Eagerly detects mutations by comparing current field values against their
+serialized snapshots, and calls flag_modified for any that changed. Returns
+True if at least one field was mutated.
+
+This is an escape hatch for code that needs to know about pending JSON mutations
+before the automatic before_flush detection fires.
+
+
+# index.html.md
+
+# activemodel.mixins.soft_delete
+
+## Classes
+
+| [`SoftDeleteRecord`](#activemodel.mixins.soft_delete.SoftDeleteRecord)   | Base class for protocol classes.                                       |
+|--------------------------------------------------------------------------|------------------------------------------------------------------------|
+| [`SoftDeletionMixin`](#activemodel.mixins.soft_delete.SoftDeletionMixin) | Soft delete records by setting deleted_at instead of removing the row. |
+
+## Module Contents
+
+### *class* activemodel.mixins.soft_delete.SoftDeleteRecord
+
+Bases: `Protocol`
+
+Base class for protocol classes.
+
+Protocol classes are defined as:
+
+```default
+class Proto(Protocol):
+    def meth(self) -> int:
+        ...
+```
+
+Such classes are primarily used with static type checkers that recognize
+structural subtyping (static duck-typing).
+
+For example:
+
+```default
+class C:
+    def meth(self) -> int:
+        return 0
+
+def func(x: Proto) -> int:
+    return x.meth()
+
+func(C())  # Passes static type check
+```
+
+See PEP 544 for details. Protocol classes decorated with
+@typing.runtime_checkable act as simple-minded runtime protocols that check
+only the presence of given attributes, ignoring their type signatures.
+Protocol classes can be generic, they are defined as:
+
+```default
+class GenProto[T](Protocol):
+    def meth(self) -> T:
+        ...
+```
+
+#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)*
+
+#### save() → Self
+
+### *class* activemodel.mixins.soft_delete.SoftDeletionMixin
+
+Soft delete records by setting deleted_at instead of removing the row.
+
+Call soft_delete() to timestamp the record and persist that change.
+
+#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+#### soft_delete() → [T](../../pytest/truncate/index.md#activemodel.pytest.truncate.T)
+
+Timestamp deleted_at and persist the record.
+
+
+# index.html.md
+
+# activemodel.mixins.timestamps
+
+## Classes
+
+| [`TimestampsMixin`](#activemodel.mixins.timestamps.TimestampsMixin)   | Simple created at and updated at timestamps. Mix them into your model:   |
+|-----------------------------------------------------------------------|--------------------------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.mixins.timestamps.TimestampsMixin
+
+Simple created at and updated at timestamps. Mix them into your model:
+
+```pycon
+>>> class MyModel(TimestampsMixin, SQLModel):
+>>>    pass
+```
+
+Notes:
+
+- Originally pulled from: [https://github.com/tiangolo/sqlmodel/issues/252](https://github.com/tiangolo/sqlmodel/issues/252)
+- Related issue: [https://github.com/fastapi/sqlmodel/issues/539](https://github.com/fastapi/sqlmodel/issues/539)
+
+#### created_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+#### updated_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+
+
+# index.html.md
+
+# activemodel.patches.get_column_from_field_patch
+
+Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fields of a model.
+
+Making sure these docstrings make their way to the DB schema is helpful for a bunch of reasons (LLM understanding being one of them).
+
+This patch mutates a core sqlmodel function which translates pydantic FieldInfo objects into sqlalchemy Column objects. It adds the field description as a comment to the column.
+
+Note that FieldInfo *from pydantic* is used when a “bare” field is defined. This can be confusing, because when inspecting model fields, the class name looks exactly the same.
+
+Some ideas for this originally sourced from: [https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633](https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633)
+
+## Functions
+
+| [`get_column_from_field`](#activemodel.patches.get_column_from_field_patch.get_column_from_field)(→ sqlalchemy.Column)   |    |
+|--------------------------------------------------------------------------------------------------------------------------|----|
+
+## Module Contents
+
+### activemodel.patches.get_column_from_field_patch.get_column_from_field(field: Any) → sqlalchemy.Column
+
+
+# index.html.md
+
+# activemodel.types.typeid_patch
+
+Pydantic v2 support for TypeID.
+
+TODO should push this upstream to the typeid package
+
+## Module Contents
+
+### *classmethod* activemodel.types.typeid_patch.get_pydantic_core_schema(source_type: Any, handler: [pydantic.GetCoreSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetCoreSchemaHandler)) → pydantic_core.CoreSchema
 
 
 # index.html.md
@@ -1860,256 +2110,6 @@ files.
 Bases: `Protocol`
 
 Runtime protocol placeholder for QueryWrapper’s forwarded methods.
-
-
-# index.html.md
-
-# activemodel.types.typeid_patch
-
-Pydantic v2 support for TypeID.
-
-TODO should push this upstream to the typeid package
-
-## Module Contents
-
-### *classmethod* activemodel.types.typeid_patch.get_pydantic_core_schema(source_type: Any, handler: [pydantic.GetCoreSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetCoreSchemaHandler)) → pydantic_core.CoreSchema
-
-
-# index.html.md
-
-# activemodel.patches.get_column_from_field_patch
-
-Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fields of a model.
-
-Making sure these docstrings make their way to the DB schema is helpful for a bunch of reasons (LLM understanding being one of them).
-
-This patch mutates a core sqlmodel function which translates pydantic FieldInfo objects into sqlalchemy Column objects. It adds the field description as a comment to the column.
-
-Note that FieldInfo *from pydantic* is used when a “bare” field is defined. This can be confusing, because when inspecting model fields, the class name looks exactly the same.
-
-Some ideas for this originally sourced from: [https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633](https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633)
-
-## Functions
-
-| [`get_column_from_field`](#activemodel.patches.get_column_from_field_patch.get_column_from_field)(→ sqlalchemy.Column)   |    |
-|--------------------------------------------------------------------------------------------------------------------------|----|
-
-## Module Contents
-
-### activemodel.patches.get_column_from_field_patch.get_column_from_field(field: Any) → sqlalchemy.Column
-
-
-# index.html.md
-
-# activemodel.mixins.typeid
-
-## Functions
-
-| [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
-|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-
-## Module Contents
-
-### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
-
-Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
-
-
-# index.html.md
-
-# activemodel.mixins.timestamps
-
-## Classes
-
-| [`TimestampsMixin`](#activemodel.mixins.timestamps.TimestampsMixin)   | Simple created at and updated at timestamps. Mix them into your model:   |
-|-----------------------------------------------------------------------|--------------------------------------------------------------------------|
-
-## Module Contents
-
-### *class* activemodel.mixins.timestamps.TimestampsMixin
-
-Simple created at and updated at timestamps. Mix them into your model:
-
-```pycon
->>> class MyModel(TimestampsMixin, SQLModel):
->>>    pass
-```
-
-Notes:
-
-- Originally pulled from: [https://github.com/tiangolo/sqlmodel/issues/252](https://github.com/tiangolo/sqlmodel/issues/252)
-- Related issue: [https://github.com/fastapi/sqlmodel/issues/539](https://github.com/fastapi/sqlmodel/issues/539)
-
-#### created_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
-
-#### updated_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
-
-
-# index.html.md
-
-# activemodel.mixins.soft_delete
-
-## Classes
-
-| [`SoftDeleteRecord`](#activemodel.mixins.soft_delete.SoftDeleteRecord)   | Base class for protocol classes.                                       |
-|--------------------------------------------------------------------------|------------------------------------------------------------------------|
-| [`SoftDeletionMixin`](#activemodel.mixins.soft_delete.SoftDeletionMixin) | Soft delete records by setting deleted_at instead of removing the row. |
-
-## Module Contents
-
-### *class* activemodel.mixins.soft_delete.SoftDeleteRecord
-
-Bases: `Protocol`
-
-Base class for protocol classes.
-
-Protocol classes are defined as:
-
-```default
-class Proto(Protocol):
-    def meth(self) -> int:
-        ...
-```
-
-Such classes are primarily used with static type checkers that recognize
-structural subtyping (static duck-typing).
-
-For example:
-
-```default
-class C:
-    def meth(self) -> int:
-        return 0
-
-def func(x: Proto) -> int:
-    return x.meth()
-
-func(C())  # Passes static type check
-```
-
-See PEP 544 for details. Protocol classes decorated with
-@typing.runtime_checkable act as simple-minded runtime protocols that check
-only the presence of given attributes, ignoring their type signatures.
-Protocol classes can be generic, they are defined as:
-
-```default
-class GenProto[T](Protocol):
-    def meth(self) -> T:
-        ...
-```
-
-#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)*
-
-#### save() → Self
-
-### *class* activemodel.mixins.soft_delete.SoftDeletionMixin
-
-Soft delete records by setting deleted_at instead of removing the row.
-
-Call soft_delete() to timestamp the record and persist that change.
-
-#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
-
-#### soft_delete() → [T](../../pytest/truncate/index.md#activemodel.pytest.truncate.T)
-
-Timestamp deleted_at and persist the record.
-
-
-# index.html.md
-
-# activemodel.mixins.pydantic_json
-
-Rehydrate JSON-backed SQLModel fields into Pydantic objects after ORM loads.
-
-SQLModel persists JSON columns as plain Python dict / list values when rows are
-loaded from the database. This module restores the annotated Pydantic shapes on the
-model instance after SQLAlchemy load and refresh operations.
-
-Supported annotations are intentionally narrow:
-
-- SubModel
-- SubModel | None
-- list[SubModel]
-- list[SubModel] | None
-
-Raw dict and tuple-shaped fields are left alone during rehydration, and ambiguous
-unions are treated as out of scope instead of being coerced heuristically.
-
-Snapshot-based mutation tracking is broader than rehydration and can still detect
-in-place changes on raw dict and list[dict] fields.
-
-Background: [https://github.com/fastapi/sqlmodel/issues/63](https://github.com/fastapi/sqlmodel/issues/63)
-
-## Classes
-
-| [`PydanticJSONMixin`](#activemodel.mixins.pydantic_json.PydanticJSONMixin)   | Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.   |
-|------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-
-## Module Contents
-
-### *class* activemodel.mixins.pydantic_json.PydanticJSONMixin
-
-Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.
-
-This mixin is paired with the engine-level JSON serializer so the same field can:
-
-1. Persist Pydantic models as JSON on write
-2. Automatically convert raw JSON to Pydantic models on load or refresh
-
-```pycon
->>> class ExampleWithJSON(BaseModel, PydanticJSONMixin, table=True):
->>>    list_field: list[SubObject] = Field(sa_type=JSONB())
-```
-
-Supported field annotations:
-
-- SubModel
-- SubModel | None
-- list[SubModel]
-- list[SubModel] | None
-
-These are the supported rehydration shapes. Raw dict and list[dict] fields
-stay as plain Python containers, but snapshot tracking can still detect mutations
-on them.
-
-Not supported:
-
-- tuples of Pydantic models
-- nested lists such as list[list[SubModel]]
-- ambiguous unions with multiple non-None JSON shapes
-
-#### *classmethod* \_\_init_subclass_\_(\*\*kwargs)
-
-Register per-model SQLAlchemy instance events when a mapped subclass is declared.
-
-load fires after SQLAlchemy first constructs an instance from query results.
-refresh fires after SQLAlchemy reloads one or more attributes on an existing
-instance, including session.refresh(…) and expired-attribute reloads.
-
-The listeners are attached once per concrete model class so every mapped subclass
-gets the same rehydration behavior automatically.
-
-#### \_\_transform_dict_to_pydantic_\_(jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None)
-
-Replace raw JSON payloads on the instance with annotated Pydantic objects.
-
-@reconstructor is SQLAlchemy’s class-decorator form of the load event, so
-this method runs automatically for the initial ORM load. The dedicated refresh
-listener above reuses the same logic for later reloads of an existing instance.
-
-set_committed_value is used so the converted value becomes the instance’s
-committed state instead of looking like a user mutation.
-
-#### has_json_mutations() → [bool](https://docs.python.org/3/library/functions.html#bool)
-
-Check whether any Pydantic JSON field has been mutated since the last snapshot.
-
-Eagerly detects mutations by comparing current field values against their
-serialized snapshots, and calls flag_modified for any that changed. Returns
-True if at least one field was mutated.
-
-This is an escape hatch for code that needs to know about pending JSON mutations
-before the automatic before_flush detection fires.
 
 
 # alembic.html.md
@@ -3119,6 +3119,160 @@ print(sys.version)
 ---
 
 *This project was created from [iloveitaly/python-package-template](https://github.com/iloveitaly/python-package-template)*
+
+
+# mutation-tracking.html.md
+
+# Automatic JSONB Mutation Tracking
+
+`activemodel` uses a serialize-and-compare strategy to detect in-place JSON mutations.
+
+After SQLAlchemy loads or refreshes a model instance, each tracked JSON field is serialized
+to a canonical JSON string and stored as a snapshot. Right before commit, the current value
+is serialized again and compared against that snapshot. If the serialized values differ,
+`activemodel` calls SQLAlchemy’s `flag_modified(...)` so the column is included in the
+`UPDATE`.
+
+This gives you ActiveRecord-style dirty tracking for complex JSON objects (either plain old py objects or Pydantic objects) without having to remember `flag_modified()` every time you mutate a nested attribute.
+
+## What Is Tracked
+
+The tracking layer currently covers:
+
+* Pydantic-backed JSON fields such as `SubModel`, `SubModel | None`, `list[SubModel]`, and `list[SubModel] | None`
+* raw `dict` fields
+* typed `dict[...]` fields
+* `list[dict]` fields
+
+Rehydration is narrower than mutation tracking.
+
+`PydanticJSONMixin` only rehydrates supported Pydantic annotations back into model objects on
+load and refresh. Raw `dict` and `list[dict]` values stay as plain Python containers, but they
+still participate in snapshot-based mutation tracking.
+
+## How It Works
+
+1. a row is loaded or refreshed
+2. supported Pydantic fields are rehydrated back into Pydantic objects
+3. each tracked JSON field is serialized into a stable JSON string snapshot
+4. before commit, the current value is serialized again
+5. if the serialized value changed, the field is marked dirty with `flag_modified(...)`
+
+This is why in-place changes like `model.profile.name = "updated"` and
+`model.settings["theme"] = "dark"` can persist even though SQLAlchemy would not normally see
+those nested mutations.
+
+## Pydantic Example
+
+```python
+from pydantic import BaseModel as PydanticBaseModel
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlmodel import Field
+
+from activemodel import BaseModel
+from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
+
+
+class AuditEntry(PydanticBaseModel):
+    actor: str
+    action: str
+
+
+class UserRecord(
+    BaseModel,
+    PydanticJSONMixin,
+    TypeIDMixin("usr"),
+    table=True,
+):
+    profile: AuditEntry = Field(sa_type=JSONB)
+
+
+record = UserRecord.one("usr_123")
+record.profile.action = "updated"
+record.save()
+```
+
+The nested attribute mutation is detected automatically on commit.
+
+## Raw Dict Example
+
+```python
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlmodel import Field
+
+from activemodel import BaseModel
+from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
+
+
+class FeatureFlags(
+    BaseModel,
+    PydanticJSONMixin,
+    TypeIDMixin("flag"),
+    table=True,
+):
+    settings: dict[str, str] = Field(sa_type=JSONB)
+
+
+record = FeatureFlags.one("flag_123")
+record.settings["theme"] = "dark"
+record.save()
+```
+
+`settings` stays a plain `dict`, but the in-place key mutation is still detected and persisted.
+
+## List Of Dicts Example
+
+```python
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlmodel import Field
+
+from activemodel import BaseModel
+from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
+
+
+class WebhookLog(
+    BaseModel,
+    PydanticJSONMixin,
+    TypeIDMixin("wh"),
+    table=True,
+):
+    deliveries: list[dict[str, str]] = Field(sa_type=JSONB)
+
+
+log = WebhookLog.one("wh_123")
+log.deliveries.append({"status": "ok", "provider": "stripe"})
+log.save()
+```
+
+Top-level `list[dict]` payloads are tracked, including list mutation methods and nested dict
+item updates.
+
+## Scope Limits
+
+The current implementation intentionally does not try to support every possible JSON type shape.
+
+Notably out of scope:
+
+* ambiguous unions such as `SubModel | dict | None`
+* tuple-shaped JSON payloads
+* nested list shapes such as `list[list[SubModel]]`
+
+Those constraints keep rehydration rules predictable and avoid heuristic coercion.
+
+## Key API References
+
+The best entry points are the methods and functions that explain the behavior directly in their
+docstrings:
+
+* [`activemodel.jsonb_snapshot.snapshot_json_fields()`](autoapi/activemodel/jsonb_snapshot/index.md#activemodel.jsonb_snapshot.snapshot_json_fields)
+* [`activemodel.jsonb_snapshot.detect_json_mutations()`](autoapi/activemodel/jsonb_snapshot/index.md#activemodel.jsonb_snapshot.detect_json_mutations)
+* [`activemodel.jsonb_snapshot.register_before_commit_listener()`](autoapi/activemodel/jsonb_snapshot/index.md#activemodel.jsonb_snapshot.register_before_commit_listener)
+* [`activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__()`](autoapi/activemodel/mixins/pydantic_json/index.md#activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__)
+* [`activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations()`](autoapi/activemodel/mixins/pydantic_json/index.md#activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations)
+
+If you want the exact implementation details, the module-level docs in
+[`activemodel.jsonb_snapshot`](autoapi/activemodel/jsonb_snapshot/index.md#module-activemodel.jsonb_snapshot) and [`activemodel.mixins.pydantic_json`](autoapi/activemodel/mixins/pydantic_json/index.md#module-activemodel.mixins.pydantic_json) are the
+most direct place to read next.
 
 
 # sql-logging.html.md
