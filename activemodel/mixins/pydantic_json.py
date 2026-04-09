@@ -24,9 +24,12 @@ from typing import get_args, get_origin
 import typing
 import types
 from pydantic import BaseModel as PydanticBaseModel
+from pydantic_core import PydanticUndefined
 from sqlalchemy import event
 from sqlalchemy.orm import attributes
+from sqlalchemy.sql.sqltypes import JSON as SQLAlchemyJSON
 from ..jsonb_snapshot import (
+    _supports_snapshot_tracking,
     snapshot_json_fields,
     detect_json_mutations,
     register_before_commit_listener,
@@ -79,6 +82,12 @@ class PydanticJSONMixin:
         if getattr(cls, "_pydantic_json_events_registered", False):
             return
 
+        event.listen(
+            cls,
+            "mapper_configured",
+            cls._warn_for_unsupported_json_fields,
+        )
+
         register_before_commit_listener()
 
         # `load` runs once for an ORM-created instance, after the initial column values exist.
@@ -100,6 +109,44 @@ class PydanticJSONMixin:
         )
 
         cls._pydantic_json_events_registered = True
+
+    @classmethod
+    def _warn_for_unsupported_json_fields(cls, mapper, class_) -> None:
+        if getattr(class_, "_unsupported_json_fields_warned", False):
+            return
+
+        table_columns = class_.__table__.columns
+
+        for field_name, field_info in class_.model_fields.items():
+            sa_type = field_info.sa_type
+            is_json_field = (
+                isinstance(sa_type, type) and issubclass(sa_type, SQLAlchemyJSON)
+            ) or isinstance(sa_type, SQLAlchemyJSON)
+
+            sa_column = field_info.sa_column
+
+            if sa_column is PydanticUndefined:
+                sa_column = table_columns.get(field_name)
+
+            sa_column_type = None if sa_column is PydanticUndefined else sa_column.type
+
+            if not is_json_field and (
+                sa_column is PydanticUndefined
+                or not isinstance(sa_column_type, SQLAlchemyJSON)
+            ):
+                continue
+
+            if _supports_snapshot_tracking(class_, field_info.annotation):
+                continue
+
+            logger.warning(
+                "unsupported json field on %s.%s will not be rehydrated or mutation tracked: %r",
+                class_.__name__,
+                field_name,
+                field_info.annotation,
+            )
+
+        class_._unsupported_json_fields_warned = True
 
     @staticmethod
     def _is_pydantic_model_class(model_cls) -> bool:
