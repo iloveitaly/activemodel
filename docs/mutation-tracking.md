@@ -18,12 +18,13 @@ The tracking layer currently covers:
 * raw `dict` fields
 * typed `dict[...]` fields
 * `list[dict]` fields
+* top-level primitive lists such as `list[str]`, `list[int]`, `list[float]`, and `list[bool]`
 
 Rehydration is narrower than mutation tracking.
 
 `PydanticJSONMixin` only rehydrates supported Pydantic annotations back into model objects on
-load and refresh. Raw `dict` and `list[dict]` values stay as plain Python containers, but they
-still participate in snapshot-based mutation tracking.
+load and refresh. Raw `dict` values and supported raw `list[...]` values stay as plain Python
+containers, but they still participate in snapshot-based mutation tracking.
 
 ## How It Works
 

@@ -121,7 +121,8 @@ Supported field annotations:
 - `list[SubModel]`
 - `list[SubModel] | None`
 
-Raw `dict`, `dict[...]`, and `list[dict]` fields stay as plain Python containers on
+Raw `dict`, `dict[...]`, `list[dict]`, and top-level primitive list fields such as
+`list[str]` and `list[int]` stay as plain Python containers on
 load and refresh, but their in-place mutations are also tracked automatically.
 
 Ambiguous unions like `SubModel | dict | None` are left as raw JSON since there is no unambiguous way to rehydrate them.
