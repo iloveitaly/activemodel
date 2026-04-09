@@ -1,3 +1,4 @@
+from sqlalchemy import Column, MetaData, Table
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import configure_mappers
 from sqlmodel import Field
@@ -30,5 +31,29 @@ def test_logs_warning_once_for_unsupported_json_fields(caplog):
     assert any(
         "unsupported json field on ExampleWithUnsupportedJSON.unsupported_json_field"
         in message
+        for message in warning_messages
+    )
+
+
+def test_logs_warning_for_field_info_without_sqlmodel_attrs(caplog):
+    class DummyFieldInfo:
+        annotation = set[str]
+
+    class DummyModel(PydanticJSONMixin):
+        __table__ = Table(
+            "dummy_model",
+            MetaData(),
+            Column("unsupported_json_field", JSONB),
+        )
+        model_fields = {"unsupported_json_field": DummyFieldInfo()}
+        _unsupported_json_fields_warned = False
+
+    with caplog.at_level("WARNING", logger="activemodel.logger"):
+        DummyModel._warn_for_unsupported_json_fields(None, DummyModel)
+
+    warning_messages = [record.getMessage() for record in caplog.records]
+
+    assert any(
+        "unsupported json field on DummyModel.unsupported_json_field" in message
         for message in warning_messages
     )

@@ -118,12 +118,12 @@ class PydanticJSONMixin:
         table_columns = class_.__table__.columns
 
         for field_name, field_info in class_.model_fields.items():
-            sa_type = field_info.sa_type
+            sa_type = getattr(field_info, "sa_type", PydanticUndefined)
             is_json_field = (
                 isinstance(sa_type, type) and issubclass(sa_type, SQLAlchemyJSON)
             ) or isinstance(sa_type, SQLAlchemyJSON)
 
-            sa_column = field_info.sa_column
+            sa_column = getattr(field_info, "sa_column", PydanticUndefined)
 
             if sa_column is PydanticUndefined:
                 sa_column = table_columns.get(field_name)
