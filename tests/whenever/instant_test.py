@@ -1,7 +1,8 @@
-from pydantic import BaseModel as PydanticBaseModel
+from datetime import datetime, timezone
+
 from whenever import Instant
 
-from .models import WheneverModel
+from tests.whenever.models import WheneverModel, WheneverSchema
 
 
 def test_instant_round_trip(create_and_wipe_database):
@@ -19,26 +20,30 @@ def test_instant_round_trip(create_and_wipe_database):
 
 
 def test_instant_pydantic_serialization():
-    class Schema(PydanticBaseModel):
-        ts: Instant
-
     now = Instant.now()
-    schema = Schema(ts=now)
-    assert schema.ts == now
+    schema = WheneverSchema(instant=now, zoned_datetime="2024-01-15T12:00:00+00:00[UTC]")
+    assert schema.instant == now
 
     json_str = schema.model_dump_json()
-    restored = Schema.model_validate_json(json_str)
-    assert restored.ts == now
+    restored = WheneverSchema.model_validate_json(json_str)
+    assert restored.instant == now
 
 
 def test_instant_pydantic_from_string():
-    class Schema(PydanticBaseModel):
-        ts: Instant
-
     iso = "2024-01-15T12:00:00Z"
-    schema = Schema.model_validate({"ts": iso})
-    assert isinstance(schema.ts, Instant)
-    assert schema.ts == Instant.parse_iso(iso)
+    schema = WheneverSchema.model_validate(
+        {"instant": iso, "zoned_datetime": "2024-01-15T12:00:00+00:00[UTC]"}
+    )
+    assert isinstance(schema.instant, Instant)
+    assert schema.instant == Instant.parse_iso(iso)
+
+
+def test_instant_pydantic_json_schema():
+    json_schema = WheneverSchema.model_json_schema()
+
+    assert json_schema["properties"]["instant"]["type"] == "string"
+    assert json_schema["properties"]["instant"]["title"] == "Instant"
+    assert "instant" in json_schema["required"]
 
 
 def test_instant_type_decorator_accepts_string(create_and_wipe_database):
@@ -48,6 +53,19 @@ def test_instant_type_decorator_accepts_string(create_and_wipe_database):
     fetched = WheneverModel.get(record.id)
     assert fetched is not None
     assert fetched.triggered_at == Instant.parse_iso(iso)
+
+
+def test_instant_accepts_datetime_assignment(create_and_wipe_database):
+    value = datetime(2024, 6, 1, 10, 0, tzinfo=timezone.utc)
+    record = WheneverModel()
+    setattr(record, "triggered_at", value)
+    record.save()
+
+    fetched = WheneverModel.get(record.id)
+    assert fetched is not None
+    assert fetched.triggered_at is not None
+    assert isinstance(fetched.triggered_at, Instant)
+    assert fetched.triggered_at == Instant(value)
 
 
 def test_nullable_fields(create_and_wipe_database):
