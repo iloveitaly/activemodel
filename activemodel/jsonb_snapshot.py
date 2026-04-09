@@ -17,7 +17,8 @@ from typing import get_args, get_origin
 
 from pydantic_core import to_jsonable_python
 from sqlalchemy import event
-from sqlalchemy.orm import Session, attributes as sa_attributes
+from sqlalchemy.orm import Session
+from sqlalchemy.orm import attributes as sa_attributes
 
 
 def _value_to_json_string(value) -> str | None:
@@ -65,7 +66,7 @@ def _is_plain_json_container_annotation(annotation) -> bool:
         return True
 
     if annotation is list or origin is list:
-        # only top-level list[dict] is tracked here; nested list shapes remain unsupported
+        # only top-level json-safe lists are tracked here; nested list shapes remain unsupported
         list_item_types = get_args(annotation)
 
         if len(list_item_types) != 1:
@@ -73,7 +74,11 @@ def _is_plain_json_container_annotation(annotation) -> bool:
 
         list_item_type = list_item_types[0]
 
-        return list_item_type is dict or get_origin(list_item_type) is dict
+        return (
+            list_item_type in (str, int, float, bool)
+            or list_item_type is dict
+            or get_origin(list_item_type) is dict
+        )
 
     return False
 
