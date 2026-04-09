@@ -342,7 +342,7 @@
 - [activemodel.pytest](autoapi/activemodel/pytest/index.html.md): * [activemodel.pytest.factories](factories/index.md)
 - [activemodel.utils](autoapi/activemodel/utils/index.html.md): | [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, he...
 - [activemodel.celery](autoapi/activemodel/celery/index.html.md): Do not import unless you have Celery/Kombu installed.
-- [activemodel.jsonb_snapshot](autoapi/activemodel/jsonb_snapshot/index.html.md): Serialize-and-compare snapshot tracking for Pydantic JSON fields.
+- [activemodel.jsonb_snapshot](autoapi/activemodel/jsonb_snapshot/index.html.md): Serialize-and-compare snapshot tracking for JSON-backed fields.
 - [activemodel.pytest.transaction](autoapi/activemodel/pytest/transaction/index.html.md): | [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
 - [activemodel.pytest.plugin](autoapi/activemodel/pytest/plugin/index.html.md): Pytest plugin integration for activemodel.
 - [activemodel.pytest.truncate](autoapi/activemodel/pytest/truncate/index.html.md): | [`T`](#activemodel.pytest.truncate.T)   |    |

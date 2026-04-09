@@ -220,8 +220,10 @@ model instance after SQLAlchemy load and refresh operations.</p>
 <li><p><cite>list[SubModel]</cite></p></li>
 <li><p><cite>list[SubModel] | None</cite></p></li>
 </ul>
-<p>Raw <cite>dict</cite> and tuple-shaped fields are left alone, and ambiguous unions are treated as
-out of scope instead of being coerced heuristically.</p>
+<p>Raw <cite>dict</cite> and tuple-shaped fields are left alone during rehydration, and ambiguous
+unions are treated as out of scope instead of being coerced heuristically.</p>
+<p>Snapshot-based mutation tracking is broader than rehydration and can still detect
+in-place changes on raw <cite>dict</cite> and <cite>list[dict]</cite> fields.</p>
 <p>Background: <a class="reference external" href="https://github.com/fastapi/sqlmodel/issues/63">https://github.com/fastapi/sqlmodel/issues/63</a></p>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
@@ -257,6 +259,9 @@ out of scope instead of being coerced heuristically.</p>
 <li><p><cite>list[SubModel]</cite></p></li>
 <li><p><cite>list[SubModel] | None</cite></p></li>
 </ul>
+<p>These are the supported rehydration shapes. Raw <cite>dict</cite> and <cite>list[dict]</cite> fields
+stay as plain Python containers, but snapshot tracking can still detect mutations
+on them.</p>
 <p>Not supported:</p>
 <ul class="simple">
 <li><p>tuples of Pydantic models</p></li>

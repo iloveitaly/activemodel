@@ -281,6 +281,9 @@ data-aria-dark="Switch to auto color mode">
 <li><p><cite>list[SubModel]</cite></p></li>
 <li><p><cite>list[SubModel] | None</cite></p></li>
 </ul>
+<p>These are the supported rehydration shapes. Raw <cite>dict</cite> and <cite>list[dict]</cite> fields
+stay as plain Python containers, but snapshot tracking can still detect mutations
+on them.</p>
 <p>Not supported:</p>
 <ul class="simple">
 <li><p>tuples of Pydantic models</p></li>

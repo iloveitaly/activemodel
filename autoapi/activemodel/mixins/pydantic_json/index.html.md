@@ -13,8 +13,11 @@ Supported annotations are intentionally narrow:
 - list[SubModel]
 - list[SubModel] | None
 
-Raw dict and tuple-shaped fields are left alone, and ambiguous unions are treated as
-out of scope instead of being coerced heuristically.
+Raw dict and tuple-shaped fields are left alone during rehydration, and ambiguous
+unions are treated as out of scope instead of being coerced heuristically.
+
+Snapshot-based mutation tracking is broader than rehydration and can still detect
+in-place changes on raw dict and list[dict] fields.
 
 Background: [https://github.com/fastapi/sqlmodel/issues/63](https://github.com/fastapi/sqlmodel/issues/63)
 
@@ -45,6 +48,10 @@ Supported field annotations:
 - SubModel | None
 - list[SubModel]
 - list[SubModel] | None
+
+These are the supported rehydration shapes. Raw dict and list[dict] fields
+stay as plain Python containers, but snapshot tracking can still detect mutations
+on them.
 
 Not supported:
 

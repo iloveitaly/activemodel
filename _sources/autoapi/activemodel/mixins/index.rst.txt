@@ -56,6 +56,10 @@ Package Contents
    - `list[SubModel]`
    - `list[SubModel] | None`
 
+   These are the supported rehydration shapes. Raw `dict` and `list[dict]` fields
+   stay as plain Python containers, but snapshot tracking can still detect mutations
+   on them.
+
    Not supported:
 
    - tuples of Pydantic models

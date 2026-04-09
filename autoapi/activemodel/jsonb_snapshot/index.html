@@ -122,7 +122,7 @@ data-aria-dark="Switch to auto color mode">
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#activemodel.jsonb_snapshot.snapshot_pydantic_fields"><code class="docutils literal notranslate"><span class="pre">snapshot_pydantic_fields()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.jsonb_snapshot.snapshot_json_fields"><code class="docutils literal notranslate"><span class="pre">snapshot_json_fields()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.jsonb_snapshot.detect_json_mutations"><code class="docutils literal notranslate"><span class="pre">detect_json_mutations()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.jsonb_snapshot.register_before_commit_listener"><code class="docutils literal notranslate"><span class="pre">register_before_commit_listener()</span></code></a></li>
 </ul>
@@ -202,11 +202,11 @@ data-aria-dark="Switch to auto color mode">
 </div><article class="yue" role="main">
           <section id="module-activemodel.jsonb_snapshot">
 <span id="activemodel-jsonb-snapshot"></span><h1>activemodel.jsonb_snapshot<a class="headerlink" href="#module-activemodel.jsonb_snapshot" title="Link to this heading">¶</a></h1>
-<p>Serialize-and-compare snapshot tracking for Pydantic JSON fields.</p>
-<p>After each ORM load/refresh, each Pydantic JSON field is serialized to a canonical
-JSON string and stored as a snapshot. Before commit, the current value is re-serialized
-and compared; if the strings differ, <cite>flag_modified</cite> is called so SQLAlchemy includes
-the column in the UPDATE.</p>
+<p>Serialize-and-compare snapshot tracking for JSON-backed fields.</p>
+<p>After each ORM load/refresh, each tracked JSON field is serialized to a canonical JSON
+string and stored as a snapshot. Before commit, the current value is re-serialized and
+compared; if the strings differ, <cite>flag_modified</cite> is called so SQLAlchemy includes the
+column in the UPDATE.</p>
 <p>This mirrors how Rails’ ActiveRecord handles JSON column dirty-tracking: compare the
 serialized form of the current value against the serialized form of the original, rather
 than intercepting every mutation with proxy objects.</p>
@@ -215,8 +215,8 @@ than intercepting every mutation with proxy objects.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.jsonb_snapshot.snapshot_pydantic_fields" title="activemodel.jsonb_snapshot.snapshot_pydantic_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">snapshot_pydantic_fields</span></code></a>(→ None)</p></td>
-<td><p>Store a serialized snapshot of each Pydantic JSON field on the instance.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.jsonb_snapshot.snapshot_json_fields" title="activemodel.jsonb_snapshot.snapshot_json_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">snapshot_json_fields</span></code></a>(→ None)</p></td>
+<td><p>Store a serialized snapshot of each tracked JSON field on the instance.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#activemodel.jsonb_snapshot.detect_json_mutations" title="activemodel.jsonb_snapshot.detect_json_mutations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_json_mutations</span></code></a>(→ list[str])</p></td>
 <td><p>Compare current field values against snapshots, flagging any that changed.</p></td>
@@ -231,9 +231,9 @@ than intercepting every mutation with proxy objects.</p>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="activemodel.jsonb_snapshot.snapshot_pydantic_fields">
-<span class="sig-prename descclassname"><span class="pre">activemodel.jsonb_snapshot.</span></span><span class="sig-name descname"><span class="pre">snapshot_pydantic_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jsonb_field_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/jsonb_snapshot.html#snapshot_pydantic_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.jsonb_snapshot.snapshot_pydantic_fields" title="Link to this definition">¶</a></dt>
-<dd><p>Store a serialized snapshot of each Pydantic JSON field on the instance.</p>
+<dt class="sig sig-object py" id="activemodel.jsonb_snapshot.snapshot_json_fields">
+<span class="sig-prename descclassname"><span class="pre">activemodel.jsonb_snapshot.</span></span><span class="sig-name descname"><span class="pre">snapshot_json_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jsonb_field_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/jsonb_snapshot.html#snapshot_json_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.jsonb_snapshot.snapshot_json_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Store a serialized snapshot of each tracked JSON field on the instance.</p>
 <p>Called after rehydration so the snapshot reflects the committed database state.
 When <cite>jsonb_field_names</cite> is provided (partial refresh), only those fields are
 re-snapshotted; existing snapshots for other fields are preserved.</p>
