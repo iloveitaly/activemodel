@@ -2,7 +2,7 @@ from datetime import datetime
 
 from whenever import PlainDateTime
 
-from tests.whenever.models import WheneverModel, WheneverSchema
+from tests.whenever.models import WheneverModel, WheneverSchema, example_whenever
 
 
 def test_plain_datetime_round_trip(create_and_wipe_database):
@@ -18,11 +18,7 @@ def test_plain_datetime_round_trip(create_and_wipe_database):
 
 def test_plain_datetime_pydantic_serialization():
     now = PlainDateTime.parse_iso("2024-06-01T10:00:00")
-    schema = WheneverSchema(
-        instant="2024-01-15T12:00:00Z",
-        plain_datetime=now,
-        zoned_datetime="2024-01-15T12:00:00+00:00[UTC]",
-    )
+    schema = example_whenever(plain_datetime=now)
     assert schema.plain_datetime == now
 
     json_str = schema.model_dump_json()
@@ -32,13 +28,7 @@ def test_plain_datetime_pydantic_serialization():
 
 def test_plain_datetime_pydantic_from_string():
     iso = "2024-06-01T10:00:00"
-    schema = WheneverSchema.model_validate(
-        {
-            "instant": "2024-01-15T12:00:00Z",
-            "plain_datetime": iso,
-            "zoned_datetime": "2024-01-15T12:00:00+00:00[UTC]",
-        }
-    )
+    schema = WheneverSchema.model_validate(example_whenever(plain_datetime=iso).model_dump())
     assert isinstance(schema.plain_datetime, PlainDateTime)
     assert schema.plain_datetime == PlainDateTime.parse_iso(iso)
 

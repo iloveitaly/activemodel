@@ -15,3 +15,14 @@ class WheneverSchema(PydanticBaseModel):
     instant: Instant
     plain_datetime: PlainDateTime
     zoned_datetime: ZonedDateTime
+
+
+def example_whenever(**overrides) -> WheneverSchema:
+    return WheneverSchema.model_validate(
+        {
+            "instant": "2024-01-15T12:00:00Z",
+            "plain_datetime": "2024-01-15T12:00:00",
+            "zoned_datetime": "2024-01-15T12:00:00+00:00[UTC]",
+        }
+        | overrides
+    )

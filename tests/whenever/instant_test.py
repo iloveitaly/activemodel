@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from whenever import Instant
 
-from tests.whenever.models import WheneverModel, WheneverSchema
+from tests.whenever.models import WheneverModel, WheneverSchema, example_whenever
 
 
 def test_instant_round_trip(create_and_wipe_database):
@@ -21,11 +21,7 @@ def test_instant_round_trip(create_and_wipe_database):
 
 def test_instant_pydantic_serialization():
     now = Instant.now()
-    schema = WheneverSchema(
-        instant=now,
-        plain_datetime="2024-01-15T12:00:00",
-        zoned_datetime="2024-01-15T12:00:00+00:00[UTC]",
-    )
+    schema = example_whenever(instant=now)
     assert schema.instant == now
 
     json_str = schema.model_dump_json()
@@ -35,13 +31,7 @@ def test_instant_pydantic_serialization():
 
 def test_instant_pydantic_from_string():
     iso = "2024-01-15T12:00:00Z"
-    schema = WheneverSchema.model_validate(
-        {
-            "instant": iso,
-            "plain_datetime": "2024-01-15T12:00:00",
-            "zoned_datetime": "2024-01-15T12:00:00+00:00[UTC]",
-        }
-    )
+    schema = WheneverSchema.model_validate(example_whenever(instant=iso).model_dump())
     assert isinstance(schema.instant, Instant)
     assert schema.instant == Instant.parse_iso(iso)
 
