@@ -50,6 +50,8 @@ class ExampleWithJSONB(
     BaseModel, PydanticJSONMixin, TypeIDMixin("json_test"), table=True
 ):
     list_field: list[SubObject] = Field(sa_type=JSONB)
+    list_of_strings_field: list[str] = Field(sa_type=JSONB, default_factory=list)
+    list_of_ints_field: list[int] = Field(sa_type=JSONB, default_factory=list)
     optional_list_field: list[SubObject] | None = Field(sa_type=JSONB, default=None)
     generic_list_field: list[dict] = Field(sa_type=JSONB)
     object_field: SubObject = Field(sa_type=JSONB)
@@ -75,13 +77,15 @@ class ExampleWithAmbiguousUnion(
 
 
 def make_example(extra_items: int = 0) -> ExampleWithJSONB:
-    # the baseline payload intentionally includes both pydantic-backed and raw dict fields
+    # the baseline payload intentionally includes pydantic-backed, raw dict, and raw list fields
     items = [SubObject(name="item_0", value=0)] + [
         SubObject(name=f"item_{i}", value=i) for i in range(1, extra_items + 1)
     ]
 
     return ExampleWithJSONB(
         list_field=items,
+        list_of_strings_field=["a", "b", "c"],
+        list_of_ints_field=[1, 2, 3],
         generic_list_field=[{"key": "val"}],
         object_field=SubObject(name="original", value=1),
         unstructured_field={"k": "v"},

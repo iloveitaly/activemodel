@@ -50,6 +50,50 @@ def test_list_of_dict_assign_persists(create_and_wipe_database):
     assert fresh.generic_list_field == [{"another": "entry"}]
 
 
+def test_list_of_strings_append_persists(create_and_wipe_database):
+    example = make_example()
+    assert not instance_state(example).modified
+
+    example.list_of_strings_field.append("d")
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_of_strings_field == ["a", "b", "c", "d"]
+
+
+def test_list_of_strings_setitem_persists(create_and_wipe_database):
+    example = make_example()
+    assert not instance_state(example).modified
+
+    example.list_of_strings_field[1] = "updated"
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_of_strings_field == ["a", "updated", "c"]
+
+
+def test_list_of_ints_append_persists(create_and_wipe_database):
+    example = make_example()
+    assert not instance_state(example).modified
+
+    example.list_of_ints_field.append(4)
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_of_ints_field == [1, 2, 3, 4]
+
+
+def test_list_of_ints_setitem_persists(create_and_wipe_database):
+    example = make_example()
+    assert not instance_state(example).modified
+
+    example.list_of_ints_field[0] = 9
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_of_ints_field == [9, 2, 3]
+
+
 def test_refresh_discards_unflushed_dict_mutation(create_and_wipe_database):
     example = make_example()
 
@@ -94,12 +138,32 @@ def test_has_json_mutations_returns_true_for_dict_field(create_and_wipe_database
     assert example.has_json_mutations()
 
 
+def test_has_json_mutations_returns_true_for_list_of_strings_field(
+    create_and_wipe_database,
+):
+    example = make_example()
+    assert not example.has_json_mutations()
+
+    example.list_of_strings_field.append("d")
+    assert example.has_json_mutations()
+
+
 def test_detect_json_mutations_returns_dict_field_names(create_and_wipe_database):
     example = make_example()
     assert detect_json_mutations(example) == []
 
     example.semi_structured_field["updated"] = "value"
     assert detect_json_mutations(example) == ["semi_structured_field"]
+
+
+def test_detect_json_mutations_returns_list_of_ints_field_name(
+    create_and_wipe_database,
+):
+    example = make_example()
+    assert detect_json_mutations(example) == []
+
+    example.list_of_ints_field.append(4)
+    assert detect_json_mutations(example) == ["list_of_ints_field"]
 
 
 def test_equivalent_dict_reassignment_does_not_produce_spurious_update(
