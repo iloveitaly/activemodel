@@ -27,7 +27,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import event
 from sqlalchemy.orm import attributes
 from ..jsonb_snapshot import (
-    snapshot_pydantic_fields,
+    snapshot_json_fields,
     detect_json_mutations,
     register_before_commit_listener,
 )
@@ -251,7 +251,7 @@ class PydanticJSONMixin:
                 raw_value = model_cls(**raw_value)
                 attributes.set_committed_value(self, field_name, raw_value)
 
-        snapshot_pydantic_fields(self, jsonb_field_names=jsonb_field_names)
+        snapshot_json_fields(self, jsonb_field_names=jsonb_field_names)
 
     def has_json_mutations(self) -> bool:
         """Check whether any Pydantic JSON field has been mutated since the last snapshot.

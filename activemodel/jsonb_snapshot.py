@@ -89,7 +89,7 @@ def _supports_snapshot_tracking(instance, annotation) -> bool:
     return _is_plain_json_container_annotation(annotation)
 
 
-def snapshot_pydantic_fields(
+def snapshot_json_fields(
     instance, jsonb_field_names: set[str] | None = None
 ) -> None:
     """Store a serialized snapshot of each tracked JSON field on the instance.
@@ -102,7 +102,7 @@ def snapshot_pydantic_fields(
         return
 
     # copy so a partial refresh only overwrites the refreshed fields, leaving others intact
-    existing = getattr(instance, "_pydantic_json_snapshots", {})
+    existing = getattr(instance, "_json_field_snapshots", {})
     snapshots = dict(existing)
 
     for field_name, field_info in type(instance).model_fields.items():
@@ -123,7 +123,7 @@ def snapshot_pydantic_fields(
         snapshots[field_name] = _value_to_json_string(raw_value)
 
     # bypass Pydantic's __setattr__ so this private dict is invisible to model_dump/validation
-    object.__setattr__(instance, "_pydantic_json_snapshots", snapshots)
+    object.__setattr__(instance, "_json_field_snapshots", snapshots)
 
 
 def detect_json_mutations(instance) -> list[str]:
@@ -134,7 +134,7 @@ def detect_json_mutations(instance) -> list[str]:
     """
 
     # store a map of field name to serialized json string for that field
-    snapshots: dict[str, str | None] = getattr(instance, "_pydantic_json_snapshots", {})
+    snapshots: dict[str, str | None] = getattr(instance, "_json_field_snapshots", {})
 
     # new instances (never loaded from DB) have no snapshot; nothing to compare
     if not snapshots:
@@ -198,7 +198,7 @@ def register_before_commit_listener() -> None:
 
     # applies to all Session subclasses (including sqlmodel.Session) via SQLAlchemy propagation
     @event.listens_for(Session, "before_commit")
-    def _detect_pydantic_json_mutations(session):
+    def _detect_tracked_json_mutations(session):
         # snapshot is only set on persistent instances that came through our load/refresh hooks
         for instance in list(session.identity_map.values()):
             if isinstance(instance, PydanticJSONMixin):
