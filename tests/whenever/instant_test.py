@@ -58,7 +58,7 @@ def test_instant_type_decorator_accepts_string(create_and_wipe_database):
 def test_instant_accepts_datetime_assignment(create_and_wipe_database):
     value = datetime(2024, 6, 1, 10, 0, tzinfo=timezone.utc)
     record = WheneverModel()
-    setattr(record, "triggered_at", value)
+    record.triggered_at = value  # type: ignore[assignment]
     record.save()
 
     fetched = WheneverModel.get(record.id)
