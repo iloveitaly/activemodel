@@ -50,6 +50,8 @@ class ExampleWithJSONB(
     BaseModel, PydanticJSONMixin, TypeIDMixin("json_test"), table=True
 ):
     list_field: list[SubObject] = Field(sa_type=JSONB)
+    list_of_bools_field: list[bool] = Field(sa_type=JSONB, default_factory=list)
+    list_of_floats_field: list[float] = Field(sa_type=JSONB, default_factory=list)
     list_of_strings_field: list[str] = Field(sa_type=JSONB, default_factory=list)
     list_of_ints_field: list[int] = Field(sa_type=JSONB, default_factory=list)
     optional_list_field: list[SubObject] | None = Field(sa_type=JSONB, default=None)
@@ -84,6 +86,8 @@ def make_example(extra_items: int = 0) -> ExampleWithJSONB:
 
     return ExampleWithJSONB(
         list_field=items,
+        list_of_bools_field=[True, False],
+        list_of_floats_field=[1.5, 2.5, 3.5],
         list_of_strings_field=["a", "b", "c"],
         list_of_ints_field=[1, 2, 3],
         generic_list_field=[{"key": "val"}],

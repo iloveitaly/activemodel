@@ -61,6 +61,50 @@ def test_list_of_strings_append_persists(create_and_wipe_database):
     assert fresh.list_of_strings_field == ["a", "b", "c", "d"]
 
 
+def test_list_of_bools_append_persists(create_and_wipe_database):
+    example = make_example()
+    assert not instance_state(example).modified
+
+    example.list_of_bools_field.append(True)
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_of_bools_field == [True, False, True]
+
+
+def test_list_of_bools_setitem_persists(create_and_wipe_database):
+    example = make_example()
+    assert not instance_state(example).modified
+
+    example.list_of_bools_field[1] = True
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_of_bools_field == [True, True]
+
+
+def test_list_of_floats_append_persists(create_and_wipe_database):
+    example = make_example()
+    assert not instance_state(example).modified
+
+    example.list_of_floats_field.append(4.5)
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_of_floats_field == [1.5, 2.5, 3.5, 4.5]
+
+
+def test_list_of_floats_setitem_persists(create_and_wipe_database):
+    example = make_example()
+    assert not instance_state(example).modified
+
+    example.list_of_floats_field[0] = 9.5
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.list_of_floats_field == [9.5, 2.5, 3.5]
+
+
 def test_list_of_strings_setitem_persists(create_and_wipe_database):
     example = make_example()
     assert not instance_state(example).modified
@@ -148,6 +192,16 @@ def test_has_json_mutations_returns_true_for_list_of_strings_field(
     assert example.has_json_mutations()
 
 
+def test_has_json_mutations_returns_true_for_list_of_bools_field(
+    create_and_wipe_database,
+):
+    example = make_example()
+    assert not example.has_json_mutations()
+
+    example.list_of_bools_field[1] = True
+    assert example.has_json_mutations()
+
+
 def test_detect_json_mutations_returns_dict_field_names(create_and_wipe_database):
     example = make_example()
     assert detect_json_mutations(example) == []
@@ -164,6 +218,16 @@ def test_detect_json_mutations_returns_list_of_ints_field_name(
 
     example.list_of_ints_field.append(4)
     assert detect_json_mutations(example) == ["list_of_ints_field"]
+
+
+def test_detect_json_mutations_returns_list_of_floats_field_name(
+    create_and_wipe_database,
+):
+    example = make_example()
+    assert detect_json_mutations(example) == []
+
+    example.list_of_floats_field.append(4.5)
+    assert detect_json_mutations(example) == ["list_of_floats_field"]
 
 
 def test_equivalent_dict_reassignment_does_not_produce_spurious_update(
