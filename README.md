@@ -18,7 +18,7 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 * **ActiveRecord-style Query & Persistence API**: Fluent methods like `save()`, `where()`, `find_or_create_by()`, and `upsert()` for intuitive database operations.
 * **Implicit Session Management**: Automatically handles database sessions, eliminating boilerplate and making database interactions feel "magic".
 * **Stripe-style IDs (TypeID)**: Native support for type-safe, prefixed, and sortable UUIDs with a built-in `TypeIDMixin`.
-* **whenever datetime types**: Optional integration for `whenever.Instant` and `whenever.ZonedDateTime` as first-class field annotations.
+* **whenever datetime types**: Optional integration for `whenever.Instant`, `whenever.PlainDateTime`, and `whenever.ZonedDateTime` as first-class field annotations.
 * **Timestamp Column Mixins**: Standard `created_at` and `updated_at` tracking out of the box.
 * **Lifecycle Hooks**: Rails-style callbacks like `before_save`, `after_create`, and `around_delete`.
 * **Automatic DB Comments**: Syncs class and field-level docstrings directly to database table and column comments for better self-documentation.
@@ -262,19 +262,22 @@ SQLModel & SQLAlchemy are tricky. Here are some useful internal tricks:
 uv add activemodel[extras]
 ```
 
-Once installed, you can use `whenever.Instant` and `whenever.ZonedDateTime` directly as field type annotations — no `sa_type=` needed:
+Once installed, you can use `whenever.Instant`, `whenever.PlainDateTime`, and `whenever.ZonedDateTime` directly as field type annotations — no `sa_type=` needed:
 
 ```python
-from whenever import Instant, ZonedDateTime
+from whenever import Instant, PlainDateTime, ZonedDateTime
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
 
 class Event(BaseModel, TypeIDMixin("event"), table=True):
     triggered_at: Instant | None = None
+    local_time: PlainDateTime | None = None
     scheduled_at: ZonedDateTime | None = None
 ```
 
-Both types are stored as timezone-aware `TIMESTAMP WITH TIME ZONE` columns. `Instant` round-trips exactly. `ZonedDateTime` preserves the UTC moment but not the original IANA timezone name (the DB stores the UTC offset at write time).
+`PlainDateTime` is stored as a naive `TIMESTAMP` / `DATETIME` value and round-trips as a local date-time without timezone information. On databases with native timezone-aware timestamp support, `Instant` and `ZonedDateTime` are stored as `TIMESTAMP WITH TIME ZONE` values. `Instant` round-trips exactly. `ZonedDateTime` preserves the UTC moment but not the original IANA timezone name (the DB stores the UTC offset at write time).
+
+SQLite does not store timezone information in its datetime columns. If you use `whenever` fields with SQLite, make sure the environment writing and reading those values is configured with the server timezone semantics you expect. In practice, that means SQLite is best suited for local development or test scenarios where you control the process timezone behavior.
 
 They also work in plain Pydantic response models without any extra setup, since `whenever` has built-in Pydantic v2 support:
 
