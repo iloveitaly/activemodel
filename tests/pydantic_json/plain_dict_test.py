@@ -39,6 +39,17 @@ def test_list_of_dict_append_persists(create_and_wipe_database):
     assert fresh.generic_list_field == [{"key": "val"}, {"another": "entry"}]
 
 
+def test_list_of_dict_assign_persists(create_and_wipe_database):
+    example = make_example()
+    assert not instance_state(example).modified
+
+    example.generic_list_field = [{"another": "entry"}]
+    example.save()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.generic_list_field == [{"another": "entry"}]
+
+
 def test_refresh_discards_unflushed_dict_mutation(create_and_wipe_database):
     example = make_example()
 
