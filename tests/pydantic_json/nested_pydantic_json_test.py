@@ -5,6 +5,7 @@ By default, fast API does not handle converting JSONB to and from Pydantic model
 from sqlalchemy.orm.base import instance_state
 from sqlmodel import Field, Session
 
+from activemodel.jsonb_snapshot import detect_json_mutations
 from activemodel.session_manager import get_engine
 from activemodel.session_manager import global_session
 from tests.models import AnotherExample, ExampleWithComputedProperty
@@ -488,8 +489,6 @@ def test_has_json_mutations_returns_false_after_revert_to_original(
 
 
 def test_detect_json_mutations_returns_field_names(create_and_wipe_database):
-    from activemodel.jsonb_snapshot import detect_json_mutations
-
     example = make_example()
     assert detect_json_mutations(example) == []
 

@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from sqlmodel import Field, Relationship
 
 from activemodel import BaseModel
+from activemodel.logger import logger
 from activemodel.types.typeid import TypeIDType
 from tests.models import AnotherExample
 
@@ -20,8 +21,6 @@ class LifecycleModelWithRelationships(BaseModel, table=True):
     )
 
     def log_self_and_relationships(self):
-        from activemodel.logger import logger
-
         logger.info("self.note=%s", self.note)
         logger.info("another_example.note=%s", self.another_example.note)
 

@@ -1,5 +1,5 @@
 import pytest
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, Session
 
 from activemodel.session_manager import (
     SessionManager,
@@ -37,8 +37,6 @@ def test_global_session_raises_with_different_session():
 
     with global_session() as outer_session:
         # Create a different session
-        from sqlmodel import Session
-
         different_session = Session(get_engine())
 
         try:

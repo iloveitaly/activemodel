@@ -1,5 +1,6 @@
 from sqlalchemy.orm.base import instance_state
 
+from activemodel.jsonb_snapshot import detect_json_mutations
 from activemodel.session_manager import global_session
 from tests.models import ExampleRecord
 from tests.pydantic_json.helpers import ExampleWithJSONB, make_example
@@ -48,6 +49,32 @@ def test_refresh_discards_unflushed_dict_mutation(create_and_wipe_database):
     assert not instance_state(example).modified
 
 
+def test_single_field_dict_update(create_and_wipe_database):
+    example = make_example()
+    example.unstructured_field = {"special": "value"}
+    example.save()
+
+    assert example.unstructured_field == {"special": "value"}
+    assert not instance_state(example).modified
+    assert not example.has_json_mutations()
+
+    example.unstructured_field["special"] = "new_value"
+
+    assert example.unstructured_field == {"special": "new_value"}
+    assert example.has_json_mutations()
+    assert instance_state(example).modified
+
+    example.save()
+
+    assert example.unstructured_field == {"special": "new_value"}
+    assert not instance_state(example).modified
+    assert not example.has_json_mutations()
+
+    fresh = ExampleWithJSONB.one(example.id)
+    assert fresh.unstructured_field == {"special": "new_value"}
+    assert not fresh.has_json_mutations()
+
+
 def test_has_json_mutations_returns_true_for_dict_field(create_and_wipe_database):
     example = make_example()
     assert not example.has_json_mutations()
@@ -57,8 +84,6 @@ def test_has_json_mutations_returns_true_for_dict_field(create_and_wipe_database
 
 
 def test_detect_json_mutations_returns_dict_field_names(create_and_wipe_database):
-    from activemodel.jsonb_snapshot import detect_json_mutations
-
     example = make_example()
     assert detect_json_mutations(example) == []
 
@@ -73,9 +98,11 @@ def test_equivalent_dict_reassignment_does_not_produce_spurious_update(
 
     example.unstructured_field = {"k": "v"}
     assert instance_state(example).modified
+    assert not example.has_json_mutations()
 
     example.save()
     assert not instance_state(example).modified
+    assert not example.has_json_mutations()
 
 
 def test_dict_mutation_persists_across_sibling_save(create_and_wipe_database):
