@@ -173,200 +173,205 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="17">
 </span><span data-line="18"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_core</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_jsonable_python</span>
 </span><span data-line="19"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">event</span>
-</span><span data-line="20"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">attributes</span> <span class="k">as</span> <span class="n">sa_attributes</span>
-</span><span data-line="21">
+</span><span data-line="20"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+</span><span data-line="21"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">attributes</span> <span class="k">as</span> <span class="n">sa_attributes</span>
 </span><span data-line="22">
-</span><span data-line="23"><span class="k">def</span><span class="w"> </span><span class="nf">_value_to_json_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="24"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Serialize a Pydantic model, list of models, or raw dict to a canonical JSON string.</span>
-</span><span data-line="25">
-</span><span data-line="26"><span class="sd">    `to_jsonable_python` (pydantic-core, Rust) converts the value to a JSON-serializable</span>
-</span><span data-line="27"><span class="sd">    form before dumping. `sort_keys=True` ensures stable output when a Pydantic-annotated</span>
-</span><span data-line="28"><span class="sd">    field is assigned a raw dict with arbitrary key ordering rather than a Pydantic model.</span>
-</span><span data-line="29">
-</span><span data-line="30"><span class="sd">    Uses orjson when available (2-10x faster, Rust-based); falls back to stdlib json.</span>
-</span><span data-line="31"><span class="sd">    orjson returns bytes, so .decode() is required when it is available. The serializer</span>
-</span><span data-line="32"><span class="sd">    is resolved once on first call and cached on the function object.</span>
-</span><span data-line="33"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="34">    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="35">        <span class="k">return</span> <span class="kc">None</span>
-</span><span data-line="36">
-</span><span data-line="37">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_value_to_json_string</span><span class="p">,</span> <span class="s2">&quot;_impl&quot;</span><span class="p">):</span>
-</span><span data-line="38">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="39">            <span class="kn">import</span><span class="w"> </span><span class="nn">orjson</span>
-</span><span data-line="40">
-</span><span data-line="41">            <span class="n">_value_to_json_string</span><span class="o">.</span><span class="n">_impl</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
-</span><span data-line="42">                <span class="n">o</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_SORT_KEYS</span>
-</span><span data-line="43">            <span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-</span><span data-line="44">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span data-line="45">            <span class="n">_value_to_json_string</span><span class="o">.</span><span class="n">_impl</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="46">
-</span><span data-line="47">    <span class="k">return</span> <span class="n">_value_to_json_string</span><span class="o">.</span><span class="n">_impl</span><span class="p">(</span><span class="n">to_jsonable_python</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-</span><span data-line="48">
+</span><span data-line="23">
+</span><span data-line="24"><span class="k">def</span><span class="w"> </span><span class="nf">_value_to_json_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="25"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Serialize a Pydantic model, list of models, or raw dict to a canonical JSON string.</span>
+</span><span data-line="26">
+</span><span data-line="27"><span class="sd">    `to_jsonable_python` (pydantic-core, Rust) converts the value to a JSON-serializable</span>
+</span><span data-line="28"><span class="sd">    form before dumping. `sort_keys=True` ensures stable output when a Pydantic-annotated</span>
+</span><span data-line="29"><span class="sd">    field is assigned a raw dict with arbitrary key ordering rather than a Pydantic model.</span>
+</span><span data-line="30">
+</span><span data-line="31"><span class="sd">    Uses orjson when available (2-10x faster, Rust-based); falls back to stdlib json.</span>
+</span><span data-line="32"><span class="sd">    orjson returns bytes, so .decode() is required when it is available. The serializer</span>
+</span><span data-line="33"><span class="sd">    is resolved once on first call and cached on the function object.</span>
+</span><span data-line="34"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="35">    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="36">        <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="37">
+</span><span data-line="38">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_value_to_json_string</span><span class="p">,</span> <span class="s2">&quot;_impl&quot;</span><span class="p">):</span>
+</span><span data-line="39">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="40">            <span class="kn">import</span><span class="w"> </span><span class="nn">orjson</span>
+</span><span data-line="41">
+</span><span data-line="42">            <span class="n">_value_to_json_string</span><span class="o">.</span><span class="n">_impl</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+</span><span data-line="43">                <span class="n">o</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_SORT_KEYS</span>
+</span><span data-line="44">            <span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+</span><span data-line="45">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span data-line="46">            <span class="n">_value_to_json_string</span><span class="o">.</span><span class="n">_impl</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="47">
+</span><span data-line="48">    <span class="k">return</span> <span class="n">_value_to_json_string</span><span class="o">.</span><span class="n">_impl</span><span class="p">(</span><span class="n">to_jsonable_python</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 </span><span data-line="49">
-</span><span data-line="50"><span class="k">def</span><span class="w"> </span><span class="nf">_is_plain_json_container_annotation</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="51">    <span class="n">origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
-</span><span data-line="52">
-</span><span data-line="53">    <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">):</span>
-</span><span data-line="54">        <span class="c1"># optional dict/list[dict] fields should still participate in snapshot tracking</span>
-</span><span data-line="55">        <span class="n">non_none_types</span> <span class="o">=</span> <span class="p">[</span>
-</span><span data-line="56">            <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">get_args</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-</span><span data-line="57">        <span class="p">]</span>
-</span><span data-line="58">
-</span><span data-line="59">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_none_types</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-</span><span data-line="60">            <span class="k">return</span> <span class="kc">False</span>
-</span><span data-line="61">
-</span><span data-line="62">        <span class="k">return</span> <span class="n">_is_plain_json_container_annotation</span><span class="p">(</span><span class="n">non_none_types</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</span><span data-line="63">
-</span><span data-line="64">    <span class="k">if</span> <span class="n">annotation</span> <span class="ow">is</span> <span class="nb">dict</span> <span class="ow">or</span> <span class="n">origin</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span data-line="65">        <span class="k">return</span> <span class="kc">True</span>
-</span><span data-line="66">
-</span><span data-line="67">    <span class="k">if</span> <span class="n">annotation</span> <span class="ow">is</span> <span class="nb">list</span> <span class="ow">or</span> <span class="n">origin</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
-</span><span data-line="68">        <span class="c1"># only top-level list[dict] is tracked here; nested list shapes remain unsupported</span>
-</span><span data-line="69">        <span class="n">list_item_types</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
-</span><span data-line="70">
-</span><span data-line="71">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_item_types</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-</span><span data-line="72">            <span class="k">return</span> <span class="kc">False</span>
-</span><span data-line="73">
-</span><span data-line="74">        <span class="n">list_item_type</span> <span class="o">=</span> <span class="n">list_item_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span data-line="75">
-</span><span data-line="76">        <span class="k">return</span> <span class="n">list_item_type</span> <span class="ow">is</span> <span class="nb">dict</span> <span class="ow">or</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">list_item_type</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span>
-</span><span data-line="77">
-</span><span data-line="78">    <span class="k">return</span> <span class="kc">False</span>
-</span><span data-line="79">
-</span><span data-line="80">
-</span><span data-line="81"><span class="k">def</span><span class="w"> </span><span class="nf">_supports_snapshot_tracking</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="82">    <span class="c1"># reuse the mixin&#39;s pydantic classifier so rehydrated shapes and tracked shapes stay aligned</span>
-</span><span data-line="83">    <span class="n">_</span><span class="p">,</span> <span class="n">model_cls</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">_resolve_pydantic_field_info</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+</span><span data-line="50">
+</span><span data-line="51"><span class="k">def</span><span class="w"> </span><span class="nf">_is_plain_json_container_annotation</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="52">    <span class="n">origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+</span><span data-line="53">
+</span><span data-line="54">    <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">):</span>
+</span><span data-line="55">        <span class="c1"># optional dict/list[dict] fields should still participate in snapshot tracking</span>
+</span><span data-line="56">        <span class="n">non_none_types</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="57">            <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">get_args</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+</span><span data-line="58">        <span class="p">]</span>
+</span><span data-line="59">
+</span><span data-line="60">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_none_types</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+</span><span data-line="61">            <span class="k">return</span> <span class="kc">False</span>
+</span><span data-line="62">
+</span><span data-line="63">        <span class="k">return</span> <span class="n">_is_plain_json_container_annotation</span><span class="p">(</span><span class="n">non_none_types</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span data-line="64">
+</span><span data-line="65">    <span class="k">if</span> <span class="n">annotation</span> <span class="ow">is</span> <span class="nb">dict</span> <span class="ow">or</span> <span class="n">origin</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span data-line="66">        <span class="k">return</span> <span class="kc">True</span>
+</span><span data-line="67">
+</span><span data-line="68">    <span class="k">if</span> <span class="n">annotation</span> <span class="ow">is</span> <span class="nb">list</span> <span class="ow">or</span> <span class="n">origin</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+</span><span data-line="69">        <span class="c1"># only top-level json-safe lists are tracked here; nested list shapes remain unsupported</span>
+</span><span data-line="70">        <span class="n">list_item_types</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+</span><span data-line="71">
+</span><span data-line="72">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_item_types</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+</span><span data-line="73">            <span class="k">return</span> <span class="kc">False</span>
+</span><span data-line="74">
+</span><span data-line="75">        <span class="n">list_item_type</span> <span class="o">=</span> <span class="n">list_item_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span data-line="76">
+</span><span data-line="77">        <span class="k">return</span> <span class="p">(</span>
+</span><span data-line="78">            <span class="n">list_item_type</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+</span><span data-line="79">            <span class="ow">or</span> <span class="n">list_item_type</span> <span class="ow">is</span> <span class="nb">dict</span>
+</span><span data-line="80">            <span class="ow">or</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">list_item_type</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span>
+</span><span data-line="81">        <span class="p">)</span>
+</span><span data-line="82">
+</span><span data-line="83">    <span class="k">return</span> <span class="kc">False</span>
 </span><span data-line="84">
-</span><span data-line="85">    <span class="k">if</span> <span class="n">model_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">instance</span><span class="o">.</span><span class="n">_is_pydantic_model_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">):</span>
-</span><span data-line="86">        <span class="k">return</span> <span class="kc">True</span>
-</span><span data-line="87">
-</span><span data-line="88">    <span class="c1"># plain dict containers are tracked even though load/refresh leaves them as raw python values</span>
-</span><span data-line="89">    <span class="k">return</span> <span class="n">_is_plain_json_container_annotation</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
-</span><span data-line="90">
-</span><span data-line="91">
+</span><span data-line="85">
+</span><span data-line="86"><span class="k">def</span><span class="w"> </span><span class="nf">_supports_snapshot_tracking</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="87">    <span class="c1"># reuse the mixin&#39;s pydantic classifier so rehydrated shapes and tracked shapes stay aligned</span>
+</span><span data-line="88">    <span class="n">_</span><span class="p">,</span> <span class="n">model_cls</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">_resolve_pydantic_field_info</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+</span><span data-line="89">
+</span><span data-line="90">    <span class="k">if</span> <span class="n">model_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">instance</span><span class="o">.</span><span class="n">_is_pydantic_model_class</span><span class="p">(</span><span class="n">model_cls</span><span class="p">):</span>
+</span><span data-line="91">        <span class="k">return</span> <span class="kc">True</span>
+</span><span data-line="92">
+</span><span data-line="93">    <span class="c1"># plain dict containers are tracked even though load/refresh leaves them as raw python values</span>
+</span><span data-line="94">    <span class="k">return</span> <span class="n">_is_plain_json_container_annotation</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+</span><span data-line="95">
+</span><span data-line="96">
 <div class="viewcode-block" id="snapshot_json_fields">
 <a class="viewcode-back" href="../../autoapi/activemodel/jsonb_snapshot/index.html#activemodel.jsonb_snapshot.snapshot_json_fields">[docs]</a>
-</span><span data-line="92"><span class="k">def</span><span class="w"> </span><span class="nf">snapshot_json_fields</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">jsonb_field_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="93"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Store a serialized snapshot of each tracked JSON field on the instance.</span>
-</span><span data-line="94">
-</span><span data-line="95"><span class="sd">    Called after rehydration so the snapshot reflects the committed database state.</span>
-</span><span data-line="96"><span class="sd">    When `jsonb_field_names` is provided (partial refresh), only those fields are</span>
-</span><span data-line="97"><span class="sd">    re-snapshotted; existing snapshots for other fields are preserved.</span>
-</span><span data-line="98"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="99">    <span class="k">if</span> <span class="n">jsonb_field_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">jsonb_field_names</span><span class="p">:</span>
-</span><span data-line="100">        <span class="k">return</span>
-</span><span data-line="101">
-</span><span data-line="102">    <span class="c1"># copy so a partial refresh only overwrites the refreshed fields, leaving others intact</span>
-</span><span data-line="103">    <span class="n">existing</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s2">&quot;_json_field_snapshots&quot;</span><span class="p">,</span> <span class="p">{})</span>
-</span><span data-line="104">    <span class="n">snapshots</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">existing</span><span class="p">)</span>
-</span><span data-line="105">
-</span><span data-line="106">    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_info</span> <span class="ow">in</span> <span class="nb">type</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="107">        <span class="c1"># partial refresh: only re-snapshot the fields that were just reloaded from DB</span>
-</span><span data-line="108">        <span class="k">if</span> <span class="n">jsonb_field_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">jsonb_field_names</span><span class="p">:</span>
-</span><span data-line="109">            <span class="k">continue</span>
+</span><span data-line="97"><span class="k">def</span><span class="w"> </span><span class="nf">snapshot_json_fields</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">jsonb_field_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="98"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Store a serialized snapshot of each tracked JSON field on the instance.</span>
+</span><span data-line="99">
+</span><span data-line="100"><span class="sd">    Called after rehydration so the snapshot reflects the committed database state.</span>
+</span><span data-line="101"><span class="sd">    When `jsonb_field_names` is provided (partial refresh), only those fields are</span>
+</span><span data-line="102"><span class="sd">    re-snapshotted; existing snapshots for other fields are preserved.</span>
+</span><span data-line="103"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="104">    <span class="k">if</span> <span class="n">jsonb_field_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">jsonb_field_names</span><span class="p">:</span>
+</span><span data-line="105">        <span class="k">return</span>
+</span><span data-line="106">
+</span><span data-line="107">    <span class="c1"># copy so a partial refresh only overwrites the refreshed fields, leaving others intact</span>
+</span><span data-line="108">    <span class="n">existing</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s2">&quot;_json_field_snapshots&quot;</span><span class="p">,</span> <span class="p">{})</span>
+</span><span data-line="109">    <span class="n">snapshots</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">existing</span><span class="p">)</span>
 </span><span data-line="110">
-</span><span data-line="111">        <span class="n">raw_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span data-line="112">
-</span><span data-line="113">        <span class="c1"># None means the field isn&#39;t present / was cleared; drop any existing snapshot</span>
-</span><span data-line="114">        <span class="k">if</span> <span class="n">raw_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="115">            <span class="n">snapshots</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span data-line="116">            <span class="k">continue</span>
+</span><span data-line="111">    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_info</span> <span class="ow">in</span> <span class="nb">type</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="112">        <span class="c1"># partial refresh: only re-snapshot the fields that were just reloaded from DB</span>
+</span><span data-line="113">        <span class="k">if</span> <span class="n">jsonb_field_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">jsonb_field_names</span><span class="p">:</span>
+</span><span data-line="114">            <span class="k">continue</span>
+</span><span data-line="115">
+</span><span data-line="116">        <span class="n">raw_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 </span><span data-line="117">
-</span><span data-line="118">        <span class="k">if</span> <span class="ow">not</span> <span class="n">_supports_snapshot_tracking</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_info</span><span class="o">.</span><span class="n">annotation</span><span class="p">):</span>
-</span><span data-line="119">            <span class="k">continue</span>
-</span><span data-line="120">
-</span><span data-line="121">        <span class="n">snapshots</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_value_to_json_string</span><span class="p">(</span><span class="n">raw_value</span><span class="p">)</span>
+</span><span data-line="118">        <span class="c1"># None means the field isn&#39;t present / was cleared; drop any existing snapshot</span>
+</span><span data-line="119">        <span class="k">if</span> <span class="n">raw_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="120">            <span class="n">snapshots</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span data-line="121">            <span class="k">continue</span>
 </span><span data-line="122">
-</span><span data-line="123">    <span class="c1"># bypass Pydantic&#39;s __setattr__ so this private dict is invisible to model_dump/validation</span>
-</span><span data-line="124">    <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s2">&quot;_json_field_snapshots&quot;</span><span class="p">,</span> <span class="n">snapshots</span><span class="p">)</span></div>
-
+</span><span data-line="123">        <span class="k">if</span> <span class="ow">not</span> <span class="n">_supports_snapshot_tracking</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_info</span><span class="o">.</span><span class="n">annotation</span><span class="p">):</span>
+</span><span data-line="124">            <span class="k">continue</span>
 </span><span data-line="125">
-</span><span data-line="126">
+</span><span data-line="126">        <span class="n">snapshots</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_value_to_json_string</span><span class="p">(</span><span class="n">raw_value</span><span class="p">)</span>
+</span><span data-line="127">
+</span><span data-line="128">    <span class="c1"># bypass Pydantic&#39;s __setattr__ so this private dict is invisible to model_dump/validation</span>
+</span><span data-line="129">    <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s2">&quot;_json_field_snapshots&quot;</span><span class="p">,</span> <span class="n">snapshots</span><span class="p">)</span></div>
+
+</span><span data-line="130">
+</span><span data-line="131">
 <div class="viewcode-block" id="detect_json_mutations">
 <a class="viewcode-back" href="../../autoapi/activemodel/jsonb_snapshot/index.html#activemodel.jsonb_snapshot.detect_json_mutations">[docs]</a>
-</span><span data-line="127"><span class="k">def</span><span class="w"> </span><span class="nf">detect_json_mutations</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span data-line="128"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare current field values against snapshots, flagging any that changed.</span>
-</span><span data-line="129">
-</span><span data-line="130"><span class="sd">    Returns a list of field names that were mutated since the last snapshot.</span>
-</span><span data-line="131"><span class="sd">    Side effect: calls `flag_modified` on the SQLAlchemy instance for each changed field.</span>
-</span><span data-line="132"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="133">
-</span><span data-line="134">    <span class="c1"># store a map of field name to serialized json string for that field</span>
-</span><span data-line="135">    <span class="n">snapshots</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s2">&quot;_json_field_snapshots&quot;</span><span class="p">,</span> <span class="p">{})</span>
-</span><span data-line="136">
-</span><span data-line="137">    <span class="c1"># new instances (never loaded from DB) have no snapshot; nothing to compare</span>
-</span><span data-line="138">    <span class="k">if</span> <span class="ow">not</span> <span class="n">snapshots</span><span class="p">:</span>
-</span><span data-line="139">        <span class="k">return</span> <span class="p">[]</span>
-</span><span data-line="140">
-</span><span data-line="141">    <span class="n">mutated_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="142">    <span class="n">model_fields</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span><span class="o">.</span><span class="n">model_fields</span>
-</span><span data-line="143">
-</span><span data-line="144">    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">snapshot_str</span> <span class="ow">in</span> <span class="n">snapshots</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="145">        <span class="n">field_info</span> <span class="o">=</span> <span class="n">model_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
-</span><span data-line="146">        <span class="k">if</span> <span class="n">field_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="147">            <span class="k">continue</span>
+</span><span data-line="132"><span class="k">def</span><span class="w"> </span><span class="nf">detect_json_mutations</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span data-line="133"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare current field values against snapshots, flagging any that changed.</span>
+</span><span data-line="134">
+</span><span data-line="135"><span class="sd">    Returns a list of field names that were mutated since the last snapshot.</span>
+</span><span data-line="136"><span class="sd">    Side effect: calls `flag_modified` on the SQLAlchemy instance for each changed field.</span>
+</span><span data-line="137"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="138">
+</span><span data-line="139">    <span class="c1"># store a map of field name to serialized json string for that field</span>
+</span><span data-line="140">    <span class="n">snapshots</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s2">&quot;_json_field_snapshots&quot;</span><span class="p">,</span> <span class="p">{})</span>
+</span><span data-line="141">
+</span><span data-line="142">    <span class="c1"># new instances (never loaded from DB) have no snapshot; nothing to compare</span>
+</span><span data-line="143">    <span class="k">if</span> <span class="ow">not</span> <span class="n">snapshots</span><span class="p">:</span>
+</span><span data-line="144">        <span class="k">return</span> <span class="p">[]</span>
+</span><span data-line="145">
+</span><span data-line="146">    <span class="n">mutated_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="147">    <span class="n">model_fields</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span><span class="o">.</span><span class="n">model_fields</span>
 </span><span data-line="148">
-</span><span data-line="149">        <span class="k">if</span> <span class="ow">not</span> <span class="n">_supports_snapshot_tracking</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_info</span><span class="o">.</span><span class="n">annotation</span><span class="p">):</span>
-</span><span data-line="150">            <span class="k">continue</span>
-</span><span data-line="151">
-</span><span data-line="152">        <span class="n">current_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span data-line="153">        <span class="n">current_str</span> <span class="o">=</span> <span class="n">_value_to_json_string</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span>
-</span><span data-line="154">
-</span><span data-line="155">        <span class="k">if</span> <span class="n">current_str</span> <span class="o">!=</span> <span class="n">snapshot_str</span><span class="p">:</span>
-</span><span data-line="156">            <span class="c1"># tell SQLAlchemy this column is dirty so it&#39;s included in the UPDATE</span>
-</span><span data-line="157">            <span class="n">sa_attributes</span><span class="o">.</span><span class="n">flag_modified</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
-</span><span data-line="158">            <span class="n">mutated_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
-</span><span data-line="159">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="160">            <span class="c1"># serialized value is unchanged; if SQLAlchemy already marked the field</span>
-</span><span data-line="161">            <span class="c1"># modified (e.g. direct assignment of an equivalent value), reset its</span>
-</span><span data-line="162">            <span class="c1"># history to prevent a spurious UPDATE.</span>
-</span><span data-line="163">            <span class="c1">#</span>
-</span><span data-line="164">            <span class="c1"># set_committed_value is the only public API for this — SQLAlchemy has no</span>
-</span><span data-line="165">            <span class="c1"># flag_clean/unflag_modified. The alternatives are worse: expire() forces a</span>
-</span><span data-line="166">            <span class="c1"># DB reload on next access; _commit() is internal. set_committed_value does</span>
-</span><span data-line="167">            <span class="c1"># slightly more than we need (it also updates the committed baseline to</span>
-</span><span data-line="168">            <span class="c1"># current_value), but since the serialized forms are equal the DB value is</span>
-</span><span data-line="169">            <span class="c1"># the same, so the baseline shift is harmless.</span>
-</span><span data-line="170">
-</span><span data-line="171">            <span class="n">sa_attributes</span><span class="o">.</span><span class="n">set_committed_value</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">current_value</span><span class="p">)</span>
-</span><span data-line="172">
-</span><span data-line="173">    <span class="k">return</span> <span class="n">mutated_fields</span></div>
-
-</span><span data-line="174">
+</span><span data-line="149">    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">snapshot_str</span> <span class="ow">in</span> <span class="n">snapshots</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="150">        <span class="n">field_info</span> <span class="o">=</span> <span class="n">model_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+</span><span data-line="151">        <span class="k">if</span> <span class="n">field_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="152">            <span class="k">continue</span>
+</span><span data-line="153">
+</span><span data-line="154">        <span class="k">if</span> <span class="ow">not</span> <span class="n">_supports_snapshot_tracking</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_info</span><span class="o">.</span><span class="n">annotation</span><span class="p">):</span>
+</span><span data-line="155">            <span class="k">continue</span>
+</span><span data-line="156">
+</span><span data-line="157">        <span class="n">current_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span data-line="158">        <span class="n">current_str</span> <span class="o">=</span> <span class="n">_value_to_json_string</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span>
+</span><span data-line="159">
+</span><span data-line="160">        <span class="k">if</span> <span class="n">current_str</span> <span class="o">!=</span> <span class="n">snapshot_str</span><span class="p">:</span>
+</span><span data-line="161">            <span class="c1"># tell SQLAlchemy this column is dirty so it&#39;s included in the UPDATE</span>
+</span><span data-line="162">            <span class="n">sa_attributes</span><span class="o">.</span><span class="n">flag_modified</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
+</span><span data-line="163">            <span class="n">mutated_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+</span><span data-line="164">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="165">            <span class="c1"># serialized value is unchanged; if SQLAlchemy already marked the field</span>
+</span><span data-line="166">            <span class="c1"># modified (e.g. direct assignment of an equivalent value), reset its</span>
+</span><span data-line="167">            <span class="c1"># history to prevent a spurious UPDATE.</span>
+</span><span data-line="168">            <span class="c1">#</span>
+</span><span data-line="169">            <span class="c1"># set_committed_value is the only public API for this — SQLAlchemy has no</span>
+</span><span data-line="170">            <span class="c1"># flag_clean/unflag_modified. The alternatives are worse: expire() forces a</span>
+</span><span data-line="171">            <span class="c1"># DB reload on next access; _commit() is internal. set_committed_value does</span>
+</span><span data-line="172">            <span class="c1"># slightly more than we need (it also updates the committed baseline to</span>
+</span><span data-line="173">            <span class="c1"># current_value), but since the serialized forms are equal the DB value is</span>
+</span><span data-line="174">            <span class="c1"># the same, so the baseline shift is harmless.</span>
 </span><span data-line="175">
-</span><span data-line="176"><span class="n">_before_commit_registered</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="176">            <span class="n">sa_attributes</span><span class="o">.</span><span class="n">set_committed_value</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">current_value</span><span class="p">)</span>
 </span><span data-line="177">
-</span><span data-line="178">
+</span><span data-line="178">    <span class="k">return</span> <span class="n">mutated_fields</span></div>
+
+</span><span data-line="179">
+</span><span data-line="180">
+</span><span data-line="181"><span class="n">_before_commit_registered</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="182">
+</span><span data-line="183">
 <div class="viewcode-block" id="register_before_commit_listener">
 <a class="viewcode-back" href="../../autoapi/activemodel/jsonb_snapshot/index.html#activemodel.jsonb_snapshot.register_before_commit_listener">[docs]</a>
-</span><span data-line="179"><span class="k">def</span><span class="w"> </span><span class="nf">register_before_commit_listener</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="180"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a session-level before_commit handler to detect in-place JSON mutations.</span>
-</span><span data-line="181">
-</span><span data-line="182"><span class="sd">    Uses before_commit (not before_flush) because SQLAlchemy skips the flush entirely</span>
-</span><span data-line="183"><span class="sd">    when it sees no pending changes -- meaning before_flush never fires for in-place</span>
-</span><span data-line="184"><span class="sd">    mutations that haven&#39;t been explicitly flagged. before_commit fires unconditionally,</span>
-</span><span data-line="185"><span class="sd">    giving us the chance to call flag_modified before the flush decision is made.</span>
+</span><span data-line="184"><span class="k">def</span><span class="w"> </span><span class="nf">register_before_commit_listener</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="185"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a session-level before_commit handler to detect in-place JSON mutations.</span>
 </span><span data-line="186">
-</span><span data-line="187"><span class="sd">    Safe to call multiple times -- the listener is only registered once.</span>
-</span><span data-line="188"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="189">    <span class="k">global</span> <span class="n">_before_commit_registered</span>
-</span><span data-line="190">
-</span><span data-line="191">    <span class="k">if</span> <span class="n">_before_commit_registered</span><span class="p">:</span>
-</span><span data-line="192">        <span class="k">return</span>
-</span><span data-line="193">
-</span><span data-line="194">    <span class="c1"># avoid circular imports</span>
-</span><span data-line="195">    <span class="kn">from</span><span class="w"> </span><span class="nn">.mixins.pydantic_json</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span>
-</span><span data-line="196">
-</span><span data-line="197">    <span class="c1"># applies to all Session subclasses (including sqlmodel.Session) via SQLAlchemy propagation</span>
-</span><span data-line="198">    <span class="nd">@event</span><span class="o">.</span><span class="n">listens_for</span><span class="p">(</span><span class="n">Session</span><span class="p">,</span> <span class="s2">&quot;before_commit&quot;</span><span class="p">)</span>
-</span><span data-line="199">    <span class="k">def</span><span class="w"> </span><span class="nf">_detect_tracked_json_mutations</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
-</span><span data-line="200">        <span class="c1"># snapshot is only set on persistent instances that came through our load/refresh hooks</span>
-</span><span data-line="201">        <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">identity_map</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-</span><span data-line="202">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">PydanticJSONMixin</span><span class="p">):</span>
-</span><span data-line="203">                <span class="n">detect_json_mutations</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
-</span><span data-line="204">
-</span><span data-line="205">    <span class="n">_before_commit_registered</span> <span class="o">=</span> <span class="kc">True</span></div>
+</span><span data-line="187"><span class="sd">    Uses before_commit (not before_flush) because SQLAlchemy skips the flush entirely</span>
+</span><span data-line="188"><span class="sd">    when it sees no pending changes -- meaning before_flush never fires for in-place</span>
+</span><span data-line="189"><span class="sd">    mutations that haven&#39;t been explicitly flagged. before_commit fires unconditionally,</span>
+</span><span data-line="190"><span class="sd">    giving us the chance to call flag_modified before the flush decision is made.</span>
+</span><span data-line="191">
+</span><span data-line="192"><span class="sd">    Safe to call multiple times -- the listener is only registered once.</span>
+</span><span data-line="193"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="194">    <span class="k">global</span> <span class="n">_before_commit_registered</span>
+</span><span data-line="195">
+</span><span data-line="196">    <span class="k">if</span> <span class="n">_before_commit_registered</span><span class="p">:</span>
+</span><span data-line="197">        <span class="k">return</span>
+</span><span data-line="198">
+</span><span data-line="199">    <span class="c1"># avoid circular imports</span>
+</span><span data-line="200">    <span class="kn">from</span><span class="w"> </span><span class="nn">.mixins.pydantic_json</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span>
+</span><span data-line="201">
+</span><span data-line="202">    <span class="c1"># applies to all Session subclasses (including sqlmodel.Session) via SQLAlchemy propagation</span>
+</span><span data-line="203">    <span class="nd">@event</span><span class="o">.</span><span class="n">listens_for</span><span class="p">(</span><span class="n">Session</span><span class="p">,</span> <span class="s2">&quot;before_commit&quot;</span><span class="p">)</span>
+</span><span data-line="204">    <span class="k">def</span><span class="w"> </span><span class="nf">_detect_tracked_json_mutations</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+</span><span data-line="205">        <span class="c1"># snapshot is only set on persistent instances that came through our load/refresh hooks</span>
+</span><span data-line="206">        <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">identity_map</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+</span><span data-line="207">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">PydanticJSONMixin</span><span class="p">):</span>
+</span><span data-line="208">                <span class="n">detect_json_mutations</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+</span><span data-line="209">
+</span><span data-line="210">    <span class="n">_before_commit_registered</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">

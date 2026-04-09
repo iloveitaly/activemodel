@@ -2922,7 +2922,8 @@ Supported field annotations:
 - `list[SubModel]`
 - `list[SubModel] | None`
 
-Raw `dict`, `dict[...]`, and `list[dict]` fields stay as plain Python containers on
+Raw `dict`, `dict[...]`, `list[dict]`, and top-level primitive list fields such as
+`list[str]` and `list[int]` stay as plain Python containers on
 load and refresh, but their in-place mutations are also tracked automatically.
 
 Ambiguous unions like `SubModel | dict | None` are left as raw JSON since there is no unambiguous way to rehydrate them.
@@ -3175,12 +3176,13 @@ The tracking layer currently covers:
 * raw `dict` fields
 * typed `dict[...]` fields
 * `list[dict]` fields
+* top-level primitive lists such as `list[str]`, `list[int]`, `list[float]`, and `list[bool]`
 
 Rehydration is narrower than mutation tracking.
 
 `PydanticJSONMixin` only rehydrates supported Pydantic annotations back into model objects on
-load and refresh. Raw `dict` and `list[dict]` values stay as plain Python containers, but they
-still participate in snapshot-based mutation tracking.
+load and refresh. Raw `dict` values and supported raw `list[...]` values stay as plain Python
+containers, but they still participate in snapshot-based mutation tracking.
 
 ## How It Works
 

@@ -210,11 +210,12 @@ is serialized again and compared against that snapshot. If the serialized values
 <li><p>raw <code class="docutils literal notranslate"><span class="pre">dict</span></code> fields</p></li>
 <li><p>typed <code class="docutils literal notranslate"><span class="pre">dict[...]</span></code> fields</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">list[dict]</span></code> fields</p></li>
+<li><p>top-level primitive lists such as <code class="docutils literal notranslate"><span class="pre">list[str]</span></code>, <code class="docutils literal notranslate"><span class="pre">list[int]</span></code>, <code class="docutils literal notranslate"><span class="pre">list[float]</span></code>, and <code class="docutils literal notranslate"><span class="pre">list[bool]</span></code></p></li>
 </ul>
 <p>Rehydration is narrower than mutation tracking.</p>
 <p><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code> only rehydrates supported Pydantic annotations back into model objects on
-load and refresh. Raw <code class="docutils literal notranslate"><span class="pre">dict</span></code> and <code class="docutils literal notranslate"><span class="pre">list[dict]</span></code> values stay as plain Python containers, but they
-still participate in snapshot-based mutation tracking.</p>
+load and refresh. Raw <code class="docutils literal notranslate"><span class="pre">dict</span></code> values and supported raw <code class="docutils literal notranslate"><span class="pre">list[...]</span></code> values stay as plain Python
+containers, but they still participate in snapshot-based mutation tracking.</p>
 </section>
 <section id="how-it-works">
 <h2>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h2>

@@ -316,7 +316,8 @@ This documentation is pretty bad. The tests and docstrs on code are the best way
 <li><p><code class="docutils literal notranslate"><span class="pre">list[SubModel]</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">list[SubModel]</span> <span class="pre">|</span> <span class="pre">None</span></code></p></li>
 </ul>
-<p>Raw <code class="docutils literal notranslate"><span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">dict[...]</span></code>, and <code class="docutils literal notranslate"><span class="pre">list[dict]</span></code> fields stay as plain Python containers on
+<p>Raw <code class="docutils literal notranslate"><span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">dict[...]</span></code>, <code class="docutils literal notranslate"><span class="pre">list[dict]</span></code>, and top-level primitive list fields such as
+<code class="docutils literal notranslate"><span class="pre">list[str]</span></code> and <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> stay as plain Python containers on
 load and refresh, but their in-place mutations are also tracked automatically.</p>
 <p>Ambiguous unions like <code class="docutils literal notranslate"><span class="pre">SubModel</span> <span class="pre">|</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span></code> are left as raw JSON since there is no unambiguous way to rehydrate them.</p>
 <p>As with standard Pydantic, a raw <code class="docutils literal notranslate"><span class="pre">dict</span></code> will never compare equal to a model instance — use <code class="docutils literal notranslate"><span class="pre">.model_dump()</span></code> if you need dict comparison.</p>
