@@ -94,7 +94,39 @@ class User(
     table=True
 ):
     list_field: list[SubObject] = Field(sa_type=JSONB)
+    profile: SubObject = Field(sa_type=JSONB)
 ```
+
+`PydanticJSONMixin` automatically rehydrates raw JSON from the database back into the annotated Pydantic types on load and refresh.
+
+It also tracks in-place mutations automatically — no need to call `flag_modified` manually:
+
+```python
+user = User.one("user_123")
+
+# scalar field: mutating a nested attribute is detected automatically
+user.profile.name = "new name"
+user.save()  # persists without flag_modified
+
+# list field: all mutation methods trigger dirty tracking
+user.list_field.append(SubObject(name="new", value=1))
+user.list_field[0].name = "updated"
+user.save()  # persists
+```
+
+Supported field annotations:
+
+- `SubModel`
+- `SubModel | None`
+- `list[SubModel]`
+- `list[SubModel] | None`
+
+Raw `dict`, `dict[...]`, and `list[dict]` fields stay as plain Python containers on
+load and refresh, but their in-place mutations are also tracked automatically.
+
+Ambiguous unions like `SubModel | dict | None` are left as raw JSON since there is no unambiguous way to rehydrate them.
+
+As with standard Pydantic, a raw `dict` will never compare equal to a model instance — use `.model_dump()` if you need dict comparison.
 
 You’ll probably want to query the model. Look ma, no sessions!
 
