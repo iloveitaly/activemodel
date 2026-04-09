@@ -2,79 +2,20 @@
 By default, fast API does not handle converting JSONB to and from Pydantic models.
 """
 
-from typing import Optional, Tuple
-from pydantic import BaseModel as PydanticBaseModel
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm.base import instance_state
-from sqlalchemy.types import UserDefinedType
 from sqlmodel import Field, Session
 
-from activemodel import BaseModel
-from sqlalchemy.dialects.postgresql import JSON
-from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
 from activemodel.session_manager import get_engine
 from activemodel.session_manager import global_session
 from tests.models import AnotherExample, ExampleWithComputedProperty
-
-
-class CustomTupleType(UserDefinedType):
-    """Custom SQLAlchemy type for testing tuple serialization."""
-
-    def get_col_spec(self, **kw):
-        return "TEXT"
-
-    def bind_processor(self, dialect):
-        return lambda value: None if value is None else ",".join(map(str, value))
-
-    def result_processor(self, dialect, coltype):
-        def process_value(value) -> Tuple[float, float] | None:
-            if value is None:
-                return None
-            parts = value.split(",")
-            return (float(parts[0]), float(parts[1]))
-
-        return process_value
-
-
-class InnerObject(PydanticBaseModel):
-    label: str
-    score: float = 0.0
-
-
-class SubObject(PydanticBaseModel):
-    name: str
-    value: int
-    inner: InnerObject | None = None
-
-
-class ExampleWithJSONB(
-    BaseModel, PydanticJSONMixin, TypeIDMixin("json_test"), table=True
-):
-    list_field: list[SubObject] = Field(sa_type=JSONB)
-    # list_with_generator: list[SubObject] = Field(sa_type=JSONB)
-    optional_list_field: list[SubObject] | None = Field(sa_type=JSONB, default=None)
-    generic_list_field: list[dict] = Field(sa_type=JSONB)
-    object_field: SubObject = Field(sa_type=JSONB)
-    unstructured_field: dict = Field(sa_type=JSONB)
-    semi_structured_field: dict[str, str] = Field(sa_type=JSONB)
-    optional_object_field: SubObject | None = Field(sa_type=JSONB, default=None)
-    old_optional_object_field: Optional[SubObject] = Field(sa_type=JSONB, default=None)
-    tuple_field: tuple[float, float] = Field(sa_type=CustomTupleType)
-    optional_tuple: Tuple | None = Field(sa_type=CustomTupleType, default=None)
-    normal_field: str | None = Field(default=None)
-
-
-class ExampleWithSimpleJSON(
-    BaseModel, PydanticJSONMixin, TypeIDMixin("simple_json_test"), table=True
-):
-    # NOT JSONB!
-    object_field: SubObject = Field(sa_type=JSON)
-
-
-class ExampleWithAmbiguousUnion(
-    BaseModel, PydanticJSONMixin, TypeIDMixin("ambiguous_union_json_test"), table=True
-):
-    ambiguous_object_field: SubObject | dict | None = Field(sa_type=JSONB, default=None)
+from tests.pydantic_json.helpers import (
+    ExampleWithAmbiguousUnion,
+    ExampleWithJSONB,
+    ExampleWithSimpleJSON,
+    InnerObject,
+    SubObject,
+    make_example,
+)
 
 
 def test_json_serialization(create_and_wipe_database):
@@ -377,23 +318,8 @@ def test_transform_is_idempotent_for_already_hydrated_json_fields(
     assert example.old_optional_object_field is old_optional_object_field
 
 
-def _make_example(extra_items: int = 0) -> ExampleWithJSONB:
-    """Create and save a minimal ExampleWithJSONB for tracking tests."""
-    items = [SubObject(name="item_0", value=0)] + [
-        SubObject(name=f"item_{i}", value=i) for i in range(1, extra_items + 1)
-    ]
-    return ExampleWithJSONB(
-        list_field=items,
-        generic_list_field=[{"key": "val"}],
-        object_field=SubObject(name="original", value=1),
-        unstructured_field={"k": "v"},
-        semi_structured_field={"k": "v"},
-        tuple_field=(1.0, 2.0),
-    ).save()
-
-
 def test_list_append_persists(create_and_wipe_database):
-    example = _make_example()
+    example = make_example()
     assert not instance_state(example).modified
 
     example.list_field.append(SubObject(name="appended", value=99))
@@ -404,7 +330,7 @@ def test_list_append_persists(create_and_wipe_database):
 
 
 def test_list_pop_persists(create_and_wipe_database):
-    example = _make_example(extra_items=1)
+    example = make_example(extra_items=1)
     assert not instance_state(example).modified
 
     example.list_field.pop()
@@ -414,7 +340,7 @@ def test_list_pop_persists(create_and_wipe_database):
 
 
 def test_list_remove_persists(create_and_wipe_database):
-    example = _make_example(extra_items=1)
+    example = make_example(extra_items=1)
     assert not instance_state(example).modified
 
     # remove() uses ==; Pydantic __eq__ compares field values.
@@ -426,7 +352,7 @@ def test_list_remove_persists(create_and_wipe_database):
 
 
 def test_list_clear_persists(create_and_wipe_database):
-    example = _make_example()
+    example = make_example()
     assert not instance_state(example).modified
 
     example.list_field.clear()
@@ -436,7 +362,7 @@ def test_list_clear_persists(create_and_wipe_database):
 
 
 def test_list_extend_persists(create_and_wipe_database):
-    example = _make_example()
+    example = make_example()
     assert not instance_state(example).modified
 
     example.list_field.extend(
@@ -449,7 +375,7 @@ def test_list_extend_persists(create_and_wipe_database):
 
 
 def test_list_setitem_persists(create_and_wipe_database):
-    example = _make_example()
+    example = make_example()
     assert not instance_state(example).modified
 
     example.list_field[0] = SubObject(name="replaced", value=42)
@@ -460,7 +386,7 @@ def test_list_setitem_persists(create_and_wipe_database):
 
 
 def test_list_iadd_persists(create_and_wipe_database):
-    example = _make_example()
+    example = make_example()
     assert not instance_state(example).modified
 
     example.list_field += [SubObject(name="iadd", value=7)]
@@ -473,7 +399,7 @@ def test_list_iadd_persists(create_and_wipe_database):
 def test_rehydrated_pydantic_preserves_isinstance_and_model_dump(
     create_and_wipe_database,
 ):
-    example = _make_example()
+    example = make_example()
 
     assert isinstance(example.object_field, SubObject)
     assert isinstance(example.list_field[0], SubObject)
@@ -500,7 +426,7 @@ def test_rehydrated_pydantic_preserves_isinstance_and_model_dump(
 
 def test_mutation_detected_across_save_cycles(create_and_wipe_database):
     "snapshot is re-taken after save() refreshes the instance, so a second mutation is also detected"
-    example = _make_example()
+    example = make_example()
 
     example.object_field.value = 10
     example.save()
@@ -514,9 +440,11 @@ def test_mutation_detected_across_save_cycles(create_and_wipe_database):
     assert fresh.object_field.value == 20
 
 
-def test_replace_entire_field_persists_via_assignment_tracking(create_and_wipe_database):
+def test_replace_entire_field_persists_via_assignment_tracking(
+    create_and_wipe_database,
+):
     "replacing a JSONB field outright goes through SQLAlchemy instrumentation, not our tracking"
-    example = _make_example()
+    example = make_example()
 
     example.object_field = SubObject(name="replaced", value=99)
     assert instance_state(example).modified
@@ -528,7 +456,7 @@ def test_replace_entire_field_persists_via_assignment_tracking(create_and_wipe_d
 
 
 def test_has_json_mutations_returns_true_when_mutated(create_and_wipe_database):
-    example = _make_example()
+    example = make_example()
     assert not example.has_json_mutations()
 
     example.object_field.value = 999
@@ -536,7 +464,7 @@ def test_has_json_mutations_returns_true_when_mutated(create_and_wipe_database):
 
 
 def test_has_json_mutations_returns_false_when_clean(create_and_wipe_database):
-    example = _make_example()
+    example = make_example()
     assert not example.has_json_mutations()
 
     # save and re-check -- snapshot is reset, still no mutations
@@ -549,7 +477,7 @@ def test_has_json_mutations_returns_false_after_revert_to_original(
     create_and_wipe_database,
 ):
     "mutating then reverting to the original value should not be detected as a change"
-    example = _make_example()
+    example = make_example()
     original_value = example.object_field.value
 
     example.object_field.value = 999
@@ -562,7 +490,7 @@ def test_has_json_mutations_returns_false_after_revert_to_original(
 def test_detect_json_mutations_returns_field_names(create_and_wipe_database):
     from activemodel.jsonb_snapshot import detect_json_mutations
 
-    example = _make_example()
+    example = make_example()
     assert detect_json_mutations(example) == []
 
     example.object_field.value = 999
@@ -596,7 +524,7 @@ def test_deep_nested_mutation_detected(create_and_wipe_database):
 
 def test_no_op_save_does_not_produce_spurious_update(create_and_wipe_database):
     "saving without mutations should not generate an UPDATE"
-    example = _make_example()
+    example = make_example()
 
     # re-save with zero changes
     example.save()
@@ -607,7 +535,7 @@ def test_no_op_save_does_not_produce_spurious_update(create_and_wipe_database):
 
 
 def test_list_sort_persists(create_and_wipe_database):
-    example = _make_example(extra_items=2)
+    example = make_example(extra_items=2)
     assert not instance_state(example).modified
 
     example.list_field.sort(key=lambda s: s.name, reverse=True)
@@ -618,7 +546,7 @@ def test_list_sort_persists(create_and_wipe_database):
 
 
 def test_list_reverse_persists(create_and_wipe_database):
-    example = _make_example(extra_items=2)
+    example = make_example(extra_items=2)
     assert not instance_state(example).modified
 
     example.list_field.reverse()
@@ -632,7 +560,7 @@ def test_equivalent_reassignment_does_not_produce_spurious_update(
     create_and_wipe_database,
 ):
     "reassigning a field to a value that serializes identically should not generate an UPDATE"
-    example = _make_example()
+    example = make_example()
 
     # direct assignment of an equivalent value — SQLAlchemy will mark the field modified,
     # but our before_commit handler should clear it since the serialized form is unchanged
