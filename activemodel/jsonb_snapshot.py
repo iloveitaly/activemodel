@@ -89,9 +89,7 @@ def _supports_snapshot_tracking(instance, annotation) -> bool:
     return _is_plain_json_container_annotation(annotation)
 
 
-def snapshot_json_fields(
-    instance, jsonb_field_names: set[str] | None = None
-) -> None:
+def snapshot_json_fields(instance, jsonb_field_names: set[str] | None = None) -> None:
     """Store a serialized snapshot of each tracked JSON field on the instance.
 
     Called after rehydration so the snapshot reflects the committed database state.
