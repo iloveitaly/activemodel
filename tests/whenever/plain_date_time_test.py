@@ -28,7 +28,9 @@ def test_plain_datetime_pydantic_serialization():
 
 def test_plain_datetime_pydantic_from_string():
     iso = "2024-06-01T10:00:00"
-    schema = WheneverSchema.model_validate(example_whenever(plain_datetime=iso).model_dump())
+    schema = WheneverSchema.model_validate(
+        example_whenever(plain_datetime=iso).model_dump()
+    )
     assert isinstance(schema.plain_datetime, PlainDateTime)
     assert schema.plain_datetime == PlainDateTime.parse_iso(iso)
 
