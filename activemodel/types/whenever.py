@@ -23,18 +23,19 @@ class InstantType(types.TypeDecorator):
     def process_bind_param(self, value, dialect):
         if value is None:
             return None
-        if isinstance(value, Instant):
-            return value.py_datetime()
         if isinstance(value, datetime):
             return value
-        if isinstance(value, str):
-            return Instant.parse_iso(value).py_datetime()
+
+        if isinstance(value, Instant):
+            return value.to_stdlib()
+
         raise ValueError(f"Cannot convert {type(value)} to Instant")
 
     def process_result_value(self, value, dialect):
         if value is None:
             return None
-        return Instant.from_py_datetime(value)
+
+        return Instant(value)
 
     @classmethod
     def __get_pydantic_core_schema__(
@@ -83,18 +84,20 @@ class ZonedDateTimeType(types.TypeDecorator):
     def process_bind_param(self, value, dialect):
         if value is None:
             return None
-        if isinstance(value, ZonedDateTime):
-            return value.py_datetime()
+
         if isinstance(value, datetime):
             return value
-        if isinstance(value, str):
-            return ZonedDateTime.parse_iso(value).py_datetime()
+
+        if isinstance(value, ZonedDateTime):
+            return value.to_stdlib()
+
         raise ValueError(f"Cannot convert {type(value)} to ZonedDateTime")
 
     def process_result_value(self, value, dialect):
         if value is None:
             return None
-        return ZonedDateTime.from_py_datetime(value)
+
+        return ZonedDateTime(value)
 
     @classmethod
     def __get_pydantic_core_schema__(
@@ -109,6 +112,7 @@ class ZonedDateTimeType(types.TypeDecorator):
             validate,
             json_schema_input_schema=core_schema.str_schema(),
         )
+
         return core_schema.json_or_python_schema(
             json_schema=schema,
             python_schema=core_schema.union_schema([schema]),
