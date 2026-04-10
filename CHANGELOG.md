@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.20.0](https://github.com/iloveitaly/activemodel/compare/v0.19.0...v0.20.0) (2026-04-10)
+
+
+### Features
+
+* **activemodel:** add automatic mutation tracking for JSONB fields ([d1e77fd](https://github.com/iloveitaly/activemodel/commit/d1e77fdd683ada630d501d096d1632eca10a9486))
+* **activemodel:** add snapshot tracking for raw JSON containers ([eaebf8b](https://github.com/iloveitaly/activemodel/commit/eaebf8b3bbbd77cd27b8c80045b2de7a5bb4fc75))
+* **activemodel:** expand jsonb tracking to support primitive lists ([cc4ff33](https://github.com/iloveitaly/activemodel/commit/cc4ff33ad2227419612ca509dc1183c30ae50828))
+* add engine_options support to SessionManager ([a8381be](https://github.com/iloveitaly/activemodel/commit/a8381be0832eb508c47e7e6a1142dd49eeb3787b))
+* **pydantic_json:** add warning for unsupported JSON field types ([89b4464](https://github.com/iloveitaly/activemodel/commit/89b4464a07cc942ca0447057e9d9cac31313e5a2))
+* remove ACTIVEMODEL_LOG_SQL env var in favor of engine_options ([65ac88b](https://github.com/iloveitaly/activemodel/commit/65ac88b702f6fa6ef3379d9fbfa1fff97a193fa7))
+
+
+### Bug Fixes
+
+* **activemodel:** use getattr for field_info attributes to prevent access errors ([d65283e](https://github.com/iloveitaly/activemodel/commit/d65283e421078f45139328541d3343ea02485dba))
+
+
+### Documentation
+
+* add documentation for automatic JSONB mutation tracking ([b9e7790](https://github.com/iloveitaly/activemodel/commit/b9e77908319f1317cecb160044ee3e1770ba8d76))
+* add examples page and link in navigation ([#70](https://github.com/iloveitaly/activemodel/issues/70)) ([6228270](https://github.com/iloveitaly/activemodel/commit/6228270b6f35419a46ac4c48fc883a0268236b03))
+* document PydanticJSONMixin functionality and usage ([3fe7045](https://github.com/iloveitaly/activemodel/commit/3fe7045972b1806e447350addc3441e2d15eef2e))
+* update mutation tracking documentation to reflect primitive list support ([e1d2e5f](https://github.com/iloveitaly/activemodel/commit/e1d2e5f274c9b3cd2acdebbb47938238c193e9a1))
+
 ## [0.19.0](https://github.com/iloveitaly/activemodel/compare/v0.18.0...v0.19.0) (2026-04-01)
 
 
