@@ -1,8 +1,11 @@
 from sqlmodel import Column, Field
 from typeid import TypeID
+from typeid.integrations.pydantic import TypeIDField
 
 from activemodel.types import typeid_patch  # noqa: F401
-from activemodel.types.typeid import TypeIDType  # noqa: F401 (re-exported for sa_column usage)
+from activemodel.types.typeid import (
+    TypeIDType,  # noqa: F401 (re-exported for sa_column usage)
+)
 
 # global list of prefixes to ensure uniqueness
 _prefixes: list[str] = []
@@ -23,7 +26,7 @@ def TypeIDMixin(prefix: str):
     class _TypeIDMixin:
         __abstract__ = True
 
-        id: TypeID = Field(
+        id: TypeIDField = Field(
             sa_column=Column(
                 TypeIDType(prefix),
                 primary_key=True,
