@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime, timezone
 
 from whenever import Instant
@@ -16,11 +17,13 @@ def test_instant_round_trip(create_and_wipe_database):
     # microsecond precision — whenever uses nanoseconds but DB stores microseconds
     assert fetched.triggered_at.timestamp_millis() == now.timestamp_millis()
 
-    # object equality doesn't work since the DB does not store nanoseconds
-    # TODO https://github.com/ariebovenberg/whenever/issues/329
-    # however, macos doesn't seem to generate nanoseconds either
-    # assert not fetched.triggered_at == now
-    # assert not fetched.triggered_at.timestamp_nanos() == now.timestamp_nanos()
+    # object equality doesn't work without rounding (on macOS) since the DB does not store nanoseconds
+    # https://github.com/ariebovenberg/whenever/issues/329
+    if sys.platform != "darwin":
+        now = now.round("millisecond")
+
+    assert not fetched.triggered_at == now
+    assert not fetched.triggered_at.timestamp_nanos() == now.timestamp_nanos()
 
 
 def test_instant_pydantic_serialization():
