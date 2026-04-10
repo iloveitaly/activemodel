@@ -45,7 +45,7 @@ jobs:
       - uses: jdx/mise-action@v4
       - run: mise use python@${{ matrix.python-version }}
       - name: Docker on macOS
-        run: brew install docker && colima start
+        run: brew install docker
         if: runner.os == 'macOS'
       - run: docker compose up -d --wait
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
