@@ -1,24 +1,43 @@
+from contextlib import contextmanager
+
 from sqlalchemy import Column, MetaData, Table
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import configure_mappers
-from sqlmodel import Field
 
-from activemodel import BaseModel
-from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
+from activemodel.logger import logger
+from activemodel.mixins import PydanticJSONMixin
+from tests.pydantic_json.helpers import ExampleWithUnsupportedJSON
+
+
+@contextmanager
+def capture_activemodel_warnings(caplog):
+    previous_disabled = logger.disabled
+
+    logger.disabled = False
+
+    try:
+        with caplog.at_level("WARNING", logger=logger.name):
+            yield
+    finally:
+        logger.disabled = previous_disabled
 
 
 def test_logs_warning_once_for_unsupported_json_fields(caplog):
-    with caplog.at_level("WARNING", logger="activemodel.logger"):
+    previous_warned = getattr(
+        ExampleWithUnsupportedJSON, "_unsupported_json_fields_warned", False
+    )
 
-        class ExampleWithUnsupportedJSON(
-            BaseModel, PydanticJSONMixin, TypeIDMixin("json_warn"), table=True
-        ):
-            unsupported_list_field: list[tuple[str, str]] = Field(sa_type=JSONB)
-            unsupported_json_field: set[str] = Field(
-                sa_type=JSONB, default_factory=set
+    try:
+        with capture_activemodel_warnings(caplog):
+            ExampleWithUnsupportedJSON._unsupported_json_fields_warned = False
+
+            ExampleWithUnsupportedJSON._warn_for_unsupported_json_fields(
+                None, ExampleWithUnsupportedJSON
             )
-
-        configure_mappers()
+            ExampleWithUnsupportedJSON._warn_for_unsupported_json_fields(
+                None, ExampleWithUnsupportedJSON
+            )
+    finally:
+        ExampleWithUnsupportedJSON._unsupported_json_fields_warned = previous_warned
 
     warning_messages = [record.getMessage() for record in caplog.records]
 
@@ -36,7 +55,7 @@ def test_logs_warning_once_for_unsupported_json_fields(caplog):
 
 
 def test_logs_warning_for_field_info_without_sqlmodel_attrs(caplog):
-    class DummyFieldInfo:
+    class MinimalFieldInfo:
         annotation = set[str]
 
     class DummyModel(PydanticJSONMixin):
@@ -45,10 +64,10 @@ def test_logs_warning_for_field_info_without_sqlmodel_attrs(caplog):
             MetaData(),
             Column("unsupported_json_field", JSONB),
         )
-        model_fields = {"unsupported_json_field": DummyFieldInfo()}
+        model_fields = {"unsupported_json_field": MinimalFieldInfo()}
         _unsupported_json_fields_warned = False
 
-    with caplog.at_level("WARNING", logger="activemodel.logger"):
+    with capture_activemodel_warnings(caplog):
         DummyModel._warn_for_unsupported_json_fields(None, DummyModel)
 
     warning_messages = [record.getMessage() for record in caplog.records]

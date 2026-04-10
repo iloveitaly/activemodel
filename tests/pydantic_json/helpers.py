@@ -78,6 +78,13 @@ class ExampleWithAmbiguousUnion(
     ambiguous_object_field: SubObject | dict | None = Field(sa_type=JSONB, default=None)
 
 
+class ExampleWithUnsupportedJSON(
+    BaseModel, PydanticJSONMixin, TypeIDMixin("unsupported_json_test"), table=True
+):
+    unsupported_list_field: list[tuple[str, str]] = Field(sa_type=JSONB)
+    unsupported_json_field: set[str] = Field(sa_type=JSONB, default_factory=set)
+
+
 def make_example(extra_items: int = 0) -> ExampleWithJSONB:
     # the baseline payload intentionally includes pydantic-backed, raw dict, and raw list fields
     items = [SubObject(name="item_0", value=0)] + [
