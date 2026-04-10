@@ -15,8 +15,12 @@ def test_instant_round_trip(create_and_wipe_database):
     assert isinstance(fetched.triggered_at, Instant)
     # microsecond precision — whenever uses nanoseconds but DB stores microseconds
     assert fetched.triggered_at.timestamp_millis() == now.timestamp_millis()
-    # object equality should also work!
-    assert fetched.triggered_at == now
+
+    # object equality doesn't work since the DB does not store nanoseconds
+    # TODO https://github.com/ariebovenberg/whenever/issues/329
+    # however, macos doesn't seem to generate nanoseconds either
+    # assert not fetched.triggered_at == now
+    # assert not fetched.triggered_at.timestamp_nanos() == now.timestamp_nanos()
 
 
 def test_instant_pydantic_serialization():
