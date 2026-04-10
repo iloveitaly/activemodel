@@ -45,6 +45,7 @@ jobs:
       - uses: jdx/mise-action@v4
       - run: mise use python@${{ matrix.python-version }}
       - uses: douglascamata/setup-docker-macos-action@v1
+        if: runner.os == 'macOS'
       - run: docker compose up -d --wait
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv sync
