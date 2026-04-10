@@ -35,7 +35,8 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        # macos is needed to cover nanosecond edge cases on some of the time stuff
+        os: [ubuntu-latest, macos-latest]
         # unfortunately, some of the typing stuff we use requires new python versions
         python-version: ["3.14", "3.13", "3.12"]
     runs-on: ${{ matrix.os }}
