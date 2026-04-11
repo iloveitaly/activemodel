@@ -43,6 +43,33 @@ def test_get_through_plain_uid(create_and_wipe_database):
     assert record is None
 
 
+def test_save_generates_typeid_and_round_trips(create_and_wipe_database):
+    example = ExampleWithId().save()
+
+    assert example.id is not None
+    assert str(example.id).startswith(f"{TYPEID_PREFIX}_")
+
+    fetched = ExampleWithId.get(example.id)
+
+    assert fetched is not None
+    assert fetched.id == example.id
+
+
+def test_save_preserves_explicitly_assigned_typeid(create_and_wipe_database):
+    explicit_id = TypeID(prefix=TYPEID_PREFIX)
+
+    example = ExampleWithId()
+    setattr(example, "id", explicit_id)
+    example = example.save()
+
+    assert example.id == explicit_id
+
+    fetched = ExampleWithId.get(explicit_id)
+
+    assert fetched is not None
+    assert fetched.id == explicit_id
+
+
 # def test_non_primary_typeid_key():
 #     class NonPrimaryKeyExample(PydanticBaseModel, table=True):
 #         something: str | None = None
