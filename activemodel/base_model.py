@@ -1,18 +1,17 @@
 import json
 import typing as t
-import textcase
-from uuid import UUID
-
-import uuid_utils
 from contextlib import nullcontext
+from uuid import UUID
 
 import sqlalchemy as sa
 import sqlmodel as sm
+import textcase
+import uuid_utils
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
+from sqlalchemy.orm import declared_attr
 from sqlalchemy.orm.attributes import flag_modified as sa_flag_modified
 from sqlmodel import Column, Field, Session, SQLModel, inspect, select
 from typeid import TypeID
-from sqlalchemy.orm import declared_attr
 
 from activemodel.mixins.pydantic_json import PydanticJSONMixin
 
@@ -133,7 +132,7 @@ class BaseModel(SQLModel):
         return textcase.snake(cls.__name__)
 
     @classmethod
-    def foreign_key(cls, **kwargs):
+    def foreign_key(cls, **kwargs) -> t.Any:
         """
         Returns a `Field` object referencing the foreign key of the model.
 

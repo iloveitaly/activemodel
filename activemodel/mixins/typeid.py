@@ -1,7 +1,7 @@
 from typing import Any
 
 from sqlmodel import Column, Field
-from typeid import TypeID
+from typeid import TypeID, typeid_factory
 
 from activemodel.types import typeid_patch  # noqa: F401
 from activemodel.types.typeid import (
@@ -38,7 +38,7 @@ def TypeIDPrimaryKey(prefix: str) -> Any:
             nullable=False,
             # default on the sa_column level ensures that an ID is generated when creating a new record, even when
             # raw SQLAlchemy operations are used instead of activemodel operations
-            default=lambda: TypeID(prefix),
+            default=typeid_factory(prefix),
         ),
         description=f"TypeID with prefix: {prefix}",
     )
