@@ -20,19 +20,21 @@ in-place changes on raw `dict` and `list[dict]` fields.
 Background: https://github.com/fastapi/sqlmodel/issues/63
 """
 
-from typing import get_args, get_origin
-import typing
 import types
+import typing
+from typing import get_args, get_origin
+
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic_core import PydanticUndefined
 from sqlalchemy import event
 from sqlalchemy.orm import attributes
 from sqlalchemy.sql.sqltypes import JSON as SQLAlchemyJSON
+
 from ..jsonb_snapshot import (
     _supports_snapshot_tracking,
-    snapshot_json_fields,
     detect_json_mutations,
     register_before_commit_listener,
+    snapshot_json_fields,
 )
 from ..logger import logger
 
