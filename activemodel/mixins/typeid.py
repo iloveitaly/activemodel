@@ -26,6 +26,9 @@ def TypeIDPrimaryKey(prefix: str) -> Any:
     Returns Any so that type checkers accept it as a default value for any
     annotation (e.g. TypeIDField[Literal["user"]]), matching the same pattern
     used by pydantic's own Field() factory.
+
+    Unfortunately, py typing is not advanced enough to automatically add a TypeIDField[Literal[prefix]]
+    so you must add a specific type and input the prefix twice.
     """
     assert prefix
     return Field(
