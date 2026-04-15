@@ -1,6 +1,7 @@
+from typing import Any
+
 from sqlmodel import Column, Field
 from typeid import TypeID
-from typeid.integrations.pydantic import TypeIDField
 
 from activemodel.types import typeid_patch  # noqa: F401
 from activemodel.types.typeid import (
@@ -8,7 +9,36 @@ from activemodel.types.typeid import (
 )
 
 # global list of prefixes to ensure uniqueness
+# NOTE this will cause issues on code reloads
 _prefixes: list[str] = []
+
+
+def TypeIDPrimaryKey(prefix: str) -> Any:
+    """
+    Field factory for the declarative form:
+
+        id: TypeIDField[Literal["user"]] = TypeIDPrimaryKey("user")
+
+    Use this when you want static type-checking of the prefix. Prefer
+    TypeIDMixin("user") when you want terser inheritance without repeating
+    the prefix.
+
+    Returns Any so that type checkers accept it as a default value for any
+    annotation (e.g. TypeIDField[Literal["user"]]), matching the same pattern
+    used by pydantic's own Field() factory.
+    """
+    assert prefix
+    return Field(
+        sa_column=Column(
+            TypeIDType(prefix),
+            primary_key=True,
+            nullable=False,
+            # default on the sa_column level ensures that an ID is generated when creating a new record, even when
+            # raw SQLAlchemy operations are used instead of activemodel operations
+            default=lambda: TypeID(prefix),
+        ),
+        description=f"TypeID with prefix: {prefix}",
+    )
 
 
 def TypeIDMixin(prefix: str):
@@ -26,18 +56,7 @@ def TypeIDMixin(prefix: str):
     class _TypeIDMixin:
         __abstract__ = True
 
-        id: TypeIDField = Field(
-            sa_column=Column(
-                TypeIDType(prefix),
-                primary_key=True,
-                nullable=False,
-                # default on the sa_column level ensures that an ID is generated when creating a new record, even when
-                # raw SQLAlchemy operations are used instead of activemodel operations
-                default=lambda: TypeID(prefix),
-            ),
-            # add a database comment to document the prefix, since it's not stored in the DB otherwise
-            description=f"TypeID with prefix: {prefix}",
-        )
+        id: TypeID = TypeIDPrimaryKey(prefix)
 
     _prefixes.append(prefix)
 
