@@ -25,9 +25,19 @@ def test_typeid_render(create_and_wipe_database):
     example = ExampleWithId().save()
     response = PydanticResponseModel(id=example.id)
 
-    # check that the TypeID is serialized as a string
+    assert response.model_dump()["id"] == str(example.id)
     assert json.loads(response.model_dump_json())["id"] == str(example.id)
-    assert response.model_json_schema()["properties"]["id"]["type"] == "string"
+
+    id_schema = response.model_json_schema()["properties"]["id"]
+    assert id_schema["type"] == "string"
+
+
+def test_typeid_string_input_coerces_to_typeid(create_and_wipe_database):
+    example = ExampleWithId().save()
+    response = PydanticResponseModel(id=str(example.id))  # type: ignore[arg-type]
+
+    assert isinstance(response.id, TypeID)
+    assert response.id == example.id
 
 
 class PydanticResponseTypeIDTypeModel(PydanticBaseModel):
