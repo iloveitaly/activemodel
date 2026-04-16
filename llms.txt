@@ -2,7 +2,6 @@
 
 > [![Release Notes](https://img.shields.io/github/release/iloveitaly/activemodel)](https://github.com/iloveitaly/activemodel/releases)
 > [![Downloads](https://static.pepy.tech/badge/activemodel/month)](https://pepy.tech/project/activemodel)
-> [![Python Versions](https://img.shields.io/pypi/pyversions/activemodel)](https://pypi.org/project/activemodel)
 > ![GitHub CI Status](https://github.com/iloveitaly/activemodel/actions/workflows/build_and_publish.yml/badge.svg)
 > [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 > 
