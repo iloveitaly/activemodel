@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, deprecated
 
 from sqlmodel import Column, Field
 from typeid import TypeID, typeid_factory
@@ -19,9 +19,7 @@ def TypeIDPrimaryKey(prefix: str) -> Any:
 
         id: TypeIDField[Literal["user"]] = TypeIDPrimaryKey("user")
 
-    Use this when you want static type-checking of the prefix. Prefer
-    TypeIDMixin("user") when you want terser inheritance without repeating
-    the prefix.
+    Use this when you want static type-checking of the prefix.
 
     Returns Any so that type checkers accept it as a default value for any
     annotation (e.g. TypeIDField[Literal["user"]]), matching the same pattern
@@ -30,8 +28,16 @@ def TypeIDPrimaryKey(prefix: str) -> Any:
     Unfortunately, py typing is not advanced enough to automatically add a TypeIDField[Literal[prefix]]
     so you must add a specific type and input the prefix twice.
     """
+
+    # make sure duplicate prefixes are not used!
+    # NOTE this will cause issues on code reloads
+
     assert prefix
-    return Field(
+    assert prefix not in _prefixes, (
+        f"TypeID prefix '{prefix}' already exists, pick a different one"
+    )
+
+    ret = Field(
         sa_column=Column(
             TypeIDType(prefix),
             primary_key=True,
@@ -43,24 +49,20 @@ def TypeIDPrimaryKey(prefix: str) -> Any:
         description=f"TypeID with prefix: {prefix}",
     )
 
+    _prefixes.append(prefix)
 
+    return ret
+
+
+@deprecated("Use TypeIDPrimaryKey(prefix) on the id field instead.")
 def TypeIDMixin(prefix: str):
     """
     Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
     """
 
-    # make sure duplicate prefixes are not used!
-    # NOTE this will cause issues on code reloads
-    assert prefix
-    assert prefix not in _prefixes, (
-        f"TypeID prefix '{prefix}' already exists, pick a different one"
-    )
-
     class _TypeIDMixin:
         __abstract__ = True
 
         id: TypeID = TypeIDPrimaryKey(prefix)
-
-    _prefixes.append(prefix)
 
     return _TypeIDMixin
