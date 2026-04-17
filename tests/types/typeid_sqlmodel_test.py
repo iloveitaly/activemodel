@@ -93,11 +93,11 @@ def test_render_typeid(create_and_wipe_database):
 
     example = ExampleWithId().save()
 
-    assert example.model_dump()["id"] == str(example.id)
+    assert example.model_dump()["id"] == example.id
     assert json.loads(example.model_dump_json())["id"] == str(example.id)
 
     wrapped_example = WrappedExample(example=example)
-    assert wrapped_example.model_dump()["example"]["id"] == str(example.id)
+    assert wrapped_example.model_dump()["example"]["id"] == example.id
     assert json.loads(wrapped_example.model_dump_json())["example"]["id"] == str(
         example.id
     )

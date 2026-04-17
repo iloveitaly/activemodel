@@ -19,11 +19,13 @@ def test_instant_round_trip(create_and_wipe_database):
 
     # object equality doesn't work without rounding (on macOS) since the DB does not store nanoseconds
     # https://github.com/ariebovenberg/whenever/issues/329
-    if sys.platform != "darwin":
+    if sys.platform == "darwin":
         now = now.round("millisecond")
+        fetched_at = fetched.triggered_at.round("millisecond")
+    else:
+        fetched_at = fetched.triggered_at
 
-    assert not fetched.triggered_at == now
-    assert not fetched.triggered_at.timestamp_nanos() == now.timestamp_nanos()
+    assert fetched_at == now
 
 
 def test_instant_pydantic_serialization():
