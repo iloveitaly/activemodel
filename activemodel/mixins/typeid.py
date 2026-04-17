@@ -1,4 +1,5 @@
-from typing import Any, deprecated
+from typing import Any
+from warnings import deprecated
 
 from sqlmodel import Column, Field
 from typeid import TypeID, typeid_factory

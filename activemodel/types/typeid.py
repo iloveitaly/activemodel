@@ -173,7 +173,9 @@ class TypeIDType(types.TypeDecorator):
             #     )
             # },
             python_schema=core_schema.union_schema([from_uuid_schema]),
-            serialization=core_schema.plain_serializer_function_ser_schema(str),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                str, when_used="json"
+            ),
         )
 
     # TODO I have a feeling that the `serialization` param in the above method solves this for us.
@@ -203,6 +205,7 @@ class TypeIDType(types.TypeDecorator):
 
         return {
             "type": "string",
+            "format": "typeid",
             # TODO implement a more strict pattern in regex
             #      https://github.com/jetify-com/typeid/blob/3d182feed5687c21bb5ab93d5f457ff96749b68b/spec/README.md?plain=1#L38
             # "pattern": "^[0-9a-f]{24}$",
