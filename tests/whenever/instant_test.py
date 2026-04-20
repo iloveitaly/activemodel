@@ -16,10 +16,10 @@ def test_instant_round_trip(create_and_wipe_database):
     # microsecond precision — whenever uses nanoseconds but DB stores microseconds
     assert fetched.triggered_at.timestamp_millis() == now.timestamp_millis()
 
-    # macOS Instant.now() is microsecond-precise; Linux is nanosecond-precise
-    # Postgres stores microseconds, so round now to microseconds before comparing
+    # Linux Instant.now() is nanosecond-precise; Postgres truncates (not rounds) to microseconds
+    # mode="floor" matches Postgres's truncation behavior; default "half_even" would round up
     # https://github.com/ariebovenberg/whenever/issues/329
-    assert fetched.triggered_at == now.round("microsecond")
+    assert fetched.triggered_at == now.round("microsecond", mode="floor")
 
 
 def test_instant_pydantic_serialization():
