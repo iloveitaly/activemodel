@@ -26,8 +26,8 @@ def TypeIDPrimaryKey(prefix: str) -> Any:
     annotation (e.g. TypeIDField[Literal["user"]]), matching the same pattern
     used by pydantic's own Field() factory.
 
-    Unfortunately, py typing is not advanced enough to automatically add a TypeIDField[Literal[prefix]]
-    so you must add a specific type and input the prefix twice.
+    Returns Any (not TypeID) because Pydantic discovers fields via __annotations__ at class creation —
+    the annotation is required for field registration, so the return type cannot replace it.
     """
 
     # make sure duplicate prefixes are not used!
