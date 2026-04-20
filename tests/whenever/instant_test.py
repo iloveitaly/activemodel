@@ -16,7 +16,8 @@ def test_instant_round_trip(create_and_wipe_database):
     # microsecond precision — whenever uses nanoseconds but DB stores microseconds
     assert fetched.triggered_at.timestamp_millis() == now.timestamp_millis()
 
-    # Linux Instant.now() has nanosecond precision; Postgres stores microseconds
+    # macOS Instant.now() is microsecond-precise; Linux is nanosecond-precise
+    # Postgres stores microseconds, so round now to microseconds before comparing
     # https://github.com/ariebovenberg/whenever/issues/329
     assert fetched.triggered_at == now.round("microsecond")
 
