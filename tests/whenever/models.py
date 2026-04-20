@@ -2,10 +2,12 @@ from pydantic import BaseModel as PydanticBaseModel
 from whenever import Instant, PlainDateTime, ZonedDateTime
 
 from activemodel import BaseModel
-from activemodel.mixins.typeid import TypeIDMixin
+from activemodel.mixins.typeid import TypeIDPrimaryKey
+from typeid import TypeID
 
 
-class WheneverModel(BaseModel, TypeIDMixin("whenever_model"), table=True):
+class WheneverModel(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("whenever_model")
     plain_datetime: PlainDateTime | None = None
     triggered_at: Instant | None = None
     scheduled_at: ZonedDateTime | None = None

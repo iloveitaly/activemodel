@@ -1,9 +1,10 @@
 from activemodel import BaseModel
-from activemodel.mixins import TypeIDMixin
+from activemodel.mixins import TypeIDPrimaryKey
+from typeid import TypeID
 
 
-class DeleteExampleWithId(BaseModel, TypeIDMixin("delete_test"), table=True):
-    pass
+class DeleteExampleWithId(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("delete_test")
 
 
 def test_delete(create_and_wipe_database):

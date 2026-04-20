@@ -7,7 +7,7 @@ from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Relationship
 
 from activemodel import BaseModel
-from activemodel.mixins import TypeIDMixin
+from activemodel.mixins import TypeIDPrimaryKey
 from activemodel.mixins.timestamps import TimestampsMixin
 from typeid import TypeID
 
@@ -16,20 +16,21 @@ TYPEID_PREFIX = "myid"
 EXAMPLE_TABLE_PREFIX = "test_record"
 
 
-class ExampleRecord(
-    BaseModel, TimestampsMixin, TypeIDMixin(EXAMPLE_TABLE_PREFIX), table=True
-):
+class ExampleRecord(BaseModel, TimestampsMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey(EXAMPLE_TABLE_PREFIX)
     something: str | None = None
     another_with_index: str | None = Field(index=True, default=None, unique=True)
 
 
-class AnotherExample(BaseModel, TypeIDMixin("myotherid"), table=True):
+class AnotherExample(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("myotherid")
     note: str | None = Field(nullable=True)
 
 
-class ExampleWithId(BaseModel, TypeIDMixin(TYPEID_PREFIX), table=True):
+class ExampleWithId(BaseModel, table=True):
     "example table with foreign keys"
 
+    id: TypeID = TypeIDPrimaryKey(TYPEID_PREFIX)
     another_example_id: TypeID = AnotherExample.foreign_key(nullable=True)
     another_example: AnotherExample = Relationship()
 
@@ -37,9 +38,8 @@ class ExampleWithId(BaseModel, TypeIDMixin(TYPEID_PREFIX), table=True):
     example_record: ExampleRecord = Relationship()
 
 
-class ExampleWithComputedProperty(
-    BaseModel, TypeIDMixin("example_computed"), table=True
-):
+class ExampleWithComputedProperty(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("example_computed")
     another_example_id: TypeID = AnotherExample.foreign_key()
     another_example: AnotherExample = Relationship()
 
@@ -49,9 +49,10 @@ class ExampleWithComputedProperty(
         return f"SPECIAL: {self.another_example.note}"
 
 
-class UpsertTestModel(BaseModel, TypeIDMixin("upsert_test"), table=True):
+class UpsertTestModel(BaseModel, table=True):
     """Test model for upsert operations"""
 
+    id: TypeID = TypeIDPrimaryKey("upsert_test")
     name: str = Field(unique=True)
     category: str = Field(index=True)
     value: int = Field(default=0)
@@ -61,10 +62,11 @@ class UpsertTestModel(BaseModel, TypeIDMixin("upsert_test"), table=True):
     __table_args__ = (UniqueConstraint("name", "category", name="compound_constraint"),)
 
 
-class ExampleRelatedModel(BaseModel, TypeIDMixin("related_model"), table=True):
+class ExampleRelatedModel(BaseModel, table=True):
     """
     Test model with a foreign key relationship to ExampleRecord, used to test related model creation in factories.
     """
 
+    id: TypeID = TypeIDPrimaryKey("related_model")
     example_record_id: TypeID = ExampleRecord.foreign_key(index=True)
     example_record: ExampleRecord = Relationship()
