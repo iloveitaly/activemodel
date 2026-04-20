@@ -8,15 +8,18 @@ from activemodel.mixins import TypeIDField, TypeIDMixin, TypeIDPrimaryKey
 
 
 def test_enforces_unique_prefixes():
-    TypeIDMixin("hi")
+    with pytest.warns(DeprecationWarning):
+        TypeIDMixin("hi")
 
     with pytest.raises(AssertionError):
-        TypeIDMixin("hi")
+        with pytest.warns(DeprecationWarning):
+            TypeIDMixin("hi")
 
 
 def test_no_empty_prefixes_test():
     with pytest.raises(AssertionError):
-        TypeIDMixin("")
+        with pytest.warns(DeprecationWarning):
+            TypeIDMixin("")
 
 
 def test_typeid_primary_key_rejects_empty_prefix():
