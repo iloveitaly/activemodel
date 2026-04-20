@@ -35,7 +35,7 @@ def test_global_session_is_nested():
 def test_global_session_raises_with_different_session():
     """Test that global_session raises an error when a different session is passed."""
 
-    with global_session() as outer_session:
+    with global_session() as _:
         # Create a different session
         different_session = Session(get_engine())
 
