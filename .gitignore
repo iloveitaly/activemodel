@@ -143,6 +143,7 @@ examples/*.db
 # START AI INSTRUCTION IGNORES
 /.claude/commands/standalone-python-scripts.md
 /.claude/commands/write-or-update-readme.md
+/.claude/rules/activemodel.md
 /.claude/rules/general.md
 /.claude/rules/python-package.md
 /.claude/rules/python.md
