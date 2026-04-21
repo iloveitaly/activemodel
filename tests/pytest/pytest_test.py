@@ -56,7 +56,7 @@ class TestTestSession:
 
     def test_test_session_with_relationships(self):
         """Test that test_session works with related models"""
-        with test_session() as session:
+        with test_session() as _:
             # Create related records
             another = AnotherExample(note="test note").save()
 
@@ -82,7 +82,7 @@ class TestTestSession:
             assert session is outer_session
 
             # Create another record
-            record2 = ExampleRecord(something="inner record").save()
+            _record2 = ExampleRecord(something="inner record").save()
 
             # Both records should be visible
             records = list(ExampleRecord.all())
@@ -117,7 +117,7 @@ class TestTestSession:
             with global_session(manual_session):
                 # test_session should raise an error when global session is already set
                 with pytest.raises(RuntimeError, match="global session already set"):
-                    with test_session() as session:
+                    with test_session() as _:
                         pass
 
     def test_test_session_handles_exceptions_gracefully(self):

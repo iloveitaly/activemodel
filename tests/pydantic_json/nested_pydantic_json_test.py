@@ -3,14 +3,13 @@ By default, fast API does not handle converting JSONB to and from Pydantic model
 """
 
 from sqlalchemy.orm.base import instance_state
-from sqlmodel import Field, Session
+from sqlmodel import Session
 
 from activemodel.jsonb_snapshot import detect_json_mutations
 from activemodel.session_manager import get_engine
 from activemodel.session_manager import global_session
 from tests.models import AnotherExample, ExampleWithComputedProperty
 from tests.pydantic_json.helpers import (
-    ExampleWithAmbiguousUnion,
     ExampleWithJSONB,
     ExampleWithSimpleJSON,
     InnerObject,

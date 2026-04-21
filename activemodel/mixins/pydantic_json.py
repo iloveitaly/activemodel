@@ -236,7 +236,7 @@ class PydanticJSONMixin:
         committed state instead of looking like a user mutation.
         """
         # TODO do we need to inspect sa_type
-        model_fields = self.model_fields
+        model_fields = type(self).model_fields
 
         for field_name, field_info in model_fields.items():
             if jsonb_field_names is not None and field_name not in jsonb_field_names:

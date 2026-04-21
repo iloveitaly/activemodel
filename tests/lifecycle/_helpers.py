@@ -4,7 +4,7 @@ from sqlmodel import Field, Relationship
 
 from activemodel import BaseModel
 from activemodel.logger import logger
-from activemodel.types.typeid import TypeIDType
+from typeid import TypeID
 from tests.models import AnotherExample
 
 events: list[str] = []
@@ -15,7 +15,7 @@ class LifecycleModelWithRelationships(BaseModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
     note: str | None = Field(default=None)
-    another_example_id: TypeIDType = AnotherExample.foreign_key()
+    another_example_id: TypeID = AnotherExample.foreign_key()
     another_example: AnotherExample = Relationship(
         sa_relationship_kwargs={"load_on_pending": True}
     )
@@ -109,7 +109,7 @@ class AfterFindModel(BaseModel, table=True):
 class AfterFindModelWithRelationships(BaseModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     note: str | None = Field(default=None)
-    another_example_id: TypeIDType = AnotherExample.foreign_key()
+    another_example_id: TypeID = AnotherExample.foreign_key()
     another_example: AnotherExample = Relationship(
         sa_relationship_kwargs={"load_on_pending": True}
     )
@@ -134,7 +134,7 @@ class AfterInitializeModel(BaseModel, table=True):
 class AfterInitializeModelWithRelationships(BaseModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     note: str | None = Field(default=None)
-    another_example_id: TypeIDType = AnotherExample.foreign_key()
+    another_example_id: TypeID = AnotherExample.foreign_key()
     another_example: AnotherExample = Relationship(
         sa_relationship_kwargs={"load_on_pending": True}
     )

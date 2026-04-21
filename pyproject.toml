@@ -3,17 +3,18 @@ name = "activemodel"
 version = "0.20.0"
 description = "SQLModel with developer ergonomics. Make SQLModel act like ActiveRecord."
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     "sqlmodel==0.0.38",
     "textcase>=0.4.0",
-    "typeid-python==0.3.3",
+    "typeid-python==0.3.9",
 ]
 authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
 keywords = ["sqlmodel", "orm", "activerecord", "activemodel", "sqlalchemy"]
 urls = { "Repository" = "https://github.com/iloveitaly/activemodel", "Documentation" = "https://iloveitaly.github.io/activemodel/" }
 
 [project.optional-dependencies]
+extras = ["whenever>=0.10.0"]
 docs = [
     "sphinx>=7.1.2",
     "shibuya",
@@ -60,6 +61,7 @@ dev = [
     "coverage>=7.13.4",
     "pytest-cov>=7.0.0",
     "covdefaults>=2.3.0",
+    "activemodel[extras]",
 ]
 
 [tool.pyright]

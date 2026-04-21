@@ -12,7 +12,8 @@ from sqlalchemy.types import UserDefinedType
 from sqlmodel import Field
 
 from activemodel import BaseModel
-from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
+from activemodel.mixins import PydanticJSONMixin, TypeIDPrimaryKey
+from typeid import TypeID
 
 
 class CustomTupleType(UserDefinedType):
@@ -46,9 +47,8 @@ class SubObject(PydanticBaseModel):
     inner: InnerObject | None = None
 
 
-class ExampleWithJSONB(
-    BaseModel, PydanticJSONMixin, TypeIDMixin("json_test"), table=True
-):
+class ExampleWithJSONB(BaseModel, PydanticJSONMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("json_test")
     list_field: list[SubObject] = Field(sa_type=JSONB)
     list_of_bools_field: list[bool] = Field(sa_type=JSONB, default_factory=list)
     list_of_floats_field: list[float] = Field(sa_type=JSONB, default_factory=list)
@@ -66,21 +66,18 @@ class ExampleWithJSONB(
     normal_field: str | None = Field(default=None)
 
 
-class ExampleWithSimpleJSON(
-    BaseModel, PydanticJSONMixin, TypeIDMixin("simple_json_test"), table=True
-):
+class ExampleWithSimpleJSON(BaseModel, PydanticJSONMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("simple_json_test")
     object_field: SubObject = Field(sa_type=JSON)
 
 
-class ExampleWithAmbiguousUnion(
-    BaseModel, PydanticJSONMixin, TypeIDMixin("ambiguous_union_json_test"), table=True
-):
+class ExampleWithAmbiguousUnion(BaseModel, PydanticJSONMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("ambiguous_union_json_test")
     ambiguous_object_field: SubObject | dict | None = Field(sa_type=JSONB, default=None)
 
 
-class ExampleWithUnsupportedJSON(
-    BaseModel, PydanticJSONMixin, TypeIDMixin("unsupported_json_test"), table=True
-):
+class ExampleWithUnsupportedJSON(BaseModel, PydanticJSONMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("unsupported_json_test")
     unsupported_list_field: list[tuple[str, str]] = Field(sa_type=JSONB)
     unsupported_json_field: set[str] = Field(sa_type=JSONB, default_factory=set)
 

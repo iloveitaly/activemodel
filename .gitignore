@@ -136,6 +136,8 @@ dmypy.json
 # i like having temporary files specified locally vs globally
 tmp/
 
+examples/*.db
+
 /tests/migrations/versions
 
 # START AI INSTRUCTION IGNORES

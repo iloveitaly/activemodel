@@ -9,7 +9,10 @@ def test_json_schema(create_and_wipe_database):
     "json schema generation shouldn't be meaningfully different than json rendering, but let's check it anyway"
 
     example = ExampleWithId().save()
-    example.model_json_schema()
+    schema = example.model_json_schema()
+    id_schema = schema["properties"]["id"]
+    assert id_schema["type"] == "string"
+    assert id_schema["format"] == "typeid"
 
 
 class PydanticResponseModel(PydanticBaseModel):
@@ -25,9 +28,21 @@ def test_typeid_render(create_and_wipe_database):
     example = ExampleWithId().save()
     response = PydanticResponseModel(id=example.id)
 
-    # check that the TypeID is serialized as a string
+    assert response.model_dump()["id"] == example.id
+    assert response.model_dump(mode="json")["id"] == str(example.id)
     assert json.loads(response.model_dump_json())["id"] == str(example.id)
-    assert response.model_json_schema()["properties"]["id"]["type"] == "string"
+
+    id_schema = response.model_json_schema()["properties"]["id"]
+    assert id_schema["type"] == "string"
+    assert id_schema["format"] == "typeid"
+
+
+def test_typeid_string_input_coerces_to_typeid(create_and_wipe_database):
+    example = ExampleWithId().save()
+    response = PydanticResponseModel(id=str(example.id))  # type: ignore[arg-type]
+
+    assert isinstance(response.id, TypeID)
+    assert response.id == example.id
 
 
 class PydanticResponseTypeIDTypeModel(PydanticBaseModel):
@@ -43,6 +58,11 @@ def test_typeid_type_render(create_and_wipe_database):
     example = ExampleWithId().save()
     response = PydanticResponseTypeIDTypeModel(id=example.id)
 
-    # check that the TypeID is serialized as a string
+    # check that the TypeID is serialized as a string in json but kept as TypeID in python mode
+    assert response.model_dump()["id"] == example.id
+    assert response.model_dump(mode="json")["id"] == str(example.id)
     assert json.loads(response.model_dump_json())["id"] == str(example.id)
-    assert response.model_json_schema()["properties"]["id"]["type"] == "string"
+
+    id_schema = response.model_json_schema()["properties"]["id"]
+    assert id_schema["type"] == "string"
+    assert id_schema["format"] == "typeid"

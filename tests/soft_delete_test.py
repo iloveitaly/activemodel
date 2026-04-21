@@ -1,11 +1,10 @@
 from activemodel import BaseModel
-from activemodel.mixins import SoftDeletionMixin, TypeIDMixin
+from activemodel.mixins import SoftDeletionMixin, TypeIDPrimaryKey
+from typeid import TypeID
 
 
-class SoftDeleteExample(
-    BaseModel, SoftDeletionMixin, TypeIDMixin("soft_delete"), table=True
-):
-    pass
+class SoftDeleteExample(BaseModel, SoftDeletionMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("soft_delete")
 
 
 def test_soft_delete_sets_timestamp_and_persists(create_and_wipe_database):

@@ -1,6 +1,7 @@
 from typing import Any, Generator, Literal, assert_type
 
 import sqlalchemy as sa
+from typeid import TypeID
 
 from activemodel import BaseModel
 from activemodel.query_wrapper import QueryWrapper
@@ -22,6 +23,7 @@ def test_classmethod_return_types_are_model_specific(create_and_wipe_database):
     assert_type(ExampleWithId.select(), QueryWrapper[ExampleWithId])
     assert_type(ExampleWithId.where(condition), QueryWrapper[ExampleWithId])
     assert_where_returns_query_wrapper(ExampleWithId, condition)
+    assert_type(example.id, TypeID)
     assert_type(ExampleWithId.get(example.id), ExampleWithId | None)
     assert_type(ExampleWithId.one_or_none(example.id), ExampleWithId | None)
     assert_type(ExampleWithId.one(example.id), ExampleWithId)

@@ -4,9 +4,10 @@ from sqlalchemy.orm.base import instance_state
 from sqlmodel import Field, Session
 
 from activemodel import BaseModel
-from activemodel.mixins import PydanticJSONMixin, TypeIDMixin
+from activemodel.mixins import PydanticJSONMixin, TypeIDPrimaryKey
 from activemodel.session_manager import global_session
 from tests.models import ExampleRecord
+from typeid import TypeID
 
 
 class NestedPayload(PydanticBaseModel):
@@ -14,12 +15,8 @@ class NestedPayload(PydanticBaseModel):
     is_enabled: bool = False
 
 
-class RecordWithPayloads(
-    BaseModel,
-    PydanticJSONMixin,
-    TypeIDMixin("pydantic_json_record"),
-    table=True,
-):
+class RecordWithPayloads(BaseModel, PydanticJSONMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("pydantic_json_record")
     payloads: list[NestedPayload] = Field(sa_type=JSONB)
     primary_payload: NestedPayload = Field(sa_type=JSONB)
 

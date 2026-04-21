@@ -1,16 +1,17 @@
 import json
 import typing as t
-import textcase
-from uuid import UUID
 from contextlib import nullcontext
+from uuid import UUID
 
 import sqlalchemy as sa
 import sqlmodel as sm
+import textcase
+import uuid_utils
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
+from sqlalchemy.orm import declared_attr
 from sqlalchemy.orm.attributes import flag_modified as sa_flag_modified
 from sqlmodel import Column, Field, Session, SQLModel, inspect, select
 from typeid import TypeID
-from sqlalchemy.orm import declared_attr
 
 from activemodel.mixins.pydantic_json import PydanticJSONMixin
 
@@ -131,13 +132,13 @@ class BaseModel(SQLModel):
         return textcase.snake(cls.__name__)
 
     @classmethod
-    def foreign_key(cls, **kwargs):
+    def foreign_key(cls, **kwargs) -> t.Any:
         """
         Returns a `Field` object referencing the foreign key of the model.
 
         Helps quickly build a many-to-one or one-to-one relationship.
 
-        >>> other_model_id: int = OtherModel.foreign_key()
+        >>> other_model_id: TypeID = OtherModel.foreign_key()
         >>> other_model = Relationship()
         """
 
@@ -458,7 +459,9 @@ class BaseModel(SQLModel):
         id_field_name = "id"
 
         # special case for getting by ID
-        if len(args) == 1 and isinstance(args[0], (int, TypeID, str, UUID)):
+        if len(args) == 1 and isinstance(
+            args[0], (int, TypeID, str, UUID, uuid_utils.UUID)
+        ):
             kwargs[id_field_name] = args[0]
             args = ()
 
@@ -505,7 +508,9 @@ class BaseModel(SQLModel):
 
         # special case for getting by ID without having to specify the field name
         # TODO should dynamically add new pk types based on column definition
-        if len(args) == 1 and isinstance(args[0], (int, TypeID, str, UUID)):
+        if len(args) == 1 and isinstance(
+            args[0], (int, TypeID, str, UUID, uuid_utils.UUID)
+        ):
             kwargs[id_field_name] = args[0]
             args = ()
 

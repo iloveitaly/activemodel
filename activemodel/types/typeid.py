@@ -4,6 +4,7 @@ Lifted from: https://github.com/akhundMurad/typeid-python/blob/main/examples/sql
 
 from uuid import UUID
 
+import uuid_utils
 from pydantic import (
     GetJsonSchemaHandler,
 )
@@ -65,9 +66,14 @@ class TypeIDType(types.TypeDecorator):
         if value is None:
             return None
 
+        # then it's a stdlib UUID class, such as UUID('01942886-7afc-7129-8f57-db09137ed002')
         if isinstance(value, UUID):
-            # then it's a UUID class, such as UUID('01942886-7afc-7129-8f57-db09137ed002')
             return value
+
+        # TODO we should be able to register the custom UUID type into pyscog to avoid conversion here
+        if isinstance(value, uuid_utils.UUID):
+            # uuid_utils.UUID (from typeid-python) is not a stdlib uuid.UUID, psycopg needs stdlib UUID
+            return UUID(bytes=value.bytes)
 
         if isinstance(value, str) and value.startswith(self.prefix + "_"):
             # then it's a TypeID such as 'user_01h45ytscbebyvny4gc8cr8ma2'
@@ -80,7 +86,6 @@ class TypeIDType(types.TypeDecorator):
             return UUID(value)
 
         if isinstance(value, TypeID):
-            # TODO in what case could this None prefix ever occur?
             if self.prefix is None:
                 if value.prefix is None:
                     raise TypeIDValidationError(
@@ -92,7 +97,9 @@ class TypeIDType(types.TypeDecorator):
                         f"Expected '{self.prefix}' but got '{value.prefix}'"
                     )
 
-            return value.uuid
+            # always returns a uuid_utils.UUID, which we need to convert
+            # TODO should be able to register a custom type in psycopg to avoid this conversion
+            return UUID(bytes=value.uuid.bytes)
 
         raise ValueError("Unexpected input type")
 
@@ -166,7 +173,9 @@ class TypeIDType(types.TypeDecorator):
             #     )
             # },
             python_schema=core_schema.union_schema([from_uuid_schema]),
-            serialization=core_schema.plain_serializer_function_ser_schema(str),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                str, when_used="json"
+            ),
         )
 
     # TODO I have a feeling that the `serialization` param in the above method solves this for us.
@@ -196,6 +205,7 @@ class TypeIDType(types.TypeDecorator):
 
         return {
             "type": "string",
+            "format": "typeid",
             # TODO implement a more strict pattern in regex
             #      https://github.com/jetify-com/typeid/blob/3d182feed5687c21bb5ab93d5f457ff96749b68b/spec/README.md?plain=1#L38
             # "pattern": "^[0-9a-f]{24}$",

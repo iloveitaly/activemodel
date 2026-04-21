@@ -86,17 +86,17 @@ def test_foreign_key():
 
 
 def test_basic_query(create_and_wipe_database):
-    example = ExampleRecord(something="hi").save()
+    _example = ExampleRecord(something="hi").save()
     query = ExampleRecord.select().where(ExampleRecord.something == "hi")
 
-    query_as_str = str(query)
-    result = query.first()
+    _query_as_str = str(query)
+    _result = query.first()
 
 
 def test_query_count(create_and_wipe_database):
     AnotherExample().save()
 
-    example = ExampleRecord(something="hi").save()
+    _example = ExampleRecord(something="hi").save()
     count = ExampleRecord.select().where(ExampleRecord.something == "hi").count()
 
     assert count == 1
@@ -153,8 +153,8 @@ def test_one_single_result(create_and_wipe_database):
 
 def test_one_multiple_results(create_and_wipe_database):
     # not a pk, but should still throw an error
-    example = ExampleRecord(something="hi").save()
-    another_example = ExampleRecord(something="hi").save()
+    _example = ExampleRecord(something="hi").save()
+    _another_example = ExampleRecord(something="hi").save()
 
     with pytest.raises(sqlalchemy.exc.MultipleResultsFound):
         ExampleRecord.one(something="hi")

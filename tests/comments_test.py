@@ -9,21 +9,20 @@ from sqlmodel import Field, text
 
 from activemodel import BaseModel
 from activemodel.mixins.timestamps import TimestampsMixin
-from activemodel.mixins.typeid import TypeIDMixin
+from activemodel.mixins.typeid import TypeIDPrimaryKey
 from activemodel.session_manager import get_session
+from typeid import TypeID
 
 
-class ExampleWithoutComments(
-    BaseModel, TimestampsMixin, TypeIDMixin("ex_wo_comments"), table=True
-):
-    pass
+class ExampleWithoutComments(BaseModel, TimestampsMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("ex_wo_comments")
 
 
-class ExampleWithComments(
-    BaseModel, TimestampsMixin, TypeIDMixin("ex_comments"), table=True
-):
+class ExampleWithComments(BaseModel, TimestampsMixin, table=True):
     # f-strings don't work with docstrings
     """Expected table comment"""
+
+    id: TypeID = TypeIDPrimaryKey("ex_comments")
 
     a_string_field_without_field: str
     "a doc string for a string field without a field"
