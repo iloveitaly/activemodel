@@ -62,6 +62,7 @@ dev = [
     "pytest-cov>=7.0.0",
     "covdefaults>=2.3.0",
     "activemodel[extras]",
+    "factory-boy>=3.3.3",
 ]
 
 [tool.pyright]
