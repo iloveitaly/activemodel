@@ -86,6 +86,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../patches/index.html">activemodel.patches</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../pytest/index.html">activemodel.pytest</a><ul>
@@ -101,6 +102,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../types/typeid/index.html">activemodel.types.typeid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../types/whenever/index.html">activemodel.types.whenever</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../utils/index.html">activemodel.utils</a></li>
@@ -142,6 +144,7 @@ data-aria-dark="Switch to auto color mode">
 </ul>
 </li>
 <li><a class="reference internal" href="#activemodel.mixins.TypeIDMixin"><code class="docutils literal notranslate"><span class="pre">TypeIDMixin()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.mixins.TypeIDPrimaryKey"><code class="docutils literal notranslate"><span class="pre">TypeIDPrimaryKey()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -255,6 +258,9 @@ data-aria-dark="Switch to auto color mode">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.mixins.TypeIDMixin" title="activemodel.mixins.TypeIDMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeIDMixin</span></code></a>(prefix)</p></td>
 <td><p>Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.mixins.TypeIDPrimaryKey" title="activemodel.mixins.TypeIDPrimaryKey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeIDPrimaryKey</span></code></a>(→ Any)</p></td>
+<td><p>Field factory for the declarative form:</p></td>
 </tr>
 </tbody>
 </table>
@@ -373,6 +379,21 @@ before the automatic <cite>before_flush</cite> detection fires.</p>
 <dt class="sig sig-object py" id="activemodel.mixins.TypeIDMixin">
 <span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">TypeIDMixin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/mixins/typeid.html#TypeIDMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.TypeIDMixin" title="Link to this definition">¶</a></dt>
 <dd><p>Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.mixins.TypeIDPrimaryKey">
+<span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">TypeIDPrimaryKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/typeid.html#TypeIDPrimaryKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.TypeIDPrimaryKey" title="Link to this definition">¶</a></dt>
+<dd><p>Field factory for the declarative form:</p>
+<blockquote>
+<div><p>id: TypeIDField[Literal[“user”]] = TypeIDPrimaryKey(“user”)</p>
+</div></blockquote>
+<p>Use this when you want static type-checking of the prefix.</p>
+<p>Returns Any so that type checkers accept it as a default value for any
+annotation (e.g. TypeIDField[Literal[“user”]]), matching the same pattern
+used by pydantic’s own Field() factory.</p>
+<p>Returns Any (not TypeID) because Pydantic discovers fields via __annotations__ at class creation —
+the annotation is required for field registration, so the return type cannot replace it.</p>
 </dd></dl>
 
 </section>

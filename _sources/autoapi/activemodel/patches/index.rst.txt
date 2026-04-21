@@ -11,5 +11,6 @@ Submodules
    :maxdepth: 1
 
    /autoapi/activemodel/patches/get_column_from_field_patch/index
+   /autoapi/activemodel/patches/get_sqlalchemy_type_patch/index
 
 

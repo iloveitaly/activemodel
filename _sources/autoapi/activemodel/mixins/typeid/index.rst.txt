@@ -9,11 +9,28 @@ Functions
 
 .. autoapisummary::
 
+   activemodel.mixins.typeid.TypeIDPrimaryKey
    activemodel.mixins.typeid.TypeIDMixin
 
 
 Module Contents
 ---------------
+
+.. py:function:: TypeIDPrimaryKey(prefix: str) -> Any
+
+   Field factory for the declarative form:
+
+       id: TypeIDField[Literal["user"]] = TypeIDPrimaryKey("user")
+
+   Use this when you want static type-checking of the prefix.
+
+   Returns Any so that type checkers accept it as a default value for any
+   annotation (e.g. TypeIDField[Literal["user"]]), matching the same pattern
+   used by pydantic's own Field() factory.
+
+   Returns Any (not TypeID) because Pydantic discovers fields via __annotations__ at class creation —
+   the annotation is required for field registration, so the return type cannot replace it.
+
 
 .. py:function:: TypeIDMixin(prefix: str)
 

@@ -32,6 +32,7 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
     * [activemodel.mixins.typeid](activemodel/mixins/typeid/index.md)
   * [activemodel.patches](activemodel/patches/index.md)
     * [activemodel.patches.get_column_from_field_patch](activemodel/patches/get_column_from_field_patch/index.md)
+    * [activemodel.patches.get_sqlalchemy_type_patch](activemodel/patches/get_sqlalchemy_type_patch/index.md)
   * [activemodel.pytest](activemodel/pytest/index.md)
     * [activemodel.pytest.factories](activemodel/pytest/factories/index.md)
     * [activemodel.pytest.plugin](activemodel/pytest/plugin/index.md)
@@ -43,6 +44,10 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
     * [activemodel.types.sqlalchemy_protocol](activemodel/types/sqlalchemy_protocol/index.md)
     * [activemodel.types.typeid](activemodel/types/typeid/index.md)
     * [activemodel.types.typeid_patch](activemodel/types/typeid_patch/index.md)
+    * [activemodel.types.whenever](activemodel/types/whenever/index.md)
+      * [activemodel.types.whenever.instant_type](activemodel/types/whenever/instant_type/index.md)
+      * [activemodel.types.whenever.plain_date_time_type](activemodel/types/whenever/plain_date_time_type/index.md)
+      * [activemodel.types.whenever.zoned_date_time_type](activemodel/types/whenever/zoned_date_time_type/index.md)
   * [activemodel.utils](activemodel/utils/index.md)
 
 * <a id='f1'>**[1]**</a> Created with [sphinx-autoapi](https://github.com/readthedocs/sphinx-autoapi)
@@ -166,14 +171,14 @@ a more precise library which processes such acronyms: [textcase]([https://pypi.o
 
 [https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case](https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case)
 
-#### *classmethod* foreign_key(\*\*kwargs)
+#### *classmethod* foreign_key(\*\*kwargs) → Any
 
 Returns a Field object referencing the foreign key of the model.
 
 Helps quickly build a many-to-one or one-to-one relationship.
 
 ```pycon
->>> other_model_id: int = OtherModel.foreign_key()
+>>> other_model_id: TypeID = OtherModel.foreign_key()
 >>> other_model = Relationship()
 ```
 
@@ -372,8 +377,9 @@ Safe to call multiple times – the listener is only registered once.
 
 ## Functions
 
-| [`TypeIDMixin`](#activemodel.mixins.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
-|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| [`TypeIDMixin`](#activemodel.mixins.TypeIDMixin)(prefix)          | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
+|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| [`TypeIDPrimaryKey`](#activemodel.mixins.TypeIDPrimaryKey)(→ Any) | Field factory for the declarative form:                                                               |
 
 ## Package Contents
 
@@ -475,6 +481,21 @@ Notes:
 
 Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
 
+### activemodel.mixins.TypeIDPrimaryKey(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str)) → Any
+
+Field factory for the declarative form:
+
+> id: TypeIDField[Literal[“user”]] = TypeIDPrimaryKey(“user”)
+
+Use this when you want static type-checking of the prefix.
+
+Returns Any so that type checkers accept it as a default value for any
+annotation (e.g. TypeIDField[Literal[“user”]]), matching the same pattern
+used by pydantic’s own Field() factory.
+
+Returns Any (not TypeID) because Pydantic discovers fields via \_\_annotations_\_ at class creation —
+the annotation is required for field registration, so the return type cannot replace it.
+
 
 # index.html.md
 
@@ -483,6 +504,7 @@ Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to 
 ## Submodules
 
 * [activemodel.patches.get_column_from_field_patch](get_column_from_field_patch/index.md)
+* [activemodel.patches.get_sqlalchemy_type_patch](get_sqlalchemy_type_patch/index.md)
 
 
 # index.html.md
@@ -755,14 +777,14 @@ a more precise library which processes such acronyms: [textcase]([https://pypi.o
 
 [https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case](https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case)
 
-#### *classmethod* foreign_key(\*\*kwargs)
+#### *classmethod* foreign_key(\*\*kwargs) → Any
 
 Returns a Field object referencing the foreign key of the model.
 
 Helps quickly build a many-to-one or one-to-one relationship.
 
 ```pycon
->>> other_model_id: int = OtherModel.foreign_key()
+>>> other_model_id: TypeID = OtherModel.foreign_key()
 >>> other_model = Relationship()
 ```
 
@@ -873,6 +895,7 @@ Helpful for testing and console debugging.
 * [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.md)
 * [activemodel.types.typeid](typeid/index.md)
 * [activemodel.types.typeid_patch](typeid_patch/index.md)
+* [activemodel.types.whenever](whenever/index.md)
 
 ## Classes
 
@@ -1866,13 +1889,1373 @@ Runtime protocol placeholder for QueryWrapper’s forwarded methods.
 
 # activemodel.types.typeid_patch
 
-Pydantic v2 support for TypeID.
+Add pydantic v2 support for TypeID.
 
-TODO should push this upstream to the typeid package
+* The TypeID package has a TypeIDField[Literal[“prefix”]] support, but this is not a subclass of TypeID
+  which causes errors when a TypeID object is assigned to a field of that type.
+* TypeIDField generates a unique type and embeds the prefix in the type, which is how how the instance of the object
+  can validate incoming strs as having the correct prefix.
+* This isn’t exactly required in our case since the prefix validation is handled within the SQLAlchemy type adapter.
+* However,
+
+## Attributes
+
+| [`existing_schema`](#activemodel.types.typeid_patch.existing_schema)   |    |
+|------------------------------------------------------------------------|----|
 
 ## Module Contents
 
 ### *classmethod* activemodel.types.typeid_patch.get_pydantic_core_schema(source_type: Any, handler: [pydantic.GetCoreSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetCoreSchemaHandler)) → pydantic_core.CoreSchema
+
+### *classmethod* activemodel.types.typeid_patch.get_pydantic_json_schema(core_schema_: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic.json_schema.JsonSchemaValue
+
+### activemodel.types.typeid_patch.existing_schema
+
+
+# index.html.md
+
+# activemodel.types.whenever
+
+## Submodules
+
+* [activemodel.types.whenever.instant_type](instant_type/index.md)
+* [activemodel.types.whenever.plain_date_time_type](plain_date_time_type/index.md)
+* [activemodel.types.whenever.zoned_date_time_type](zoned_date_time_type/index.md)
+
+## Classes
+
+| [`InstantType`](#activemodel.types.whenever.InstantType)             | SQLAlchemy TypeDecorator for whenever.Instant.       |
+|----------------------------------------------------------------------|------------------------------------------------------|
+| [`PlainDateTimeType`](#activemodel.types.whenever.PlainDateTimeType) | SQLAlchemy TypeDecorator for whenever.PlainDateTime. |
+| [`ZonedDateTimeType`](#activemodel.types.whenever.ZonedDateTimeType) | SQLAlchemy TypeDecorator for whenever.ZonedDateTime. |
+
+## Package Contents
+
+### *class* activemodel.types.whenever.InstantType(\*args: Any, \*\*kwargs: Any)
+
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
+
+SQLAlchemy TypeDecorator for whenever.Instant.
+
+Stores as a timezone-aware datetime in the database (UTC).
+Reconstructs as an Instant on read.
+
+Usage:
+: created_at: Instant | None = None
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### process_bind_param(value, dialect)
+
+Receive a bound parameter value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for incoming data values.
+This method is called at **statement execution time** and is passed
+the literal Python data value which is to be associated with a bound
+parameter in the statement.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or serializing data.
+This could also be used as a hook for validating logic.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_result_value()`
+
+#### process_result_value(value, dialect)
+
+Receive a result-row column value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for data values
+being received in result rows coming from the database.
+This method is called at **result fetching time** and is passed
+the literal Python data value that’s extracted from a database result
+row.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or deserializing data.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_bind_param()`
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_source_type: [object](https://docs.python.org/3/library/functions.html#object), handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+
+### *class* activemodel.types.whenever.PlainDateTimeType(\*args: Any, \*\*kwargs: Any)
+
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
+
+SQLAlchemy TypeDecorator for whenever.PlainDateTime.
+
+Stores as a naive datetime in the database.
+Reconstructs as a PlainDateTime on read.
+
+This is useful for SQLite and other databases that do not have robust
+timezone-aware datetime support, or for fields that are intentionally meant
+to represent a local wall-clock time without timezone information.
+
+Usage:
+: local_time: PlainDateTime | None = None
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### process_bind_param(value, dialect)
+
+Receive a bound parameter value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for incoming data values.
+This method is called at **statement execution time** and is passed
+the literal Python data value which is to be associated with a bound
+parameter in the statement.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or serializing data.
+This could also be used as a hook for validating logic.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_result_value()`
+
+#### process_result_value(value, dialect)
+
+Receive a result-row column value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for data values
+being received in result rows coming from the database.
+This method is called at **result fetching time** and is passed
+the literal Python data value that’s extracted from a database result
+row.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or deserializing data.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_bind_param()`
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_source_type: [object](https://docs.python.org/3/library/functions.html#object), handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+
+### *class* activemodel.types.whenever.ZonedDateTimeType(\*args: Any, \*\*kwargs: Any)
+
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
+
+SQLAlchemy TypeDecorator for whenever.ZonedDateTime.
+
+Stores as a timezone-aware datetime in the database. Note that the IANA
+timezone name is not preserved — the DB stores the UTC offset at the time
+of writing. On read, the value is reconstructed as a ZonedDateTime, but
+the timezone will be a fixed-offset zone rather than the original IANA name.
+
+Usage:
+: scheduled_at: ZonedDateTime | None = None
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### process_bind_param(value, dialect)
+
+Receive a bound parameter value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for incoming data values.
+This method is called at **statement execution time** and is passed
+the literal Python data value which is to be associated with a bound
+parameter in the statement.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or serializing data.
+This could also be used as a hook for validating logic.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_result_value()`
+
+#### process_result_value(value, dialect)
+
+Receive a result-row column value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for data values
+being received in result rows coming from the database.
+This method is called at **result fetching time** and is passed
+the literal Python data value that’s extracted from a database result
+row.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or deserializing data.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_bind_param()`
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_source_type: [object](https://docs.python.org/3/library/functions.html#object), handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+
+
+# index.html.md
+
+# activemodel.types.whenever.plain_date_time_type
+
+## Classes
+
+| [`PlainDateTimeType`](#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType)   | SQLAlchemy TypeDecorator for whenever.PlainDateTime.   |
+|---------------------------------------------------------------------------------------------|--------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.types.whenever.plain_date_time_type.PlainDateTimeType(\*args: Any, \*\*kwargs: Any)
+
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
+
+SQLAlchemy TypeDecorator for whenever.PlainDateTime.
+
+Stores as a naive datetime in the database.
+Reconstructs as a PlainDateTime on read.
+
+This is useful for SQLite and other databases that do not have robust
+timezone-aware datetime support, or for fields that are intentionally meant
+to represent a local wall-clock time without timezone information.
+
+Usage:
+: local_time: PlainDateTime | None = None
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### process_bind_param(value, dialect)
+
+Receive a bound parameter value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for incoming data values.
+This method is called at **statement execution time** and is passed
+the literal Python data value which is to be associated with a bound
+parameter in the statement.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or serializing data.
+This could also be used as a hook for validating logic.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_result_value()`
+
+#### process_result_value(value, dialect)
+
+Receive a result-row column value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for data values
+being received in result rows coming from the database.
+This method is called at **result fetching time** and is passed
+the literal Python data value that’s extracted from a database result
+row.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or deserializing data.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_bind_param()`
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_source_type: [object](https://docs.python.org/3/library/functions.html#object), handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+
+
+# index.html.md
+
+# activemodel.types.whenever.zoned_date_time_type
+
+## Classes
+
+| [`ZonedDateTimeType`](#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType)   | SQLAlchemy TypeDecorator for whenever.ZonedDateTime.   |
+|---------------------------------------------------------------------------------------------|--------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType(\*args: Any, \*\*kwargs: Any)
+
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
+
+SQLAlchemy TypeDecorator for whenever.ZonedDateTime.
+
+Stores as a timezone-aware datetime in the database. Note that the IANA
+timezone name is not preserved — the DB stores the UTC offset at the time
+of writing. On read, the value is reconstructed as a ZonedDateTime, but
+the timezone will be a fixed-offset zone rather than the original IANA name.
+
+Usage:
+: scheduled_at: ZonedDateTime | None = None
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### process_bind_param(value, dialect)
+
+Receive a bound parameter value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for incoming data values.
+This method is called at **statement execution time** and is passed
+the literal Python data value which is to be associated with a bound
+parameter in the statement.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or serializing data.
+This could also be used as a hook for validating logic.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_result_value()`
+
+#### process_result_value(value, dialect)
+
+Receive a result-row column value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for data values
+being received in result rows coming from the database.
+This method is called at **result fetching time** and is passed
+the literal Python data value that’s extracted from a database result
+row.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or deserializing data.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_bind_param()`
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_source_type: [object](https://docs.python.org/3/library/functions.html#object), handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+
+
+# index.html.md
+
+# activemodel.types.whenever.instant_type
+
+## Classes
+
+| [`InstantType`](#activemodel.types.whenever.instant_type.InstantType)   | SQLAlchemy TypeDecorator for whenever.Instant.   |
+|-------------------------------------------------------------------------|--------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.types.whenever.instant_type.InstantType(\*args: Any, \*\*kwargs: Any)
+
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
+
+SQLAlchemy TypeDecorator for whenever.Instant.
+
+Stores as a timezone-aware datetime in the database (UTC).
+Reconstructs as an Instant on read.
+
+Usage:
+: created_at: Instant | None = None
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### process_bind_param(value, dialect)
+
+Receive a bound parameter value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for incoming data values.
+This method is called at **statement execution time** and is passed
+the literal Python data value which is to be associated with a bound
+parameter in the statement.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or serializing data.
+This could also be used as a hook for validating logic.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_result_value()`
+
+#### process_result_value(value, dialect)
+
+Receive a result-row column value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for data values
+being received in result rows coming from the database.
+This method is called at **result fetching time** and is passed
+the literal Python data value that’s extracted from a database result
+row.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or deserializing data.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_bind_param()`
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_source_type: [object](https://docs.python.org/3/library/functions.html#object), handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
 
 
 # index.html.md
@@ -1901,14 +3284,55 @@ Some ideas for this originally sourced from: [https://github.com/fastapi/sqlmode
 
 # index.html.md
 
+# activemodel.patches.get_sqlalchemy_type_patch
+
+Extends SQLModel’s get_sqlalchemy_type to recognize whenever datetime types.
+
+This allows using whenever.Instant, whenever.PlainDateTime, and
+whenever.ZonedDateTime as bare field
+type annotations without needing to specify sa_type= explicitly:
+
+> class MyModel(BaseModel, table=True):
+> : created_at: whenever.Instant | None = None
+>   local_time: whenever.PlainDateTime | None = None
+>   scheduled_at: whenever.ZonedDateTime | None = None
+
+## Functions
+
+| [`get_sqlalchemy_type`](#activemodel.patches.get_sqlalchemy_type_patch.get_sqlalchemy_type)(field)   |    |
+|------------------------------------------------------------------------------------------------------|----|
+
+## Module Contents
+
+### activemodel.patches.get_sqlalchemy_type_patch.get_sqlalchemy_type(field)
+
+
+# index.html.md
+
 # activemodel.mixins.typeid
 
 ## Functions
 
-| [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
-|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| [`TypeIDPrimaryKey`](#activemodel.mixins.typeid.TypeIDPrimaryKey)(→ Any)   | Field factory for the declarative form:                                                             |
+|----------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)            | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID. |
 
 ## Module Contents
+
+### activemodel.mixins.typeid.TypeIDPrimaryKey(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str)) → Any
+
+Field factory for the declarative form:
+
+> id: TypeIDField[Literal[“user”]] = TypeIDPrimaryKey(“user”)
+
+Use this when you want static type-checking of the prefix.
+
+Returns Any so that type checkers accept it as a default value for any
+annotation (e.g. TypeIDField[Literal[“user”]]), matching the same pattern
+used by pydantic’s own Field() factory.
+
+Returns Any (not TypeID) because Pydantic discovers fields via \_\_annotations_\_ at class creation —
+the annotation is required for field registration, so the return type cannot replace it.
 
 ### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
 
@@ -2841,6 +4265,7 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 * **ActiveRecord-style Query & Persistence API**: Fluent methods like `save()`, `where()`, `find_or_create_by()`, and `upsert()` for intuitive database operations.
 * **Implicit Session Management**: Automatically handles database sessions, eliminating boilerplate and making database interactions feel “magic”.
 * **Stripe-style IDs (TypeID)**: Native support for type-safe, prefixed, and sortable UUIDs with a built-in `TypeIDMixin`.
+* **whenever datetime types**: Optional integration for `whenever.Instant`, `whenever.PlainDateTime`, and `whenever.ZonedDateTime` as first-class field annotations.
 * **Timestamp Column Mixins**: Standard `created_at` and `updated_at` tracking out of the box.
 * **Lifecycle Hooks**: Rails-style callbacks like `before_save`, `after_create`, and `around_delete`.
 * **Automatic DB Comments**: Syncs class and field-level docstrings directly to database table and column comments for better self-documentation.
@@ -3072,6 +4497,42 @@ SQLModel & SQLAlchemy are tricky. Here are some useful internal tricks:
 * Is a model dirty `instance_state(instance).modified`
 * `select(Table).outerjoin??` won’t work in a ipython session, but `Table.__table__.outerjoin??` will. `__table__` is a reference to the underlying SQLAlchemy table record.
 * `get_engine().pool.stats()` is helpful for inspecting connection pools and limits\\
+
+### whenever Datetime Types
+
+[whenever](https://github.com/ariebovenberg/whenever) is a modern, type-safe datetime library for Python. Install the optional integration:
+
+```bash
+uv add activemodel[extras]
+```
+
+Once installed, you can use `whenever.Instant`, `whenever.PlainDateTime`, and `whenever.ZonedDateTime` directly as field type annotations — no `sa_type=` needed:
+
+```python
+from whenever import Instant, PlainDateTime, ZonedDateTime
+from activemodel import BaseModel
+from activemodel.mixins import TypeIDMixin
+
+class Event(BaseModel, TypeIDMixin("event"), table=True):
+    triggered_at: Instant | None = None
+    local_time: PlainDateTime | None = None
+    scheduled_at: ZonedDateTime | None = None
+```
+
+`PlainDateTime` is stored as a naive `TIMESTAMP` / `DATETIME` value and round-trips as a local date-time without timezone information. On databases with native timezone-aware timestamp support, `Instant` and `ZonedDateTime` are stored as `TIMESTAMP WITH TIME ZONE` values. `Instant` round-trips exactly. `ZonedDateTime` preserves the UTC moment but not the original IANA timezone name (the DB stores the UTC offset at write time).
+
+SQLite does not store timezone information in its datetime columns. If you use `whenever` fields with SQLite, make sure the environment writing and reading those values is configured with the server timezone semantics you expect. In practice, that means SQLite is best suited for local development or test scenarios where you control the process timezone behavior.
+
+They also work in plain Pydantic response models without any extra setup, since `whenever` has built-in Pydantic v2 support:
+
+```python
+from pydantic import BaseModel as PydanticBaseModel
+from whenever import Instant
+
+class EventResponse(PydanticBaseModel):
+    id: str
+    triggered_at: Instant
+```
 
 ### TypeID
 

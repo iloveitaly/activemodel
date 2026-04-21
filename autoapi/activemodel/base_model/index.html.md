@@ -106,14 +106,14 @@ a more precise library which processes such acronyms: [textcase]([https://pypi.o
 
 [https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case](https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case)
 
-#### *classmethod* foreign_key(\*\*kwargs)
+#### *classmethod* foreign_key(\*\*kwargs) → Any
 
 Returns a Field object referencing the foreign key of the model.
 
 Helps quickly build a many-to-one or one-to-one relationship.
 
 ```pycon
->>> other_model_id: int = OtherModel.foreign_key()
+>>> other_model_id: TypeID = OtherModel.foreign_key()
 >>> other_model = Relationship()
 ```
 

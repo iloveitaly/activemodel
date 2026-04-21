@@ -14,6 +14,7 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
     * [activemodel.mixins.typeid](activemodel/mixins/typeid/index.md)
   * [activemodel.patches](activemodel/patches/index.md)
     * [activemodel.patches.get_column_from_field_patch](activemodel/patches/get_column_from_field_patch/index.md)
+    * [activemodel.patches.get_sqlalchemy_type_patch](activemodel/patches/get_sqlalchemy_type_patch/index.md)
   * [activemodel.pytest](activemodel/pytest/index.md)
     * [activemodel.pytest.factories](activemodel/pytest/factories/index.md)
     * [activemodel.pytest.plugin](activemodel/pytest/plugin/index.md)
@@ -25,6 +26,10 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
     * [activemodel.types.sqlalchemy_protocol](activemodel/types/sqlalchemy_protocol/index.md)
     * [activemodel.types.typeid](activemodel/types/typeid/index.md)
     * [activemodel.types.typeid_patch](activemodel/types/typeid_patch/index.md)
+    * [activemodel.types.whenever](activemodel/types/whenever/index.md)
+      * [activemodel.types.whenever.instant_type](activemodel/types/whenever/instant_type/index.md)
+      * [activemodel.types.whenever.plain_date_time_type](activemodel/types/whenever/plain_date_time_type/index.md)
+      * [activemodel.types.whenever.zoned_date_time_type](activemodel/types/whenever/zoned_date_time_type/index.md)
   * [activemodel.utils](activemodel/utils/index.md)
 
 * <a id='f1'>**[1]**</a> Created with [sphinx-autoapi](https://github.com/readthedocs/sphinx-autoapi)

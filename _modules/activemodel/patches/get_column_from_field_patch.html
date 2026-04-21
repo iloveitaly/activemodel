@@ -86,6 +86,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
@@ -101,6 +102,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/types/typeid/index.html">activemodel.types.typeid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/types/whenever/index.html">activemodel.types.whenever</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/utils/index.html">activemodel.utils</a></li>
@@ -185,7 +187,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="29">    <span class="n">UndefinedType</span><span class="p">,</span>
 </span><span data-line="30">    <span class="n">is_field_noneable</span><span class="p">,</span>
 </span><span data-line="31"><span class="p">)</span>
-</span><span data-line="32"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_sqlalchemy_type</span><span class="p">,</span> <span class="n">_get_sqlmodel_field_value</span>
+</span><span data-line="32"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">_get_sqlmodel_field_value</span>
 </span><span data-line="33">
 </span><span data-line="34"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">hash_function_code</span>
 </span><span data-line="35">
@@ -216,7 +218,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="58">            <span class="n">sa_column</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">field_comment</span>
 </span><span data-line="59">        <span class="c1"># &lt;/Change&gt;</span>
 </span><span data-line="60">        <span class="k">return</span> <span class="n">sa_column</span>
-</span><span data-line="61">    <span class="n">sa_type</span> <span class="o">=</span> <span class="n">get_sqlalchemy_type</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+</span><span data-line="61">    <span class="n">sa_type</span> <span class="o">=</span> <span class="n">sqlmodel</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">get_sqlalchemy_type</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
 </span><span data-line="62">    <span class="n">primary_key</span> <span class="o">=</span> <span class="n">_get_sqlmodel_field_value</span><span class="p">(</span><span class="n">field_info</span><span class="p">,</span> <span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="n">Undefined</span><span class="p">)</span>
 </span><span data-line="63">    <span class="k">if</span> <span class="n">primary_key</span> <span class="ow">is</span> <span class="n">Undefined</span><span class="p">:</span>
 </span><span data-line="64">        <span class="n">primary_key</span> <span class="o">=</span> <span class="kc">False</span>

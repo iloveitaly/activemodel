@@ -86,6 +86,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
@@ -101,6 +102,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid/index.html">activemodel.types.typeid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/whenever/index.html">activemodel.types.whenever</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/utils/index.html">activemodel.utils</a></li>
@@ -131,6 +133,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#easy-database-sessions">Easy Database Sessions</a></li>
 <li><a class="reference internal" href="#example-sqlalchemy-queries">Example SQLAlchemy Queries</a></li>
 <li><a class="reference internal" href="#sqlmodel-internals">SQLModel Internals</a></li>
+<li><a class="reference internal" href="#whenever-datetime-types">whenever Datetime Types</a></li>
 <li><a class="reference internal" href="#typeid">TypeID</a></li>
 </ul>
 </li>
@@ -223,6 +226,7 @@ data-aria-dark="Switch to auto color mode">
 <li><p><strong>ActiveRecord-style Query &amp; Persistence API</strong>: Fluent methods like <code class="docutils literal notranslate"><span class="pre">save()</span></code>, <code class="docutils literal notranslate"><span class="pre">where()</span></code>, <code class="docutils literal notranslate"><span class="pre">find_or_create_by()</span></code>, and <code class="docutils literal notranslate"><span class="pre">upsert()</span></code> for intuitive database operations.</p></li>
 <li><p><strong>Implicit Session Management</strong>: Automatically handles database sessions, eliminating boilerplate and making database interactions feel “magic”.</p></li>
 <li><p><strong>Stripe-style IDs (TypeID)</strong>: Native support for type-safe, prefixed, and sortable UUIDs with a built-in <code class="docutils literal notranslate"><span class="pre">TypeIDMixin</span></code>.</p></li>
+<li><p><strong>whenever datetime types</strong>: Optional integration for <code class="docutils literal notranslate"><span class="pre">whenever.Instant</span></code>, <code class="docutils literal notranslate"><span class="pre">whenever.PlainDateTime</span></code>, and <code class="docutils literal notranslate"><span class="pre">whenever.ZonedDateTime</span></code> as first-class field annotations.</p></li>
 <li><p><strong>Timestamp Column Mixins</strong>: Standard <code class="docutils literal notranslate"><span class="pre">created_at</span></code> and <code class="docutils literal notranslate"><span class="pre">updated_at</span></code> tracking out of the box.</p></li>
 <li><p><strong>Lifecycle Hooks</strong>: Rails-style callbacks like <code class="docutils literal notranslate"><span class="pre">before_save</span></code>, <code class="docutils literal notranslate"><span class="pre">after_create</span></code>, and <code class="docutils literal notranslate"><span class="pre">around_delete</span></code>.</p></li>
 <li><p><strong>Automatic DB Comments</strong>: Syncs class and field-level docstrings directly to database table and column comments for better self-documentation.</p></li>
@@ -440,6 +444,35 @@ DB operations on each test.</a></p>
 <li><p><code class="docutils literal notranslate"><span class="pre">select(Table).outerjoin??</span></code> won’t work in a ipython session, but <code class="docutils literal notranslate"><span class="pre">Table.__table__.outerjoin??</span></code> will. <code class="docutils literal notranslate"><span class="pre">__table__</span></code> is a reference to the underlying SQLAlchemy table record.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">get_engine().pool.stats()</span></code> is helpful for inspecting connection pools and limits\</p></li>
 </ul>
+</section>
+<section id="whenever-datetime-types">
+<h3>whenever Datetime Types<a class="headerlink" href="#whenever-datetime-types" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://github.com/ariebovenberg/whenever">whenever</a> is a modern, type-safe datetime library for Python. Install the optional integration:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>add<span class="w"> </span>activemodel<span class="o">[</span>extras<span class="o">]</span>
+</span></pre></div>
+</div>
+<p>Once installed, you can use <code class="docutils literal notranslate"><span class="pre">whenever.Instant</span></code>, <code class="docutils literal notranslate"><span class="pre">whenever.PlainDateTime</span></code>, and <code class="docutils literal notranslate"><span class="pre">whenever.ZonedDateTime</span></code> directly as field type annotations — no <code class="docutils literal notranslate"><span class="pre">sa_type=</span></code> needed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">whenever</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instant</span><span class="p">,</span> <span class="n">PlainDateTime</span><span class="p">,</span> <span class="n">ZonedDateTime</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="k">class</span><span class="w"> </span><span class="nc">Event</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="6">    <span class="n">triggered_at</span><span class="p">:</span> <span class="n">Instant</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="7">    <span class="n">local_time</span><span class="p">:</span> <span class="n">PlainDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="8">    <span class="n">scheduled_at</span><span class="p">:</span> <span class="n">ZonedDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span></pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">PlainDateTime</span></code> is stored as a naive <code class="docutils literal notranslate"><span class="pre">TIMESTAMP</span></code> / <code class="docutils literal notranslate"><span class="pre">DATETIME</span></code> value and round-trips as a local date-time without timezone information. On databases with native timezone-aware timestamp support, <code class="docutils literal notranslate"><span class="pre">Instant</span></code> and <code class="docutils literal notranslate"><span class="pre">ZonedDateTime</span></code> are stored as <code class="docutils literal notranslate"><span class="pre">TIMESTAMP</span> <span class="pre">WITH</span> <span class="pre">TIME</span> <span class="pre">ZONE</span></code> values. <code class="docutils literal notranslate"><span class="pre">Instant</span></code> round-trips exactly. <code class="docutils literal notranslate"><span class="pre">ZonedDateTime</span></code> preserves the UTC moment but not the original IANA timezone name (the DB stores the UTC offset at write time).</p>
+<p>SQLite does not store timezone information in its datetime columns. If you use <code class="docutils literal notranslate"><span class="pre">whenever</span></code> fields with SQLite, make sure the environment writing and reading those values is configured with the server timezone semantics you expect. In practice, that means SQLite is best suited for local development or test scenarios where you control the process timezone behavior.</p>
+<p>They also work in plain Pydantic response models without any extra setup, since <code class="docutils literal notranslate"><span class="pre">whenever</span></code> has built-in Pydantic v2 support:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">whenever</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instant</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="k">class</span><span class="w"> </span><span class="nc">EventResponse</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
+</span><span data-line="5">    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="6">    <span class="n">triggered_at</span><span class="p">:</span> <span class="n">Instant</span>
+</span></pre></div>
+</div>
 </section>
 <section id="typeid">
 <h3>TypeID<a class="headerlink" href="#typeid" title="Link to this heading">¶</a></h3>

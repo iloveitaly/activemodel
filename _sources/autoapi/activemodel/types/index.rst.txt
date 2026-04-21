@@ -13,6 +13,7 @@ Submodules
    /autoapi/activemodel/types/sqlalchemy_protocol/index
    /autoapi/activemodel/types/typeid/index
    /autoapi/activemodel/types/typeid_patch/index
+   /autoapi/activemodel/types/whenever/index
 
 
 Classes
