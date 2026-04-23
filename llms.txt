@@ -19,13 +19,14 @@
 > 
 > * **ActiveRecord-style Query & Persistence API**: Fluent methods like `save()`, `where()`, `find_or_create_by()`, and `upsert()` for intuitive database operations.
 > * **Implicit Session Management**: Automatically handles database sessions, eliminating boilerplate and making database interactions feel "magic".
-> * **Stripe-style IDs (TypeID)**: Native support for type-safe, prefixed, and sortable UUIDs with a built-in `TypeIDMixin`.
+> * **Stripe-style IDs (TypeID)**: Native support for type-safe, prefixed, and sortable UUIDs with a built-in `TypeIDPrimaryKey`.
 > * **whenever datetime types**: Optional integration for `whenever.Instant`, `whenever.PlainDateTime`, and `whenever.ZonedDateTime` as first-class field annotations.
 > * **Timestamp Column Mixins**: Standard `created_at` and `updated_at` tracking out of the box.
 > * **Lifecycle Hooks**: Rails-style callbacks like `before_save`, `after_create`, and `around_delete`.
 > * **Automatic DB Comments**: Syncs class and field-level docstrings directly to database table and column comments for better self-documentation.
 > * **Soft Deletion**: Easily mark records as deleted with a `deleted_at` timestamp using the `SoftDeletionMixin`.
 > * **Smart Table & Constraint Naming**: Consistent snake_case table names and standardized naming conventions for indexes and constraints.
+> * **Pytest Integration**: Built-in fixtures, database cleanup strategies, and factory integration for robust testing.
 > 
 > > [!TIP]
 > > This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this. 
@@ -49,18 +50,12 @@
 > 
 > ```python
 > from activemodel import BaseModel
-> from activemodel.mixins import TimestampsMixin, TypeIDMixin
+> from activemodel.mixins import TimestampsMixin
+> from activemodel.types.typeid import TypeIDPrimaryKey
+> from typeid import TypeID
 > 
-> class User(
->     BaseModel,
->     # optionally, obviously
->     TimestampsMixin,
->     # you can use a different pk type, but why would you?
->     # put this mixin last otherwise `id` will not be the first column in the DB
->     TypeIDMixin("user"),
->     # wire this model into the DB, without this alembic will not generate a migration
->     table=True
-> ):
+> class User(BaseModel, TimestampsMixin, table=True):
+>     id: TypeID = TypeIDPrimaryKey("user")
 >     a_field: str
 > ```
 > 
@@ -82,19 +77,16 @@
 > from pydantic import BaseModel as PydanticBaseModel
 > 
 > from activemodel import BaseModel
-> from activemodel.mixins import PydanticJSONMixin, TypeIDMixin, TimestampsMixin
+> from activemodel.mixins import PydanticJSONMixin, TimestampsMixin
+> from activemodel.types.typeid import TypeIDPrimaryKey
+> from typeid import TypeID
 > 
 > class SubObject(PydanticBaseModel):
 >     name: str
 >     value: int
 > 
-> class User(
->     BaseModel,
->     TimestampsMixin,
->     PydanticJSONMixin,
->     TypeIDMixin("user"),
->     table=True
-> ):
+> class User(BaseModel, TimestampsMixin, PydanticJSONMixin, table=True):
+>     id: TypeID = TypeIDPrimaryKey("user")
 >     list_field: list[SubObject] = Field(sa_type=JSONB)
 >     profile: SubObject = Field(sa_type=JSONB)
 > ```
@@ -206,10 +198,6 @@
 > 
 > Also note that `after_find` / `after_initialize` only run for model instances. Lower-level query paths that return `None`, counts, scalars, or raw SQLAlchemy result objects are outside that contract.
 > 
-> ### Pytest
-> 
-> TODO detail out truncation and transactions
-> 
 > ### Integrating Alembic
 > 
 > Detailed instructions on how to integrate Alembic into your project can be found in the [Alembic Integration](https://iloveitaly.github.io/activemodel/alembic.html) documentation.
@@ -269,9 +257,11 @@
 > ```python
 > from whenever import Instant, PlainDateTime, ZonedDateTime
 > from activemodel import BaseModel
-> from activemodel.mixins import TypeIDMixin
+> from activemodel.types.typeid import TypeIDPrimaryKey
+> from typeid import TypeID
 > 
-> class Event(BaseModel, TypeIDMixin("event"), table=True):
+> class Event(BaseModel, table=True):
+>     id: TypeID = TypeIDPrimaryKey("event")
 >     triggered_at: Instant | None = None
 >     local_time: PlainDateTime | None = None
 >     scheduled_at: ZonedDateTime | None = None
@@ -304,18 +294,15 @@
 > import uuid
 > 
 > from activemodel import BaseModel
-> from activemodel.mixins import TimestampsMixin, TypeIDMixin
 > from activemodel.types import TypeIDType
+> from activemodel.types.typeid import TypeIDPrimaryKey
 > from sqlmodel import Field, Relationship
+> from typeid import TypeID
 > 
 > from .patient import Patient
 > 
-> class Appointment(
->     BaseModel,
->     # this adds an `id` field to the model with the correct type
->     TypeIDMixin("appointment"),
->     table=True
-> ):
+> class Appointment(BaseModel, table=True):
+>     id: TypeID = TypeIDPrimaryKey("appointment")
 >     # `foreign_key` is a activemodel method to generate the right `Field` for the relationship
 >     # TypeIDType is really important here for fastapi serialization
 >     doctor_id: TypeIDType = Doctor.foreign_key()
@@ -401,39 +388,40 @@
 - [Home](index.html.md): <div class="title-with-logo">
 - [API Reference](autoapi/index.html.md): This page contains auto-generated API reference documentation <sup>[1](#f1)</sup>.
 - [activemodel](autoapi/activemodel/index.html.md): * [activemodel.base_model](base_model/index.md)
-- [activemodel.pytest](autoapi/activemodel/pytest/index.html.md): * [activemodel.pytest.factories](factories/index.md)
+- [activemodel.jsonb_snapshot](autoapi/activemodel/jsonb_snapshot/index.html.md): Serialize-and-compare snapshot tracking for JSON-backed fields.
 - [activemodel.mixins](autoapi/activemodel/mixins/index.html.md): * [activemodel.mixins.pydantic_json](pydantic_json/index.md)
-- [activemodel.types](autoapi/activemodel/types/index.html.md): * [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.md)
-- [activemodel.query_wrapper](autoapi/activemodel/query_wrapper/index.html.md): | [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries on a mod...
-- [activemodel.celery](autoapi/activemodel/celery/index.html.md): Do not import unless you have Celery/Kombu installed.
 - [activemodel.patches](autoapi/activemodel/patches/index.html.md): * [activemodel.patches.get_column_from_field_patch](get_column_from_field_patch/index.md)
 - [activemodel.errors](autoapi/activemodel/errors/index.html.md): | [`TypeIDValidationError`](#activemodel.errors.TypeIDValidationError)   | Raised when a TypeID is i...
-- [activemodel.jsonb_snapshot](autoapi/activemodel/jsonb_snapshot/index.html.md): Serialize-and-compare snapshot tracking for JSON-backed fields.
+- [activemodel.celery](autoapi/activemodel/celery/index.html.md): Do not import unless you have Celery/Kombu installed.
+- [activemodel.utils](autoapi/activemodel/utils/index.html.md): | [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, he...
 - [activemodel.session_manager](autoapi/activemodel/session_manager/index.html.md): Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it ea...
 - [activemodel.base_model](autoapi/activemodel/base_model/index.html.md): | [`POSTGRES_INDEXES_NAMING_CONVENTION`](#activemodel.base_model.POSTGRES_INDEXES_NAMING_CONVENTION)...
-- [activemodel.utils](autoapi/activemodel/utils/index.html.md): | [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, he...
-- [activemodel.patches.get_sqlalchemy_type_patch](autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html.md): Extends SQLModel’s get_sqlalchemy_type to recognize whenever datetime types.
-- [activemodel.patches.get_column_from_field_patch](autoapi/activemodel/patches/get_column_from_field_patch/index.html.md): Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fie...
-- [activemodel.types.whenever](autoapi/activemodel/types/whenever/index.html.md): * [activemodel.types.whenever.instant_type](instant_type/index.md)
+- [activemodel.types](autoapi/activemodel/types/index.html.md): * [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.md)
+- [activemodel.pytest](autoapi/activemodel/pytest/index.html.md): * [activemodel.pytest.factories](factories/index.md)
+- [activemodel.query_wrapper](autoapi/activemodel/query_wrapper/index.html.md): | [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries on a mod...
+- [activemodel.pytest.truncate](autoapi/activemodel/pytest/truncate/index.html.md): | [`T`](#activemodel.pytest.truncate.T)   |    |
+- [activemodel.pytest.plugin](autoapi/activemodel/pytest/plugin/index.html.md): Pytest plugin integration for activemodel.
+- [activemodel.pytest.transaction](autoapi/activemodel/pytest/transaction/index.html.md): | [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
+- [activemodel.pytest.factories](autoapi/activemodel/pytest/factories/index.html.md): Notes on polyfactory:
+- [activemodel.types.typeid](autoapi/activemodel/types/typeid/index.html.md): A SQLAlchemy TypeDecorator for storing TypeIDs in the database as native UUID fields, with the prefi...
 - [activemodel.types.sqlalchemy_protocol](autoapi/activemodel/types/sqlalchemy_protocol/index.html.md): Auto-generated runtime companion for sqlalchemy_protocol.pyi.
-- [activemodel.types.typeid](autoapi/activemodel/types/typeid/index.html.md): Lifted from: [https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py](https:/...
 - [activemodel.types.typeid_patch](autoapi/activemodel/types/typeid_patch/index.html.md): Add pydantic v2 support for TypeID.
+- [activemodel.types.whenever](autoapi/activemodel/types/whenever/index.html.md): * [activemodel.types.whenever.instant_type](instant_type/index.md)
+- [activemodel.types.whenever.plain_date_time_type](autoapi/activemodel/types/whenever/plain_date_time_type/index.html.md): | [`PlainDateTimeType`](#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType)   | SQLA...
 - [activemodel.types.whenever.zoned_date_time_type](autoapi/activemodel/types/whenever/zoned_date_time_type/index.html.md): | [`ZonedDateTimeType`](#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType)   | SQLA...
 - [activemodel.types.whenever.instant_type](autoapi/activemodel/types/whenever/instant_type/index.html.md): | [`InstantType`](#activemodel.types.whenever.instant_type.InstantType)   | SQLAlchemy TypeDecorator...
-- [activemodel.types.whenever.plain_date_time_type](autoapi/activemodel/types/whenever/plain_date_time_type/index.html.md): | [`PlainDateTimeType`](#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType)   | SQLA...
-- [activemodel.mixins.soft_delete](autoapi/activemodel/mixins/soft_delete/index.html.md): | [`SoftDeleteRecord`](#activemodel.mixins.soft_delete.SoftDeleteRecord)   | Base class for protocol...
-- [activemodel.mixins.typeid](autoapi/activemodel/mixins/typeid/index.html.md): | [`TypeIDPrimaryKey`](#activemodel.mixins.typeid.TypeIDPrimaryKey)(→ Any)   | Field factory for the...
+- [activemodel.patches.get_column_from_field_patch](autoapi/activemodel/patches/get_column_from_field_patch/index.html.md): Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fie...
+- [activemodel.patches.get_sqlalchemy_type_patch](autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html.md): Extends SQLModel’s get_sqlalchemy_type to recognize whenever datetime types.
+- [activemodel.mixins.typeid](autoapi/activemodel/mixins/typeid/index.html.md): | [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID prima...
 - [activemodel.mixins.timestamps](autoapi/activemodel/mixins/timestamps/index.html.md): | [`TimestampsMixin`](#activemodel.mixins.timestamps.TimestampsMixin)   | Simple created at and upda...
+- [activemodel.mixins.soft_delete](autoapi/activemodel/mixins/soft_delete/index.html.md): | [`SoftDeleteRecord`](#activemodel.mixins.soft_delete.SoftDeleteRecord)   | Base class for protocol...
 - [activemodel.mixins.pydantic_json](autoapi/activemodel/mixins/pydantic_json/index.html.md): Rehydrate JSON-backed SQLModel fields into Pydantic objects after ORM loads.
-- [activemodel.pytest.transaction](autoapi/activemodel/pytest/transaction/index.html.md): | [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
-- [activemodel.pytest.plugin](autoapi/activemodel/pytest/plugin/index.html.md): Pytest plugin integration for activemodel.
-- [activemodel.pytest.factories](autoapi/activemodel/pytest/factories/index.html.md): Notes on polyfactory:
-- [activemodel.pytest.truncate](autoapi/activemodel/pytest/truncate/index.html.md): | [`T`](#activemodel.pytest.truncate.T)   |    |
 - [Integrating Alembic](alembic.html.md): `alembic init` will not work out of the box. You need to mutate a handful of files:
 - [Changelog](changelog.html.md): * **activemodel:** add automatic mutation tracking for JSONB fields ([d1e77fd](https://github.com/il...
 - [Examples](examples.html.md): This section provides practical examples of how to use `activemodel` in your projects, demonstrating...
 - [ActiveModel: ORM Wrapper for SQLModel](getting-started.html.md): [![Release Notes](https://img.shields.io/github/release/iloveitaly/activemodel)](https://github.com/...
 - [Automatic JSONB Mutation Tracking](mutation-tracking.html.md): `activemodel` uses a serialize-and-compare strategy to detect in-place JSON mutations.
+- [Pytest Integration](pytest.html.md): `activemodel` provides comprehensive testing utilities to manage database state and model factories ...
 - [SQL Logging](sql-logging.html.md): Configure SQL logging through `engine_options` when you initialize `activemodel`.
 
 ---

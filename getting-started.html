@@ -68,6 +68,7 @@ data-aria-dark="Switch to auto color mode">
         <div class="globaltoc" data-expand-depth="0"><ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mutation-tracking.html">Mutation Tracking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytest.html">Pytest Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sql-logging.html">SQL Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="alembic.html">Alembic Integration</a></li>
@@ -127,7 +128,6 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#getting-started">Getting Started</a></li>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
 <li><a class="reference internal" href="#lifecycle-hooks">Lifecycle Hooks</a></li>
-<li><a class="reference internal" href="#pytest">Pytest</a></li>
 <li><a class="reference internal" href="#integrating-alembic">Integrating Alembic</a></li>
 <li><a class="reference internal" href="#query-wrapper">Query Wrapper</a></li>
 <li><a class="reference internal" href="#easy-database-sessions">Easy Database Sessions</a></li>
@@ -225,13 +225,14 @@ data-aria-dark="Switch to auto color mode">
 <ul class="simple">
 <li><p><strong>ActiveRecord-style Query &amp; Persistence API</strong>: Fluent methods like <code class="docutils literal notranslate"><span class="pre">save()</span></code>, <code class="docutils literal notranslate"><span class="pre">where()</span></code>, <code class="docutils literal notranslate"><span class="pre">find_or_create_by()</span></code>, and <code class="docutils literal notranslate"><span class="pre">upsert()</span></code> for intuitive database operations.</p></li>
 <li><p><strong>Implicit Session Management</strong>: Automatically handles database sessions, eliminating boilerplate and making database interactions feel “magic”.</p></li>
-<li><p><strong>Stripe-style IDs (TypeID)</strong>: Native support for type-safe, prefixed, and sortable UUIDs with a built-in <code class="docutils literal notranslate"><span class="pre">TypeIDMixin</span></code>.</p></li>
+<li><p><strong>Stripe-style IDs (TypeID)</strong>: Native support for type-safe, prefixed, and sortable UUIDs with a built-in <code class="docutils literal notranslate"><span class="pre">TypeIDPrimaryKey</span></code>.</p></li>
 <li><p><strong>whenever datetime types</strong>: Optional integration for <code class="docutils literal notranslate"><span class="pre">whenever.Instant</span></code>, <code class="docutils literal notranslate"><span class="pre">whenever.PlainDateTime</span></code>, and <code class="docutils literal notranslate"><span class="pre">whenever.ZonedDateTime</span></code> as first-class field annotations.</p></li>
 <li><p><strong>Timestamp Column Mixins</strong>: Standard <code class="docutils literal notranslate"><span class="pre">created_at</span></code> and <code class="docutils literal notranslate"><span class="pre">updated_at</span></code> tracking out of the box.</p></li>
 <li><p><strong>Lifecycle Hooks</strong>: Rails-style callbacks like <code class="docutils literal notranslate"><span class="pre">before_save</span></code>, <code class="docutils literal notranslate"><span class="pre">after_create</span></code>, and <code class="docutils literal notranslate"><span class="pre">around_delete</span></code>.</p></li>
 <li><p><strong>Automatic DB Comments</strong>: Syncs class and field-level docstrings directly to database table and column comments for better self-documentation.</p></li>
 <li><p><strong>Soft Deletion</strong>: Easily mark records as deleted with a <code class="docutils literal notranslate"><span class="pre">deleted_at</span></code> timestamp using the <code class="docutils literal notranslate"><span class="pre">SoftDeletionMixin</span></code>.</p></li>
 <li><p><strong>Smart Table &amp; Constraint Naming</strong>: Consistent snake_case table names and standardized naming conventions for indexes and constraints.</p></li>
+<li><p><strong>Pytest Integration</strong>: Built-in fixtures, database cleanup strategies, and factory integration for robust testing.</p></li>
 </ul>
 <blockquote>
 <div><p>[!TIP]
@@ -252,19 +253,13 @@ This documentation is pretty bad. The tests and docstrs on code are the best way
 </div>
 <p>Create models:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
-</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampsMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span>
-</span><span data-line="3">
-</span><span data-line="4"><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span>
-</span><span data-line="5">    <span class="n">BaseModel</span><span class="p">,</span>
-</span><span data-line="6">    <span class="c1"># optionally, obviously</span>
-</span><span data-line="7">    <span class="n">TimestampsMixin</span><span class="p">,</span>
-</span><span data-line="8">    <span class="c1"># you can use a different pk type, but why would you?</span>
-</span><span data-line="9">    <span class="c1"># put this mixin last otherwise `id` will not be the first column in the DB</span>
-</span><span data-line="10">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">),</span>
-</span><span data-line="11">    <span class="c1"># wire this model into the DB, without this alembic will not generate a migration</span>
-</span><span data-line="12">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span>
-</span><span data-line="13"><span class="p">):</span>
-</span><span data-line="14">    <span class="n">a_field</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampsMixin</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types.typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDPrimaryKey</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TimestampsMixin</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="7">    <span class="nb">id</span><span class="p">:</span> <span class="n">TypeID</span> <span class="o">=</span> <span class="n">TypeIDPrimaryKey</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+</span><span data-line="8">    <span class="n">a_field</span><span class="p">:</span> <span class="nb">str</span>
 </span></pre></div>
 </div>
 <p>You’ll need to create the models in the DB. Alembic is the best way to do it, but you can cheat as well:</p>
@@ -281,21 +276,18 @@ This documentation is pretty bad. The tests and docstrs on code are the best way
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
 </span><span data-line="3">
 </span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
-</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">,</span> <span class="n">TimestampsMixin</span>
-</span><span data-line="6">
-</span><span data-line="7"><span class="k">class</span><span class="w"> </span><span class="nc">SubObject</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
-</span><span data-line="8">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span data-line="9">    <span class="n">value</span><span class="p">:</span> <span class="nb">int</span>
-</span><span data-line="10">
-</span><span data-line="11"><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span>
-</span><span data-line="12">    <span class="n">BaseModel</span><span class="p">,</span>
-</span><span data-line="13">    <span class="n">TimestampsMixin</span><span class="p">,</span>
-</span><span data-line="14">    <span class="n">PydanticJSONMixin</span><span class="p">,</span>
-</span><span data-line="15">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">),</span>
-</span><span data-line="16">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span>
-</span><span data-line="17"><span class="p">):</span>
-</span><span data-line="18">    <span class="n">list_field</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SubObject</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
-</span><span data-line="19">    <span class="n">profile</span><span class="p">:</span> <span class="n">SubObject</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">TimestampsMixin</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types.typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDPrimaryKey</span>
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="k">class</span><span class="w"> </span><span class="nc">SubObject</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
+</span><span data-line="10">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="11">    <span class="n">value</span><span class="p">:</span> <span class="nb">int</span>
+</span><span data-line="12">
+</span><span data-line="13"><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TimestampsMixin</span><span class="p">,</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="14">    <span class="nb">id</span><span class="p">:</span> <span class="n">TypeID</span> <span class="o">=</span> <span class="n">TypeIDPrimaryKey</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+</span><span data-line="15">    <span class="n">list_field</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SubObject</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
+</span><span data-line="16">    <span class="n">profile</span><span class="p">:</span> <span class="n">SubObject</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
 </span></pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code> automatically rehydrates raw JSON from the database back into the annotated Pydantic types on load and refresh.</p>
@@ -332,8 +324,8 @@ load and refresh, but their in-place mutations are also tracked automatically.</
 </span></pre></div>
 </div>
 <p>Magically creating sessions for DB operations is one of the main problems this project tackles. Even better, you can set
-a single session object to be used for all DB operations. This is helpful for DB transactions, <a class="reference internal" href="#pytest">specifically rolling back
-DB operations on each test.</a></p>
+a single session object to be used for all DB operations. This is helpful for DB transactions, <a class="reference internal" href="pytest.html"><span class="doc std std-doc">specifically rolling back
+DB operations on each test.</span></a></p>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
@@ -394,10 +386,6 @@ DB operations on each test.</a></p>
 </ul>
 <p>Also note that <code class="docutils literal notranslate"><span class="pre">after_find</span></code> / <code class="docutils literal notranslate"><span class="pre">after_initialize</span></code> only run for model instances. Lower-level query paths that return <code class="docutils literal notranslate"><span class="pre">None</span></code>, counts, scalars, or raw SQLAlchemy result objects are outside that contract.</p>
 </section>
-<section id="pytest">
-<h3>Pytest<a class="headerlink" href="#pytest" title="Link to this heading">¶</a></h3>
-<p>TODO detail out truncation and transactions</p>
-</section>
 <section id="integrating-alembic">
 <h3>Integrating Alembic<a class="headerlink" href="#integrating-alembic" title="Link to this heading">¶</a></h3>
 <p>Detailed instructions on how to integrate Alembic into your project can be found in the <a class="reference external" href="https://iloveitaly.github.io/activemodel/alembic.html">Alembic Integration</a> documentation.</p>
@@ -454,12 +442,14 @@ DB operations on each test.</a></p>
 <p>Once installed, you can use <code class="docutils literal notranslate"><span class="pre">whenever.Instant</span></code>, <code class="docutils literal notranslate"><span class="pre">whenever.PlainDateTime</span></code>, and <code class="docutils literal notranslate"><span class="pre">whenever.ZonedDateTime</span></code> directly as field type annotations — no <code class="docutils literal notranslate"><span class="pre">sa_type=</span></code> needed:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">whenever</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instant</span><span class="p">,</span> <span class="n">PlainDateTime</span><span class="p">,</span> <span class="n">ZonedDateTime</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
-</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span>
-</span><span data-line="4">
-</span><span data-line="5"><span class="k">class</span><span class="w"> </span><span class="nc">Event</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span data-line="6">    <span class="n">triggered_at</span><span class="p">:</span> <span class="n">Instant</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="7">    <span class="n">local_time</span><span class="p">:</span> <span class="n">PlainDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="8">    <span class="n">scheduled_at</span><span class="p">:</span> <span class="n">ZonedDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types.typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDPrimaryKey</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">Event</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="7">    <span class="nb">id</span><span class="p">:</span> <span class="n">TypeID</span> <span class="o">=</span> <span class="n">TypeIDPrimaryKey</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">)</span>
+</span><span data-line="8">    <span class="n">triggered_at</span><span class="p">:</span> <span class="n">Instant</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="9">    <span class="n">local_time</span><span class="p">:</span> <span class="n">PlainDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="10">    <span class="n">scheduled_at</span><span class="p">:</span> <span class="n">ZonedDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">PlainDateTime</span></code> is stored as a naive <code class="docutils literal notranslate"><span class="pre">TIMESTAMP</span></code> / <code class="docutils literal notranslate"><span class="pre">DATETIME</span></code> value and round-trips as a local date-time without timezone information. On databases with native timezone-aware timestamp support, <code class="docutils literal notranslate"><span class="pre">Instant</span></code> and <code class="docutils literal notranslate"><span class="pre">ZonedDateTime</span></code> are stored as <code class="docutils literal notranslate"><span class="pre">TIMESTAMP</span> <span class="pre">WITH</span> <span class="pre">TIME</span> <span class="pre">ZONE</span></code> values. <code class="docutils literal notranslate"><span class="pre">Instant</span></code> round-trips exactly. <code class="docutils literal notranslate"><span class="pre">ZonedDateTime</span></code> preserves the UTC moment but not the original IANA timezone name (the DB stores the UTC offset at write time).</p>
@@ -483,22 +473,19 @@ with SQLModel that plays well with fastapi as well.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
-</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampsMixin</span><span class="p">,</span> <span class="n">TypeIDMixin</span>
-</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDType</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDType</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types.typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDPrimaryKey</span>
 </span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Relationship</span>
-</span><span data-line="7">
-</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">.patient</span><span class="w"> </span><span class="kn">import</span> <span class="n">Patient</span>
-</span><span data-line="9">
-</span><span data-line="10"><span class="k">class</span><span class="w"> </span><span class="nc">Appointment</span><span class="p">(</span>
-</span><span data-line="11">    <span class="n">BaseModel</span><span class="p">,</span>
-</span><span data-line="12">    <span class="c1"># this adds an `id` field to the model with the correct type</span>
-</span><span data-line="13">    <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;appointment&quot;</span><span class="p">),</span>
-</span><span data-line="14">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span>
-</span><span data-line="15"><span class="p">):</span>
-</span><span data-line="16">    <span class="c1"># `foreign_key` is a activemodel method to generate the right `Field` for the relationship</span>
-</span><span data-line="17">    <span class="c1"># TypeIDType is really important here for fastapi serialization</span>
-</span><span data-line="18">    <span class="n">doctor_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">=</span> <span class="n">Doctor</span><span class="o">.</span><span class="n">foreign_key</span><span class="p">()</span>
-</span><span data-line="19">    <span class="n">doctor</span><span class="p">:</span> <span class="n">Doctor</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">()</span>
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">.patient</span><span class="w"> </span><span class="kn">import</span> <span class="n">Patient</span>
+</span><span data-line="10">
+</span><span data-line="11"><span class="k">class</span><span class="w"> </span><span class="nc">Appointment</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="12">    <span class="nb">id</span><span class="p">:</span> <span class="n">TypeID</span> <span class="o">=</span> <span class="n">TypeIDPrimaryKey</span><span class="p">(</span><span class="s2">&quot;appointment&quot;</span><span class="p">)</span>
+</span><span data-line="13">    <span class="c1"># `foreign_key` is a activemodel method to generate the right `Field` for the relationship</span>
+</span><span data-line="14">    <span class="c1"># TypeIDType is really important here for fastapi serialization</span>
+</span><span data-line="15">    <span class="n">doctor_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">=</span> <span class="n">Doctor</span><span class="o">.</span><span class="n">foreign_key</span><span class="p">()</span>
+</span><span data-line="16">    <span class="n">doctor</span><span class="p">:</span> <span class="n">Doctor</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">()</span>
 </span></pre></div>
 </div>
 <p>Here’s how to get the prefix associated with a given field:</p>

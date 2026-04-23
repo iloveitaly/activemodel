@@ -1,11 +1,20 @@
 # activemodel.types.typeid
 
-Lifted from: [https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py](https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py)
+A SQLAlchemy TypeDecorator for storing TypeIDs in the database as native UUID fields, with the prefix handled in Python.
+
+Adapted from:
+
+[https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py](https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py)
 
 ## Classes
 
 | [`TypeIDType`](#activemodel.types.typeid.TypeIDType)   | A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.   |
 |--------------------------------------------------------|---------------------------------------------------------------------------|
+
+## Functions
+
+| [`TypeIDPrimaryKey`](#activemodel.types.typeid.TypeIDPrimaryKey)(→ Any)   | Field factory for the declarative form:   |
+|---------------------------------------------------------------------------|-------------------------------------------|
 
 ## Module Contents
 
@@ -230,3 +239,18 @@ Or, you could return a more specific JSON schema type:
 The problem with using something like uuid_schema is the specific patterns
 
 [https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153](https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153)
+
+### activemodel.types.typeid.TypeIDPrimaryKey(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str)) → Any
+
+Field factory for the declarative form:
+
+> id: TypeIDField[Literal[“user”]] = TypeIDPrimaryKey(“user”)
+
+Use this when you want static type-checking of the prefix.
+
+Returns Any so that type checkers accept it as a default value for any
+annotation (e.g. TypeIDField[Literal[“user”]]), matching the same pattern
+used by pydantic’s own Field() factory.
+
+Returns Any (not TypeID) because Pydantic discovers fields via \_\_annotations_\_ at class creation —
+the annotation is required for field registration, so the return type cannot replace it.

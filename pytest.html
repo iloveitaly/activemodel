@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="blue" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Pytest Integration - activemodel documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SQL Logging" href="sql-logging.html" /><link rel="prev" title="Automatic JSONB Mutation Tracking" href="mutation-tracking.html" />
+      <link rel="canonical" href="https://iloveitaly.github.io/activemodel/pytest.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=168b0b94" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://iloveitaly.github.io/activemodel/pytest.html"/>
+  <meta property="og:title" content="Pytest Integration"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      <img class="light-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <img class="dark-logo" src="_static/logo-nav.png" alt="activemodel" height="28" loading="lazy" />
+      <strong>activemodel</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="getting-started.html">Getting Started</a></li><li class="link"><a href="autoapi/index.html">API Reference</a></li><li class="link"><a href="changelog.html">Changelog</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mutation-tracking.html">Mutation Tracking</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pytest Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sql-logging.html">SQL Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alembic.html">Alembic Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/activemodel/index.html">activemodel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/base_model/index.html">activemodel.base_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/errors/index.html">activemodel.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/jsonb_snapshot/index.html">activemodel.jsonb_snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/mixins/index.html">activemodel.mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/pydantic_json/index.html">activemodel.mixins.pydantic_json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/factories/index.html">activemodel.pytest.factories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/transaction/index.html">activemodel.pytest.transaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/truncate/index.html">activemodel.pytest.truncate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/query_wrapper/index.html">activemodel.query_wrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/session_manager/index.html">activemodel.session_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/types/index.html">activemodel.types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/sqlalchemy_protocol/index.html">activemodel.types.sqlalchemy_protocol</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid/index.html">activemodel.types.typeid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/typeid_patch/index.html">activemodel.types.typeid_patch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/types/whenever/index.html">activemodel.types.whenever</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/utils/index.html">activemodel.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li><a class="reference internal" href="#activemodel-preserve-tables"><code class="docutils literal notranslate"><span class="pre">activemodel_preserve_tables</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#database-reset-strategies">Database Reset Strategies</a><ul>
+<li><a class="reference internal" href="#transaction-reset-recommended">Transaction Reset (Recommended)</a></li>
+<li><a class="reference internal" href="#truncation-reset">Truncation Reset</a></li>
+<li><a class="reference internal" href="#hybrid-strategy-integration-unit">Hybrid Strategy (Integration + Unit)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fixtures">Fixtures</a><ul>
+<li><a class="reference internal" href="#db-session"><code class="docutils literal notranslate"><span class="pre">db_session</span></code></a></li>
+<li><a class="reference internal" href="#db-truncate-session"><code class="docutils literal notranslate"><span class="pre">db_truncate_session</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a><ul>
+<li><a class="reference internal" href="#session-initialization">Session Initialization</a></li>
+<li><a class="reference internal" href="#factory-persistence">Factory Persistence</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#factory-integration">Factory Integration</a><ul>
+<li><a class="reference internal" href="#activemodelfactory"><code class="docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reference-implementation">Reference Implementation</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">activemodel</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Pytest Integration</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <div class="copy-page-wrapper relative pb-4 lg:absolute lg:top-8 lg:right-6 xl:right-12">
+  <div id="copy-page-trigger">
+    <button
+      type="button"
+      class="js-copy px-3 py-1 inline-flex items-center gap-1"
+      data-url="https://iloveitaly.github.io/activemodel/_sources/pytest.md.txt"
+    >
+      <i class="i-lucide" data-icon="copy"></i>
+      <span>Copy page</span>
+    </button>
+    <button class="js-menu px-2 py-1" type="button" aria-label="More actions"
+      aria-haspopup="menu" aria-expanded="false" aria-controls="copy-page-content">
+      <i class="i-lucide chevron-down"></i>
+    </button>
+  </div>
+  <div id="copy-page-content" role="menu" aria-orientation="vertical" aria-hidden="true">
+    <div role="presentation">
+      <div class="flex flex-col" role="group">
+        <button class="js-copy" type="button" role="menuitem"
+          data-url="https://iloveitaly.github.io/activemodel/_sources/pytest.md.txt">
+          <span class="iconify-icon">
+            <i class="i-lucide" data-icon="copy"></i>
+          </span>
+          <span>Copy page</span>
+        </button>
+        <a role="menuitem" href="https://iloveitaly.github.io/activemodel/_sources/pytest.md.txt" target="_blank" rel="nofollow"><iconify-icon icon="bi:markdown"></iconify-icon>
+            <span>View as Markdown</span></a><a role="menuitem" href="https://chatgpt.com/?hints=search&q=Read%20https%3A//iloveitaly.github.io/activemodel/_sources/pytest.md.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:openai"></iconify-icon>
+          <span>Open in ChatGPT</span>
+        </a><a role="menuitem" href="https://claude.ai/new?q=Read%20https%3A//iloveitaly.github.io/activemodel/_sources/pytest.md.txt%20so%20I%20can%20ask%20questions%20about%20it." target="_blank" rel="nofollow">
+          <iconify-icon icon="bi:claude"></iconify-icon>
+          <span>Open in Claude</span>
+        </a></div>
+    </div>
+  </div>
+</div><article class="yue" role="main">
+          <section id="pytest-integration">
+<h1>Pytest Integration<a class="headerlink" href="#pytest-integration" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> provides comprehensive testing utilities to manage database state and model factories during tests.</p>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
+<p>You can configure which tables are preserved (not truncated) when using the truncation reset strategy.</p>
+<section id="activemodel-preserve-tables">
+<h3><code class="docutils literal notranslate"><span class="pre">activemodel_preserve_tables</span></code><a class="headerlink" href="#activemodel-preserve-tables" title="Link to this heading">¶</a></h3>
+<p>This option specifies a list of tables to keep during database truncation. The <code class="docutils literal notranslate"><span class="pre">alembic_version</span></code> table is always preserved by default.</p>
+<p><strong>pytest.ini</strong>:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">[pytest]</span>
+</span><span data-line="2"><span class="na">activemodel_preserve_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">alembic_version,zip_codes,seed_data</span>
+</span></pre></div>
+</div>
+<p><strong>pyproject.toml</strong>:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">[tool.pytest.ini_options]</span>
+</span><span data-line="2"><span class="n">activemodel_preserve_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+</span><span data-line="3"><span class="w">  </span><span class="s2">&quot;alembic_version&quot;</span><span class="p">,</span>
+</span><span data-line="4"><span class="w">  </span><span class="s2">&quot;zip_codes&quot;</span><span class="p">,</span>
+</span><span data-line="5"><span class="w">  </span><span class="s2">&quot;seed_data&quot;</span><span class="p">,</span>
+</span><span data-line="6"><span class="p">]</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="database-reset-strategies">
+<h2>Database Reset Strategies<a class="headerlink" href="#database-reset-strategies" title="Link to this heading">¶</a></h2>
+<p>Testing database-backed applications requires a reliable way to reset the database between tests. <code class="docutils literal notranslate"><span class="pre">activemodel</span></code> supports two main strategies.</p>
+<section id="transaction-reset-recommended">
+<h3>Transaction Reset (Recommended)<a class="headerlink" href="#transaction-reset-recommended" title="Link to this heading">¶</a></h3>
+<p>The most efficient way to reset the database is to wrap each test in a transaction and roll it back. This is provided by the <code class="docutils literal notranslate"><span class="pre">database_reset_transaction</span></code> function.</p>
+<p>To use this, create an autouse fixture in your <code class="docutils literal notranslate"><span class="pre">conftest.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">database_reset_transaction</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="5"><span class="k">def</span><span class="w"> </span><span class="nf">db_reset</span><span class="p">():</span>
+</span><span data-line="6">    <span class="k">yield from</span> <span class="n">database_reset_transaction</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>This strategy ensures that any changes made during the test are never committed. <strong>Crucially</strong>, <code class="docutils literal notranslate"><span class="pre">BaseModel.save()</span></code> and <code class="docutils literal notranslate"><span class="pre">ActiveModelFactory.save()</span></code> will automatically use this transaction’s session, so you don’t need to manually manage sessions in your tests.</p>
+</section>
+<section id="truncation-reset">
+<h3>Truncation Reset<a class="headerlink" href="#truncation-reset" title="Link to this heading">¶</a></h3>
+<p>In scenarios where transactions aren’t suitable (e.g., integration tests where code runs in a separate process or manages its own transactions), use the truncation strategy.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">database_reset_truncate</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="5"><span class="k">def</span><span class="w"> </span><span class="nf">db_reset</span><span class="p">(</span><span class="n">pytestconfig</span><span class="p">):</span>
+</span><span data-line="6">    <span class="n">database_reset_truncate</span><span class="p">(</span><span class="n">pytest_config</span><span class="o">=</span><span class="n">pytestconfig</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="hybrid-strategy-integration-unit">
+<h3>Hybrid Strategy (Integration + Unit)<a class="headerlink" href="#hybrid-strategy-integration-unit" title="Link to this heading">¶</a></h3>
+<p>For complex projects, you may want to use transactions for speed in unit tests but truncation for reliability in integration tests. Here is a recommended pattern:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest</span><span class="w"> </span><span class="kn">import</span> <span class="n">database_reset_transaction</span><span class="p">,</span> <span class="n">database_reset_truncate</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="k">def</span><span class="w"> </span><span class="nf">is_integration_test</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span><span data-line="6">    <span class="k">return</span> <span class="s2">&quot;integration&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="9"><span class="k">def</span><span class="w"> </span><span class="nf">db_reset</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span><span data-line="10">    <span class="k">if</span> <span class="n">is_integration_test</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span><span data-line="11">        <span class="n">database_reset_truncate</span><span class="p">(</span><span class="n">pytest_config</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span><span data-line="12">        <span class="k">yield</span>
+</span><span data-line="13">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="14">        <span class="k">yield from</span> <span class="n">database_reset_transaction</span><span class="p">()</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="fixtures">
+<h2>Fixtures<a class="headerlink" href="#fixtures" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">activemodel</span></code> plugin provides several fixtures out of the box.</p>
+<section id="db-session">
+<h3><code class="docutils literal notranslate"><span class="pre">db_session</span></code><a class="headerlink" href="#db-session" title="Link to this heading">¶</a></h3>
+<p>Provides a database session for the duration of a test. While models and factories use the global session automatically, <code class="docutils literal notranslate"><span class="pre">db_session</span></code> is useful for manual queries or assertions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">def</span><span class="w"> </span><span class="nf">test_user_creation</span><span class="p">(</span><span class="n">db_session</span><span class="p">):</span>
+</span><span data-line="2">    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span><span data-line="3">    <span class="c1"># db_session is already configured to point to the test transaction</span>
+</span><span data-line="4">    <span class="n">count</span> <span class="o">=</span> <span class="n">db_session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">User</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</span><span data-line="5">    <span class="k">assert</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span>
+</span></pre></div>
+</div>
+</section>
+<section id="db-truncate-session">
+<h3><code class="docutils literal notranslate"><span class="pre">db_truncate_session</span></code><a class="headerlink" href="#db-truncate-session" title="Link to this heading">¶</a></h3>
+<p>When using the truncation strategy, models created by factories are often detached from any active session. <code class="docutils literal notranslate"><span class="pre">db_truncate_session</span></code> fixes this by setting a global session that factories will use, keeping objects attached and navigable.</p>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
+<section id="session-initialization">
+<h3>Session Initialization<a class="headerlink" href="#session-initialization" title="Link to this heading">¶</a></h3>
+<p>Ensure that your database is initialized <strong>before</strong> the tests run, and that application modules (especially models) are not imported until the environment is set to <code class="docutils literal notranslate"><span class="pre">test</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># conftest.py</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span data-line="3"><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PYTHON_ENV&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="kn">import</span><span class="w"> </span><span class="nn">activemodel</span>
+</span><span data-line="6"><span class="kn">import</span><span class="w"> </span><span class="nn">my_app.models</span> 
+</span><span data-line="7">
+</span><span data-line="8"><span class="k">def</span><span class="w"> </span><span class="nf">pytest_sessionstart</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+</span><span data-line="9">    <span class="n">activemodel</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="s2">&quot;postgresql://...&quot;</span><span class="p">)</span>
+</span><span data-line="10">    <span class="c1"># Initial cleanup of any cruft from previous failed runs</span>
+</span><span data-line="11">    <span class="n">database_reset_truncate</span><span class="p">(</span><span class="n">pytest_config</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="factory-persistence">
+<h3>Factory Persistence<a class="headerlink" href="#factory-persistence" title="Link to this heading">¶</a></h3>
+<p>Always prefer <code class="docutils literal notranslate"><span class="pre">Factory.save()</span></code> over <code class="docutils literal notranslate"><span class="pre">Factory.build()</span></code> when testing database interactions. <code class="docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code> ensures the object is persisted and then refreshed so that all attributes (like autogenerated IDs or timestamps) are available.</p>
+</section>
+</section>
+<section id="factory-integration">
+<h2>Factory Integration<a class="headerlink" href="#factory-integration" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> includes built-in support for <a class="reference external" href="https://github.com/litestar-org/polyfactory">polyfactory</a> to make generating test data easy.</p>
+<section id="activemodelfactory">
+<h3><code class="docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code><a class="headerlink" href="#activemodelfactory" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code> automatically handles persistence and session management.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActiveModelFactory</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">my_app.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="k">class</span><span class="w"> </span><span class="nc">UserFactory</span><span class="p">(</span><span class="n">ActiveModelFactory</span><span class="p">[</span><span class="n">User</span><span class="p">]):</span>
+</span><span data-line="5">    <span class="n">__model__</span> <span class="o">=</span> <span class="n">User</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="k">def</span><span class="w"> </span><span class="nf">test_something</span><span class="p">():</span>
+</span><span data-line="8">    <span class="c1"># Builds and saves the model to the database</span>
+</span><span data-line="9">    <span class="n">user</span> <span class="o">=</span> <span class="n">UserFactory</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;custom@example.com&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Key features of <code class="docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Automatic Saving</strong>: <code class="docutils literal notranslate"><span class="pre">Factory.save()</span></code> persists the model using the current test session.</p></li>
+<li><p><strong>Relationship Handling</strong>: Includes hooks to intelligently handle or ignore relationship fields and primary keys during generation.</p></li>
+<li><p><strong>Lifecycle Support</strong>: Works seamlessly with <code class="docutils literal notranslate"><span class="pre">activemodel</span></code> lifecycle hooks.</p></li>
+</ul>
+</section>
+</section>
+<section id="reference-implementation">
+<h2>Reference Implementation<a class="headerlink" href="#reference-implementation" title="Link to this heading">¶</a></h2>
+<p>For a complete, real-world example of how to configure <code class="docutils literal notranslate"><span class="pre">activemodel</span></code> with Pytest for both unit and integration (browser-based) tests, see the <a class="reference external" href="https://github.com/iloveitaly/python-starter-template">python-starter-template</a>.</p>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="mutation-tracking.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Automatic JSONB Mutation Tracking</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="sql-logging.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">SQL Logging</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Michael Bianco</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/design-tabs.js?v=f930bc37"></script>
+      <script src="_static/shibuya.js?v=cac61aee"></script></body>
+</html>

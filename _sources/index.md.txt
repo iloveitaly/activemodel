@@ -36,6 +36,7 @@ Clean, intuitive ActiveRecord-like API designed for rapid development and less b
 
 Getting Started <getting-started>
 Mutation Tracking <mutation-tracking>
+Pytest Integration <pytest>
 SQL Logging <sql-logging>
 Examples <examples>
 Alembic Integration <alembic>

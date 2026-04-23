@@ -22,6 +22,7 @@ Attributes
 .. autoapisummary::
 
    activemodel.types.typeid_patch.existing_schema
+   activemodel.types.typeid_patch.existing_json_schema
 
 
 Module Contents
@@ -36,4 +37,6 @@ Module Contents
 
 
 .. py:data:: existing_schema
+
+.. py:data:: existing_json_schema
 

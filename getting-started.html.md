@@ -17,13 +17,14 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 
 * **ActiveRecord-style Query & Persistence API**: Fluent methods like `save()`, `where()`, `find_or_create_by()`, and `upsert()` for intuitive database operations.
 * **Implicit Session Management**: Automatically handles database sessions, eliminating boilerplate and making database interactions feel “magic”.
-* **Stripe-style IDs (TypeID)**: Native support for type-safe, prefixed, and sortable UUIDs with a built-in `TypeIDMixin`.
+* **Stripe-style IDs (TypeID)**: Native support for type-safe, prefixed, and sortable UUIDs with a built-in `TypeIDPrimaryKey`.
 * **whenever datetime types**: Optional integration for `whenever.Instant`, `whenever.PlainDateTime`, and `whenever.ZonedDateTime` as first-class field annotations.
 * **Timestamp Column Mixins**: Standard `created_at` and `updated_at` tracking out of the box.
 * **Lifecycle Hooks**: Rails-style callbacks like `before_save`, `after_create`, and `around_delete`.
 * **Automatic DB Comments**: Syncs class and field-level docstrings directly to database table and column comments for better self-documentation.
 * **Soft Deletion**: Easily mark records as deleted with a `deleted_at` timestamp using the `SoftDeletionMixin`.
 * **Smart Table & Constraint Naming**: Consistent snake_case table names and standardized naming conventions for indexes and constraints.
+* **Pytest Integration**: Built-in fixtures, database cleanup strategies, and factory integration for robust testing.
 
 > [!TIP]
 > This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this.
@@ -47,18 +48,12 @@ Create models:
 
 ```python
 from activemodel import BaseModel
-from activemodel.mixins import TimestampsMixin, TypeIDMixin
+from activemodel.mixins import TimestampsMixin
+from activemodel.types.typeid import TypeIDPrimaryKey
+from typeid import TypeID
 
-class User(
-    BaseModel,
-    # optionally, obviously
-    TimestampsMixin,
-    # you can use a different pk type, but why would you?
-    # put this mixin last otherwise `id` will not be the first column in the DB
-    TypeIDMixin("user"),
-    # wire this model into the DB, without this alembic will not generate a migration
-    table=True
-):
+class User(BaseModel, TimestampsMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("user")
     a_field: str
 ```
 
@@ -80,19 +75,16 @@ from sqlalchemy.dialects.postgresql import JSONB
 from pydantic import BaseModel as PydanticBaseModel
 
 from activemodel import BaseModel
-from activemodel.mixins import PydanticJSONMixin, TypeIDMixin, TimestampsMixin
+from activemodel.mixins import PydanticJSONMixin, TimestampsMixin
+from activemodel.types.typeid import TypeIDPrimaryKey
+from typeid import TypeID
 
 class SubObject(PydanticBaseModel):
     name: str
     value: int
 
-class User(
-    BaseModel,
-    TimestampsMixin,
-    PydanticJSONMixin,
-    TypeIDMixin("user"),
-    table=True
-):
+class User(BaseModel, TimestampsMixin, PydanticJSONMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("user")
     list_field: list[SubObject] = Field(sa_type=JSONB)
     profile: SubObject = Field(sa_type=JSONB)
 ```
@@ -140,7 +132,7 @@ User.one("user_123")
 
 Magically creating sessions for DB operations is one of the main problems this project tackles. Even better, you can set
 a single session object to be used for all DB operations. This is helpful for DB transactions, [specifically rolling back
-DB operations on each test.]()
+DB operations on each test.](pytest.md)
 
 ## Usage
 
@@ -204,10 +196,6 @@ There is one important scope limit to know about:
 
 Also note that `after_find` / `after_initialize` only run for model instances. Lower-level query paths that return `None`, counts, scalars, or raw SQLAlchemy result objects are outside that contract.
 
-### Pytest
-
-TODO detail out truncation and transactions
-
 ### Integrating Alembic
 
 Detailed instructions on how to integrate Alembic into your project can be found in the [Alembic Integration](https://iloveitaly.github.io/activemodel/alembic.html) documentation.
@@ -264,9 +252,11 @@ Once installed, you can use `whenever.Instant`, `whenever.PlainDateTime`, and `w
 ```python
 from whenever import Instant, PlainDateTime, ZonedDateTime
 from activemodel import BaseModel
-from activemodel.mixins import TypeIDMixin
+from activemodel.types.typeid import TypeIDPrimaryKey
+from typeid import TypeID
 
-class Event(BaseModel, TypeIDMixin("event"), table=True):
+class Event(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("event")
     triggered_at: Instant | None = None
     local_time: PlainDateTime | None = None
     scheduled_at: ZonedDateTime | None = None
@@ -299,18 +289,15 @@ Here’s an example of defining a relationship:
 import uuid
 
 from activemodel import BaseModel
-from activemodel.mixins import TimestampsMixin, TypeIDMixin
 from activemodel.types import TypeIDType
+from activemodel.types.typeid import TypeIDPrimaryKey
 from sqlmodel import Field, Relationship
+from typeid import TypeID
 
 from .patient import Patient
 
-class Appointment(
-    BaseModel,
-    # this adds an `id` field to the model with the correct type
-    TypeIDMixin("appointment"),
-    table=True
-):
+class Appointment(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("appointment")
     # `foreign_key` is a activemodel method to generate the right `Field` for the relationship
     # TypeIDType is really important here for fastapi serialization
     doctor_id: TypeIDType = Doctor.foreign_key()

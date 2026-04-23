@@ -68,6 +68,7 @@ data-aria-dark="Switch to auto color mode">
         <div class="globaltoc" data-expand-depth="0"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mutation-tracking.html">Mutation Tracking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytest.html">Pytest Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sql-logging.html">SQL Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../alembic.html">Alembic Integration</a></li>
@@ -383,7 +384,7 @@ before the automatic <cite>before_flush</cite> detection fires.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.mixins.TypeIDPrimaryKey">
-<span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">TypeIDPrimaryKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/typeid.html#TypeIDPrimaryKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.TypeIDPrimaryKey" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">TypeIDPrimaryKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/activemodel/types/typeid.html#TypeIDPrimaryKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.TypeIDPrimaryKey" title="Link to this definition">¶</a></dt>
 <dd><p>Field factory for the declarative form:</p>
 <blockquote>
 <div><p>id: TypeIDField[Literal[“user”]] = TypeIDPrimaryKey(“user”)</p>

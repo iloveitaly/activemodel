@@ -68,6 +68,7 @@ data-aria-dark="Switch to auto color mode">
         <div class="globaltoc" data-expand-depth="0"><ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mutation-tracking.html">Mutation Tracking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytest.html">Pytest Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sql-logging.html">SQL Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../alembic.html">Alembic Integration</a></li>
@@ -224,8 +225,16 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="57">    <span class="s2">&quot;TypeID already has a __get_pydantic_core_schema__, cannot apply patch&quot;</span>
 </span><span data-line="58"><span class="p">)</span>
 </span><span data-line="59">
-</span><span data-line="60"><span class="n">TypeID</span><span class="o">.</span><span class="n">__get_pydantic_core_schema__</span> <span class="o">=</span> <span class="n">get_pydantic_core_schema</span>
-</span><span data-line="61"><span class="n">TypeID</span><span class="o">.</span><span class="n">__get_pydantic_json_schema__</span> <span class="o">=</span> <span class="n">get_pydantic_json_schema</span>
+<div class="viewcode-block" id="existing_json_schema">
+<a class="viewcode-back" href="../../../autoapi/activemodel/types/typeid_patch/index.html#activemodel.types.typeid_patch.existing_json_schema">[docs]</a>
+</span><span data-line="60"><span class="n">existing_json_schema</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">TypeID</span><span class="p">,</span> <span class="s2">&quot;__get_pydantic_json_schema__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+</span><span data-line="61"><span class="k">assert</span> <span class="p">(</span>
+</span><span data-line="62">    <span class="n">existing_json_schema</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">existing_json_schema</span> <span class="o">==</span> <span class="n">get_pydantic_json_schema</span>
+</span><span data-line="63"><span class="p">),</span> <span class="s2">&quot;TypeID already has a __get_pydantic_json_schema__, cannot apply patch&quot;</span>
+</span><span data-line="64">
+</span><span data-line="65"><span class="n">TypeID</span><span class="o">.</span><span class="n">__get_pydantic_core_schema__</span> <span class="o">=</span> <span class="n">get_pydantic_core_schema</span>
+</span><span data-line="66"><span class="n">TypeID</span><span class="o">.</span><span class="n">__get_pydantic_json_schema__</span> <span class="o">=</span> <span class="n">get_pydantic_json_schema</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
