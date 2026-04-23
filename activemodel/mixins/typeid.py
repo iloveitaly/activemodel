@@ -4,7 +4,7 @@ from typeid import TypeID
 
 from activemodel.types import typeid_patch  # noqa: F401
 from activemodel.types.typeid import (
-    TypeIDPrimaryKey,  # noqa: F401 (re-exported for backward compat)
+    TypeIDPrimaryKey,
     TypeIDType,  # noqa: F401 (re-exported for sa_column usage)
 )
 
