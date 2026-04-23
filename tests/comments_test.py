@@ -9,7 +9,7 @@ from sqlmodel import Field, text
 
 from activemodel import BaseModel
 from activemodel.mixins.timestamps import TimestampsMixin
-from activemodel.mixins.typeid import TypeIDPrimaryKey
+from activemodel.types.typeid import TypeIDPrimaryKey
 from activemodel.session_manager import get_session
 from typeid import TypeID
 

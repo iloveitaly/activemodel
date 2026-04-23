@@ -2,7 +2,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from whenever import Instant, PlainDateTime, ZonedDateTime
 
 from activemodel import BaseModel
-from activemodel.mixins.typeid import TypeIDPrimaryKey
+from activemodel.types.typeid import TypeIDPrimaryKey
 from typeid import TypeID
 
 
