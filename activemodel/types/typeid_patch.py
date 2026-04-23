@@ -57,5 +57,10 @@ assert existing_schema is None or existing_schema == get_pydantic_core_schema, (
     "TypeID already has a __get_pydantic_core_schema__, cannot apply patch"
 )
 
+existing_json_schema = getattr(TypeID, "__get_pydantic_json_schema__", None)
+assert (
+    existing_json_schema is None or existing_json_schema == get_pydantic_json_schema
+), "TypeID already has a __get_pydantic_json_schema__, cannot apply patch"
+
 TypeID.__get_pydantic_core_schema__ = get_pydantic_core_schema
 TypeID.__get_pydantic_json_schema__ = get_pydantic_json_schema

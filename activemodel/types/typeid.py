@@ -1,5 +1,9 @@
 """
-Lifted from: https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py
+A SQLAlchemy TypeDecorator for storing TypeIDs in the database as native UUID fields, with the prefix handled in Python.
+
+Adapted from:
+
+https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py
 """
 
 from uuid import UUID
