@@ -17,7 +17,7 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 
 * **ActiveRecord-style Query & Persistence API**: Fluent methods like `save()`, `where()`, `find_or_create_by()`, and `upsert()` for intuitive database operations.
 * **Implicit Session Management**: Automatically handles database sessions, eliminating boilerplate and making database interactions feel "magic".
-* **Stripe-style IDs (TypeID)**: Native support for type-safe, prefixed, and sortable UUIDs with a built-in `TypeIDMixin`.
+* **Stripe-style IDs (TypeID)**: Native support for type-safe, prefixed, and sortable UUIDs with a built-in `TypeIDPrimaryKey`.
 * **whenever datetime types**: Optional integration for `whenever.Instant`, `whenever.PlainDateTime`, and `whenever.ZonedDateTime` as first-class field annotations.
 * **Timestamp Column Mixins**: Standard `created_at` and `updated_at` tracking out of the box.
 * **Lifecycle Hooks**: Rails-style callbacks like `before_save`, `after_create`, and `around_delete`.
@@ -48,18 +48,12 @@ Create models:
 
 ```python
 from activemodel import BaseModel
-from activemodel.mixins import TimestampsMixin, TypeIDMixin
+from activemodel.mixins import TimestampsMixin
+from activemodel.types.typeid import TypeIDPrimaryKey
+from typeid import TypeID
 
-class User(
-    BaseModel,
-    # optionally, obviously
-    TimestampsMixin,
-    # you can use a different pk type, but why would you?
-    # put this mixin last otherwise `id` will not be the first column in the DB
-    TypeIDMixin("user"),
-    # wire this model into the DB, without this alembic will not generate a migration
-    table=True
-):
+class User(BaseModel, TimestampsMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("user")
     a_field: str
 ```
 
@@ -81,19 +75,16 @@ from sqlalchemy.dialects.postgresql import JSONB
 from pydantic import BaseModel as PydanticBaseModel
 
 from activemodel import BaseModel
-from activemodel.mixins import PydanticJSONMixin, TypeIDMixin, TimestampsMixin
+from activemodel.mixins import PydanticJSONMixin, TimestampsMixin
+from activemodel.types.typeid import TypeIDPrimaryKey
+from typeid import TypeID
 
 class SubObject(PydanticBaseModel):
     name: str
     value: int
 
-class User(
-    BaseModel,
-    TimestampsMixin,
-    PydanticJSONMixin,
-    TypeIDMixin("user"),
-    table=True
-):
+class User(BaseModel, TimestampsMixin, PydanticJSONMixin, table=True):
+    id: TypeID = TypeIDPrimaryKey("user")
     list_field: list[SubObject] = Field(sa_type=JSONB)
     profile: SubObject = Field(sa_type=JSONB)
 ```
@@ -264,9 +255,11 @@ Once installed, you can use `whenever.Instant`, `whenever.PlainDateTime`, and `w
 ```python
 from whenever import Instant, PlainDateTime, ZonedDateTime
 from activemodel import BaseModel
-from activemodel.mixins import TypeIDMixin
+from activemodel.types.typeid import TypeIDPrimaryKey
+from typeid import TypeID
 
-class Event(BaseModel, TypeIDMixin("event"), table=True):
+class Event(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("event")
     triggered_at: Instant | None = None
     local_time: PlainDateTime | None = None
     scheduled_at: ZonedDateTime | None = None
@@ -299,18 +292,15 @@ Here's an example of defining a relationship:
 import uuid
 
 from activemodel import BaseModel
-from activemodel.mixins import TimestampsMixin, TypeIDMixin
 from activemodel.types import TypeIDType
+from activemodel.types.typeid import TypeIDPrimaryKey
 from sqlmodel import Field, Relationship
+from typeid import TypeID
 
 from .patient import Patient
 
-class Appointment(
-    BaseModel,
-    # this adds an `id` field to the model with the correct type
-    TypeIDMixin("appointment"),
-    table=True
-):
+class Appointment(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("appointment")
     # `foreign_key` is a activemodel method to generate the right `Field` for the relationship
     # TypeIDType is really important here for fastapi serialization
     doctor_id: TypeIDType = Doctor.foreign_key()
