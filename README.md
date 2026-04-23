@@ -24,6 +24,7 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 * **Automatic DB Comments**: Syncs class and field-level docstrings directly to database table and column comments for better self-documentation.
 * **Soft Deletion**: Easily mark records as deleted with a `deleted_at` timestamp using the `SoftDeletionMixin`.
 * **Smart Table & Constraint Naming**: Consistent snake_case table names and standardized naming conventions for indexes and constraints.
+* **Pytest Integration**: Built-in fixtures, database cleanup strategies, and factory integration for robust testing.
 
 > [!TIP]
 > This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this. 
@@ -203,10 +204,6 @@ There is one important scope limit to know about:
 * `refresh()` does **not** currently replay Rails-style read callbacks. It refreshes the object from the database, but it does not currently trigger `after_find` / `after_initialize` the way Rails `reload` effectively does.
 
 Also note that `after_find` / `after_initialize` only run for model instances. Lower-level query paths that return `None`, counts, scalars, or raw SQLAlchemy result objects are outside that contract.
-
-### Pytest
-
-TODO detail out truncation and transactions
 
 ### Integrating Alembic
 
