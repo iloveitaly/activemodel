@@ -24,7 +24,7 @@ _test_session = contextvars.ContextVar[Session | None]("test_session", default=N
 def set_factory_session(session):
     if not factory_exists:
         return
-        
+
     from factory.alchemy import SQLAlchemyModelFactory
 
     # Ensure that all factories use the same session

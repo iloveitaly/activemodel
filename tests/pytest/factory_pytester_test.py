@@ -7,7 +7,6 @@ and that records created through those factories are rolled back between tests.
 import pathlib
 import textwrap
 
-import pytest
 
 pytest_plugins = ["pytester"]
 
@@ -40,7 +39,8 @@ def test_factory_boy_session_injected_and_rolls_back(pytester, monkeypatch):
 
     pytester.makeconftest(_CONFTEST)
 
-    pytester.makepyfile(textwrap.dedent("""
+    pytester.makepyfile(
+        textwrap.dedent("""
         from factory.alchemy import SQLAlchemyModelFactory
         from tests.models import ExampleRecord
 
@@ -64,7 +64,8 @@ def test_factory_boy_session_injected_and_rolls_back(pytester, monkeypatch):
             # the row from test_record_persists_within_transaction should be gone
             all_records = list(ExampleRecord.all())
             assert all_records == []
-    """))
+    """)
+    )
 
     result = pytester.runpytest_subprocess("--override-ini=addopts=")
     result.assert_outcomes(passed=3)
@@ -75,7 +76,8 @@ def test_polyfactory_session_injected_and_rolls_back(pytester, monkeypatch):
 
     pytester.makeconftest(_CONFTEST)
 
-    pytester.makepyfile(textwrap.dedent("""
+    pytester.makepyfile(
+        textwrap.dedent("""
         from activemodel.pytest.factories import ActiveModelFactory
         from tests.models import ExampleRecord
 
@@ -95,7 +97,8 @@ def test_polyfactory_session_injected_and_rolls_back(pytester, monkeypatch):
             # the row from test_record_persists_within_transaction should be gone
             all_records = list(ExampleRecord.all())
             assert all_records == []
-    """))
+    """)
+    )
 
     result = pytester.runpytest_subprocess("--override-ini=addopts=")
     result.assert_outcomes(passed=3)
