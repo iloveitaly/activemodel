@@ -6,7 +6,7 @@ Adapted from:
 https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py
 """
 
-from typing import Any
+from typing import Any, Self
 from uuid import UUID
 
 import uuid_utils
@@ -15,7 +15,6 @@ from pydantic import (
 )
 from pydantic_core import CoreSchema, core_schema
 from sqlalchemy import types
-from sqlalchemy.util import generic_repr
 from sqlmodel import Column, Field
 from typeid import TypeID, typeid_factory
 
@@ -46,27 +45,34 @@ class TypeIDType(types.TypeDecorator):
     to add a `id` pk field to your model with a specific prefix.
     """
 
-    # TODO are we sure we wouldn't use TypeID here?
+    # impl must be a SQLAlchemy type that represents a primitive data type to use as the database storage type?
     impl = types.Uuid
-    # TODO why the types version?
-    # impl = uuid.UUID
-
     cache_ok = True
-    prefix: str
 
-    def __init__(self, prefix: str, *args, **kwargs):
+    prefix: str | None
+
+    def __init__(self, prefix: str | None, *args, _raw: bool = False, **kwargs):
+        if _raw:
+            assert prefix is None
+        else:
+            assert prefix is not None
+
         self.prefix = prefix
         super().__init__(*args, **kwargs)
+
+    @classmethod
+    def raw(cls) -> Self:
+        return cls(prefix=None, _raw=True)
 
     def __repr__(self) -> str:
         # Customize __repr__ to ensure that auto-generated code e.g. from alembic includes
         # the right __init__ params (otherwise by default prefix will be omitted because
         # uuid.__init__ does not have such an argument).
         # TODO this makes it so inspected code does NOT include the suffix
-        return generic_repr(
-            self,
-            to_inspect=TypeID(self.prefix),
-        )
+        if self.prefix is None:
+            return "TypeIDType.raw()"
+
+        return f"TypeIDType({self.prefix!r})"
 
     def process_bind_param(self, value, dialect):
         """
@@ -85,7 +91,7 @@ class TypeIDType(types.TypeDecorator):
             # uuid_utils.UUID (from typeid-python) is not a stdlib uuid.UUID, psycopg needs stdlib UUID
             return UUID(bytes=value.bytes)
 
-        if isinstance(value, str) and value.startswith(self.prefix + "_"):
+        if isinstance(value, str) and "_" in value:
             # then it's a TypeID such as 'user_01h45ytscbebyvny4gc8cr8ma2'
             value = TypeID.from_string(value)
 
@@ -97,15 +103,12 @@ class TypeIDType(types.TypeDecorator):
 
         if isinstance(value, TypeID):
             if self.prefix is None:
-                if value.prefix is None:
-                    raise TypeIDValidationError(
-                        "Must have a valid prefix set on the class"
-                    )
-            else:
-                if value.prefix != self.prefix:
-                    raise TypeIDValidationError(
-                        f"Expected '{self.prefix}' but got '{value.prefix}'"
-                    )
+                return UUID(bytes=value.uuid.bytes)
+
+            if value.prefix != self.prefix:
+                raise TypeIDValidationError(
+                    f"Expected '{self.prefix}' but got '{value.prefix}'"
+                )
 
             # always returns a uuid_utils.UUID, which we need to convert
             # TODO should be able to register a custom type in psycopg to avoid this conversion
@@ -118,6 +121,9 @@ class TypeIDType(types.TypeDecorator):
 
         if value is None:
             return None
+
+        if self.prefix is None:
+            return value
 
         return TypeID.from_uuid(value, self.prefix)
 
