@@ -308,105 +308,53 @@ configure activemodel to connect to a specific database
 
 # index.html.md
 
-# activemodel.pytest
+# activemodel.jsonb_snapshot
 
-## Submodules
+Serialize-and-compare snapshot tracking for JSON-backed fields.
 
-* [activemodel.pytest.factories](factories/index.md)
-* [activemodel.pytest.plugin](plugin/index.md)
-* [activemodel.pytest.transaction](transaction/index.md)
-* [activemodel.pytest.truncate](truncate/index.md)
+After each ORM load/refresh, each tracked JSON field is serialized to a canonical JSON
+string and stored as a snapshot. Before commit, the current value is re-serialized and
+compared; if the strings differ, flag_modified is called so SQLAlchemy includes the
+column in the UPDATE.
+
+This mirrors how Rails’ ActiveRecord handles JSON column dirty-tracking: compare the
+serialized form of the current value against the serialized form of the original, rather
+than intercepting every mutation with proxy objects.
 
 ## Functions
 
-| [`database_reset_transaction`](#activemodel.pytest.database_reset_transaction)()                           | Wrap all database interactions for a given test in a nested transaction and roll it back after the test.   |
-|------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-| [`test_session`](#activemodel.pytest.test_session)()                                                       | Configures a session-global database session for a test.                                                   |
-| [`database_reset_truncate`](#activemodel.pytest.database_reset_truncate)([preserve_tables, pytest_config]) | Transaction is most likely the better way to go, but there are some scenarios where the session override   |
+| [`snapshot_json_fields`](#activemodel.jsonb_snapshot.snapshot_json_fields)(→ None)                       | Store a serialized snapshot of each tracked JSON field on the instance.           |
+|----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| [`detect_json_mutations`](#activemodel.jsonb_snapshot.detect_json_mutations)(→ list[str])                | Compare current field values against snapshots, flagging any that changed.        |
+| [`register_before_commit_listener`](#activemodel.jsonb_snapshot.register_before_commit_listener)(→ None) | Register a session-level before_commit handler to detect in-place JSON mutations. |
 
-## Package Contents
+## Module Contents
 
-### activemodel.pytest.database_reset_transaction()
+### activemodel.jsonb_snapshot.snapshot_json_fields(instance, jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [None](https://docs.python.org/3/library/constants.html#None)
 
-Wrap all database interactions for a given test in a nested transaction and roll it back after the test.
+Store a serialized snapshot of each tracked JSON field on the instance.
 
-This is provided as a function, not a fixture, since you’ll need to determine when a integration test is run. Here’s
-an example of how to build a fixture from this method:
+Called after rehydration so the snapshot reflects the committed database state.
+When jsonb_field_names is provided (partial refresh), only those fields are
+re-snapshotted; existing snapshots for other fields are preserved.
 
-```pycon
->>> from activemodel.pytest import database_reset_transaction
->>> database_reset_transaction = pytest.fixture(scope="function", autouse=True)(database_reset_transaction)
-```
+### activemodel.jsonb_snapshot.detect_json_mutations(instance) → [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
 
-Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process because the
-same session is not shared across python processes. For this scenario, use the truncate method.
+Compare current field values against snapshots, flagging any that changed.
 
-Note that using fork as a multiprocess start method is dangerous. Use spawn. This link has more documentation
-around this topic:
+Returns a list of field names that were mutated since the last snapshot.
+Side effect: calls flag_modified on the SQLAlchemy instance for each changed field.
 
-[https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py](https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py)
+### activemodel.jsonb_snapshot.register_before_commit_listener() → [None](https://docs.python.org/3/library/constants.html#None)
 
-References:
+Register a session-level before_commit handler to detect in-place JSON mutations.
 
-- [https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created](https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created)
-- [https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/](https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/)
-- [https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77](https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77)
-- [https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46](https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46)
-- [https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn](https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn)
+Uses before_commit (not before_flush) because SQLAlchemy skips the flush entirely
+when it sees no pending changes – meaning before_flush never fires for in-place
+mutations that haven’t been explicitly flagged. before_commit fires unconditionally,
+giving us the chance to call flag_modified before the flush decision is made.
 
-Using a named SAVEPOINT does not give us anything extra, so we are not using it.
-
-### activemodel.pytest.test_session()
-
-Configures a session-global database session for a test.
-
-Use this as a fixture using db_session. This method is meant to be used as a context manager.
-
-This is useful for tests that need to interact with the database multiple times before calling application code
-that uses the objects. This is intended to be used outside of an integration test. Integration tests generally
-do not use database transactions to clean the database and instead use truncation. The transaction fixture
-configures a session, which is then used here. This method requires that this global test session is already
-configured. If the transaction fixture is not used, then there is no session available for use and this will fail.
-
-ActiveModelFactory.save() does this automatically, but if you need to manually create objects
-and persist them to a DB, you can run into issues with the simple expunge() call
-used to reassociate an object with a new session. If there are more complex relationships
-this approach will fail and give you detached object errors.
-
-```pycon
->>> from activemodel.pytest import test_session
->>> def test_the_thing():
->>>     with test_session():
-...         obj = MyModel(name="test").save()
-...         obj2 = MyModelFactory.save()
-```
-
-More information: [https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b](https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b)
-
-### activemodel.pytest.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
-
-Transaction is most likely the better way to go, but there are some scenarios where the session override
-logic does not work properly and you need to truncate tables back to their original state.
-
-Here’s how to do this once at the start of the test:
-
-```pycon
->>> from activemodel.pytest import database_reset_truncation
->>> def pytest_configure(config):
->>>         database_reset_truncation()
-```
-
-Or, if you want to use this as a fixture:
-
-```pycon
->>> pytest.fixture(scope="function")(database_reset_truncation)
->>> def test_the_thing(database_reset_truncation)
-```
-
-This approach has a couple of problems:
-
-* You can’t run multiple tests in parallel without separate databases
-* If you have important seed data and want to truncate those tables, the seed data will be lost
+Safe to call multiple times – the listener is only registered once.
 
 
 # index.html.md
@@ -551,347 +499,6 @@ the annotation is required for field registration, so the return type cannot rep
 
 # index.html.md
 
-# activemodel.types
-
-## Submodules
-
-* [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.md)
-* [activemodel.types.typeid](typeid/index.md)
-* [activemodel.types.typeid_patch](typeid_patch/index.md)
-* [activemodel.types.whenever](whenever/index.md)
-
-## Classes
-
-| [`TypeIDType`](#activemodel.types.TypeIDType)   | A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.   |
-|-------------------------------------------------|---------------------------------------------------------------------------|
-
-## Package Contents
-
-### *class* activemodel.types.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str), \*args, \*\*kwargs)
-
-Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
-
-A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.
-
-The prefix will not be persisted to the database, instead the database-native UUID field will be used.
-At retrieval time a TypeID will be constructed (in python) based on the configured prefix and the UUID
-value from the database.
-
-For example:
-
-```pycon
->>> id = mapped_column(
->>>     TypeIDType("user"),
->>>     primary_key=True,
->>>     default=lambda: TypeID("user")
->>> )
-```
-
-Will result in TypeIDs such as “user_01h45ytscbebyvny4gc8cr8ma2”. There’s a mixin provided to make it easy
-to add a id pk field to your model with a specific prefix.
-
-#### impl
-
-#### cache_ok *= True*
-
-Indicate if statements using this `ExternalType` are “safe to
-cache”.
-
-The default value `None` will emit a warning and then not allow caching
-of a statement which includes this type.   Set to `False` to disable
-statements using this type from being cached at all without a warning.
-When set to `True`, the object’s class and selected elements from its
-state will be used as part of the cache key.  For example, using a
-`TypeDecorator`:
-
-```default
-class MyType(TypeDecorator):
-    impl = String
-
-    cache_ok = True
-
-    def __init__(self, choices):
-        self.choices = tuple(choices)
-        self.internal_only = True
-```
-
-The cache key for the above type would be equivalent to:
-
-```default
->>> MyType(["a", "b", "c"])._static_cache_key
-(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
-```
-
-The caching scheme will extract attributes from the type that correspond
-to the names of parameters in the `__init__()` method.  Above, the
-“choices” attribute becomes part of the cache key but “internal_only”
-does not, because there is no parameter named “internal_only”.
-
-The requirements for cacheable elements is that they are hashable
-and also that they indicate the same SQL rendered for expressions using
-this type every time for a given cache value.
-
-To accommodate for datatypes that refer to unhashable structures such
-as dictionaries, sets and lists, these objects can be made “cacheable”
-by assigning hashable structures to the attributes whose names
-correspond with the names of the arguments.  For example, a datatype
-which accepts a dictionary of lookup values may publish this as a sorted
-series of tuples.   Given a previously un-cacheable type as:
-
-```default
-class LookupType(UserDefinedType):
-    """a custom type that accepts a dictionary as a parameter.
-
-    this is the non-cacheable version, as "self.lookup" is not
-    hashable.
-
-    """
-
-    def __init__(self, lookup):
-        self.lookup = lookup
-
-    def get_col_spec(self, **kw):
-        return "VARCHAR(255)"
-
-    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
-```
-
-Where “lookup” is a dictionary.  The type will not be able to generate
-a cache key:
-
-```default
->>> type_ = LookupType({"a": 10, "b": 20})
->>> type_._static_cache_key
-<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
-produce a cache key because the ``cache_ok`` flag is not set to True.
-Set this flag to True if this type object's state is safe to use
-in a cache key, or False to disable this warning.
-symbol('no_cache')
-```
-
-If we **did** set up such a cache key, it wouldn’t be usable. We would
-get a tuple structure that contains a dictionary inside of it, which
-cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
-statement cache, since Python dictionaries aren’t hashable:
-
-```default
->>> # set cache_ok = True
->>> type_.cache_ok = True
-
->>> # this is the cache key it would generate
->>> key = type_._static_cache_key
->>> key
-(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
-
->>> # however this key is not hashable, will fail when used with
->>> # SQLAlchemy statement cache
->>> some_cache = {key: "some sql value"}
-Traceback (most recent call last): File "<stdin>", line 1,
-in <module> TypeError: unhashable type: 'dict'
-```
-
-The type may be made cacheable by assigning a sorted tuple of tuples
-to the “.lookup” attribute:
-
-```default
-class LookupType(UserDefinedType):
-    """a custom type that accepts a dictionary as a parameter.
-
-    The dictionary is stored both as itself in a private variable,
-    and published in a public variable as a sorted tuple of tuples,
-    which is hashable and will also return the same value for any
-    two equivalent dictionaries.  Note it assumes the keys and
-    values of the dictionary are themselves hashable.
-
-    """
-
-    cache_ok = True
-
-    def __init__(self, lookup):
-        self._lookup = lookup
-
-        # assume keys/values of "lookup" are hashable; otherwise
-        # they would also need to be converted in some way here
-        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
-
-    def get_col_spec(self, **kw):
-        return "VARCHAR(255)"
-
-    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
-```
-
-Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
-
-```default
->>> LookupType({"a": 10, "b": 20})._static_cache_key
-(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
-```
-
-#### Versionadded
-Added in version 1.4.14: - added the `cache_ok` flag to allow
-some configurability of caching for `TypeDecorator` classes.
-
-#### Versionadded
-Added in version 1.4.28: - added the `ExternalType` mixin which
-generalizes the `cache_ok` flag to both the `TypeDecorator`
-and `UserDefinedType` classes.
-
-#### SEE ALSO
-[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
-
-#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str)*
-
-#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
-
-#### process_bind_param(value, dialect)
-
-This is run when a search query is built or …
-
-#### process_result_value(value, dialect)
-
-convert a raw UUID, without a prefix, to a TypeID with the correct prefix
-
-#### *classmethod* \_\_get_pydantic_core_schema_\_(\_core_schema: pydantic_core.core_schema.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
-
-This fixes the following error: ‘Unable to serialize unknown type’ by telling pydantic how to serialize this field.
-
-Note that TypeIDType MUST be the type of the field in SQLModel otherwise you’ll get serialization errors.
-This is done automatically for the mixin but for any relationship fields you’ll need to specify the type explicitly.
-
-- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88)
-- [https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py](https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py)
-- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14)
-- [https://github.com/pydantic/pydantic/issues/10060](https://github.com/pydantic/pydantic/issues/10060)
-- [https://github.com/fastapi/fastapi/discussions/10027](https://github.com/fastapi/fastapi/discussions/10027)
-- [https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50](https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50)
-
-#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
-
-Called when generating the openapi schema. This overrides the function-plain type which
-is generated by the no_info_plain_validator_function.
-
-This logic seems to be a hot part of the codebase, so I’d expect this to break as pydantic
-fastapi continue to evolve.
-
-Note that this method can return multiple types. A return value can be as simple as:
-
-```pycon
->>> {"type": "string"}
-```
-
-Or, you could return a more specific JSON schema type:
-
-```pycon
->>> core_schema.uuid_schema()
-```
-
-The problem with using something like uuid_schema is the specific patterns
-
-[https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153](https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153)
-
-
-# index.html.md
-
-# activemodel.query_wrapper
-
-## Classes
-
-| [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries on a model.   |
-|-------------------------------------------------------------|-------------------------------------------|
-
-## Module Contents
-
-### *class* activemodel.query_wrapper.QueryWrapper(cls: [type](https://docs.python.org/3/library/functions.html#type)[TModel], \*args: Any)
-
-Bases: [`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`](../types/sqlalchemy_protocol/index.md#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)[`TModel`]
-
-Make it easy to run queries on a model.
-
-#### target *: sqlmodel.sql.expression.SelectOfScalar[TModel]*
-
-#### first()
-
-#### last()
-
-#### one()
-
-requires exactly one result in the dataset
-
-#### all()
-
-#### count()
-
-I did some basic tests
-
-#### scalar()
-
-```pycon
->>>
-```
-
-#### exec()
-
-#### delete()
-
-#### exists() → [bool](https://docs.python.org/3/library/functions.html#bool)
-
-Return True if the current query yields at least one row.
-
-Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
-the current target for efficiency. Keeps the original target intact.
-
-SQLAlchemy exists works differently and does not return a simple boolean.
-
-#### \_\_getattr_\_(name)
-
-This implements the magic that forwards function calls to sqlalchemy.
-
-#### sql()
-
-Output the raw SQL of the query for debugging
-
-#### sample() → TModel | [None](https://docs.python.org/3/library/constants.html#None)
-
-#### sample(n: [int](https://docs.python.org/3/library/functions.html#int)) → [list](https://docs.python.org/3/library/stdtypes.html#list)[TModel]
-
-Return a random sample of rows from the current query.
-
-* **Parameters:**
-  * **n** ([*int*](https://docs.python.org/3/library/functions.html#int)) – Number of rows to return. Defaults to 1.
-  * **Behavior**
-  * **--------**
-  * **rows****)** ( *- Returns a list* *[**Model* *]* *when n > 1* *(**possibly empty list when no*)
-  * **rows****)**
-  * **func.random****(****)** ( *- Sampling is performed by appending an ORDER BY RANDOM* *(* *)*  */*) – and `LIMIT n` clause to the existing query target.
-  * **further** ( *- Keeps original query intact* *(**does not mutate self.target* *)* *so*) – chaining works as expected.
-
-#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
-
-
-# index.html.md
-
-# activemodel.celery
-
-Do not import unless you have Celery/Kombu installed.
-
-In order for TypeID objects to be properly handled by celery, a custom encoder must be registered.
-
-## Functions
-
-| [`register_celery_typeid_encoder`](#activemodel.celery.register_celery_typeid_encoder)()   | Ensures TypeID objects passed as arguments to a delayed function are properly serialized.   |
-|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
-
-## Module Contents
-
-### activemodel.celery.register_celery_typeid_encoder()
-
-Ensures TypeID objects passed as arguments to a delayed function are properly serialized.
-
-Run at the top of your celery initialization script.
-
-
-# index.html.md
-
 # activemodel.patches
 
 ## Submodules
@@ -920,53 +527,55 @@ Raised when a TypeID is invalid in some way
 
 # index.html.md
 
-# activemodel.jsonb_snapshot
+# activemodel.celery
 
-Serialize-and-compare snapshot tracking for JSON-backed fields.
+Do not import unless you have Celery/Kombu installed.
 
-After each ORM load/refresh, each tracked JSON field is serialized to a canonical JSON
-string and stored as a snapshot. Before commit, the current value is re-serialized and
-compared; if the strings differ, flag_modified is called so SQLAlchemy includes the
-column in the UPDATE.
-
-This mirrors how Rails’ ActiveRecord handles JSON column dirty-tracking: compare the
-serialized form of the current value against the serialized form of the original, rather
-than intercepting every mutation with proxy objects.
+In order for TypeID objects to be properly handled by celery, a custom encoder must be registered.
 
 ## Functions
 
-| [`snapshot_json_fields`](#activemodel.jsonb_snapshot.snapshot_json_fields)(→ None)                       | Store a serialized snapshot of each tracked JSON field on the instance.           |
-|----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
-| [`detect_json_mutations`](#activemodel.jsonb_snapshot.detect_json_mutations)(→ list[str])                | Compare current field values against snapshots, flagging any that changed.        |
-| [`register_before_commit_listener`](#activemodel.jsonb_snapshot.register_before_commit_listener)(→ None) | Register a session-level before_commit handler to detect in-place JSON mutations. |
+| [`register_celery_typeid_encoder`](#activemodel.celery.register_celery_typeid_encoder)()   | Ensures TypeID objects passed as arguments to a delayed function are properly serialized.   |
+|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
 
 ## Module Contents
 
-### activemodel.jsonb_snapshot.snapshot_json_fields(instance, jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [None](https://docs.python.org/3/library/constants.html#None)
+### activemodel.celery.register_celery_typeid_encoder()
 
-Store a serialized snapshot of each tracked JSON field on the instance.
+Ensures TypeID objects passed as arguments to a delayed function are properly serialized.
 
-Called after rehydration so the snapshot reflects the committed database state.
-When jsonb_field_names is provided (partial refresh), only those fields are
-re-snapshotted; existing snapshots for other fields are preserved.
+Run at the top of your celery initialization script.
 
-### activemodel.jsonb_snapshot.detect_json_mutations(instance) → [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
 
-Compare current field values against snapshots, flagging any that changed.
+# index.html.md
 
-Returns a list of field names that were mutated since the last snapshot.
-Side effect: calls flag_modified on the SQLAlchemy instance for each changed field.
+# activemodel.utils
 
-### activemodel.jsonb_snapshot.register_before_commit_listener() → [None](https://docs.python.org/3/library/constants.html#None)
+## Functions
 
-Register a session-level before_commit handler to detect in-place JSON mutations.
+| [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries   |
+|---------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`raw_sql_exec`](#activemodel.utils.raw_sql_exec)(raw_query)        |                                                                               |
+| [`hash_function_code`](#activemodel.utils.hash_function_code)(func) | get sha of a function to easily assert that it hasn't changed                 |
+| [`is_database_empty`](#activemodel.utils.is_database_empty)(→ bool) | Check if any table in the database has records using Model.count().           |
 
-Uses before_commit (not before_flush) because SQLAlchemy skips the flush entirely
-when it sees no pending changes – meaning before_flush never fires for in-place
-mutations that haven’t been explicitly flagged. before_commit fires unconditionally,
-giving us the chance to call flag_modified before the flush decision is made.
+## Module Contents
 
-Safe to call multiple times – the listener is only registered once.
+### activemodel.utils.compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
+
+### activemodel.utils.raw_sql_exec(raw_query: [str](https://docs.python.org/3/library/stdtypes.html#str))
+
+### activemodel.utils.hash_function_code(func)
+
+get sha of a function to easily assert that it hasn’t changed
+
+### activemodel.utils.is_database_empty(exclude: [list](https://docs.python.org/3/library/stdtypes.html#list)[[type](https://docs.python.org/3/library/functions.html#type)] = []) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Check if any table in the database has records using Model.count().
+
+Useful for detecting an empty database state to run operations such as seeding, etc.
 
 
 # index.html.md
@@ -1279,82 +888,1059 @@ Helpful for testing and console debugging.
 
 # index.html.md
 
-# activemodel.utils
+# activemodel.types
 
-## Functions
+## Submodules
 
-| [`compile_sql`](#activemodel.utils.compile_sql)(→ str)              | convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries   |
-|---------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| [`raw_sql_exec`](#activemodel.utils.raw_sql_exec)(raw_query)        |                                                                               |
-| [`hash_function_code`](#activemodel.utils.hash_function_code)(func) | get sha of a function to easily assert that it hasn't changed                 |
-| [`is_database_empty`](#activemodel.utils.is_database_empty)(→ bool) | Check if any table in the database has records using Model.count().           |
+* [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.md)
+* [activemodel.types.typeid](typeid/index.md)
+* [activemodel.types.typeid_patch](typeid_patch/index.md)
+* [activemodel.types.whenever](whenever/index.md)
 
-## Module Contents
+## Classes
 
-### activemodel.utils.compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) → [str](https://docs.python.org/3/library/stdtypes.html#str)
+| [`TypeIDType`](#activemodel.types.TypeIDType)   | A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.   |
+|-------------------------------------------------|---------------------------------------------------------------------------|
 
-convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
+## Package Contents
 
-### activemodel.utils.raw_sql_exec(raw_query: [str](https://docs.python.org/3/library/stdtypes.html#str))
+### *class* activemodel.types.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None), \*args, \_raw: [bool](https://docs.python.org/3/library/functions.html#bool) = False, \*\*kwargs)
 
-### activemodel.utils.hash_function_code(func)
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
 
-get sha of a function to easily assert that it hasn’t changed
+A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.
 
-### activemodel.utils.is_database_empty(exclude: [list](https://docs.python.org/3/library/stdtypes.html#list)[[type](https://docs.python.org/3/library/functions.html#type)] = []) → [bool](https://docs.python.org/3/library/functions.html#bool)
+The prefix will not be persisted to the database, instead the database-native UUID field will be used.
+At retrieval time a TypeID will be constructed (in python) based on the configured prefix and the UUID
+value from the database.
 
-Check if any table in the database has records using Model.count().
+For example:
 
-Useful for detecting an empty database state to run operations such as seeding, etc.
+```pycon
+>>> id = mapped_column(
+>>>     TypeIDType("user"),
+>>>     primary_key=True,
+>>>     default=lambda: TypeID("user")
+>>> )
+```
+
+Will result in TypeIDs such as “user_01h45ytscbebyvny4gc8cr8ma2”. There’s a mixin provided to make it easy
+to add a id pk field to your model with a specific prefix.
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None)*
+
+#### *classmethod* raw() → Self
+
+#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+#### process_bind_param(value, dialect)
+
+This is run when a search query is built or …
+
+#### process_result_value(value, dialect)
+
+convert a raw UUID, without a prefix, to a TypeID with the correct prefix
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_core_schema: pydantic_core.core_schema.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+This fixes the following error: ‘Unable to serialize unknown type’ by telling pydantic how to serialize this field.
+
+Note that TypeIDType MUST be the type of the field in SQLModel otherwise you’ll get serialization errors.
+This is done automatically for the mixin but for any relationship fields you’ll need to specify the type explicitly.
+
+- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88)
+- [https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py](https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py)
+- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14)
+- [https://github.com/pydantic/pydantic/issues/10060](https://github.com/pydantic/pydantic/issues/10060)
+- [https://github.com/fastapi/fastapi/discussions/10027](https://github.com/fastapi/fastapi/discussions/10027)
+- [https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50](https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50)
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+
+Called when generating the openapi schema. This overrides the function-plain type which
+is generated by the no_info_plain_validator_function.
+
+This logic seems to be a hot part of the codebase, so I’d expect this to break as pydantic
+fastapi continue to evolve.
+
+Note that this method can return multiple types. A return value can be as simple as:
+
+```pycon
+>>> {"type": "string"}
+```
+
+Or, you could return a more specific JSON schema type:
+
+```pycon
+>>> core_schema.uuid_schema()
+```
+
+The problem with using something like uuid_schema is the specific patterns
+
+[https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153](https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153)
 
 
 # index.html.md
 
-# activemodel.patches.get_sqlalchemy_type_patch
+# activemodel.pytest
 
-Extends SQLModel’s get_sqlalchemy_type to recognize whenever datetime types.
+## Submodules
 
-This allows using whenever.Instant, whenever.PlainDateTime, and
-whenever.ZonedDateTime as bare field
-type annotations without needing to specify sa_type= explicitly:
-
-> class MyModel(BaseModel, table=True):
-> : created_at: whenever.Instant | None = None
->   local_time: whenever.PlainDateTime | None = None
->   scheduled_at: whenever.ZonedDateTime | None = None
+* [activemodel.pytest.factories](factories/index.md)
+* [activemodel.pytest.plugin](plugin/index.md)
+* [activemodel.pytest.transaction](transaction/index.md)
+* [activemodel.pytest.truncate](truncate/index.md)
 
 ## Functions
 
-| [`get_sqlalchemy_type`](#activemodel.patches.get_sqlalchemy_type_patch.get_sqlalchemy_type)(field)   |    |
-|------------------------------------------------------------------------------------------------------|----|
+| [`database_reset_transaction`](#activemodel.pytest.database_reset_transaction)()                           | Wrap all database interactions for a given test in a nested transaction and roll it back after the test.   |
+|------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| [`test_session`](#activemodel.pytest.test_session)()                                                       | Configures a session-global database session for a test.                                                   |
+| [`database_reset_truncate`](#activemodel.pytest.database_reset_truncate)([preserve_tables, pytest_config]) | Transaction is most likely the better way to go, but there are some scenarios where the session override   |
 
-## Module Contents
+## Package Contents
 
-### activemodel.patches.get_sqlalchemy_type_patch.get_sqlalchemy_type(field)
+### activemodel.pytest.database_reset_transaction()
+
+Wrap all database interactions for a given test in a nested transaction and roll it back after the test.
+
+This is provided as a function, not a fixture, since you’ll need to determine when a integration test is run. Here’s
+an example of how to build a fixture from this method:
+
+```pycon
+>>> from activemodel.pytest import database_reset_transaction
+>>> database_reset_transaction = pytest.fixture(scope="function", autouse=True)(database_reset_transaction)
+```
+
+Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process because the
+same session is not shared across python processes. For this scenario, use the truncate method.
+
+Note that using fork as a multiprocess start method is dangerous. Use spawn. This link has more documentation
+around this topic:
+
+[https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py](https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py)
+
+References:
+
+- [https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created](https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created)
+- [https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/](https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/)
+- [https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77](https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77)
+- [https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46](https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46)
+- [https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn](https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn)
+
+Using a named SAVEPOINT does not give us anything extra, so we are not using it.
+
+### activemodel.pytest.test_session()
+
+Configures a session-global database session for a test.
+
+Use this as a fixture using db_session. This method is meant to be used as a context manager.
+
+This is useful for tests that need to interact with the database multiple times before calling application code
+that uses the objects. This is intended to be used outside of an integration test. Integration tests generally
+do not use database transactions to clean the database and instead use truncation. The transaction fixture
+configures a session, which is then used here. This method requires that this global test session is already
+configured. If the transaction fixture is not used, then there is no session available for use and this will fail.
+
+ActiveModelFactory.save() does this automatically, but if you need to manually create objects
+and persist them to a DB, you can run into issues with the simple expunge() call
+used to reassociate an object with a new session. If there are more complex relationships
+this approach will fail and give you detached object errors.
+
+```pycon
+>>> from activemodel.pytest import test_session
+>>> def test_the_thing():
+>>>     with test_session():
+...         obj = MyModel(name="test").save()
+...         obj2 = MyModelFactory.save()
+```
+
+More information: [https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b](https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b)
+
+### activemodel.pytest.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+Transaction is most likely the better way to go, but there are some scenarios where the session override
+logic does not work properly and you need to truncate tables back to their original state.
+
+Here’s how to do this once at the start of the test:
+
+```pycon
+>>> from activemodel.pytest import database_reset_truncation
+>>> def pytest_configure(config):
+>>>         database_reset_truncation()
+```
+
+Or, if you want to use this as a fixture:
+
+```pycon
+>>> pytest.fixture(scope="function")(database_reset_truncation)
+>>> def test_the_thing(database_reset_truncation)
+```
+
+This approach has a couple of problems:
+
+* You can’t run multiple tests in parallel without separate databases
+* If you have important seed data and want to truncate those tables, the seed data will be lost
 
 
 # index.html.md
 
-# activemodel.patches.get_column_from_field_patch
+# activemodel.query_wrapper
 
-Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fields of a model.
+## Classes
 
-Making sure these docstrings make their way to the DB schema is helpful for a bunch of reasons (LLM understanding being one of them).
-
-This patch mutates a core sqlmodel function which translates pydantic FieldInfo objects into sqlalchemy Column objects. It adds the field description as a comment to the column.
-
-Note that FieldInfo *from pydantic* is used when a “bare” field is defined. This can be confusing, because when inspecting model fields, the class name looks exactly the same.
-
-Some ideas for this originally sourced from: [https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633](https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633)
-
-## Functions
-
-| [`get_column_from_field`](#activemodel.patches.get_column_from_field_patch.get_column_from_field)(→ sqlalchemy.Column)   |    |
-|--------------------------------------------------------------------------------------------------------------------------|----|
+| [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries on a model.   |
+|-------------------------------------------------------------|-------------------------------------------|
 
 ## Module Contents
 
-### activemodel.patches.get_column_from_field_patch.get_column_from_field(field: Any) → sqlalchemy.Column
+### *class* activemodel.query_wrapper.QueryWrapper(cls: [type](https://docs.python.org/3/library/functions.html#type)[TModel], \*args: Any)
+
+Bases: [`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`](../types/sqlalchemy_protocol/index.md#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)[`TModel`]
+
+Make it easy to run queries on a model.
+
+#### target *: sqlmodel.sql.expression.SelectOfScalar[TModel]*
+
+#### first()
+
+#### last()
+
+#### one()
+
+requires exactly one result in the dataset
+
+#### all()
+
+#### count()
+
+I did some basic tests
+
+#### scalar()
+
+```pycon
+>>>
+```
+
+#### exec()
+
+#### delete()
+
+#### exists() → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Return True if the current query yields at least one row.
+
+Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
+the current target for efficiency. Keeps the original target intact.
+
+SQLAlchemy exists works differently and does not return a simple boolean.
+
+#### \_\_getattr_\_(name)
+
+This implements the magic that forwards function calls to sqlalchemy.
+
+#### sql()
+
+Output the raw SQL of the query for debugging
+
+#### sample() → TModel | [None](https://docs.python.org/3/library/constants.html#None)
+
+#### sample(n: [int](https://docs.python.org/3/library/functions.html#int)) → [list](https://docs.python.org/3/library/stdtypes.html#list)[TModel]
+
+Return a random sample of rows from the current query.
+
+* **Parameters:**
+  * **n** ([*int*](https://docs.python.org/3/library/functions.html#int)) – Number of rows to return. Defaults to 1.
+  * **Behavior**
+  * **--------**
+  * **rows****)** ( *- Returns a list* *[**Model* *]* *when n > 1* *(**possibly empty list when no*)
+  * **rows****)**
+  * **func.random****(****)** ( *- Sampling is performed by appending an ORDER BY RANDOM* *(* *)*  */*) – and `LIMIT n` clause to the existing query target.
+  * **further** ( *- Keeps original query intact* *(**does not mutate self.target* *)* *so*) – chaining works as expected.
+
+#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+
+# index.html.md
+
+# activemodel.pytest.truncate
+
+## Attributes
+
+| [`T`](#activemodel.pytest.truncate.T)   |    |
+|-----------------------------------------|----|
+
+## Functions
+
+| [`database_reset_truncate`](#activemodel.pytest.truncate.database_reset_truncate)([preserve_tables, pytest_config])   | Transaction is most likely the better way to go, but there are some scenarios where the session override   |
+|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### activemodel.pytest.truncate.T
+
+### activemodel.pytest.truncate.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
+
+Transaction is most likely the better way to go, but there are some scenarios where the session override
+logic does not work properly and you need to truncate tables back to their original state.
+
+Here’s how to do this once at the start of the test:
+
+```pycon
+>>> from activemodel.pytest import database_reset_truncation
+>>> def pytest_configure(config):
+>>>         database_reset_truncation()
+```
+
+Or, if you want to use this as a fixture:
+
+```pycon
+>>> pytest.fixture(scope="function")(database_reset_truncation)
+>>> def test_the_thing(database_reset_truncation)
+```
+
+This approach has a couple of problems:
+
+* You can’t run multiple tests in parallel without separate databases
+* If you have important seed data and want to truncate those tables, the seed data will be lost
+
+
+# index.html.md
+
+# activemodel.pytest.plugin
+
+Pytest plugin integration for activemodel.
+
+Currently provides:
+
+* `db_session` fixture - quick access to a database session (see `test_session`)
+* `activemodel_preserve_tables` ini option - configure tables to preserve when using
+  `database_reset_truncate` (comma separated list or multiple lines depending on config style)
+
+Configuration examples:
+
+pytest.ini:
+
+```default
+[pytest]
+activemodel_preserve_tables = alembic_version,zip_code,seed_table
+```
+
+pyproject.toml:
+
+```default
+[tool.pytest.ini_options]
+activemodel_preserve_tables = [
+  "alembic_version",
+  "zip_code",
+  "seed_table",
+]
+```
+
+The list always implicitly includes `alembic_version` even if not specified.
+
+## Functions
+
+| [`pytest_addoption`](#activemodel.pytest.plugin.pytest_addoption)(→ None)   | Register custom ini options.                                                                      |
+|-----------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| [`db_session`](#activemodel.pytest.plugin.db_session)()                     | Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you |
+| [`db_truncate_session`](#activemodel.pytest.plugin.db_truncate_session)()   | Provides a database session for testing when using a truncation cleaning strategy.                |
+
+## Module Contents
+
+### activemodel.pytest.plugin.pytest_addoption(parser: pytest.Parser) → [None](https://docs.python.org/3/library/constants.html#None)
+
+Register custom ini options.
+
+We treat this as a *linelist* so pyproject.toml list syntax works. Comma separated works too because
+pytest splits lines first; users can still provide one line with commas.
+
+### activemodel.pytest.plugin.db_session()
+
+Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you
+probably don’t need this because the router, job harness, etc should wrap the logic in a database session.
+
+If your unit test is simple (you are just creating a couple of models) you
+can most likely skip this, unless your factories or models do something more complex with nested database calls.
+
+This is helpful if you are doing a lot of lazy-loaded params or need a database session to be in place
+for testing code that will run within a celery worker or something similar.
+
+```pycon
+>>> def the_test(db_session):
+```
+
+### activemodel.pytest.plugin.db_truncate_session()
+
+Provides a database session for testing when using a truncation cleaning strategy.
+
+When using a truncation cleaning strategy, no global test session is set. This means all models that are created
+are tied to a detached session, which makes it hard to mutate models after creation. This fixture fixes that problem
+by setting the session used by all model factories to a global session.
+
+
+# index.html.md
+
+# activemodel.pytest.transaction
+
+## Attributes
+
+| [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
+|----------------------------------------------------------------------------|----|
+| [`polyfactory_exists`](#activemodel.pytest.transaction.polyfactory_exists) |    |
+
+## Functions
+
+| [`set_factory_session`](#activemodel.pytest.transaction.set_factory_session)(session)         |                                                                                                          |
+|-----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| [`set_polyfactory_session`](#activemodel.pytest.transaction.set_polyfactory_session)(session) |                                                                                                          |
+| [`set_factory_sessions`](#activemodel.pytest.transaction.set_factory_sessions)(session)       | set all supported model factories to use the provided session                                            |
+| [`test_session`](#activemodel.pytest.transaction.test_session)()                              | Configures a session-global database session for a test.                                                 |
+| [`database_truncate_session`](#activemodel.pytest.transaction.database_truncate_session)()    | Provides a database session for testing when using a truncation cleaning strategy.                       |
+| [`database_reset_transaction`](#activemodel.pytest.transaction.database_reset_transaction)()  | Wrap all database interactions for a given test in a nested transaction and roll it back after the test. |
+
+## Module Contents
+
+### activemodel.pytest.transaction.factory_exists *= None*
+
+### activemodel.pytest.transaction.polyfactory_exists *= None*
+
+### activemodel.pytest.transaction.set_factory_session(session)
+
+### activemodel.pytest.transaction.set_polyfactory_session(session)
+
+### activemodel.pytest.transaction.set_factory_sessions(session)
+
+set all supported model factories to use the provided session
+
+### activemodel.pytest.transaction.test_session()
+
+Configures a session-global database session for a test.
+
+Use this as a fixture using db_session. This method is meant to be used as a context manager.
+
+This is useful for tests that need to interact with the database multiple times before calling application code
+that uses the objects. This is intended to be used outside of an integration test. Integration tests generally
+do not use database transactions to clean the database and instead use truncation. The transaction fixture
+configures a session, which is then used here. This method requires that this global test session is already
+configured. If the transaction fixture is not used, then there is no session available for use and this will fail.
+
+ActiveModelFactory.save() does this automatically, but if you need to manually create objects
+and persist them to a DB, you can run into issues with the simple expunge() call
+used to reassociate an object with a new session. If there are more complex relationships
+this approach will fail and give you detached object errors.
+
+```pycon
+>>> from activemodel.pytest import test_session
+>>> def test_the_thing():
+>>>     with test_session():
+...         obj = MyModel(name="test").save()
+...         obj2 = MyModelFactory.save()
+```
+
+More information: [https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b](https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b)
+
+### activemodel.pytest.transaction.database_truncate_session()
+
+Provides a database session for testing when using a truncation cleaning strategy.
+
+When not using a transaction cleaning strategy, no global test session is set
+
+### activemodel.pytest.transaction.database_reset_transaction()
+
+Wrap all database interactions for a given test in a nested transaction and roll it back after the test.
+
+This is provided as a function, not a fixture, since you’ll need to determine when a integration test is run. Here’s
+an example of how to build a fixture from this method:
+
+```pycon
+>>> from activemodel.pytest import database_reset_transaction
+>>> database_reset_transaction = pytest.fixture(scope="function", autouse=True)(database_reset_transaction)
+```
+
+Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process because the
+same session is not shared across python processes. For this scenario, use the truncate method.
+
+Note that using fork as a multiprocess start method is dangerous. Use spawn. This link has more documentation
+around this topic:
+
+[https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py](https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py)
+
+References:
+
+- [https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created](https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created)
+- [https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/](https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/)
+- [https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77](https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77)
+- [https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46](https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46)
+- [https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn](https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn)
+
+Using a named SAVEPOINT does not give us anything extra, so we are not using it.
+
+
+# index.html.md
+
+# activemodel.pytest.factories
+
+Notes on polyfactory:
+
+1. is_supported_type validates that the class can be used to generate a factory
+[https://github.com/litestar-org/polyfactory/issues/655#issuecomment-2727450854](https://github.com/litestar-org/polyfactory/issues/655#issuecomment-2727450854)
+
+## Classes
+
+| [`SQLModelFactory`](#activemodel.pytest.factories.SQLModelFactory)       | Base factory for SQLModel models:   |
+|--------------------------------------------------------------------------|-------------------------------------|
+| [`ActiveModelFactory`](#activemodel.pytest.factories.ActiveModelFactory) | Base factory for SQLModel models:   |
+
+## Module Contents
+
+### *class* activemodel.pytest.factories.SQLModelFactory
+
+Bases: `polyfactory.factories.pydantic_factory.ModelFactory`[`T`]
+
+Base factory for SQLModel models:
+
+1. Ability to ignore all relationship fks
+2. Option to ignore all pks
+
+#### \_\_is_base_factory_\_ *= True*
+
+Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.
+
+#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Determine whether to set a value for a given field_name.
+This is an override of BaseFactory.should_set_field_value.
+
+* **Parameters:**
+  * **field_meta** – FieldMeta instance.
+  * **kwargs** – Any kwargs passed to the factory.
+* **Returns:**
+  A boolean determining whether a value should be set for the given field_meta.
+
+### *class* activemodel.pytest.factories.ActiveModelFactory
+
+Bases: [`SQLModelFactory`](#activemodel.pytest.factories.SQLModelFactory)[`T`]
+
+Base factory for SQLModel models:
+
+1. Ability to ignore all relationship fks
+2. Option to ignore all pks
+
+#### \_\_is_base_factory_\_ *= True*
+
+Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.
+
+#### \_\_sqlalchemy_session_\_ *= None*
+
+#### *classmethod* save(\*args, \*\*kwargs) → [T](../truncate/index.md#activemodel.pytest.truncate.T)
+
+Builds and persists a new model to the database.
+
+Where this gets tricky, is this can be called multiple times within the same callstack. This can happen when
+a factory uses other factories to create relationships. This is fine if \_\_sqlalchemy_session_\_ is set, but
+if it’s not (in the case of a truncation DB strategy) you’ll run into issues.
+
+In a truncation strategy, the \_\_sqlalchemy_session_\_ is set to None.
+
+#### *classmethod* post_save(model: [T](../truncate/index.md#activemodel.pytest.truncate.T)) → [T](../truncate/index.md#activemodel.pytest.truncate.T)
+
+Post-save hook for performing additional actions after the model has been saved to the database. This is useful
+for cases where you need to perform additional operations that require the model be persisted in the database.
+
+The implementation of this method should return a refreshed instance of the model if that’s necessary. For
+example, if your post_save hook triggers another factory save(), the current model will likely be expired
+and detached, leading to a DetachedInstanceError when accessing it later.
+
+To avoid this, return model.refresh() at the end of your implementation.
+
+#### *classmethod* foreign_key_typeid()
+
+Return a random type id for the foreign key on this model.
+
+This is helpful for generating TypeIDs for testing 404s, parsing, manually settings, etc
+
+#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
+
+Determine whether to set a value for a given field_name.
+This is an override of BaseFactory.should_set_field_value.
+
+* **Parameters:**
+  * **field_meta** – FieldMeta instance.
+  * **kwargs** – Any kwargs passed to the factory.
+* **Returns:**
+  A boolean determining whether a value should be set for the given field_meta.
+
+
+# index.html.md
+
+# activemodel.types.typeid
+
+A SQLAlchemy TypeDecorator for storing TypeIDs in the database as native UUID fields, with the prefix handled in Python.
+
+Adapted from:
+
+[https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py](https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py)
+
+## Classes
+
+| [`TypeIDType`](#activemodel.types.typeid.TypeIDType)   | A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.   |
+|--------------------------------------------------------|---------------------------------------------------------------------------|
+
+## Functions
+
+| [`TypeIDPrimaryKey`](#activemodel.types.typeid.TypeIDPrimaryKey)(→ Any)   | Field factory for the declarative form:   |
+|---------------------------------------------------------------------------|-------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.types.typeid.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None), \*args, \_raw: [bool](https://docs.python.org/3/library/functions.html#bool) = False, \*\*kwargs)
+
+Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
+
+A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.
+
+The prefix will not be persisted to the database, instead the database-native UUID field will be used.
+At retrieval time a TypeID will be constructed (in python) based on the configured prefix and the UUID
+value from the database.
+
+For example:
+
+```pycon
+>>> id = mapped_column(
+>>>     TypeIDType("user"),
+>>>     primary_key=True,
+>>>     default=lambda: TypeID("user")
+>>> )
+```
+
+Will result in TypeIDs such as “user_01h45ytscbebyvny4gc8cr8ma2”. There’s a mixin provided to make it easy
+to add a id pk field to your model with a specific prefix.
+
+#### impl
+
+#### cache_ok *= True*
+
+Indicate if statements using this `ExternalType` are “safe to
+cache”.
+
+The default value `None` will emit a warning and then not allow caching
+of a statement which includes this type.   Set to `False` to disable
+statements using this type from being cached at all without a warning.
+When set to `True`, the object’s class and selected elements from its
+state will be used as part of the cache key.  For example, using a
+`TypeDecorator`:
+
+```default
+class MyType(TypeDecorator):
+    impl = String
+
+    cache_ok = True
+
+    def __init__(self, choices):
+        self.choices = tuple(choices)
+        self.internal_only = True
+```
+
+The cache key for the above type would be equivalent to:
+
+```default
+>>> MyType(["a", "b", "c"])._static_cache_key
+(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
+```
+
+The caching scheme will extract attributes from the type that correspond
+to the names of parameters in the `__init__()` method.  Above, the
+“choices” attribute becomes part of the cache key but “internal_only”
+does not, because there is no parameter named “internal_only”.
+
+The requirements for cacheable elements is that they are hashable
+and also that they indicate the same SQL rendered for expressions using
+this type every time for a given cache value.
+
+To accommodate for datatypes that refer to unhashable structures such
+as dictionaries, sets and lists, these objects can be made “cacheable”
+by assigning hashable structures to the attributes whose names
+correspond with the names of the arguments.  For example, a datatype
+which accepts a dictionary of lookup values may publish this as a sorted
+series of tuples.   Given a previously un-cacheable type as:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    this is the non-cacheable version, as "self.lookup" is not
+    hashable.
+
+    """
+
+    def __init__(self, lookup):
+        self.lookup = lookup
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
+```
+
+Where “lookup” is a dictionary.  The type will not be able to generate
+a cache key:
+
+```default
+>>> type_ = LookupType({"a": 10, "b": 20})
+>>> type_._static_cache_key
+<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
+produce a cache key because the ``cache_ok`` flag is not set to True.
+Set this flag to True if this type object's state is safe to use
+in a cache key, or False to disable this warning.
+symbol('no_cache')
+```
+
+If we **did** set up such a cache key, it wouldn’t be usable. We would
+get a tuple structure that contains a dictionary inside of it, which
+cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
+statement cache, since Python dictionaries aren’t hashable:
+
+```default
+>>> # set cache_ok = True
+>>> type_.cache_ok = True
+
+>>> # this is the cache key it would generate
+>>> key = type_._static_cache_key
+>>> key
+(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
+
+>>> # however this key is not hashable, will fail when used with
+>>> # SQLAlchemy statement cache
+>>> some_cache = {key: "some sql value"}
+Traceback (most recent call last): File "<stdin>", line 1,
+in <module> TypeError: unhashable type: 'dict'
+```
+
+The type may be made cacheable by assigning a sorted tuple of tuples
+to the “.lookup” attribute:
+
+```default
+class LookupType(UserDefinedType):
+    """a custom type that accepts a dictionary as a parameter.
+
+    The dictionary is stored both as itself in a private variable,
+    and published in a public variable as a sorted tuple of tuples,
+    which is hashable and will also return the same value for any
+    two equivalent dictionaries.  Note it assumes the keys and
+    values of the dictionary are themselves hashable.
+
+    """
+
+    cache_ok = True
+
+    def __init__(self, lookup):
+        self._lookup = lookup
+
+        # assume keys/values of "lookup" are hashable; otherwise
+        # they would also need to be converted in some way here
+        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
+
+    def get_col_spec(self, **kw):
+        return "VARCHAR(255)"
+
+    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
+```
+
+Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
+
+```default
+>>> LookupType({"a": 10, "b": 20})._static_cache_key
+(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
+```
+
+#### Versionadded
+Added in version 1.4.14: - added the `cache_ok` flag to allow
+some configurability of caching for `TypeDecorator` classes.
+
+#### Versionadded
+Added in version 1.4.28: - added the `ExternalType` mixin which
+generalizes the `cache_ok` flag to both the `TypeDecorator`
+and `UserDefinedType` classes.
+
+#### SEE ALSO
+[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
+
+#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None)*
+
+#### *classmethod* raw() → Self
+
+#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+
+#### process_bind_param(value, dialect)
+
+This is run when a search query is built or …
+
+#### process_result_value(value, dialect)
+
+convert a raw UUID, without a prefix, to a TypeID with the correct prefix
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_core_schema: pydantic_core.core_schema.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+
+This fixes the following error: ‘Unable to serialize unknown type’ by telling pydantic how to serialize this field.
+
+Note that TypeIDType MUST be the type of the field in SQLModel otherwise you’ll get serialization errors.
+This is done automatically for the mixin but for any relationship fields you’ll need to specify the type explicitly.
+
+- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88)
+- [https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py](https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py)
+- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14)
+- [https://github.com/pydantic/pydantic/issues/10060](https://github.com/pydantic/pydantic/issues/10060)
+- [https://github.com/fastapi/fastapi/discussions/10027](https://github.com/fastapi/fastapi/discussions/10027)
+- [https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50](https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50)
+
+#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+
+Called when generating the openapi schema. This overrides the function-plain type which
+is generated by the no_info_plain_validator_function.
+
+This logic seems to be a hot part of the codebase, so I’d expect this to break as pydantic
+fastapi continue to evolve.
+
+Note that this method can return multiple types. A return value can be as simple as:
+
+```pycon
+>>> {"type": "string"}
+```
+
+Or, you could return a more specific JSON schema type:
+
+```pycon
+>>> core_schema.uuid_schema()
+```
+
+The problem with using something like uuid_schema is the specific patterns
+
+[https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153](https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153)
+
+### activemodel.types.typeid.TypeIDPrimaryKey(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str)) → Any
+
+Field factory for the declarative form:
+
+> id: TypeIDField[Literal[“user”]] = TypeIDPrimaryKey(“user”)
+
+Use this when you want static type-checking of the prefix.
+
+Returns Any so that type checkers accept it as a default value for any
+annotation (e.g. TypeIDField[Literal[“user”]]), matching the same pattern
+used by pydantic’s own Field() factory.
+
+Returns Any (not TypeID) because Pydantic discovers fields via \_\_annotations_\_ at class creation —
+the annotation is required for field registration, so the return type cannot replace it.
+
+
+# index.html.md
+
+# activemodel.types.sqlalchemy_protocol
+
+Auto-generated runtime companion for sqlalchemy_protocol.pyi.
+
+This module stays intentionally minimal so activemodel.query_wrapper can
+import SQLAlchemyQueryMethods at runtime without importing QueryWrapper.
+Type checkers should read sqlalchemy_protocol.pyi for the generated method
+signatures forwarded through QueryWrapper._\_getattr_\_.
+
+Do not edit this file directly. Run just generate-types to regenerate both
+files.
+
+## Classes
+
+| [`SQLAlchemyQueryMethods`](#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)   | Runtime protocol placeholder for QueryWrapper's forwarded methods.   |
+|---------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods
+
+Bases: `Protocol`
+
+Runtime protocol placeholder for QueryWrapper’s forwarded methods.
+
+
+# index.html.md
+
+# activemodel.types.typeid_patch
+
+Add pydantic v2 support for TypeID.
+
+* The TypeID package has a TypeIDField[Literal[“prefix”]] support, but this is not a subclass of TypeID
+  which causes errors when a TypeID object is assigned to a field of that type.
+* TypeIDField generates a unique type and embeds the prefix in the type, which is how how the instance of the object
+  can validate incoming strs as having the correct prefix.
+* This isn’t exactly required in our case since the prefix validation is handled within the SQLAlchemy type adapter.
+* However,
+
+## Attributes
+
+| [`existing_schema`](#activemodel.types.typeid_patch.existing_schema)           |    |
+|--------------------------------------------------------------------------------|----|
+| [`existing_json_schema`](#activemodel.types.typeid_patch.existing_json_schema) |    |
+
+## Module Contents
+
+### *classmethod* activemodel.types.typeid_patch.get_pydantic_core_schema(source_type: Any, handler: [pydantic.GetCoreSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetCoreSchemaHandler)) → pydantic_core.CoreSchema
+
+### *classmethod* activemodel.types.typeid_patch.get_pydantic_json_schema(core_schema_: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic.json_schema.JsonSchemaValue
+
+### activemodel.types.typeid_patch.existing_schema
+
+### activemodel.types.typeid_patch.existing_json_schema
 
 
 # index.html.md
@@ -2024,76 +2610,30 @@ behavior, such as transforming or deserializing data.
 
 # index.html.md
 
-# activemodel.types.sqlalchemy_protocol
-
-Auto-generated runtime companion for sqlalchemy_protocol.pyi.
-
-This module stays intentionally minimal so activemodel.query_wrapper can
-import SQLAlchemyQueryMethods at runtime without importing QueryWrapper.
-Type checkers should read sqlalchemy_protocol.pyi for the generated method
-signatures forwarded through QueryWrapper._\_getattr_\_.
-
-Do not edit this file directly. Run just generate-types to regenerate both
-files.
+# activemodel.types.whenever.plain_date_time_type
 
 ## Classes
 
-| [`SQLAlchemyQueryMethods`](#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)   | Runtime protocol placeholder for QueryWrapper's forwarded methods.   |
-|---------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| [`PlainDateTimeType`](#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType)   | SQLAlchemy TypeDecorator for whenever.PlainDateTime.   |
+|---------------------------------------------------------------------------------------------|--------------------------------------------------------|
 
 ## Module Contents
 
-### *class* activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods
-
-Bases: `Protocol`
-
-Runtime protocol placeholder for QueryWrapper’s forwarded methods.
-
-
-# index.html.md
-
-# activemodel.types.typeid
-
-A SQLAlchemy TypeDecorator for storing TypeIDs in the database as native UUID fields, with the prefix handled in Python.
-
-Adapted from:
-
-[https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py](https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py)
-
-## Classes
-
-| [`TypeIDType`](#activemodel.types.typeid.TypeIDType)   | A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.   |
-|--------------------------------------------------------|---------------------------------------------------------------------------|
-
-## Functions
-
-| [`TypeIDPrimaryKey`](#activemodel.types.typeid.TypeIDPrimaryKey)(→ Any)   | Field factory for the declarative form:   |
-|---------------------------------------------------------------------------|-------------------------------------------|
-
-## Module Contents
-
-### *class* activemodel.types.typeid.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str), \*args, \*\*kwargs)
+### *class* activemodel.types.whenever.plain_date_time_type.PlainDateTimeType(\*args: Any, \*\*kwargs: Any)
 
 Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
 
-A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.
+SQLAlchemy TypeDecorator for whenever.PlainDateTime.
 
-The prefix will not be persisted to the database, instead the database-native UUID field will be used.
-At retrieval time a TypeID will be constructed (in python) based on the configured prefix and the UUID
-value from the database.
+Stores as a naive datetime in the database.
+Reconstructs as a PlainDateTime on read.
 
-For example:
+This is useful for SQLite and other databases that do not have robust
+timezone-aware datetime support, or for fields that are intentionally meant
+to represent a local wall-clock time without timezone information.
 
-```pycon
->>> id = mapped_column(
->>>     TypeIDType("user"),
->>>     primary_key=True,
->>>     default=lambda: TypeID("user")
->>> )
-```
-
-Will result in TypeIDs such as “user_01h45ytscbebyvny4gc8cr8ma2”. There’s a mixin provided to make it easy
-to add a id pk field to your model with a specific prefix.
+Usage:
+: local_time: PlainDateTime | None = None
 
 #### impl
 
@@ -2244,100 +2784,57 @@ and `UserDefinedType` classes.
 #### SEE ALSO
 [SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
 
-#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str)*
-
-#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
-
 #### process_bind_param(value, dialect)
 
-This is run when a search query is built or …
+Receive a bound parameter value to be converted.
+
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for incoming data values.
+This method is called at **statement execution time** and is passed
+the literal Python data value which is to be associated with a bound
+parameter in the statement.
+
+The operation could be anything desired to perform custom
+behavior, such as transforming or serializing data.
+This could also be used as a hook for validating logic.
+
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
+
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_result_value()`
 
 #### process_result_value(value, dialect)
 
-convert a raw UUID, without a prefix, to a TypeID with the correct prefix
+Receive a result-row column value to be converted.
 
-#### *classmethod* \_\_get_pydantic_core_schema_\_(\_core_schema: pydantic_core.core_schema.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
+Custom subclasses of `_types.TypeDecorator` should override
+this method to provide custom behaviors for data values
+being received in result rows coming from the database.
+This method is called at **result fetching time** and is passed
+the literal Python data value that’s extracted from a database result
+row.
 
-This fixes the following error: ‘Unable to serialize unknown type’ by telling pydantic how to serialize this field.
+The operation could be anything desired to perform custom
+behavior, such as transforming or deserializing data.
 
-Note that TypeIDType MUST be the type of the field in SQLModel otherwise you’ll get serialization errors.
-This is done automatically for the mixin but for any relationship fields you’ll need to specify the type explicitly.
+* **Parameters:**
+  * **value** – Data to operate upon, of any type expected by
+    this method in the subclass.  Can be `None`.
+  * **dialect** – the `Dialect` in use.
 
-- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/server/value_objects/steam_id.py#L88)
-- [https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py](https://github.com/hhimanshu/uv-workspaces/blob/main/packages/api/src/_lib/dto/typeid_field.py)
-- [https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14](https://github.com/karma-dev-team/karma-system/blob/ee0c1a06ab2cb7aaca6dc4818312e68c5c623365/app/base/typeid/type_id.py#L14)
-- [https://github.com/pydantic/pydantic/issues/10060](https://github.com/pydantic/pydantic/issues/10060)
-- [https://github.com/fastapi/fastapi/discussions/10027](https://github.com/fastapi/fastapi/discussions/10027)
-- [https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50](https://github.com/alice-biometrics/petisco/blob/b01ef1b84949d156f73919e126ed77aa8e0b48dd/petisco/base/domain/model/uuid.py#L50)
+#### SEE ALSO
+[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
+
+`_types.TypeDecorator.process_bind_param()`
+
+#### *classmethod* \_\_get_pydantic_core_schema_\_(\_source_type: [object](https://docs.python.org/3/library/functions.html#object), handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
 
 #### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
-
-Called when generating the openapi schema. This overrides the function-plain type which
-is generated by the no_info_plain_validator_function.
-
-This logic seems to be a hot part of the codebase, so I’d expect this to break as pydantic
-fastapi continue to evolve.
-
-Note that this method can return multiple types. A return value can be as simple as:
-
-```pycon
->>> {"type": "string"}
-```
-
-Or, you could return a more specific JSON schema type:
-
-```pycon
->>> core_schema.uuid_schema()
-```
-
-The problem with using something like uuid_schema is the specific patterns
-
-[https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153](https://github.com/BeanieODM/beanie/blob/2190cd9d1fc047af477d5e6897cc283799f54064/beanie/odm/fields.py#L153)
-
-### activemodel.types.typeid.TypeIDPrimaryKey(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str)) → Any
-
-Field factory for the declarative form:
-
-> id: TypeIDField[Literal[“user”]] = TypeIDPrimaryKey(“user”)
-
-Use this when you want static type-checking of the prefix.
-
-Returns Any so that type checkers accept it as a default value for any
-annotation (e.g. TypeIDField[Literal[“user”]]), matching the same pattern
-used by pydantic’s own Field() factory.
-
-Returns Any (not TypeID) because Pydantic discovers fields via \_\_annotations_\_ at class creation —
-the annotation is required for field registration, so the return type cannot replace it.
-
-
-# index.html.md
-
-# activemodel.types.typeid_patch
-
-Add pydantic v2 support for TypeID.
-
-* The TypeID package has a TypeIDField[Literal[“prefix”]] support, but this is not a subclass of TypeID
-  which causes errors when a TypeID object is assigned to a field of that type.
-* TypeIDField generates a unique type and embeds the prefix in the type, which is how how the instance of the object
-  can validate incoming strs as having the correct prefix.
-* This isn’t exactly required in our case since the prefix validation is handled within the SQLAlchemy type adapter.
-* However,
-
-## Attributes
-
-| [`existing_schema`](#activemodel.types.typeid_patch.existing_schema)           |    |
-|--------------------------------------------------------------------------------|----|
-| [`existing_json_schema`](#activemodel.types.typeid_patch.existing_json_schema) |    |
-
-## Module Contents
-
-### *classmethod* activemodel.types.typeid_patch.get_pydantic_core_schema(source_type: Any, handler: [pydantic.GetCoreSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetCoreSchemaHandler)) → pydantic_core.CoreSchema
-
-### *classmethod* activemodel.types.typeid_patch.get_pydantic_json_schema(core_schema_: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic.json_schema.JsonSchemaValue
-
-### activemodel.types.typeid_patch.existing_schema
-
-### activemodel.types.typeid_patch.existing_json_schema
 
 
 # index.html.md
@@ -2794,231 +3291,97 @@ behavior, such as transforming or deserializing data.
 
 # index.html.md
 
-# activemodel.types.whenever.plain_date_time_type
+# activemodel.patches.get_column_from_field_patch
 
-## Classes
+Pydantic has a great DX for adding docstrings to fields. This allows devs to easily document the fields of a model.
 
-| [`PlainDateTimeType`](#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType)   | SQLAlchemy TypeDecorator for whenever.PlainDateTime.   |
-|---------------------------------------------------------------------------------------------|--------------------------------------------------------|
+Making sure these docstrings make their way to the DB schema is helpful for a bunch of reasons (LLM understanding being one of them).
+
+This patch mutates a core sqlmodel function which translates pydantic FieldInfo objects into sqlalchemy Column objects. It adds the field description as a comment to the column.
+
+Note that FieldInfo *from pydantic* is used when a “bare” field is defined. This can be confusing, because when inspecting model fields, the class name looks exactly the same.
+
+Some ideas for this originally sourced from: [https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633](https://github.com/fastapi/sqlmodel/issues/492#issuecomment-2489858633)
+
+## Functions
+
+| [`get_column_from_field`](#activemodel.patches.get_column_from_field_patch.get_column_from_field)(→ sqlalchemy.Column)   |    |
+|--------------------------------------------------------------------------------------------------------------------------|----|
 
 ## Module Contents
 
-### *class* activemodel.types.whenever.plain_date_time_type.PlainDateTimeType(\*args: Any, \*\*kwargs: Any)
+### activemodel.patches.get_column_from_field_patch.get_column_from_field(field: Any) → sqlalchemy.Column
 
-Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
 
-SQLAlchemy TypeDecorator for whenever.PlainDateTime.
+# index.html.md
 
-Stores as a naive datetime in the database.
-Reconstructs as a PlainDateTime on read.
+# activemodel.patches.get_sqlalchemy_type_patch
 
-This is useful for SQLite and other databases that do not have robust
-timezone-aware datetime support, or for fields that are intentionally meant
-to represent a local wall-clock time without timezone information.
+Extends SQLModel’s get_sqlalchemy_type to recognize whenever datetime types.
 
-Usage:
-: local_time: PlainDateTime | None = None
+This allows using whenever.Instant, whenever.PlainDateTime, and
+whenever.ZonedDateTime as bare field
+type annotations without needing to specify sa_type= explicitly:
 
-#### impl
+> class MyModel(BaseModel, table=True):
+> : created_at: whenever.Instant | None = None
+>   local_time: whenever.PlainDateTime | None = None
+>   scheduled_at: whenever.ZonedDateTime | None = None
 
-#### cache_ok *= True*
+## Functions
 
-Indicate if statements using this `ExternalType` are “safe to
-cache”.
+| [`get_sqlalchemy_type`](#activemodel.patches.get_sqlalchemy_type_patch.get_sqlalchemy_type)(field)   |    |
+|------------------------------------------------------------------------------------------------------|----|
 
-The default value `None` will emit a warning and then not allow caching
-of a statement which includes this type.   Set to `False` to disable
-statements using this type from being cached at all without a warning.
-When set to `True`, the object’s class and selected elements from its
-state will be used as part of the cache key.  For example, using a
-`TypeDecorator`:
+## Module Contents
 
-```default
-class MyType(TypeDecorator):
-    impl = String
+### activemodel.patches.get_sqlalchemy_type_patch.get_sqlalchemy_type(field)
 
-    cache_ok = True
 
-    def __init__(self, choices):
-        self.choices = tuple(choices)
-        self.internal_only = True
+# index.html.md
+
+# activemodel.mixins.typeid
+
+## Functions
+
+| [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
+|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
+
+Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
+
+
+# index.html.md
+
+# activemodel.mixins.timestamps
+
+## Classes
+
+| [`TimestampsMixin`](#activemodel.mixins.timestamps.TimestampsMixin)   | Simple created at and updated at timestamps. Mix them into your model:   |
+|-----------------------------------------------------------------------|--------------------------------------------------------------------------|
+
+## Module Contents
+
+### *class* activemodel.mixins.timestamps.TimestampsMixin
+
+Simple created at and updated at timestamps. Mix them into your model:
+
+```pycon
+>>> class MyModel(TimestampsMixin, SQLModel):
+>>>    pass
 ```
 
-The cache key for the above type would be equivalent to:
+Notes:
 
-```default
->>> MyType(["a", "b", "c"])._static_cache_key
-(<class '__main__.MyType'>, ('choices', ('a', 'b', 'c')))
-```
+- Originally pulled from: [https://github.com/tiangolo/sqlmodel/issues/252](https://github.com/tiangolo/sqlmodel/issues/252)
+- Related issue: [https://github.com/fastapi/sqlmodel/issues/539](https://github.com/fastapi/sqlmodel/issues/539)
 
-The caching scheme will extract attributes from the type that correspond
-to the names of parameters in the `__init__()` method.  Above, the
-“choices” attribute becomes part of the cache key but “internal_only”
-does not, because there is no parameter named “internal_only”.
+#### created_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
 
-The requirements for cacheable elements is that they are hashable
-and also that they indicate the same SQL rendered for expressions using
-this type every time for a given cache value.
-
-To accommodate for datatypes that refer to unhashable structures such
-as dictionaries, sets and lists, these objects can be made “cacheable”
-by assigning hashable structures to the attributes whose names
-correspond with the names of the arguments.  For example, a datatype
-which accepts a dictionary of lookup values may publish this as a sorted
-series of tuples.   Given a previously un-cacheable type as:
-
-```default
-class LookupType(UserDefinedType):
-    """a custom type that accepts a dictionary as a parameter.
-
-    this is the non-cacheable version, as "self.lookup" is not
-    hashable.
-
-    """
-
-    def __init__(self, lookup):
-        self.lookup = lookup
-
-    def get_col_spec(self, **kw):
-        return "VARCHAR(255)"
-
-    def bind_processor(self, dialect): ...  # works with "self.lookup" ...
-```
-
-Where “lookup” is a dictionary.  The type will not be able to generate
-a cache key:
-
-```default
->>> type_ = LookupType({"a": 10, "b": 20})
->>> type_._static_cache_key
-<stdin>:1: SAWarning: UserDefinedType LookupType({'a': 10, 'b': 20}) will not
-produce a cache key because the ``cache_ok`` flag is not set to True.
-Set this flag to True if this type object's state is safe to use
-in a cache key, or False to disable this warning.
-symbol('no_cache')
-```
-
-If we **did** set up such a cache key, it wouldn’t be usable. We would
-get a tuple structure that contains a dictionary inside of it, which
-cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
-statement cache, since Python dictionaries aren’t hashable:
-
-```default
->>> # set cache_ok = True
->>> type_.cache_ok = True
-
->>> # this is the cache key it would generate
->>> key = type_._static_cache_key
->>> key
-(<class '__main__.LookupType'>, ('lookup', {'a': 10, 'b': 20}))
-
->>> # however this key is not hashable, will fail when used with
->>> # SQLAlchemy statement cache
->>> some_cache = {key: "some sql value"}
-Traceback (most recent call last): File "<stdin>", line 1,
-in <module> TypeError: unhashable type: 'dict'
-```
-
-The type may be made cacheable by assigning a sorted tuple of tuples
-to the “.lookup” attribute:
-
-```default
-class LookupType(UserDefinedType):
-    """a custom type that accepts a dictionary as a parameter.
-
-    The dictionary is stored both as itself in a private variable,
-    and published in a public variable as a sorted tuple of tuples,
-    which is hashable and will also return the same value for any
-    two equivalent dictionaries.  Note it assumes the keys and
-    values of the dictionary are themselves hashable.
-
-    """
-
-    cache_ok = True
-
-    def __init__(self, lookup):
-        self._lookup = lookup
-
-        # assume keys/values of "lookup" are hashable; otherwise
-        # they would also need to be converted in some way here
-        self.lookup = tuple((key, lookup[key]) for key in sorted(lookup))
-
-    def get_col_spec(self, **kw):
-        return "VARCHAR(255)"
-
-    def bind_processor(self, dialect): ...  # works with "self._lookup" ...
-```
-
-Where above, the cache key for `LookupType({"a": 10, "b": 20})` will be:
-
-```default
->>> LookupType({"a": 10, "b": 20})._static_cache_key
-(<class '__main__.LookupType'>, ('lookup', (('a', 10), ('b', 20))))
-```
-
-#### Versionadded
-Added in version 1.4.14: - added the `cache_ok` flag to allow
-some configurability of caching for `TypeDecorator` classes.
-
-#### Versionadded
-Added in version 1.4.28: - added the `ExternalType` mixin which
-generalizes the `cache_ok` flag to both the `TypeDecorator`
-and `UserDefinedType` classes.
-
-#### SEE ALSO
-[SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
-
-#### process_bind_param(value, dialect)
-
-Receive a bound parameter value to be converted.
-
-Custom subclasses of `_types.TypeDecorator` should override
-this method to provide custom behaviors for incoming data values.
-This method is called at **statement execution time** and is passed
-the literal Python data value which is to be associated with a bound
-parameter in the statement.
-
-The operation could be anything desired to perform custom
-behavior, such as transforming or serializing data.
-This could also be used as a hook for validating logic.
-
-* **Parameters:**
-  * **value** – Data to operate upon, of any type expected by
-    this method in the subclass.  Can be `None`.
-  * **dialect** – the `Dialect` in use.
-
-#### SEE ALSO
-[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
-
-`_types.TypeDecorator.process_result_value()`
-
-#### process_result_value(value, dialect)
-
-Receive a result-row column value to be converted.
-
-Custom subclasses of `_types.TypeDecorator` should override
-this method to provide custom behaviors for data values
-being received in result rows coming from the database.
-This method is called at **result fetching time** and is passed
-the literal Python data value that’s extracted from a database result
-row.
-
-The operation could be anything desired to perform custom
-behavior, such as transforming or deserializing data.
-
-* **Parameters:**
-  * **value** – Data to operate upon, of any type expected by
-    this method in the subclass.  Can be `None`.
-  * **dialect** – the `Dialect` in use.
-
-#### SEE ALSO
-[Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
-
-`_types.TypeDecorator.process_bind_param()`
-
-#### *classmethod* \_\_get_pydantic_core_schema_\_(\_source_type: [object](https://docs.python.org/3/library/functions.html#object), handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
-
-#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))
+#### updated_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
 
 
 # index.html.md
@@ -3089,52 +3452,6 @@ Call soft_delete() to timestamp the record and persist that change.
 #### soft_delete() → [T](../../pytest/truncate/index.md#activemodel.pytest.truncate.T)
 
 Timestamp deleted_at and persist the record.
-
-
-# index.html.md
-
-# activemodel.mixins.typeid
-
-## Functions
-
-| [`TypeIDMixin`](#activemodel.mixins.typeid.TypeIDMixin)(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.   |
-|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-
-## Module Contents
-
-### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
-
-Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
-
-
-# index.html.md
-
-# activemodel.mixins.timestamps
-
-## Classes
-
-| [`TimestampsMixin`](#activemodel.mixins.timestamps.TimestampsMixin)   | Simple created at and updated at timestamps. Mix them into your model:   |
-|-----------------------------------------------------------------------|--------------------------------------------------------------------------|
-
-## Module Contents
-
-### *class* activemodel.mixins.timestamps.TimestampsMixin
-
-Simple created at and updated at timestamps. Mix them into your model:
-
-```pycon
->>> class MyModel(TimestampsMixin, SQLModel):
->>>    pass
-```
-
-Notes:
-
-- Originally pulled from: [https://github.com/tiangolo/sqlmodel/issues/252](https://github.com/tiangolo/sqlmodel/issues/252)
-- Related issue: [https://github.com/fastapi/sqlmodel/issues/539](https://github.com/fastapi/sqlmodel/issues/539)
-
-#### created_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
-
-#### updated_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
 
 
 # index.html.md
@@ -3232,319 +3549,6 @@ True if at least one field was mutated.
 
 This is an escape hatch for code that needs to know about pending JSON mutations
 before the automatic before_flush detection fires.
-
-
-# index.html.md
-
-# activemodel.pytest.transaction
-
-## Attributes
-
-| [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
-|----------------------------------------------------------------------------|----|
-| [`polyfactory_exists`](#activemodel.pytest.transaction.polyfactory_exists) |    |
-
-## Functions
-
-| [`set_factory_session`](#activemodel.pytest.transaction.set_factory_session)(session)         |                                                                                                          |
-|-----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| [`set_polyfactory_session`](#activemodel.pytest.transaction.set_polyfactory_session)(session) |                                                                                                          |
-| [`set_factory_sessions`](#activemodel.pytest.transaction.set_factory_sessions)(session)       | set all supported model factories to use the provided session                                            |
-| [`test_session`](#activemodel.pytest.transaction.test_session)()                              | Configures a session-global database session for a test.                                                 |
-| [`database_truncate_session`](#activemodel.pytest.transaction.database_truncate_session)()    | Provides a database session for testing when using a truncation cleaning strategy.                       |
-| [`database_reset_transaction`](#activemodel.pytest.transaction.database_reset_transaction)()  | Wrap all database interactions for a given test in a nested transaction and roll it back after the test. |
-
-## Module Contents
-
-### activemodel.pytest.transaction.factory_exists *= None*
-
-### activemodel.pytest.transaction.polyfactory_exists *= None*
-
-### activemodel.pytest.transaction.set_factory_session(session)
-
-### activemodel.pytest.transaction.set_polyfactory_session(session)
-
-### activemodel.pytest.transaction.set_factory_sessions(session)
-
-set all supported model factories to use the provided session
-
-### activemodel.pytest.transaction.test_session()
-
-Configures a session-global database session for a test.
-
-Use this as a fixture using db_session. This method is meant to be used as a context manager.
-
-This is useful for tests that need to interact with the database multiple times before calling application code
-that uses the objects. This is intended to be used outside of an integration test. Integration tests generally
-do not use database transactions to clean the database and instead use truncation. The transaction fixture
-configures a session, which is then used here. This method requires that this global test session is already
-configured. If the transaction fixture is not used, then there is no session available for use and this will fail.
-
-ActiveModelFactory.save() does this automatically, but if you need to manually create objects
-and persist them to a DB, you can run into issues with the simple expunge() call
-used to reassociate an object with a new session. If there are more complex relationships
-this approach will fail and give you detached object errors.
-
-```pycon
->>> from activemodel.pytest import test_session
->>> def test_the_thing():
->>>     with test_session():
-...         obj = MyModel(name="test").save()
-...         obj2 = MyModelFactory.save()
-```
-
-More information: [https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b](https://grok.com/share/bGVnYWN5_c21dd39f-84a7-44cf-a05b-9b26c8febb0b)
-
-### activemodel.pytest.transaction.database_truncate_session()
-
-Provides a database session for testing when using a truncation cleaning strategy.
-
-When not using a transaction cleaning strategy, no global test session is set
-
-### activemodel.pytest.transaction.database_reset_transaction()
-
-Wrap all database interactions for a given test in a nested transaction and roll it back after the test.
-
-This is provided as a function, not a fixture, since you’ll need to determine when a integration test is run. Here’s
-an example of how to build a fixture from this method:
-
-```pycon
->>> from activemodel.pytest import database_reset_transaction
->>> database_reset_transaction = pytest.fixture(scope="function", autouse=True)(database_reset_transaction)
-```
-
-Transaction-based DB cleaning does *not* work if the DB mutations are happening in a separate process because the
-same session is not shared across python processes. For this scenario, use the truncate method.
-
-Note that using fork as a multiprocess start method is dangerous. Use spawn. This link has more documentation
-around this topic:
-
-[https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py](https://github.com/iloveitaly/python-starter-template/blob/master/app/configuration/lang.py)
-
-References:
-
-- [https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created](https://stackoverflow.com/questions/62433018/how-to-make-sqlalchemy-transaction-rollback-drop-tables-it-created)
-- [https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/](https://aalvarez.me/posts/setting-up-a-sqlalchemy-and-pytest-based-test-suite/)
-- [https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77](https://github.com/nickjj/docker-flask-example/blob/93af9f4fbf185098ffb1d120ee0693abcd77a38b/test/conftest.py#L77)
-- [https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46](https://github.com/caiola/vinhos.com/blob/c47d0a5d7a4bf290c1b726561d1e8f5d2ac29bc8/backend/test/conftest.py#L46)
-- [https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn](https://stackoverflow.com/questions/64095876/multiprocessing-fork-vs-spawn)
-
-Using a named SAVEPOINT does not give us anything extra, so we are not using it.
-
-
-# index.html.md
-
-# activemodel.pytest.plugin
-
-Pytest plugin integration for activemodel.
-
-Currently provides:
-
-* `db_session` fixture - quick access to a database session (see `test_session`)
-* `activemodel_preserve_tables` ini option - configure tables to preserve when using
-  `database_reset_truncate` (comma separated list or multiple lines depending on config style)
-
-Configuration examples:
-
-pytest.ini:
-
-```default
-[pytest]
-activemodel_preserve_tables = alembic_version,zip_code,seed_table
-```
-
-pyproject.toml:
-
-```default
-[tool.pytest.ini_options]
-activemodel_preserve_tables = [
-  "alembic_version",
-  "zip_code",
-  "seed_table",
-]
-```
-
-The list always implicitly includes `alembic_version` even if not specified.
-
-## Functions
-
-| [`pytest_addoption`](#activemodel.pytest.plugin.pytest_addoption)(→ None)   | Register custom ini options.                                                                      |
-|-----------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| [`db_session`](#activemodel.pytest.plugin.db_session)()                     | Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you |
-| [`db_truncate_session`](#activemodel.pytest.plugin.db_truncate_session)()   | Provides a database session for testing when using a truncation cleaning strategy.                |
-
-## Module Contents
-
-### activemodel.pytest.plugin.pytest_addoption(parser: pytest.Parser) → [None](https://docs.python.org/3/library/constants.html#None)
-
-Register custom ini options.
-
-We treat this as a *linelist* so pyproject.toml list syntax works. Comma separated works too because
-pytest splits lines first; users can still provide one line with commas.
-
-### activemodel.pytest.plugin.db_session()
-
-Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you
-probably don’t need this because the router, job harness, etc should wrap the logic in a database session.
-
-If your unit test is simple (you are just creating a couple of models) you
-can most likely skip this, unless your factories or models do something more complex with nested database calls.
-
-This is helpful if you are doing a lot of lazy-loaded params or need a database session to be in place
-for testing code that will run within a celery worker or something similar.
-
-```pycon
->>> def the_test(db_session):
-```
-
-### activemodel.pytest.plugin.db_truncate_session()
-
-Provides a database session for testing when using a truncation cleaning strategy.
-
-When using a truncation cleaning strategy, no global test session is set. This means all models that are created
-are tied to a detached session, which makes it hard to mutate models after creation. This fixture fixes that problem
-by setting the session used by all model factories to a global session.
-
-
-# index.html.md
-
-# activemodel.pytest.factories
-
-Notes on polyfactory:
-
-1. is_supported_type validates that the class can be used to generate a factory
-[https://github.com/litestar-org/polyfactory/issues/655#issuecomment-2727450854](https://github.com/litestar-org/polyfactory/issues/655#issuecomment-2727450854)
-
-## Classes
-
-| [`SQLModelFactory`](#activemodel.pytest.factories.SQLModelFactory)       | Base factory for SQLModel models:   |
-|--------------------------------------------------------------------------|-------------------------------------|
-| [`ActiveModelFactory`](#activemodel.pytest.factories.ActiveModelFactory) | Base factory for SQLModel models:   |
-
-## Module Contents
-
-### *class* activemodel.pytest.factories.SQLModelFactory
-
-Bases: `polyfactory.factories.pydantic_factory.ModelFactory`[`T`]
-
-Base factory for SQLModel models:
-
-1. Ability to ignore all relationship fks
-2. Option to ignore all pks
-
-#### \_\_is_base_factory_\_ *= True*
-
-Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
-For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.
-
-#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
-
-Determine whether to set a value for a given field_name.
-This is an override of BaseFactory.should_set_field_value.
-
-* **Parameters:**
-  * **field_meta** – FieldMeta instance.
-  * **kwargs** – Any kwargs passed to the factory.
-* **Returns:**
-  A boolean determining whether a value should be set for the given field_meta.
-
-### *class* activemodel.pytest.factories.ActiveModelFactory
-
-Bases: [`SQLModelFactory`](#activemodel.pytest.factories.SQLModelFactory)[`T`]
-
-Base factory for SQLModel models:
-
-1. Ability to ignore all relationship fks
-2. Option to ignore all pks
-
-#### \_\_is_base_factory_\_ *= True*
-
-Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
-For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.
-
-#### \_\_sqlalchemy_session_\_ *= None*
-
-#### *classmethod* save(\*args, \*\*kwargs) → [T](../truncate/index.md#activemodel.pytest.truncate.T)
-
-Builds and persists a new model to the database.
-
-Where this gets tricky, is this can be called multiple times within the same callstack. This can happen when
-a factory uses other factories to create relationships. This is fine if \_\_sqlalchemy_session_\_ is set, but
-if it’s not (in the case of a truncation DB strategy) you’ll run into issues.
-
-In a truncation strategy, the \_\_sqlalchemy_session_\_ is set to None.
-
-#### *classmethod* post_save(model: [T](../truncate/index.md#activemodel.pytest.truncate.T)) → [T](../truncate/index.md#activemodel.pytest.truncate.T)
-
-Post-save hook for performing additional actions after the model has been saved to the database. This is useful
-for cases where you need to perform additional operations that require the model be persisted in the database.
-
-The implementation of this method should return a refreshed instance of the model if that’s necessary. For
-example, if your post_save hook triggers another factory save(), the current model will likely be expired
-and detached, leading to a DetachedInstanceError when accessing it later.
-
-To avoid this, return model.refresh() at the end of your implementation.
-
-#### *classmethod* foreign_key_typeid()
-
-Return a random type id for the foreign key on this model.
-
-This is helpful for generating TypeIDs for testing 404s, parsing, manually settings, etc
-
-#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
-
-Determine whether to set a value for a given field_name.
-This is an override of BaseFactory.should_set_field_value.
-
-* **Parameters:**
-  * **field_meta** – FieldMeta instance.
-  * **kwargs** – Any kwargs passed to the factory.
-* **Returns:**
-  A boolean determining whether a value should be set for the given field_meta.
-
-
-# index.html.md
-
-# activemodel.pytest.truncate
-
-## Attributes
-
-| [`T`](#activemodel.pytest.truncate.T)   |    |
-|-----------------------------------------|----|
-
-## Functions
-
-| [`database_reset_truncate`](#activemodel.pytest.truncate.database_reset_truncate)([preserve_tables, pytest_config])   | Transaction is most likely the better way to go, but there are some scenarios where the session override   |
-|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-
-## Module Contents
-
-### activemodel.pytest.truncate.T
-
-### activemodel.pytest.truncate.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
-
-Transaction is most likely the better way to go, but there are some scenarios where the session override
-logic does not work properly and you need to truncate tables back to their original state.
-
-Here’s how to do this once at the start of the test:
-
-```pycon
->>> from activemodel.pytest import database_reset_truncation
->>> def pytest_configure(config):
->>>         database_reset_truncation()
-```
-
-Or, if you want to use this as a fixture:
-
-```pycon
->>> pytest.fixture(scope="function")(database_reset_truncation)
->>> def test_the_thing(database_reset_truncation)
-```
-
-This approach has a couple of problems:
-
-* You can’t run multiple tests in parallel without separate databases
-* If you have important seed data and want to truncate those tables, the seed data will be lost
 
 
 # alembic.html.md
@@ -3967,10 +3971,10 @@ class LocationEvent(BaseModel, table=True):
     booked_datetime: datetime = Field(
         sa_type=sa.DateTime(timezone=True)  # type: ignore
     )
-    
+
     # Custom PostgreSQL Types (e.g. Point)
     location: Tuple[float, float] | None = Field(
-        default=None, 
+        default=None,
         sa_type=PointType
     )
 ```
@@ -3986,36 +3990,68 @@ from activemodel import BaseModel
 class Product(BaseModel, table=True):
     # Require values greater than zero
     price_cents: int = Field(gt=0)
-    
+
     # Exclude internal fields from Pydantic schemas (e.g. FastAPI responses)
     stripe_account_id: str | None = Field(default=None, exclude=True)
-    
+
     # Define max lengths and index the column
     status: str = Field(default="active", max_length=100, index=True)
 ```
 
 ### Advanced TypeID Usage
 
-While `TypeIDMixin` handles the primary key, you can use `TypeIDType` and the `.foreign_key()` helper to manage related IDs securely, and even enforce prefixes.
+While `TypeIDMixin` handles the primary key, you can use `TypeIDType` and the `.foreign_key()` helper for related IDs, prefix enforcement, and polymorphic reference IDs.
+
+#### Foreign Keys
 
 ```python
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
 from activemodel.types import TypeIDType
-from sqlmodel import Field, Relationship
+from sqlmodel import Relationship
 
 class Distribution(BaseModel, TypeIDMixin("dst"), table=True):
     name: str
 
 class Screening(BaseModel, TypeIDMixin("scr"), table=True):
-    # Standard Foreign Key relationship definition helper
     distribution_id: TypeIDType = Distribution.foreign_key(index=True)
     distribution: Distribution = Relationship()
+```
 
-    # Enforce a specific TypeID prefix on a field
+#### Prefix Enforcement
+
+```python
+from activemodel import BaseModel
+from activemodel.mixins import TypeIDMixin
+from activemodel.types import TypeIDType
+from sqlmodel import Field
+
+class Screening(BaseModel, TypeIDMixin("scr"), table=True):
     merged_into_screening_id: TypeIDType | None = Field(
-        default=None, 
+        default=None,
         sa_type=TypeIDType(prefix="scr")  # type: ignore
+    )
+```
+
+#### Raw Polymorphic References
+
+Use `TypeIDType.raw()` for polymorphic reference IDs where the field can be assigned TypeIDs with multiple prefixes, but only the UUID needs to be stored and read back. This mode accepts `TypeID` objects and TypeID strings with any prefix, persists a native UUID, and returns a plain `UUID`.
+
+```python
+from uuid import UUID
+
+from activemodel import BaseModel
+from activemodel.mixins import TypeIDPrimaryKey
+from activemodel.types import TypeIDType
+from sqlmodel import Field
+from typeid import TypeID
+
+class Event(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("event")
+    originating_id: UUID | None = Field(
+        default=None,
+        index=True,
+        sa_type=TypeIDType.raw(),
     )
 ```
 
@@ -4121,7 +4157,7 @@ class LLMResponse(BaseModel, TypeIDMixin("llr"), table=True):
 
     def before_save(self):
         new_hash = hash_prompt(self.prompt)
-        
+
         # Enforce that the prompt cannot be changed once saved
         if self.prompt_hash and self.prompt_hash != new_hash:
             raise ValueError("Prompts should never be modified once they are cached")
@@ -4150,7 +4186,7 @@ class UserFactory(ActiveModelFactory[User]):
     # Using Faker for random structured data
     name = BaseFactory.__faker__.name
     email = BaseFactory.__faker__.email
-    
+
     # Using Use() to execute a function dynamically for each build
     # Combining with `whenever` for timezone-aware datetimes
     last_active_at = Use(
@@ -4204,18 +4240,18 @@ class FullyFundedScreeningFactory(ActiveModelFactory[Screening]):
     @classmethod
     def post_save(cls, model):
         """
-        After creating a screening, automatically create enough 
+        After creating a screening, automatically create enough
         paid orders to reach the funding goal.
         """
         from .order import TicketReservationOrderFactory
-        
-        ticket_count = 10 
+
+        ticket_count = 10
         for _ in range(ticket_count):
             TicketReservationOrderFactory.save(
                 screening_id=model.id,
                 status="paid"
             )
-        
+
         # Refresh to ensure any computed fields/relationships are updated
         return model.refresh()
 ```
@@ -4247,7 +4283,7 @@ class Partner(
     """
     name: str = Field(nullable=False)
     slug: str = Field(nullable=False, unique=True)
-    
+
     # Using foreign_key() helper for clean relationship definitions
     doctor_id: TypeIDType = Doctor.foreign_key()
     doctor: Doctor = Relationship()

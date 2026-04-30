@@ -32,7 +32,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:class:: TypeIDType(prefix: str, *args, **kwargs)
+.. py:class:: TypeIDType(prefix: str | None, *args, _raw: bool = False, **kwargs)
 
    Bases: :py:obj:`sqlalchemy.types.TypeDecorator`
 
@@ -194,7 +194,12 @@ Module Contents
 
 
    .. py:attribute:: prefix
-      :type:  str
+      :type:  str | None
+
+
+   .. py:method:: raw() -> Self
+      :classmethod:
+
 
 
    .. py:method:: __repr__() -> str

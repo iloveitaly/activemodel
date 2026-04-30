@@ -23,10 +23,10 @@ class LocationEvent(BaseModel, table=True):
     booked_datetime: datetime = Field(
         sa_type=sa.DateTime(timezone=True)  # type: ignore
     )
-    
+
     # Custom PostgreSQL Types (e.g. Point)
     location: Tuple[float, float] | None = Field(
-        default=None, 
+        default=None,
         sa_type=PointType
     )
 ```
@@ -42,36 +42,68 @@ from activemodel import BaseModel
 class Product(BaseModel, table=True):
     # Require values greater than zero
     price_cents: int = Field(gt=0)
-    
+
     # Exclude internal fields from Pydantic schemas (e.g. FastAPI responses)
     stripe_account_id: str | None = Field(default=None, exclude=True)
-    
+
     # Define max lengths and index the column
     status: str = Field(default="active", max_length=100, index=True)
 ```
 
 ### Advanced TypeID Usage
 
-While `TypeIDMixin` handles the primary key, you can use `TypeIDType` and the `.foreign_key()` helper to manage related IDs securely, and even enforce prefixes.
+While `TypeIDMixin` handles the primary key, you can use `TypeIDType` and the `.foreign_key()` helper for related IDs, prefix enforcement, and polymorphic reference IDs.
+
+#### Foreign Keys
 
 ```python
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin
 from activemodel.types import TypeIDType
-from sqlmodel import Field, Relationship
+from sqlmodel import Relationship
 
 class Distribution(BaseModel, TypeIDMixin("dst"), table=True):
     name: str
 
 class Screening(BaseModel, TypeIDMixin("scr"), table=True):
-    # Standard Foreign Key relationship definition helper
     distribution_id: TypeIDType = Distribution.foreign_key(index=True)
     distribution: Distribution = Relationship()
+```
 
-    # Enforce a specific TypeID prefix on a field
+#### Prefix Enforcement
+
+```python
+from activemodel import BaseModel
+from activemodel.mixins import TypeIDMixin
+from activemodel.types import TypeIDType
+from sqlmodel import Field
+
+class Screening(BaseModel, TypeIDMixin("scr"), table=True):
     merged_into_screening_id: TypeIDType | None = Field(
-        default=None, 
+        default=None,
         sa_type=TypeIDType(prefix="scr")  # type: ignore
+    )
+```
+
+#### Raw Polymorphic References
+
+Use `TypeIDType.raw()` for polymorphic reference IDs where the field can be assigned TypeIDs with multiple prefixes, but only the UUID needs to be stored and read back. This mode accepts `TypeID` objects and TypeID strings with any prefix, persists a native UUID, and returns a plain `UUID`.
+
+```python
+from uuid import UUID
+
+from activemodel import BaseModel
+from activemodel.mixins import TypeIDPrimaryKey
+from activemodel.types import TypeIDType
+from sqlmodel import Field
+from typeid import TypeID
+
+class Event(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("event")
+    originating_id: UUID | None = Field(
+        default=None,
+        index=True,
+        sa_type=TypeIDType.raw(),
     )
 ```
 
@@ -177,7 +209,7 @@ class LLMResponse(BaseModel, TypeIDMixin("llr"), table=True):
 
     def before_save(self):
         new_hash = hash_prompt(self.prompt)
-        
+
         # Enforce that the prompt cannot be changed once saved
         if self.prompt_hash and self.prompt_hash != new_hash:
             raise ValueError("Prompts should never be modified once they are cached")
@@ -206,7 +238,7 @@ class UserFactory(ActiveModelFactory[User]):
     # Using Faker for random structured data
     name = BaseFactory.__faker__.name
     email = BaseFactory.__faker__.email
-    
+
     # Using Use() to execute a function dynamically for each build
     # Combining with `whenever` for timezone-aware datetimes
     last_active_at = Use(
@@ -260,18 +292,18 @@ class FullyFundedScreeningFactory(ActiveModelFactory[Screening]):
     @classmethod
     def post_save(cls, model):
         """
-        After creating a screening, automatically create enough 
+        After creating a screening, automatically create enough
         paid orders to reach the funding goal.
         """
         from .order import TicketReservationOrderFactory
-        
-        ticket_count = 10 
+
+        ticket_count = 10
         for _ in range(ticket_count):
             TicketReservationOrderFactory.save(
                 screening_id=model.id,
                 status="paid"
             )
-        
+
         # Refresh to ensure any computed fields/relationships are updated
         return model.refresh()
 ```
@@ -303,7 +335,7 @@ class Partner(
     """
     name: str = Field(nullable=False)
     slug: str = Field(nullable=False, unique=True)
-    
+
     # Using foreign_key() helper for clean relationship definitions
     doctor_id: TypeIDType = Doctor.foreign_key()
     doctor: Doctor = Relationship()

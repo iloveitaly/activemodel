@@ -14,7 +14,7 @@
 
 ## Package Contents
 
-### *class* activemodel.types.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str), \*args, \*\*kwargs)
+### *class* activemodel.types.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None), \*args, \_raw: [bool](https://docs.python.org/3/library/functions.html#bool) = False, \*\*kwargs)
 
 Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
 
@@ -186,7 +186,9 @@ and `UserDefinedType` classes.
 #### SEE ALSO
 [SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
 
-#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str)*
+#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None)*
+
+#### *classmethod* raw() → Self
 
 #### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
 

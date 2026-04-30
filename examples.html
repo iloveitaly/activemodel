@@ -127,7 +127,12 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#advanced-field-types-and-configuration">Advanced Field Types and Configuration</a><ul>
 <li><a class="reference internal" href="#custom-sqlalchemy-types-and-datetimes">Custom SQLAlchemy Types and Datetimes</a></li>
 <li><a class="reference internal" href="#defaults-exclusions-and-constraints">Defaults, Exclusions, and Constraints</a></li>
-<li><a class="reference internal" href="#advanced-typeid-usage">Advanced TypeID Usage</a></li>
+<li><a class="reference internal" href="#advanced-typeid-usage">Advanced TypeID Usage</a><ul>
+<li><a class="reference internal" href="#foreign-keys">Foreign Keys</a></li>
+<li><a class="reference internal" href="#prefix-enforcement">Prefix Enforcement</a></li>
+<li><a class="reference internal" href="#raw-polymorphic-references">Raw Polymorphic References</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#structured-json-with-pydantic-models">Structured JSON with Pydantic Models</a><ul>
@@ -233,10 +238,10 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="10">    <span class="n">booked_datetime</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
 </span><span data-line="11">        <span class="n">sa_type</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 </span><span data-line="12">    <span class="p">)</span>
-</span><span data-line="13">    
+</span><span data-line="13">
 </span><span data-line="14">    <span class="c1"># Custom PostgreSQL Types (e.g. Point)</span>
 </span><span data-line="15">    <span class="n">location</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-</span><span data-line="16">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+</span><span data-line="16">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span data-line="17">        <span class="n">sa_type</span><span class="o">=</span><span class="n">PointType</span>
 </span><span data-line="18">    <span class="p">)</span>
 </span></pre></div>
@@ -251,10 +256,10 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="4"><span class="k">class</span><span class="w"> </span><span class="nc">Product</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 </span><span data-line="5">    <span class="c1"># Require values greater than zero</span>
 </span><span data-line="6">    <span class="n">price_cents</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">gt</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span data-line="7">    
+</span><span data-line="7">
 </span><span data-line="8">    <span class="c1"># Exclude internal fields from Pydantic schemas (e.g. FastAPI responses)</span>
 </span><span data-line="9">    <span class="n">stripe_account_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="10">    
+</span><span data-line="10">
 </span><span data-line="11">    <span class="c1"># Define max lengths and index the column</span>
 </span><span data-line="12">    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></pre></div>
@@ -262,27 +267,59 @@ data-aria-dark="Switch to auto color mode">
 </section>
 <section id="advanced-typeid-usage">
 <h3>Advanced TypeID Usage<a class="headerlink" href="#advanced-typeid-usage" title="Link to this heading">¶</a></h3>
-<p>While <code class="docutils literal notranslate"><span class="pre">TypeIDMixin</span></code> handles the primary key, you can use <code class="docutils literal notranslate"><span class="pre">TypeIDType</span></code> and the <code class="docutils literal notranslate"><span class="pre">.foreign_key()</span></code> helper to manage related IDs securely, and even enforce prefixes.</p>
+<p>While <code class="docutils literal notranslate"><span class="pre">TypeIDMixin</span></code> handles the primary key, you can use <code class="docutils literal notranslate"><span class="pre">TypeIDType</span></code> and the <code class="docutils literal notranslate"><span class="pre">.foreign_key()</span></code> helper for related IDs, prefix enforcement, and polymorphic reference IDs.</p>
+<section id="foreign-keys">
+<h4>Foreign Keys<a class="headerlink" href="#foreign-keys" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span>
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDType</span>
-</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Relationship</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Relationship</span>
 </span><span data-line="5">
 </span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">Distribution</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;dst&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 </span><span data-line="7">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 </span><span data-line="8">
 </span><span data-line="9"><span class="k">class</span><span class="w"> </span><span class="nc">Screening</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;scr&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span data-line="10">    <span class="c1"># Standard Foreign Key relationship definition helper</span>
-</span><span data-line="11">    <span class="n">distribution_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">=</span> <span class="n">Distribution</span><span class="o">.</span><span class="n">foreign_key</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="12">    <span class="n">distribution</span><span class="p">:</span> <span class="n">Distribution</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">()</span>
-</span><span data-line="13">
-</span><span data-line="14">    <span class="c1"># Enforce a specific TypeID prefix on a field</span>
-</span><span data-line="15">    <span class="n">merged_into_screening_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-</span><span data-line="16">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-</span><span data-line="17">        <span class="n">sa_type</span><span class="o">=</span><span class="n">TypeIDType</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;scr&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-</span><span data-line="18">    <span class="p">)</span>
+</span><span data-line="10">    <span class="n">distribution_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">=</span> <span class="n">Distribution</span><span class="o">.</span><span class="n">foreign_key</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="11">    <span class="n">distribution</span><span class="p">:</span> <span class="n">Distribution</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">()</span>
 </span></pre></div>
 </div>
+</section>
+<section id="prefix-enforcement">
+<h4>Prefix Enforcement<a class="headerlink" href="#prefix-enforcement" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDType</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">Screening</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;scr&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="7">    <span class="n">merged_into_screening_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span data-line="8">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="9">        <span class="n">sa_type</span><span class="o">=</span><span class="n">TypeIDType</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;scr&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+</span><span data-line="10">    <span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="raw-polymorphic-references">
+<h4>Raw Polymorphic References<a class="headerlink" href="#raw-polymorphic-references" title="Link to this heading">¶</a></h4>
+<p>Use <code class="docutils literal notranslate"><span class="pre">TypeIDType.raw()</span></code> for polymorphic reference IDs where the field can be assigned TypeIDs with multiple prefixes, but only the UUID needs to be stored and read back. This mode accepts <code class="docutils literal notranslate"><span class="pre">TypeID</span></code> objects and TypeID strings with any prefix, persists a native UUID, and returns a plain <code class="docutils literal notranslate"><span class="pre">UUID</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDPrimaryKey</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDType</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="k">class</span><span class="w"> </span><span class="nc">Event</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="10">    <span class="nb">id</span><span class="p">:</span> <span class="n">TypeID</span> <span class="o">=</span> <span class="n">TypeIDPrimaryKey</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">)</span>
+</span><span data-line="11">    <span class="n">originating_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span data-line="12">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="13">        <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="14">        <span class="n">sa_type</span><span class="o">=</span><span class="n">TypeIDType</span><span class="o">.</span><span class="n">raw</span><span class="p">(),</span>
+</span><span data-line="15">    <span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
 </section>
 </section>
 <section id="structured-json-with-pydantic-models">
@@ -383,7 +420,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="12">
 </span><span data-line="13">    <span class="k">def</span><span class="w"> </span><span class="nf">before_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="14">        <span class="n">new_hash</span> <span class="o">=</span> <span class="n">hash_prompt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span>
-</span><span data-line="15">        
+</span><span data-line="15">
 </span><span data-line="16">        <span class="c1"># Enforce that the prompt cannot be changed once saved</span>
 </span><span data-line="17">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_hash</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_hash</span> <span class="o">!=</span> <span class="n">new_hash</span><span class="p">:</span>
 </span><span data-line="18">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Prompts should never be modified once they are cached&quot;</span><span class="p">)</span>
@@ -411,7 +448,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="10">    <span class="c1"># Using Faker for random structured data</span>
 </span><span data-line="11">    <span class="n">name</span> <span class="o">=</span> <span class="n">BaseFactory</span><span class="o">.</span><span class="n">__faker__</span><span class="o">.</span><span class="n">name</span>
 </span><span data-line="12">    <span class="n">email</span> <span class="o">=</span> <span class="n">BaseFactory</span><span class="o">.</span><span class="n">__faker__</span><span class="o">.</span><span class="n">email</span>
-</span><span data-line="13">    
+</span><span data-line="13">
 </span><span data-line="14">    <span class="c1"># Using Use() to execute a function dynamically for each build</span>
 </span><span data-line="15">    <span class="c1"># Combining with `whenever` for timezone-aware datetimes</span>
 </span><span data-line="16">    <span class="n">last_active_at</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span>
@@ -463,18 +500,18 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="2">    <span class="nd">@classmethod</span>
 </span><span data-line="3">    <span class="k">def</span><span class="w"> </span><span class="nf">post_save</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
 </span><span data-line="4"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="5"><span class="sd">        After creating a screening, automatically create enough </span>
+</span><span data-line="5"><span class="sd">        After creating a screening, automatically create enough</span>
 </span><span data-line="6"><span class="sd">        paid orders to reach the funding goal.</span>
 </span><span data-line="7"><span class="sd">        &quot;&quot;&quot;</span>
 </span><span data-line="8">        <span class="kn">from</span><span class="w"> </span><span class="nn">.order</span><span class="w"> </span><span class="kn">import</span> <span class="n">TicketReservationOrderFactory</span>
-</span><span data-line="9">        
-</span><span data-line="10">        <span class="n">ticket_count</span> <span class="o">=</span> <span class="mi">10</span> 
+</span><span data-line="9">
+</span><span data-line="10">        <span class="n">ticket_count</span> <span class="o">=</span> <span class="mi">10</span>
 </span><span data-line="11">        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ticket_count</span><span class="p">):</span>
 </span><span data-line="12">            <span class="n">TicketReservationOrderFactory</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
 </span><span data-line="13">                <span class="n">screening_id</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
 </span><span data-line="14">                <span class="n">status</span><span class="o">=</span><span class="s2">&quot;paid&quot;</span>
 </span><span data-line="15">            <span class="p">)</span>
-</span><span data-line="16">        
+</span><span data-line="16">
 </span><span data-line="17">        <span class="c1"># Refresh to ensure any computed fields/relationships are updated</span>
 </span><span data-line="18">        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
 </span></pre></div>
@@ -506,7 +543,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="20"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="21">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span data-line="22">    <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="23">    
+</span><span data-line="23">
 </span><span data-line="24">    <span class="c1"># Using foreign_key() helper for clean relationship definitions</span>
 </span><span data-line="25">    <span class="n">doctor_id</span><span class="p">:</span> <span class="n">TypeIDType</span> <span class="o">=</span> <span class="n">Doctor</span><span class="o">.</span><span class="n">foreign_key</span><span class="p">()</span>
 </span><span data-line="26">    <span class="n">doctor</span><span class="p">:</span> <span class="n">Doctor</span> <span class="o">=</span> <span class="n">Relationship</span><span class="p">()</span>
