@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://github.com/iloveitaly/activemodel/compare/v0.21.0...v0.22.0) (2026-05-01)
+
+
+### Features
+
+* **query:** add no_autoflush support to QueryWrapper ([19dde68](https://github.com/iloveitaly/activemodel/commit/19dde680bc34a3ee246c529b48c568199ac9aca8))
+
 ## [0.21.0](https://github.com/iloveitaly/activemodel/compare/v0.20.0...v0.21.0) (2026-04-30)
 
 
