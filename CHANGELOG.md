@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.21.0](https://github.com/iloveitaly/activemodel/compare/v0.20.0...v0.21.0) (2026-04-30)
+
+
+### Features
+
+* add raw mode to TypeIDType for polymorphic references ([1cbef17](https://github.com/iloveitaly/activemodel/commit/1cbef17f637dde8317a7747d9c1631d989832482))
+* add support for whenever datetime types and latest typeid ([#75](https://github.com/iloveitaly/activemodel/issues/75)) ([b327d1a](https://github.com/iloveitaly/activemodel/commit/b327d1a6cac14d8837aa587f7a476ebc8973a84a))
+* inject session into factory_boy and add test coverage ([cfd44d0](https://github.com/iloveitaly/activemodel/commit/cfd44d00c0a7aa9f83525c2f9fd6ff48e6ecdf32))
+* **types:** add json schema support for TypeID and update docs ([693da4e](https://github.com/iloveitaly/activemodel/commit/693da4ee1381c1bc14a38e64c4e7806088c0b8eb))
+
+
+### Bug Fixes
+
+* **whenever:** round to microseconds on Linux for instant round-trip test ([b327d1a](https://github.com/iloveitaly/activemodel/commit/b327d1a6cac14d8837aa587f7a476ebc8973a84a))
+* **whenever:** simplify instant round-trip precision check ([b327d1a](https://github.com/iloveitaly/activemodel/commit/b327d1a6cac14d8837aa587f7a476ebc8973a84a))
+
+
+### Documentation
+
+* add pytest integration documentation ([f842d37](https://github.com/iloveitaly/activemodel/commit/f842d37b07260cbe94d83725b53c4f51c25feb1c))
+* Remove Python Versions badge from README ([09c4271](https://github.com/iloveitaly/activemodel/commit/09c4271a7ea5f47103dc1df8553a223bde107258))
+* Update docs top navigation ([#81](https://github.com/iloveitaly/activemodel/issues/81)) ([19dd084](https://github.com/iloveitaly/activemodel/commit/19dd084a835e6588275f88a5760d9fd8c07a2062))
+* update examples to use TypeIDPrimaryKey instead of TypeIDMixin ([0f39d81](https://github.com/iloveitaly/activemodel/commit/0f39d817d1df0eb0ed4a0156ff5e8348186f058f))
+* **whenever:** clarify macOS vs Linux precision in instant test comment ([b327d1a](https://github.com/iloveitaly/activemodel/commit/b327d1a6cac14d8837aa587f7a476ebc8973a84a))
+
 ## [0.20.0](https://github.com/iloveitaly/activemodel/compare/v0.19.0...v0.20.0) (2026-04-10)
 
 
