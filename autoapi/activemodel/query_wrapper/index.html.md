@@ -15,6 +15,8 @@ Make it easy to run queries on a model.
 
 #### target *: sqlmodel.sql.expression.SelectOfScalar[TModel]*
 
+#### no_autoflush() → Self
+
 #### first()
 
 #### last()

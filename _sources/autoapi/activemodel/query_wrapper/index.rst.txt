@@ -27,6 +27,9 @@ Module Contents
       :type:  sqlmodel.sql.expression.SelectOfScalar[TModel]
 
 
+   .. py:method:: no_autoflush() -> Self
+
+
    .. py:method:: first()
 
 
