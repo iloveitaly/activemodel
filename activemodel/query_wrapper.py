@@ -1,3 +1,4 @@
+import contextlib
 import typing as t
 from typing import overload
 
@@ -20,6 +21,7 @@ class QueryWrapper[TModel: sm.SQLModel](SQLAlchemyQueryMethods[TModel]):
 
     def __init__(self, cls: type[TModel], *args: t.Any) -> None:
         self._model_cls = cls
+        self._no_autoflush = False
 
         # TODO add generics here
         # self.target: SelectOfScalar[T] = sql.select(cls)
@@ -46,28 +48,42 @@ class QueryWrapper[TModel: sm.SQLModel](SQLAlchemyQueryMethods[TModel]):
         model_cls = t.cast(t.Any, self._model_cls)
         return model_cls._run_after_load_hooks(instance)
 
+    @contextlib.contextmanager
+    def _get_session(self):
+        with get_session() as session:
+            if not self._no_autoflush:
+                yield session
+                return
+
+            with session.no_autoflush:
+                yield session
+
+    def no_autoflush(self) -> t.Self:
+        self._no_autoflush = True
+        return self
+
     def first(self):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.desc()).limit(1)
-        with get_session() as session:
+        with self._get_session() as session:
             result = session.exec(stmt).first()
             return self._run_after_load_hooks(result)
 
     def last(self):
         pk_attr = self._pk_attr()
         stmt = self.target.order_by(pk_attr.asc()).limit(1)
-        with get_session() as session:
+        with self._get_session() as session:
             result = session.exec(stmt).first()
             return self._run_after_load_hooks(result)
 
     def one(self):
         "requires exactly one result in the dataset"
-        with get_session() as session:
+        with self._get_session() as session:
             result = session.exec(self.target).one()
             return self._run_after_load_hooks(result)
 
     def all(self):
-        with get_session() as session:
+        with self._get_session() as session:
             result = session.exec(self.target)
             for row in result:
                 yield self._run_after_load_hooks(row)
@@ -76,7 +92,7 @@ class QueryWrapper[TModel: sm.SQLModel](SQLAlchemyQueryMethods[TModel]):
         """
         I did some basic tests
         """
-        with get_session() as session:
+        with self._get_session() as session:
             return session.scalar(
                 sm.select(sm.func.count()).select_from(self.target.subquery())
             )
@@ -87,15 +103,15 @@ class QueryWrapper[TModel: sm.SQLModel](SQLAlchemyQueryMethods[TModel]):
         """
         >>>
         """
-        with get_session() as session:
+        with self._get_session() as session:
             return session.scalar(self.target)
 
     def exec(self):
-        with get_session() as session:
+        with self._get_session() as session:
             return session.exec(self.target)
 
     def delete(self):
-        with get_session() as session:
+        with self._get_session() as session:
             return session.delete(self.target)
 
     def exists(self) -> bool:
@@ -106,7 +122,7 @@ class QueryWrapper[TModel: sm.SQLModel](SQLAlchemyQueryMethods[TModel]):
 
         SQLAlchemy exists works differently and does not return a simple boolean.
         """
-        with get_session() as session:
+        with self._get_session() as session:
             exists_stmt = sm.select(sm.exists(self.target))
             result = session.scalar(exists_stmt)
             return bool(result)
@@ -173,7 +189,7 @@ class QueryWrapper[TModel: sm.SQLModel](SQLAlchemyQueryMethods[TModel]):
         # Build a new randomized limited query leaving self.target untouched
         randomized = self.target.order_by(sm.func.random()).limit(n)
 
-        with get_session() as session:
+        with self._get_session() as session:
             result = list(session.exec(randomized))
 
         processed_result = [self._run_after_load_hooks(row) for row in result]

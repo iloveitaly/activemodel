@@ -6,6 +6,7 @@ from sqlmodel.sql.expression import SelectOfScalar
 from sqlalchemy import column
 
 from activemodel.query_wrapper import QueryWrapper
+from activemodel.session_manager import global_session
 from tests.models import ExampleRecord, UpsertTestModel
 
 
@@ -43,6 +44,7 @@ def test_basic_types(create_and_wipe_database):
         ExampleRecord.select().filter_by(something="typed"),
         QueryWrapper[ExampleRecord],
     )
+    assert_type(qw.no_autoflush(), QueryWrapper[ExampleRecord])
 
 
 def test_scalar_single_column(create_and_wipe_database):
@@ -87,6 +89,13 @@ def test_exists_does_not_mutate_query(create_and_wipe_database):
     assert q.sql() == before_sql
     # further chaining still works
     assert q.where(ExampleRecord.something == "one").exists() is True
+
+
+def test_no_autoflush_skips_pending_session_flush(create_and_wipe_database):
+    with global_session() as session:
+        session.add(UpsertTestModel(name="pending-without-required-category"))
+
+        assert UpsertTestModel.select().no_autoflush().count() == 0
 
 
 # TODO needs to be fixed
