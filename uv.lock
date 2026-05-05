@@ -8,12 +8,13 @@ resolution-markers = [
 
 [[package]]
 name = "activemodel"
-version = "0.20.0"
+version = "0.21.0"
 source = { editable = "." }
 dependencies = [
     { name = "sqlmodel" },
     { name = "textcase" },
     { name = "typeid-python" },
+    { name = "whenever" },
 ]
 
 [package.optional-dependencies]
@@ -29,16 +30,12 @@ docs = [
     { name = "sphinx-llm" },
     { name = "sphinx-paramlinks" },
 ]
-extras = [
-    { name = "whenever" },
-]
 
 [package.dev-dependencies]
 debugging-extras = [
     { name = "pytest-watcher" },
 ]
 dev = [
-    { name = "activemodel", extra = ["extras"] },
     { name = "alembic" },
     { name = "covdefaults" },
     { name = "coverage" },
@@ -70,14 +67,13 @@ requires-dist = [
     { name = "sqlmodel", specifier = "==0.0.38" },
     { name = "textcase", specifier = ">=0.4.0" },
     { name = "typeid-python", specifier = "==0.3.9" },
-    { name = "whenever", marker = "extra == 'extras'", specifier = ">=0.10.0" },
+    { name = "whenever", specifier = ">=0.10.0" },
 ]
-provides-extras = ["extras", "docs"]
+provides-extras = ["docs"]
 
 [package.metadata.requires-dev]
 debugging-extras = [{ name = "pytest-watcher", specifier = ">=0.4.3" }]
 dev = [
-    { name = "activemodel", extras = ["extras"] },
     { name = "alembic", specifier = ">=1.14.1" },
     { name = "covdefaults", specifier = ">=2.3.0" },
     { name = "coverage", specifier = ">=7.13.4" },
