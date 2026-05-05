@@ -94,16 +94,14 @@ You may want to override \_\_pydantic_init_subclass_\_ instead, which behaves si
 
 #### \_\_tablename_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
 
-Automatically generates the table name for the model by converting the model’s class name from camel case to snake case.
+Automatically generates the table name for the model by converting the model’s class name from PascalCase to snake_case.
 This is the recommended text case style for table names:
 
 [https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names](https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names)
 
 By default, the model’s class name is lower cased which makes it harder to read.
 
-Also, many text case conversion libraries struggle handling words like “LLMCache”, this is why we are using
-a more precise library which processes such acronyms: [textcase]([https://pypi.org/project/textcase/](https://pypi.org/project/textcase/)).
-
+This implementation properly handles acronyms: e.g. LLMCache -> llm_cache.
 [https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case](https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case)
 
 #### *classmethod* foreign_key(\*\*kwargs) → Any

@@ -9,6 +9,7 @@ Functions
 
 .. autoapisummary::
 
+   activemodel.utils.to_snake_case
    activemodel.utils.compile_sql
    activemodel.utils.raw_sql_exec
    activemodel.utils.hash_function_code
@@ -17,6 +18,14 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:function:: to_snake_case(name: str) -> str
+
+   Converts a PascalCase or camelCase string to snake_case.
+   Properly handles acronyms like 'LLMCache' -> 'llm_cache'.
+
+   Source: https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
+
 
 .. py:function:: compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) -> str
 

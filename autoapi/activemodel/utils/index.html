@@ -126,6 +126,7 @@ data-aria-dark="Switch to auto color mode">
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#activemodel.utils.to_snake_case"><code class="docutils literal notranslate"><span class="pre">to_snake_case()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.utils.compile_sql"><code class="docutils literal notranslate"><span class="pre">compile_sql()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.utils.raw_sql_exec"><code class="docutils literal notranslate"><span class="pre">raw_sql_exec()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.utils.hash_function_code"><code class="docutils literal notranslate"><span class="pre">hash_function_code()</span></code></a></li>
@@ -212,16 +213,19 @@ data-aria-dark="Switch to auto color mode">
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.compile_sql" title="activemodel.utils.compile_sql"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compile_sql</span></code></a>(→ str)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.to_snake_case" title="activemodel.utils.to_snake_case"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_snake_case</span></code></a>(→ str)</p></td>
+<td><p>Converts a PascalCase or camelCase string to snake_case.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.utils.compile_sql" title="activemodel.utils.compile_sql"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compile_sql</span></code></a>(→ str)</p></td>
 <td><p>convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.utils.raw_sql_exec" title="activemodel.utils.raw_sql_exec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">raw_sql_exec</span></code></a>(raw_query)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.raw_sql_exec" title="activemodel.utils.raw_sql_exec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">raw_sql_exec</span></code></a>(raw_query)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.hash_function_code" title="activemodel.utils.hash_function_code"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash_function_code</span></code></a>(func)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.utils.hash_function_code" title="activemodel.utils.hash_function_code"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash_function_code</span></code></a>(func)</p></td>
 <td><p>get sha of a function to easily assert that it hasn't changed</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.utils.is_database_empty" title="activemodel.utils.is_database_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_database_empty</span></code></a>(→ bool)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.is_database_empty" title="activemodel.utils.is_database_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_database_empty</span></code></a>(→ bool)</p></td>
 <td><p>Check if any table in the database has records using Model.count().</p></td>
 </tr>
 </tbody>
@@ -230,6 +234,14 @@ data-aria-dark="Switch to auto color mode">
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.utils.to_snake_case">
+<span class="sig-prename descclassname"><span class="pre">activemodel.utils.</span></span><span class="sig-name descname"><span class="pre">to_snake_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/utils.html#to_snake_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.utils.to_snake_case" title="Link to this definition">¶</a></dt>
+<dd><p>Converts a PascalCase or camelCase string to snake_case.
+Properly handles acronyms like ‘LLMCache’ -&gt; ‘llm_cache’.</p>
+<p>Source: <a class="reference external" href="https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case">https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case</a></p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.utils.compile_sql">
 <span class="sig-prename descclassname"><span class="pre">activemodel.utils.</span></span><span class="sig-name descname"><span class="pre">compile_sql</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">sqlmodel.sql.expression.SelectOfScalar</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/utils.html#compile_sql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.utils.compile_sql" title="Link to this definition">¶</a></dt>
