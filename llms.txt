@@ -423,6 +423,7 @@
 - [Automatic JSONB Mutation Tracking](mutation-tracking.html.md): `activemodel` uses a serialize-and-compare strategy to detect in-place JSON mutations.
 - [Pytest Integration](pytest.html.md): `activemodel` provides comprehensive testing utilities to manage database state and model factories ...
 - [SQL Logging](sql-logging.html.md): Configure SQL logging through `engine_options` when you initialize `activemodel`.
+- [whenever Integration](whenever.html.md): `activemodel` has built-in support for the [`whenever`](https://github.com/ariebovenberg/whenever) d...
 
 ---
 

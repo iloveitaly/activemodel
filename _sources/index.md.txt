@@ -38,6 +38,7 @@ Getting Started <getting-started>
 Mutation Tracking <mutation-tracking>
 Pytest Integration <pytest>
 SQL Logging <sql-logging>
+whenever Integration <whenever>
 Examples <examples>
 Alembic Integration <alembic>
 API Reference <autoapi/index>
