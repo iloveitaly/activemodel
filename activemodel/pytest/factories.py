@@ -10,6 +10,7 @@ import typing as t
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.field_meta import FieldMeta
 from typeid import TypeID
+from whenever import Instant, PlainDateTime, ZonedDateTime
 
 from activemodel.logger import logger
 from activemodel.session_manager import global_session
@@ -130,3 +131,8 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
     #         result.save()
 
     #     return result
+
+
+ActiveModelFactory.add_provider(Instant, lambda: Instant.now())
+ActiveModelFactory.add_provider(ZonedDateTime, lambda: ZonedDateTime.now_in_system_tz())
+ActiveModelFactory.add_provider(PlainDateTime, lambda: ZonedDateTime.now_in_system_tz().to_plain())

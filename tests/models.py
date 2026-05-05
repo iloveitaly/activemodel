@@ -5,6 +5,7 @@ Example models to test various ORM cases
 from pydantic import computed_field
 from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Relationship
+from whenever import Instant, PlainDateTime, ZonedDateTime
 
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDPrimaryKey
@@ -60,6 +61,13 @@ class UpsertTestModel(BaseModel, table=True):
 
     # Add a composite unique constraint for the multiple unique field test
     __table_args__ = (UniqueConstraint("name", "category", name="compound_constraint"),)
+
+
+class ExampleWithWheneverFields(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("whenever_example")
+    instant_field: Instant | None = None
+    plain_field: PlainDateTime | None = None
+    zoned_field: ZonedDateTime | None = None
 
 
 class ExampleRelatedModel(BaseModel, table=True):

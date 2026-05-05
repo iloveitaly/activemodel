@@ -1,10 +1,13 @@
 from typeid import TypeID
+from whenever import Instant, PlainDateTime, ZonedDateTime
+
 from activemodel.pytest.factories import ActiveModelFactory
 from tests.models import (
     AnotherExample,
     ExampleRecord,
     ExampleRelatedModel,
     ExampleWithId,
+    ExampleWithWheneverFields,
 )
 
 
@@ -182,3 +185,23 @@ def test_post_save_can_create_related_models(create_and_wipe_database):
     related = ExampleRelatedModel.get(ExampleRelatedModel.example_record_id == rec.id)
     assert related is not None
     assert related.example_record_id == rec.id
+
+
+class ExampleWithWheneverFieldsFactory(ActiveModelFactory[ExampleWithWheneverFields]):
+    __model__ = ExampleWithWheneverFields
+    __allow_none_optionals__ = False
+
+
+def test_whenever_instant_provider():
+    record = ExampleWithWheneverFieldsFactory.build()
+    assert isinstance(record.instant_field, Instant)
+
+
+def test_whenever_plain_datetime_provider():
+    record = ExampleWithWheneverFieldsFactory.build()
+    assert isinstance(record.plain_field, PlainDateTime)
+
+
+def test_whenever_zoned_datetime_provider():
+    record = ExampleWithWheneverFieldsFactory.build()
+    assert isinstance(record.zoned_field, ZonedDateTime)
