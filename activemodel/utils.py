@@ -1,7 +1,19 @@
+import re
 from sqlalchemy import text
 from sqlmodel.sql.expression import SelectOfScalar
 
 from .session_manager import get_engine, get_session
+
+
+def to_snake_case(name: str) -> str:
+    """
+    Converts a PascalCase or camelCase string to snake_case.
+    Properly handles acronyms like 'LLMCache' -> 'llm_cache'.
+
+    Source: https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
+    """
+    s1 = re.sub(r"(?<!^)(?<!_)([A-Z][a-z]+)", r"_\1", name)
+    return re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
 
 
 def compile_sql(target: SelectOfScalar) -> str:

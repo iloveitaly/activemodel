@@ -5,7 +5,6 @@ from uuid import UUID
 
 import sqlalchemy as sa
 import sqlmodel as sm
-import textcase
 import uuid_utils
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
 from sqlalchemy.orm import declared_attr
@@ -18,6 +17,7 @@ from activemodel.mixins.pydantic_json import PydanticJSONMixin
 # NOTE: this patches a core method in sqlmodel to support db comments
 from .patches import get_column_from_field_patch  # noqa: F401
 from .query_wrapper import QueryWrapper
+from .utils import to_snake_case
 from .session_manager import get_session
 
 POSTGRES_INDEXES_NAMING_CONVENTION = {
@@ -117,19 +117,17 @@ class BaseModel(SQLModel):
     @declared_attr
     def __tablename__(cls) -> str:
         """
-        Automatically generates the table name for the model by converting the model's class name from camel case to snake case.
+        Automatically generates the table name for the model by converting the model's class name from PascalCase to snake_case.
         This is the recommended text case style for table names:
 
         https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names
 
         By default, the model's class name is lower cased which makes it harder to read.
 
-        Also, many text case conversion libraries struggle handling words like "LLMCache", this is why we are using
-        a more precise library which processes such acronyms: [`textcase`](https://pypi.org/project/textcase/).
-
+        This implementation properly handles acronyms: e.g. `LLMCache` -> `llm_cache`.
         https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case
         """
-        return textcase.snake(cls.__name__)
+        return to_snake_case(cls.__name__)
 
     @classmethod
     def foreign_key(cls, **kwargs) -> t.Any:
