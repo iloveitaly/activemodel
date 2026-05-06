@@ -138,6 +138,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li><a class="reference internal" href="#structured-json-with-pydantic-models">Structured JSON with Pydantic Models</a><ul>
 <li><a class="reference internal" href="#single-model-column">Single Model Column</a></li>
+<li><a class="reference internal" href="#plain-json-array-with-server-default">Plain JSON Array with Server Default</a></li>
 <li><a class="reference internal" href="#list-of-models-column">List of Models Column</a></li>
 </ul>
 </li>
@@ -348,6 +349,24 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="18"><span class="p">):</span>
 </span><span data-line="19">    <span class="n">chosen_info</span><span class="p">:</span> <span class="n">UserActionAuditData</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">)</span>
 </span><span data-line="20">    <span class="s2">&quot;audit data about the user&#39;s choice stored as structured JSON&quot;</span>
+</span></pre></div>
+</div>
+</section>
+<section id="plain-json-array-with-server-default">
+<h3>Plain JSON Array with Server Default<a class="headerlink" href="#plain-json-array-with-server-default" title="Link to this heading">¶</a></h3>
+<p>For simple arrays of primitives, you can store them directly as JSONB without a Pydantic wrapper. Use <code class="docutils literal notranslate"><span class="pre">sa_column_kwargs</span></code> to set a server-side default so the column is initialized to <code class="docutils literal notranslate"><span class="pre">[]</span></code> at the database level even for rows inserted outside of Python.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sa</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="k">class</span><span class="w"> </span><span class="nc">StreamSession</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">TypeIDMixin</span><span class="p">(</span><span class="s2">&quot;ss&quot;</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="8">    <span class="n">streaming_ip_requests</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span data-line="9">        <span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">,</span>
+</span><span data-line="10">        <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
+</span><span data-line="11">        <span class="n">sa_column_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;server_default&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;&#39;[]&#39;&quot;</span><span class="p">)},</span>
+</span><span data-line="12">    <span class="p">)</span>
 </span></pre></div>
 </div>
 </section>

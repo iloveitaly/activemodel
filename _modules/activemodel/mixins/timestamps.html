@@ -158,53 +158,41 @@ data-aria-dark="Switch to auto color mode">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
           <h1>Source code for activemodel.mixins.timestamps</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-</span><span data-line="2">
-</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sa</span>
-</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+<span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sa</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">whenever</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZonedDateTime</span>
+</span><span data-line="4">
 </span><span data-line="5">
-</span><span data-line="6"><span class="c1"># TODO raw sql https://github.com/tiangolo/sqlmodel/discussions/772</span>
-</span><span data-line="7"><span class="c1"># @classmethod</span>
-</span><span data-line="8"><span class="c1"># def select(cls):</span>
-</span><span data-line="9"><span class="c1">#     with get_session() as session:</span>
-</span><span data-line="10"><span class="c1">#         results = session.exec(sql.select(cls))</span>
-</span><span data-line="11">
-</span><span data-line="12"><span class="c1">#         for result in results:</span>
-</span><span data-line="13"><span class="c1">#             yield result</span>
-</span><span data-line="14">
-</span><span data-line="15">
 <div class="viewcode-block" id="TimestampsMixin">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/timestamps/index.html#activemodel.mixins.TimestampsMixin">[docs]</a>
-</span><span data-line="16"><span class="k">class</span><span class="w"> </span><span class="nc">TimestampsMixin</span><span class="p">:</span>
-</span><span data-line="17"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="18"><span class="sd">    Simple created at and updated at timestamps. Mix them into your model:</span>
-</span><span data-line="19">
-</span><span data-line="20"><span class="sd">    &gt;&gt;&gt; class MyModel(TimestampsMixin, SQLModel):</span>
-</span><span data-line="21"><span class="sd">    &gt;&gt;&gt;    pass</span>
-</span><span data-line="22">
-</span><span data-line="23"><span class="sd">    Notes:</span>
-</span><span data-line="24">
-</span><span data-line="25"><span class="sd">    - Originally pulled from: https://github.com/tiangolo/sqlmodel/issues/252</span>
-</span><span data-line="26"><span class="sd">    - Related issue: https://github.com/fastapi/sqlmodel/issues/539</span>
-</span><span data-line="27"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="28">
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">TimestampsMixin</span><span class="p">:</span>
+</span><span data-line="7"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="8"><span class="sd">    Simple created at and updated at timestamps. Mix them into your model:</span>
+</span><span data-line="9">
+</span><span data-line="10"><span class="sd">    &gt;&gt;&gt; class MyModel(TimestampsMixin, SQLModel):</span>
+</span><span data-line="11"><span class="sd">    &gt;&gt;&gt;    pass</span>
+</span><span data-line="12">
+</span><span data-line="13"><span class="sd">    Notes:</span>
+</span><span data-line="14">
+</span><span data-line="15"><span class="sd">    - Originally pulled from: https://github.com/tiangolo/sqlmodel/issues/252</span>
+</span><span data-line="16"><span class="sd">    - Related issue: https://github.com/fastapi/sqlmodel/issues/539</span>
+</span><span data-line="17"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="18">
 <div class="viewcode-block" id="TimestampsMixin.created_at">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/timestamps/index.html#activemodel.mixins.TimestampsMixin.created_at">[docs]</a>
-</span><span data-line="29">    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-</span><span data-line="30">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="31">        <span class="n">sa_type</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-</span><span data-line="32">        <span class="n">sa_column_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;server_default&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">()},</span>
-</span><span data-line="33">        <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span data-line="34">    <span class="p">)</span></div>
+</span><span data-line="19">    <span class="n">created_at</span><span class="p">:</span> <span class="n">ZonedDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span data-line="20">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="21">        <span class="n">sa_column_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;server_default&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">()},</span>
+</span><span data-line="22">        <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span data-line="23">    <span class="p">)</span></div>
 
-</span><span data-line="35">
+</span><span data-line="24">
 <div class="viewcode-block" id="TimestampsMixin.updated_at">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/timestamps/index.html#activemodel.mixins.TimestampsMixin.updated_at">[docs]</a>
-</span><span data-line="36">    <span class="n">updated_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-</span><span data-line="37">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="38">        <span class="n">sa_type</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-</span><span data-line="39">        <span class="n">sa_column_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;onupdate&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="s2">&quot;server_default&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">()},</span>
-</span><span data-line="40">    <span class="p">)</span></div>
+</span><span data-line="25">    <span class="n">updated_at</span><span class="p">:</span> <span class="n">ZonedDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+</span><span data-line="26">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="27">        <span class="n">sa_column_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;onupdate&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="s2">&quot;server_default&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">()},</span>
+</span><span data-line="28">    <span class="p">)</span></div>
 </div>
 
 </span></pre></div>

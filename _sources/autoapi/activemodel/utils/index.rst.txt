@@ -34,12 +34,15 @@ Module Contents
 
 .. py:function:: raw_sql_exec(raw_query: str)
 
+   https://github.com/tiangolo/sqlmodel/discussions/772
+
+
 .. py:function:: hash_function_code(func)
 
    get sha of a function to easily assert that it hasn't changed
 
 
-.. py:function:: is_database_empty(exclude: list[type] = []) -> bool
+.. py:function:: is_database_empty(exclude: list[type] | None = None) -> bool
 
    Check if any table in the database has records using Model.count().
 

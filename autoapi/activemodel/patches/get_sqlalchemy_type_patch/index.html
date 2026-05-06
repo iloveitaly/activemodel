@@ -211,8 +211,8 @@ data-aria-dark="Switch to auto color mode">
 <span id="activemodel-patches-get-sqlalchemy-type-patch"></span><h1>activemodel.patches.get_sqlalchemy_type_patch<a class="headerlink" href="#module-activemodel.patches.get_sqlalchemy_type_patch" title="Link to this heading">¶</a></h1>
 <p>Extends SQLModel’s get_sqlalchemy_type to recognize whenever datetime types.</p>
 <p>This allows using whenever.Instant, whenever.PlainDateTime, and
-whenever.ZonedDateTime as bare field
-type annotations without needing to specify sa_type= explicitly:</p>
+whenever.ZonedDateTime as bare field type annotations without needing to
+specify sa_type= explicitly:</p>
 <blockquote>
 <div><dl class="simple">
 <dt>class MyModel(BaseModel, table=True):</dt><dd><p>created_at: whenever.Instant | None = None

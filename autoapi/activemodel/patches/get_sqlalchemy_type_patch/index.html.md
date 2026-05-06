@@ -3,8 +3,8 @@
 Extends SQLModel’s get_sqlalchemy_type to recognize whenever datetime types.
 
 This allows using whenever.Instant, whenever.PlainDateTime, and
-whenever.ZonedDateTime as bare field
-type annotations without needing to specify sa_type= explicitly:
+whenever.ZonedDateTime as bare field type annotations without needing to
+specify sa_type= explicitly:
 
 > class MyModel(BaseModel, table=True):
 > : created_at: whenever.Instant | None = None

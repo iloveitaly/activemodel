@@ -54,7 +54,7 @@ Module Contents
 
 
    .. py:attribute:: deleted_at
-      :type:  datetime.datetime | None
+      :type:  whenever.ZonedDateTime | None
 
 
    .. py:method:: save() -> Self
@@ -68,7 +68,7 @@ Module Contents
 
 
    .. py:attribute:: deleted_at
-      :type:  datetime.datetime | None
+      :type:  whenever.ZonedDateTime | None
       :value: None
 
 

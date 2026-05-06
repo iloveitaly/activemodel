@@ -136,6 +136,25 @@ class RefundChoice(
     "audit data about the user's choice stored as structured JSON"
 ```
 
+### Plain JSON Array with Server Default
+
+For simple arrays of primitives, you can store them directly as JSONB without a Pydantic wrapper. Use `sa_column_kwargs` to set a server-side default so the column is initialized to `[]` at the database level even for rows inserted outside of Python.
+
+```python
+import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlmodel import Field
+from activemodel import BaseModel
+from activemodel.mixins import TypeIDMixin
+
+class StreamSession(BaseModel, TypeIDMixin("ss"), table=True):
+    streaming_ip_requests: list[str] = Field(
+        sa_type=JSONB,
+        default_factory=list,
+        sa_column_kwargs={"server_default": sa.text("'[]'")},
+    )
+```
+
 ### List of Models Column
 
 You can also store a list of Pydantic models. This is useful for things like transcripts, audit logs, or line items.

@@ -117,7 +117,7 @@ Package Contents
 
 
    .. py:attribute:: deleted_at
-      :type:  datetime.datetime | None
+      :type:  whenever.ZonedDateTime | None
       :value: None
 
 
@@ -142,13 +142,13 @@ Package Contents
 
 
    .. py:attribute:: created_at
-      :type:  datetime.datetime | None
+      :type:  whenever.ZonedDateTime | None
       :value: None
 
 
 
    .. py:attribute:: updated_at
-      :type:  datetime.datetime | None
+      :type:  whenever.ZonedDateTime | None
       :value: None
 
 

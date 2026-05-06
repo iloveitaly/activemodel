@@ -49,7 +49,7 @@ class GenProto[T](Protocol):
         ...
 ```
 
-#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)*
+#### deleted_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/library/constants.html#None)*
 
 #### save() → Self
 
@@ -59,7 +59,7 @@ Soft delete records by setting deleted_at instead of removing the row.
 
 Call soft_delete() to timestamp the record and persist that change.
 
-#### deleted_at *: [datetime.datetime](https://docs.python.org/3/library/datetime.html#datetime.datetime) | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+#### deleted_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
 
 #### soft_delete() → [T](../../pytest/truncate/index.md#activemodel.pytest.truncate.T)
 

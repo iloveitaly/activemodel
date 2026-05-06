@@ -27,8 +27,10 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
     * [activemodel.types.typeid](activemodel/types/typeid/index.md)
     * [activemodel.types.typeid_patch](activemodel/types/typeid_patch/index.md)
     * [activemodel.types.whenever](activemodel/types/whenever/index.md)
+      * [activemodel.types.whenever.date_type](activemodel/types/whenever/date_type/index.md)
       * [activemodel.types.whenever.instant_type](activemodel/types/whenever/instant_type/index.md)
       * [activemodel.types.whenever.plain_date_time_type](activemodel/types/whenever/plain_date_time_type/index.md)
+      * [activemodel.types.whenever.time_type](activemodel/types/whenever/time_type/index.md)
       * [activemodel.types.whenever.zoned_date_time_type](activemodel/types/whenever/zoned_date_time_type/index.md)
   * [activemodel.utils](activemodel/utils/index.md)
 
