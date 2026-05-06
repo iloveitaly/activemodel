@@ -1,7 +1,6 @@
-from datetime import datetime
-
 import sqlalchemy as sa
 from sqlmodel import Field
+from whenever import ZonedDateTime
 
 
 class TimestampsMixin:
@@ -17,15 +16,13 @@ class TimestampsMixin:
     - Related issue: https://github.com/fastapi/sqlmodel/issues/539
     """
 
-    created_at: datetime | None = Field(
+    created_at: ZonedDateTime | None = Field(
         default=None,
-        sa_type=sa.DateTime(timezone=True),
         sa_column_kwargs={"server_default": sa.func.now()},
         nullable=False,
     )
 
-    updated_at: datetime | None = Field(
+    updated_at: ZonedDateTime | None = Field(
         default=None,
-        sa_type=sa.DateTime(timezone=True),
         sa_column_kwargs={"onupdate": sa.func.now(), "server_default": sa.func.now()},
     )
