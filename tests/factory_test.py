@@ -2,6 +2,7 @@ from typeid import TypeID
 from whenever import Instant, PlainDateTime, ZonedDateTime
 
 from activemodel.pytest.factories import ActiveModelFactory
+from activemodel.pytest.truncate import database_reset_truncate
 from tests.models import (
     AnotherExample,
     ExampleRecord,
@@ -9,6 +10,7 @@ from tests.models import (
     ExampleWithId,
     ExampleWithWheneverFields,
 )
+from tests.pydantic_json.helpers import make_example
 
 
 class ExampleRecordFactory(ActiveModelFactory[ExampleRecord]):
@@ -205,3 +207,28 @@ def test_whenever_plain_datetime_provider():
 def test_whenever_zoned_datetime_provider():
     record = ExampleWithWheneverFieldsFactory.build()
     assert isinstance(record.zoned_field, ZonedDateTime)
+
+
+def test_database_reset_truncate_with_jsonb_raises_object_deleted_error(
+    create_and_wipe_database, db_truncate_session
+):
+    """
+    Reproduces: database_reset_truncate deletes rows but leaves SQLAlchemy's identity
+    map intact. The before_commit JSONB listener then tries to lazy-load the deleted
+    rows and raises ObjectDeletedError on the next factory commit.
+    """
+    # create a JSONB-backed record and keep a strong reference so it stays in the
+    # identity map (SQLAlchemy's identity_map uses weak refs; discarding the instance
+    # lets the GC collect it, removing it from the map before the bug can fire)
+    _jsonb_record = make_example()
+
+    # a subsequent commit (via another factory save) expires ALL objects in the session,
+    # including the JSONB instance above — leaving it stale in the identity map
+    ExampleRecordFactory.save(something="before_truncate")
+
+    # delete all rows from DB — identity map is NOT cleared (the bug scenario)
+    database_reset_truncate()
+
+    # the next commit triggers before_commit, which iterates the identity map and hits the
+    # expired JSONB instance; the DB SELECT to reload it finds no row -> ObjectDeletedError
+    ExampleRecordFactory.save(something="after_truncate")
