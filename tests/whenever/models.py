@@ -1,5 +1,5 @@
 from pydantic import BaseModel as PydanticBaseModel
-from whenever import Instant, PlainDateTime, ZonedDateTime
+from whenever import Date, Instant, PlainDateTime, Time, ZonedDateTime
 
 from activemodel import BaseModel
 from activemodel.types.typeid import TypeIDPrimaryKey
@@ -11,12 +11,16 @@ class WheneverModel(BaseModel, table=True):
     plain_datetime: PlainDateTime | None = None
     triggered_at: Instant | None = None
     scheduled_at: ZonedDateTime | None = None
+    birthday: Date | None = None
+    alarm_time: Time | None = None
 
 
 class WheneverSchema(PydanticBaseModel):
     instant: Instant
     plain_datetime: PlainDateTime
     zoned_datetime: ZonedDateTime
+    date: Date
+    time: Time
 
 
 def example_whenever(**overrides) -> WheneverSchema:
@@ -25,6 +29,8 @@ def example_whenever(**overrides) -> WheneverSchema:
             "instant": "2024-01-15T12:00:00Z",
             "plain_datetime": "2024-01-15T12:00:00",
             "zoned_datetime": "2024-01-15T12:00:00+00:00[UTC]",
+            "date": "2024-01-15",
+            "time": "12:00:00",
         }
         | overrides
     )
