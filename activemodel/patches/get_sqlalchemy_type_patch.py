@@ -2,22 +2,28 @@
 Extends SQLModel's get_sqlalchemy_type to recognize whenever datetime types.
 
 This allows using whenever.Instant, whenever.PlainDateTime, and
-whenever.ZonedDateTime as bare field
-type annotations without needing to specify sa_type= explicitly:
+whenever.ZonedDateTime as bare field type annotations without needing to
+specify sa_type= explicitly:
 
     class MyModel(BaseModel, table=True):
         created_at: whenever.Instant | None = None
         local_time: whenever.PlainDateTime | None = None
         scheduled_at: whenever.ZonedDateTime | None = None
+
+We also update SQLModel's default_registry.type_annotation_map so that plain
+SQLAlchemy DeclarativeBase models sharing the same registry get the same
+automatic type resolution.
 """
 
 import sqlmodel
 from sqlmodel.main import get_sqlalchemy_type as _original_get_sqlalchemy_type
-from whenever import Instant, PlainDateTime, ZonedDateTime
+from whenever import Date, Instant, PlainDateTime, Time, ZonedDateTime
 
 from activemodel.types.whenever import (
+    DateType,
     InstantType,
     PlainDateTimeType,
+    TimeType,
     ZonedDateTimeType,
 )
 from activemodel.utils import hash_function_code
@@ -47,6 +53,10 @@ def get_sqlalchemy_type(field):  # type: ignore[misc]
             return PlainDateTimeType()
         if issubclass(type_, ZonedDateTime):
             return ZonedDateTimeType()
+        if issubclass(type_, Date):
+            return DateType()
+        if issubclass(type_, Time):
+            return TimeType()
     except (ValueError, TypeError):
         pass
 
@@ -54,3 +64,16 @@ def get_sqlalchemy_type(field):  # type: ignore[misc]
 
 
 sqlmodel.main.get_sqlalchemy_type = get_sqlalchemy_type
+
+# SQLModel's get_sqlalchemy_type is a separate code path from SQLAlchemy's
+# registry._resolve_type, so we register in both places. This covers plain
+# SQLAlchemy DeclarativeBase models that share the default_registry.
+sqlmodel.main.default_registry.update_type_annotation_map(
+    {
+        Instant: InstantType(),
+        PlainDateTime: PlainDateTimeType(),
+        ZonedDateTime: ZonedDateTimeType(),
+        Date: DateType(),
+        Time: TimeType(),
+    }
+)

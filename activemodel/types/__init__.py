@@ -5,8 +5,8 @@ __all__ = [
 ]
 
 try:
-    from .whenever import InstantType, PlainDateTimeType, ZonedDateTimeType
+    from .whenever import DateType, InstantType, PlainDateTimeType, TimeType, ZonedDateTimeType
 
-    __all__ += ["InstantType", "PlainDateTimeType", "ZonedDateTimeType"]
+    __all__ += ["DateType", "InstantType", "PlainDateTimeType", "TimeType", "ZonedDateTimeType"]
 except ImportError:
     pass
