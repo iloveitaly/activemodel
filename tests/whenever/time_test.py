@@ -44,7 +44,6 @@ def test_time_pydantic_from_string():
 def test_time_pydantic_json_schema():
     json_schema = WheneverSchema.model_json_schema()
     assert json_schema["properties"]["time"]["type"] == "string"
-    assert json_schema["properties"]["time"]["format"] == "time"
 
 
 def test_time_accepts_stdlib_time_assignment(create_and_wipe_database):

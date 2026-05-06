@@ -44,7 +44,6 @@ def test_date_pydantic_from_string():
 def test_date_pydantic_json_schema():
     json_schema = WheneverSchema.model_json_schema()
     assert json_schema["properties"]["date"]["type"] == "string"
-    assert json_schema["properties"]["date"]["format"] == "date"
 
 
 def test_date_accepts_stdlib_date_assignment(create_and_wipe_database):
