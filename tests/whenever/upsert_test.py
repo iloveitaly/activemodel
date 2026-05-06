@@ -5,12 +5,8 @@ from tests.models import WheneverUpsertModel
 CLERK_ID = "user_clerk_123"
 
 
-def _now() -> Instant:
-    return Instant.now().round("microsecond", mode="floor")
-
-
 def test_upsert_insert_with_whenever_fields(create_and_wipe_database):
-    now = _now()
+    now = Instant.now()
     scheduled = ZonedDateTime(2025, 6, 1, 9, 0, tz="America/New_York")
     bday = Date(1990, 3, 15)
     alarm = Time(7, 30, 0)
@@ -42,13 +38,13 @@ def test_upsert_insert_with_whenever_fields(create_and_wipe_database):
 
 
 def test_upsert_update_whenever_fields_on_conflict(create_and_wipe_database):
-    first_active = _now()
+    first_active = Instant.now()
     WheneverUpsertModel.upsert(
         data={"clerk_id": CLERK_ID, "last_active_at": first_active},
         unique_by="clerk_id",
     )
 
-    second_active = _now()
+    second_active = Instant.now()
     result = WheneverUpsertModel.upsert(
         data={"clerk_id": CLERK_ID, "last_active_at": second_active},
         unique_by="clerk_id",
@@ -66,7 +62,7 @@ def test_upsert_partial_update_preserves_existing_whenever_fields(create_and_wip
     bday = Date(1990, 3, 15)
     alarm = Time(7, 30, 0)
     scheduled = ZonedDateTime(2025, 6, 1, 9, 0, tz="America/New_York")
-    initial_active = _now()
+    initial_active = Instant.now()
 
     WheneverUpsertModel.upsert(
         data={
@@ -79,7 +75,7 @@ def test_upsert_partial_update_preserves_existing_whenever_fields(create_and_wip
         unique_by="clerk_id",
     )
 
-    new_active = _now()
+    new_active = Instant.now()
     result = WheneverUpsertModel.upsert(
         data={"clerk_id": CLERK_ID, "last_active_at": new_active},
         unique_by="clerk_id",
