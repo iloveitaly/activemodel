@@ -5,7 +5,7 @@ Example models to test various ORM cases
 from pydantic import computed_field
 from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Relationship
-from whenever import Instant, PlainDateTime, ZonedDateTime
+from whenever import Date, Instant, PlainDateTime, Time, ZonedDateTime
 
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDPrimaryKey
@@ -68,6 +68,15 @@ class ExampleWithWheneverFields(BaseModel, table=True):
     instant_field: Instant | None = None
     plain_field: PlainDateTime | None = None
     zoned_field: ZonedDateTime | None = None
+
+
+class WheneverUpsertModel(BaseModel, table=True):
+    id: TypeID = TypeIDPrimaryKey("whenever_upsert")
+    external_id: str = Field(unique=True)
+    last_active_at: Instant | None = None
+    scheduled_at: ZonedDateTime | None = None
+    birthday: Date | None = None
+    alarm_time: Time | None = None
 
 
 class ExampleRelatedModel(BaseModel, table=True):
