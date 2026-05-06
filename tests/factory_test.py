@@ -1,3 +1,4 @@
+from sqlalchemy import delete as sa_delete
 from typeid import TypeID
 from whenever import Instant, PlainDateTime, ZonedDateTime
 
@@ -10,7 +11,7 @@ from tests.models import (
     ExampleWithId,
     ExampleWithWheneverFields,
 )
-from tests.pydantic_json.helpers import make_example
+from tests.pydantic_json.helpers import ExampleWithJSONB, make_example
 
 
 class ExampleRecordFactory(ActiveModelFactory[ExampleRecord]):
@@ -209,26 +210,51 @@ def test_whenever_zoned_datetime_provider():
     assert isinstance(record.zoned_field, ZonedDateTime)
 
 
-def test_database_reset_truncate_with_jsonb_raises_object_deleted_error(
+def test_factory_save_after_truncate_with_jsonb_in_identity_map(
     create_and_wipe_database, db_truncate_session
 ):
     """
-    Reproduces: database_reset_truncate deletes rows but leaves SQLAlchemy's identity
-    map intact. The before_commit JSONB listener then tries to lazy-load the deleted
-    rows and raises ObjectDeletedError on the next factory commit.
+    Regression: database_reset_truncate deletes rows but leaves SQLAlchemy's identity
+    map intact. A prior commit expires those instances; on the next commit the
+    before_commit JSONB listener must skip expired instances rather than triggering a
+    lazy SELECT that raises ObjectDeletedError on the deleted row.
+
+    Keep _jsonb_record assigned — SQLAlchemy's identity_map uses weak refs, so
+    discarding the instance lets the GC collect it before the bug can fire.
     """
-    # create a JSONB-backed record and keep a strong reference so it stays in the
-    # identity map (SQLAlchemy's identity_map uses weak refs; discarding the instance
-    # lets the GC collect it, removing it from the map before the bug can fire)
     _jsonb_record = make_example()
 
-    # a subsequent commit (via another factory save) expires ALL objects in the session,
-    # including the JSONB instance above — leaving it stale in the identity map
+    # commit via factory save expires all objects in the session (including the JSONB
+    # instance above), leaving it stale in the identity map
     ExampleRecordFactory.save(something="before_truncate")
 
-    # delete all rows from DB — identity map is NOT cleared (the bug scenario)
+    # delete all rows from DB — identity map is NOT cleared
     database_reset_truncate()
 
-    # the next commit triggers before_commit, which iterates the identity map and hits the
-    # expired JSONB instance; the DB SELECT to reload it finds no row -> ObjectDeletedError
-    ExampleRecordFactory.save(something="after_truncate")
+    # before_commit must skip the expired JSONB instance rather than crashing
+    rec = ExampleRecordFactory.save(something="after_truncate")
+    assert rec.something == "after_truncate"
+
+
+def test_factory_save_after_bulk_delete_with_jsonb_in_identity_map(
+    create_and_wipe_database, db_truncate_session
+):
+    """
+    Same bug, different trigger: a bulk SQL DELETE run directly on the session
+    (synchronize_session=False) deletes the row without updating the identity map.
+    This is a common production pattern (batch cleanup queries) that leaves expired
+    JSONB instances stranded in the identity map the same way truncate does.
+    """
+    _jsonb_record = make_example()
+
+    # expire the JSONB instance via an unrelated commit
+    ExampleRecordFactory.save(something="before_delete")
+
+    # bulk delete bypassing ORM identity-map sync — row is gone, map still holds instance
+    db_truncate_session.execute(
+        sa_delete(ExampleWithJSONB).execution_options(synchronize_session=False)
+    )
+
+    # before_commit must skip the expired JSONB instance rather than crashing
+    rec = ExampleRecordFactory.save(something="after_delete")
+    assert rec.something == "after_delete"
