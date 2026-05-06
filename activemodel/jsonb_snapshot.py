@@ -204,7 +204,16 @@ def register_before_commit_listener() -> None:
     def _detect_tracked_json_mutations(session):
         # snapshot is only set on persistent instances that came through our load/refresh hooks
         for instance in list(session.identity_map.values()):
-            if isinstance(instance, PydanticJSONMixin):
-                detect_json_mutations(instance)
+            if not isinstance(instance, PydanticJSONMixin):
+                continue
+
+            state = sa_attributes.instance_state(instance)
+            # expired/deleted instances have no in-memory values to diff against the
+            # snapshot — accessing attributes would trigger a lazy SELECT, which fails
+            # with ObjectDeletedError if the row was deleted out-of-band (e.g. truncate)
+            if state.expired or state.deleted:
+                continue
+
+            detect_json_mutations(instance)
 
     _before_commit_registered = True
