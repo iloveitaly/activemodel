@@ -128,6 +128,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#defining-fields-on-a-model">Defining fields on a model</a></li>
 <li><a class="reference internal" href="#reading-and-writing">Reading and writing</a></li>
 <li><a class="reference internal" href="#factories">Factories</a></li>
+<li><a class="reference internal" href="#pydantic-json-schema">Pydantic JSON schema</a></li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
@@ -195,7 +196,7 @@ data-aria-dark="Switch to auto color mode">
 </div><article class="yue" role="main">
           <section id="whenever-integration">
 <h1>whenever Integration<a class="headerlink" href="#whenever-integration" title="Link to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> has built-in support for the <a class="reference external" href="https://github.com/ariebovenberg/whenever"><code class="docutils literal notranslate"><span class="pre">whenever</span></code></a> datetime library. Three types are supported:</p>
+<p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> has built-in support for the <a class="reference external" href="https://github.com/ariebovenberg/whenever"><code class="docutils literal notranslate"><span class="pre">whenever</span></code></a> datetime library. Five types are supported:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -216,6 +217,14 @@ data-aria-dark="Switch to auto color mode">
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PlainDateTime</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">TIMESTAMP</span> <span class="pre">WITHOUT</span> <span class="pre">TIME</span> <span class="pre">ZONE</span></code></p></td>
 <td><p>No timezone; matches SQLite/naive datetime</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Date</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DATE</span></code></p></td>
+<td><p>Calendar date with no time component</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Time</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TIME</span></code></p></td>
+<td><p>Time of day with no date or timezone</p></td>
 </tr>
 </tbody>
 </table>
@@ -278,6 +287,10 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="3"><span class="n">past_event</span> <span class="o">=</span> <span class="n">EventFactory</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">occurred_at</span><span class="o">=</span><span class="n">Instant</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">24</span><span class="p">))</span>
 </span></pre></div>
 </div>
+</section>
+<section id="pydantic-json-schema">
+<h2>Pydantic JSON schema<a class="headerlink" href="#pydantic-json-schema" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Date</span></code> and <code class="docutils literal notranslate"><span class="pre">Time</span></code> validate and serialize correctly in Pydantic models but will not carry a <code class="docutils literal notranslate"><span class="pre">&quot;format&quot;</span></code> hint in the generated JSON schema — they produce <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;}</span></code> rather than <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;date&quot;}</span></code>. This is a limitation of <code class="docutils literal notranslate"><span class="pre">whenever.Date</span></code> and <code class="docutils literal notranslate"><span class="pre">whenever.Time</span></code> being Rust extension types; Python cannot add <code class="docutils literal notranslate"><span class="pre">__get_pydantic_json_schema__</span></code> to them.</p>
 </section>
 </section>
 

@@ -1,12 +1,14 @@
 # whenever Integration
 
-`activemodel` has built-in support for the [`whenever`](https://github.com/ariebovenberg/whenever) datetime library. Three types are supported:
+`activemodel` has built-in support for the [`whenever`](https://github.com/ariebovenberg/whenever) datetime library. Five types are supported:
 
 | whenever type   | SQLAlchemy column type         | Notes                                          |
 |-----------------|--------------------------------|------------------------------------------------|
 | `Instant`       | `TIMESTAMP WITH TIME ZONE`     | UTC-normalized point in time                   |
 | `ZonedDateTime` | `TIMESTAMP WITH TIME ZONE`     | IANA timezone name is not preserved in the DB  |
 | `PlainDateTime` | `TIMESTAMP WITHOUT TIME ZONE`  | No timezone; matches SQLite/naive datetime     |
+| `Date`          | `DATE`                         | Calendar date with no time component           |
+| `Time`          | `TIME`                         | Time of day with no date or timezone           |
 
 ## Defining fields on a model
 
@@ -73,3 +75,7 @@ from whenever import Instant
 
 past_event = EventFactory.build(occurred_at=Instant.now().subtract(hours=24))
 ```
+
+## Pydantic JSON schema
+
+`Date` and `Time` validate and serialize correctly in Pydantic models but will not carry a `"format"` hint in the generated JSON schema — they produce `{"type": "string"}` rather than `{"type": "string", "format": "date"}`. This is a limitation of `whenever.Date` and `whenever.Time` being Rust extension types; Python cannot add `__get_pydantic_json_schema__` to them.
