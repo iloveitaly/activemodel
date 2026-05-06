@@ -54,7 +54,7 @@ def hash_function_code(func):
     return hashlib.sha256(source.encode()).hexdigest()
 
 
-def is_database_empty(exclude: list[type] = []) -> bool:
+def is_database_empty(exclude: list[type] | None = None) -> bool:
     """
     Check if any table in the database has records using Model.count().
 
@@ -63,6 +63,9 @@ def is_database_empty(exclude: list[type] = []) -> bool:
 
     from .base_model import BaseModel
     from .logger import logger
+
+    if exclude is None:
+        exclude = []
 
     # Get all subclasses recursively
     all_models = BaseModel.__subclasses__()
