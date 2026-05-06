@@ -1,4 +1,5 @@
 import re
+
 from sqlalchemy import text
 from sqlmodel.sql.expression import SelectOfScalar
 
@@ -25,9 +26,20 @@ def compile_sql(target: SelectOfScalar) -> str:
     return str(compiled)
 
 
+# alternative implementation we could consider
+# def select(cls):
+#     with get_session() as session:
+#         results = session.exec(sql.select(cls))
+#         for result in results:
+#             yield result
+
+
 # TODO wait so why isn't this typed?
 # TODO document further, lots of risks here
 def raw_sql_exec(raw_query: str):
+    """
+    https://github.com/tiangolo/sqlmodel/discussions/772
+    """
     with get_session() as session:
         session.execute(text(raw_query))
 

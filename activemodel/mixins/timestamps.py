@@ -3,15 +3,6 @@ from datetime import datetime
 import sqlalchemy as sa
 from sqlmodel import Field
 
-# TODO raw sql https://github.com/tiangolo/sqlmodel/discussions/772
-# @classmethod
-# def select(cls):
-#     with get_session() as session:
-#         results = session.exec(sql.select(cls))
-
-#         for result in results:
-#             yield result
-
 
 class TimestampsMixin:
     """
