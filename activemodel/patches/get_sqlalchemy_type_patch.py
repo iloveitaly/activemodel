@@ -9,10 +9,6 @@ specify sa_type= explicitly:
         created_at: whenever.Instant | None = None
         local_time: whenever.PlainDateTime | None = None
         scheduled_at: whenever.ZonedDateTime | None = None
-
-We also update SQLModel's default_registry.type_annotation_map so that plain
-SQLAlchemy DeclarativeBase models sharing the same registry get the same
-automatic type resolution.
 """
 
 import sqlmodel
