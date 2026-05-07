@@ -212,7 +212,7 @@ data-aria-dark="Switch to auto color mode">
 </div><article class="yue" role="main">
           <section id="module-activemodel.types.typeid_patch">
 <span id="activemodel-types-typeid-patch"></span><h1>activemodel.types.typeid_patch<a class="headerlink" href="#module-activemodel.types.typeid_patch" title="Link to this heading">¶</a></h1>
-<p>Add pydantic v2 support for TypeID.</p>
+<p>Add pydantic v2 support for TypeID. Importing file mutates the TypeID class from another package.</p>
 <ul class="simple">
 <li><p>The TypeID package has a <cite>TypeIDField[Literal[“prefix”]]</cite> support, but this is not a subclass of TypeID
 which causes errors when a TypeID object is assigned to a field of that type.</p></li>

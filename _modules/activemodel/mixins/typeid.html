@@ -162,27 +162,26 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="2">
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
 </span><span data-line="4">
-</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">typeid_patch</span>  <span class="c1"># noqa: F401</span>
-</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types.typeid</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-</span><span data-line="7">    <span class="n">TypeIDPrimaryKey</span><span class="p">,</span>
-</span><span data-line="8">    <span class="n">TypeIDType</span><span class="p">,</span>  <span class="c1"># noqa: F401 (re-exported for sa_column usage)</span>
-</span><span data-line="9"><span class="p">)</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.types.typeid</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="6">    <span class="n">TypeIDPrimaryKey</span><span class="p">,</span>
+</span><span data-line="7">    <span class="n">TypeIDType</span><span class="p">,</span>  <span class="c1"># noqa: F401 (re-exported for sa_column usage)</span>
+</span><span data-line="8"><span class="p">)</span>
+</span><span data-line="9">
 </span><span data-line="10">
-</span><span data-line="11">
-</span><span data-line="12"><span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;Use TypeIDPrimaryKey(prefix) on the id field instead.&quot;</span><span class="p">)</span>
+</span><span data-line="11"><span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;Use TypeIDPrimaryKey(prefix) on the id field instead.&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="TypeIDMixin">
 <a class="viewcode-back" href="../../../autoapi/activemodel/mixins/typeid/index.html#activemodel.mixins.TypeIDMixin">[docs]</a>
-</span><span data-line="13"><span class="k">def</span><span class="w"> </span><span class="nf">TypeIDMixin</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-</span><span data-line="14"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="15"><span class="sd">    Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.</span>
-</span><span data-line="16"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="17">
-</span><span data-line="18">    <span class="k">class</span><span class="w"> </span><span class="nc">_TypeIDMixin</span><span class="p">:</span>
-</span><span data-line="19">        <span class="n">__abstract__</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="20">
-</span><span data-line="21">        <span class="nb">id</span><span class="p">:</span> <span class="n">TypeID</span> <span class="o">=</span> <span class="n">TypeIDPrimaryKey</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-</span><span data-line="22">
-</span><span data-line="23">    <span class="k">return</span> <span class="n">_TypeIDMixin</span></div>
+</span><span data-line="12"><span class="k">def</span><span class="w"> </span><span class="nf">TypeIDMixin</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span data-line="13"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="14"><span class="sd">    Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.</span>
+</span><span data-line="15"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="16">
+</span><span data-line="17">    <span class="k">class</span><span class="w"> </span><span class="nc">_TypeIDMixin</span><span class="p">:</span>
+</span><span data-line="18">        <span class="n">__abstract__</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="19">
+</span><span data-line="20">        <span class="nb">id</span><span class="p">:</span> <span class="n">TypeID</span> <span class="o">=</span> <span class="n">TypeIDPrimaryKey</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+</span><span data-line="21">
+</span><span data-line="22">    <span class="k">return</span> <span class="n">_TypeIDMixin</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
