@@ -56,3 +56,9 @@ class Event(BaseModel, table=True):
         sa_type=TypeIDType.raw(),
     )
 ```
+
+Because `raw()` fields return a stdlib `UUID` while TypeID objects are not directly comparable to `UUID`, use `.bytes` to compare them reliably:
+
+```python
+assert event.originating_id.bytes == some_typeid.uuid_bytes
+```

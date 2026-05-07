@@ -49,11 +49,6 @@ class Product(BaseModel, table=True):
     # Define max lengths and index the column
     status: str = Field(default="active", max_length=100, index=True)
 ```
-
-### Advanced TypeID Usage
-
-See the [TypeID](typeid.md) page for full documentation on foreign keys, prefix enforcement, and polymorphic references.
-
 ## Structured JSON with Pydantic Models
 
 Using the `PydanticJSONMixin`, you can store complex Pydantic models or lists of models in PostgreSQL `JSONB` columns. The mixin handles serialization and deserialization automatically.
