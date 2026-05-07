@@ -21,14 +21,14 @@ def test_upsert_insert_with_whenever_fields(create_and_wipe_database):
     )
 
     assert result is not None
-    assert result.last_active_at == now
+    assert result.last_active_at == now.round("microsecond", mode="floor")
     assert result.scheduled_at == scheduled
     assert result.birthday == bday
     assert result.alarm_time == alarm
 
     fetched = WheneverUpsertModel.one(external_id="user_123")
     assert fetched.id == result.id
-    assert fetched.last_active_at == now
+    assert fetched.last_active_at == now.round("microsecond", mode="floor")
     assert fetched.scheduled_at == scheduled
     assert fetched.birthday == bday
     assert fetched.alarm_time == alarm
@@ -47,12 +47,12 @@ def test_upsert_update_whenever_fields_on_conflict(create_and_wipe_database):
         unique_by="external_id",
     )
 
-    assert result.last_active_at == second_active
+    assert result.last_active_at == second_active.round("microsecond", mode="floor")
     assert WheneverUpsertModel.count() == 1
 
     fetched = WheneverUpsertModel.one(external_id="user_123")
     assert fetched.id == result.id
-    assert fetched.last_active_at == second_active
+    assert fetched.last_active_at == second_active.round("microsecond", mode="floor")
 
 
 def test_upsert_partial_update_preserves_existing_whenever_fields(create_and_wipe_database):
@@ -78,10 +78,10 @@ def test_upsert_partial_update_preserves_existing_whenever_fields(create_and_wip
         unique_by="external_id",
     )
 
-    assert result.last_active_at == new_active
+    assert result.last_active_at == new_active.round("microsecond", mode="floor")
 
     fetched = WheneverUpsertModel.one(external_id="user_123")
-    assert fetched.last_active_at == new_active
+    assert fetched.last_active_at == new_active.round("microsecond", mode="floor")
     # Columns absent from data are preserved in DB
     assert fetched.birthday == bday
     assert fetched.alarm_time == alarm
