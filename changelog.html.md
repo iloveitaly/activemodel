@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.23.0](https://github.com/iloveitaly/activemodel/compare/v0.22.0...v0.23.0) (2026-05-07)
+
+### Features
+
+* add Date and Time support for Whenever models and schemas ([4ceeefd](https://github.com/iloveitaly/activemodel/commit/4ceeefdca992923b8edcfa962e94ac13b47b12d1))
+* **factory:** add whenever type providers to ActiveModelFactory ([957e118](https://github.com/iloveitaly/activemodel/commit/957e118a418200724205761f0a38378b03fff62e))
+* support whenever.Date and whenever.Time in models ([76d0392](https://github.com/iloveitaly/activemodel/commit/76d03923a6d39dfec306478060231b31fb00c170))
+
+### Bug Fixes
+
+* **activemodel:** prevent attribute access on expired or deleted instances ([5fb9450](https://github.com/iloveitaly/activemodel/commit/5fb9450ae900a6e05e79c8c7f50a2360a32a89ce))
+* migrate datetime fields to ZonedDateTime ([8411946](https://github.com/iloveitaly/activemodel/commit/8411946de1b30bd15f59c6a42a8d0dff31273950))
+* use None as default for exclude parameter in is_database_empty ([dbe9b22](https://github.com/iloveitaly/activemodel/commit/dbe9b22cbc0710289b004fab341eb79c28ac8718))
+
+### Documentation
+
+* add example for JSONB array with server-side default ([e9c0d9f](https://github.com/iloveitaly/activemodel/commit/e9c0d9fc466d157355c07e49894aaa7c39706508))
+* add whenever integration documentation ([9a7c0a2](https://github.com/iloveitaly/activemodel/commit/9a7c0a2c447f46bc3ef55bd6d0f11223772b9b17))
+* update patch documentation to reflect removed registry logic ([d95fa34](https://github.com/iloveitaly/activemodel/commit/d95fa3454a44abef1a54f57925802113a5da67cf))
+* update whenever documentation with new types and pydantic limitations ([bee0a09](https://github.com/iloveitaly/activemodel/commit/bee0a092d15f95745241e12f7a41ca31050fa189))
+
 ## [0.22.0](https://github.com/iloveitaly/activemodel/compare/v0.21.0...v0.22.0) (2026-05-05)
 
 ### Features
