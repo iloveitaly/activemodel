@@ -1,5 +1,5 @@
 """
-Add pydantic v2 support for TypeID.
+Add pydantic v2 support for TypeID. Importing file mutates the TypeID class from another package.
 
 * The TypeID package has a `TypeIDField[Literal["prefix"]]` support, but this is not a subclass of TypeID
   which causes errors when a TypeID object is assigned to a field of that type.
