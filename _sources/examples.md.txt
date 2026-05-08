@@ -49,64 +49,6 @@ class Product(BaseModel, table=True):
     # Define max lengths and index the column
     status: str = Field(default="active", max_length=100, index=True)
 ```
-
-### Advanced TypeID Usage
-
-While `TypeIDMixin` handles the primary key, you can use `TypeIDType` and the `.foreign_key()` helper for related IDs, prefix enforcement, and polymorphic reference IDs.
-
-#### Foreign Keys
-
-```python
-from activemodel import BaseModel
-from activemodel.mixins import TypeIDMixin
-from activemodel.types import TypeIDType
-from sqlmodel import Relationship
-
-class Distribution(BaseModel, TypeIDMixin("dst"), table=True):
-    name: str
-
-class Screening(BaseModel, TypeIDMixin("scr"), table=True):
-    distribution_id: TypeIDType = Distribution.foreign_key(index=True)
-    distribution: Distribution = Relationship()
-```
-
-#### Prefix Enforcement
-
-```python
-from activemodel import BaseModel
-from activemodel.mixins import TypeIDMixin
-from activemodel.types import TypeIDType
-from sqlmodel import Field
-
-class Screening(BaseModel, TypeIDMixin("scr"), table=True):
-    merged_into_screening_id: TypeIDType | None = Field(
-        default=None,
-        sa_type=TypeIDType(prefix="scr")  # type: ignore
-    )
-```
-
-#### Raw Polymorphic References
-
-Use `TypeIDType.raw()` for polymorphic reference IDs where the field can be assigned TypeIDs with multiple prefixes, but only the UUID needs to be stored and read back. This mode accepts `TypeID` objects and TypeID strings with any prefix, persists a native UUID, and returns a plain `UUID`.
-
-```python
-from uuid import UUID
-
-from activemodel import BaseModel
-from activemodel.mixins import TypeIDPrimaryKey
-from activemodel.types import TypeIDType
-from sqlmodel import Field
-from typeid import TypeID
-
-class Event(BaseModel, table=True):
-    id: TypeID = TypeIDPrimaryKey("event")
-    originating_id: UUID | None = Field(
-        default=None,
-        index=True,
-        sa_type=TypeIDType.raw(),
-    )
-```
-
 ## Structured JSON with Pydantic Models
 
 Using the `PydanticJSONMixin`, you can store complex Pydantic models or lists of models in PostgreSQL `JSONB` columns. The mixin handles serialization and deserialization automatically.

@@ -40,6 +40,7 @@ Pytest Integration <pytest>
 SQL Logging <sql-logging>
 whenever Integration <whenever>
 Examples <examples>
+TypeID <typeid>
 Alembic Integration <alembic>
 API Reference <autoapi/index>
 Changelog <changelog>
