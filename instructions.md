@@ -9,6 +9,7 @@ Coding instructions for all programming languages:
 - Prefer constants with separators: `10_000` is preferred to `10000` (or `10_00` over `1000` in the case of a integer representing cents).
 - Only add comments if the code is not self-explanatory. Do not add obvious code comments.
 - Do not remove existing comments.
+- Do not capitalize or add periods at the end of single-line comments.
 - When I ask you to write code, prioritize simplicity and legibility over covering all edge cases, handling all errors, etc.
 - When a particular need can be met with a mature, reasonably adopted and maintained package, I would prefer to use that package rather than engineering my own solution.
 - Never add error handling to catch an error without being asked to do so. Fail hard and early with assertions and allow exceptions to propagate.
@@ -37,7 +38,7 @@ session_id = client_secret_id.split("_secret")[0]
 
 **DO NOT FORGET**: keep your responses short, dense, and without fluff. I am a senior, well-educated software engineer, and hate long explanations.
 
-### Import Developer Workflow Rules
+### Important Developer Workflow Rules
 
 Pay careful attention to these instructions when running tests, generating database migrations, or otherwise figuring out how to operate this project:
 
@@ -52,7 +53,11 @@ Pay careful attention to these instructions when running tests, generating datab
 - Do not attempt to create or run database migrations. Pause your work and let me know you need a migration run.
   - If you receive errors about missing migrations, missing tables, database connectivity, etc, stop your work and let me know.
 
-Look at @local.md
+### Expert Engineer With Limited Domain Knowledge, Add Comments
+
+The engineer reading the code you write is an expert software engineer, but is not familiar with the internals of every system. Include concise one-line comments explaining key hooks, API usage, blocks of logic, etc., to help the reader quickly understand the code you've written.
+
+Another way of thinking about this: embed the business requirements as comments in the code when the code does not self-document.
 
 ## Python
 
