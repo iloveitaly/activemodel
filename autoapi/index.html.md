@@ -5,6 +5,7 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
 * [activemodel](activemodel/index.md)
   * [activemodel.base_model](activemodel/base_model/index.md)
   * [activemodel.celery](activemodel/celery/index.md)
+  * [activemodel.decorators](activemodel/decorators/index.md)
   * [activemodel.errors](activemodel/errors/index.md)
   * [activemodel.jsonb_snapshot](activemodel/jsonb_snapshot/index.md)
   * [activemodel.mixins](activemodel/mixins/index.md)

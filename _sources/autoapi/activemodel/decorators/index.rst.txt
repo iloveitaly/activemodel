@@ -1,0 +1,22 @@
+activemodel.decorators
+======================
+
+.. py:module:: activemodel.decorators
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   activemodel.decorators.property_field
+
+
+Module Contents
+---------------
+
+.. py:function:: property_field(func=None, /, **kwargs)
+
+   `@property` enables attribute-style access; `@computed_field` includes the field in pydantic serialization.
+
+

@@ -23,6 +23,7 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
 * [activemodel](activemodel/index.md)
   * [activemodel.base_model](activemodel/base_model/index.md)
   * [activemodel.celery](activemodel/celery/index.md)
+  * [activemodel.decorators](activemodel/decorators/index.md)
   * [activemodel.errors](activemodel/errors/index.md)
   * [activemodel.jsonb_snapshot](activemodel/jsonb_snapshot/index.md)
   * [activemodel.mixins](activemodel/mixins/index.md)
@@ -63,6 +64,7 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
 
 * [activemodel.base_model](base_model/index.md)
 * [activemodel.celery](celery/index.md)
+* [activemodel.decorators](decorators/index.md)
 * [activemodel.errors](errors/index.md)
 * [activemodel.jsonb_snapshot](jsonb_snapshot/index.md)
 * [activemodel.mixins](mixins/index.md)
@@ -81,10 +83,11 @@ This page contains auto-generated API reference documentation <sup>[1](#f1)</sup
 
 ## Functions
 
-| [`get_engine`](#activemodel.get_engine)()                       | alias to get the database engine without importing SessionManager   |
-|-----------------------------------------------------------------|---------------------------------------------------------------------|
-| [`get_session`](#activemodel.get_session)()                     | alias to get a database session without importing SessionManager    |
-| [`init`](#activemodel.init)(database_url, \*[, engine_options]) | configure activemodel to connect to a specific database             |
+| [`property_field`](#activemodel.property_field)([func])         | @property enables attribute-style access; @computed_field includes the field in pydantic serialization.   |
+|-----------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| [`get_engine`](#activemodel.get_engine)()                       | alias to get the database engine without importing SessionManager                                         |
+| [`get_session`](#activemodel.get_session)()                     | alias to get a database session without importing SessionManager                                          |
+| [`init`](#activemodel.init)(database_url, \*[, engine_options]) | configure activemodel to connect to a specific database                                                   |
 
 ## Package Contents
 
@@ -278,6 +281,10 @@ get a generator for all records in the database
 Pick a random record from the database. Raises if none exist.
 
 Helpful for testing and console debugging.
+
+### activemodel.property_field(func=None, , \*\*kwargs)
+
+@property enables attribute-style access; @computed_field includes the field in pydantic serialization.
 
 ### *class* activemodel.SessionManager(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
 
@@ -1238,6 +1245,22 @@ get sha of a function to easily assert that it hasn’t changed
 Check if any table in the database has records using Model.count().
 
 Useful for detecting an empty database state to run operations such as seeding, etc.
+
+
+# index.html.md
+
+# activemodel.decorators
+
+## Functions
+
+| [`property_field`](#activemodel.decorators.property_field)([func])   | @property enables attribute-style access; @computed_field includes the field in pydantic serialization.   |
+|----------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+
+## Module Contents
+
+### activemodel.decorators.property_field(func=None, , \*\*kwargs)
+
+@property enables attribute-style access; @computed_field includes the field in pydantic serialization.
 
 
 # index.html.md
@@ -5562,7 +5585,7 @@ print(sys.version)
 
 ## Upstream Changes
 
-- <input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> https://github.com/fastapi/sqlmodel/pull/1293
+- <input class="task-list-item-checkbox" disabled="disabled" type="checkbox">https://github.com/fastapi/sqlmodel/pull/1293
 
 ---
 

@@ -12,6 +12,7 @@ Submodules
 
    /autoapi/activemodel/base_model/index
    /autoapi/activemodel/celery/index
+   /autoapi/activemodel/decorators/index
    /autoapi/activemodel/errors/index
    /autoapi/activemodel/jsonb_snapshot/index
    /autoapi/activemodel/mixins/index
@@ -37,6 +38,7 @@ Functions
 
 .. autoapisummary::
 
+   activemodel.property_field
    activemodel.get_engine
    activemodel.get_session
    activemodel.init
@@ -297,6 +299,11 @@ Package Contents
 
       Helpful for testing and console debugging.
 
+
+
+.. py:function:: property_field(func=None, /, **kwargs)
+
+   `@property` enables attribute-style access; `@computed_field` includes the field in pydantic serialization.
 
 
 .. py:class:: SessionManager(database_url: str, *, engine_options: dict[str, Any] | None = None)

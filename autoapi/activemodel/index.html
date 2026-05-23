@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=9454f7d5" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -23,7 +23,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/>
+    
+  <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://iloveitaly.github.io/activemodel/autoapi/activemodel/"/>
   <meta property="og:title" content="activemodel"/>
     <meta name="twitter:card" content="summary"/>
@@ -78,6 +79,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">activemodel</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="base_model/index.html">activemodel.base_model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="decorators/index.html">activemodel.decorators</a></li>
 <li class="toctree-l3"><a class="reference internal" href="errors/index.html">activemodel.errors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="jsonb_snapshot/index.html">activemodel.jsonb_snapshot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mixins/index.html">activemodel.mixins</a><ul>
@@ -158,6 +160,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#activemodel.BaseModel.sample"><code class="docutils literal notranslate">sample()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#activemodel.property_field"><code class="docutils literal notranslate"><span class="pre">property_field()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.SessionManager"><code class="docutils literal notranslate"><span class="pre">SessionManager</span></code></a><ul>
 <li><a class="reference internal" href="#activemodel.SessionManager.session_connection"><code class="docutils literal notranslate">session_connection</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.SessionManager.get_instance"><code class="docutils literal notranslate">get_instance()</span></code></a></li>
@@ -239,6 +242,7 @@ data-aria-dark="Switch to auto color mode">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="base_model/index.html">activemodel.base_model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="celery/index.html">activemodel.celery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decorators/index.html">activemodel.decorators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="errors/index.html">activemodel.errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jsonb_snapshot/index.html">activemodel.jsonb_snapshot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mixins/index.html">activemodel.mixins</a></li>
@@ -271,13 +275,16 @@ data-aria-dark="Switch to auto color mode">
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.get_engine" title="activemodel.get_engine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_engine</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.property_field" title="activemodel.property_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">property_field</span></code></a>([func])</p></td>
+<td><p><cite>&#64;property</cite> enables attribute-style access; <cite>&#64;computed_field</cite> includes the field in pydantic serialization.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.get_engine" title="activemodel.get_engine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_engine</span></code></a>()</p></td>
 <td><p>alias to get the database engine without importing SessionManager</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.get_session" title="activemodel.get_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_session</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.get_session" title="activemodel.get_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_session</span></code></a>()</p></td>
 <td><p>alias to get a database session without importing SessionManager</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.init" title="activemodel.init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init</span></code></a>(database_url, *[, engine_options])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.init" title="activemodel.init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init</span></code></a>(database_url, *[, engine_options])</p></td>
 <td><p>configure activemodel to connect to a specific database</p></td>
 </tr>
 </tbody>
@@ -506,6 +513,12 @@ Returns None if no record is found. Throws an error if more than one record is f
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="activemodel.property_field">
+<span class="sig-prename descclassname"><span class="pre">activemodel.</span></span><span class="sig-name descname"><span class="pre">property_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/activemodel/decorators.html#property_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.property_field" title="Link to this definition">¶</a></dt>
+<dd><p><cite>&#64;property</cite> enables attribute-style access; <cite>&#64;computed_field</cite> includes the field in pydantic serialization.</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="activemodel.SessionManager">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.</span></span><span class="sig-name descname"><span class="pre">SessionManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/activemodel/session_manager.html#SessionManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.SessionManager" title="Link to this definition">¶</a></dt>
@@ -603,5 +616,5 @@ Returns None if no record is found. Throws an error if more than one record is f
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../_static/shibuya.js?v=cac61aee"></script></body>
+      <script src="../../_static/shibuya.js?v=50760d75"></script></body>
 </html>

@@ -369,7 +369,7 @@ print(sys.version)
 
 ## Upstream Changes
 
-- <input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> https://github.com/fastapi/sqlmodel/pull/1293
+- <input class="task-list-item-checkbox" disabled="disabled" type="checkbox">https://github.com/fastapi/sqlmodel/pull/1293
 
 ---
 

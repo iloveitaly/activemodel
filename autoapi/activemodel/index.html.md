@@ -4,6 +4,7 @@
 
 * [activemodel.base_model](base_model/index.md)
 * [activemodel.celery](celery/index.md)
+* [activemodel.decorators](decorators/index.md)
 * [activemodel.errors](errors/index.md)
 * [activemodel.jsonb_snapshot](jsonb_snapshot/index.md)
 * [activemodel.mixins](mixins/index.md)
@@ -22,10 +23,11 @@
 
 ## Functions
 
-| [`get_engine`](#activemodel.get_engine)()                       | alias to get the database engine without importing SessionManager   |
-|-----------------------------------------------------------------|---------------------------------------------------------------------|
-| [`get_session`](#activemodel.get_session)()                     | alias to get a database session without importing SessionManager    |
-| [`init`](#activemodel.init)(database_url, \*[, engine_options]) | configure activemodel to connect to a specific database             |
+| [`property_field`](#activemodel.property_field)([func])         | @property enables attribute-style access; @computed_field includes the field in pydantic serialization.   |
+|-----------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| [`get_engine`](#activemodel.get_engine)()                       | alias to get the database engine without importing SessionManager                                         |
+| [`get_session`](#activemodel.get_session)()                     | alias to get a database session without importing SessionManager                                          |
+| [`init`](#activemodel.init)(database_url, \*[, engine_options]) | configure activemodel to connect to a specific database                                                   |
 
 ## Package Contents
 
@@ -219,6 +221,10 @@ get a generator for all records in the database
 Pick a random record from the database. Raises if none exist.
 
 Helpful for testing and console debugging.
+
+### activemodel.property_field(func=None, , \*\*kwargs)
+
+@property enables attribute-style access; @computed_field includes the field in pydantic serialization.
 
 ### *class* activemodel.SessionManager(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
 
