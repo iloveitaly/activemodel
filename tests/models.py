@@ -2,12 +2,11 @@
 Example models to test various ORM cases
 """
 
-from pydantic import computed_field
 from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Relationship
 from whenever import Date, Instant, PlainDateTime, Time, ZonedDateTime
 
-from activemodel import BaseModel
+from activemodel import BaseModel, property_field
 from activemodel.mixins import TypeIDPrimaryKey
 from activemodel.mixins.timestamps import TimestampsMixin
 from typeid import TypeID
@@ -44,8 +43,7 @@ class ExampleWithComputedProperty(BaseModel, table=True):
     another_example_id: TypeID = AnotherExample.foreign_key()
     another_example: AnotherExample = Relationship()
 
-    @computed_field
-    @property
+    @property_field
     def special_note(self) -> str:
         return f"SPECIAL: {self.another_example.note}"
 
