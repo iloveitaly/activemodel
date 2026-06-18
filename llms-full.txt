@@ -4553,6 +4553,19 @@ Here are some useful resources around Alembic + SQLModel:
 
 # Changelog
 
+## [0.24.0](https://github.com/iloveitaly/activemodel/compare/v0.23.0...v0.24.0) (2026-06-18)
+
+### Features
+
+* add property_field decorator to combine property and computed_field ([1344653](https://github.com/iloveitaly/activemodel/commit/1344653eb4dfe7678dd5f7234bd1efc9fa3769ea))
+
+### Documentation
+
+* document TypeID and UUID comparison in typeid.md ([145a3e5](https://github.com/iloveitaly/activemodel/commit/145a3e50fbd991c1565e5c2c216c69f4112aab37))
+* move TypeID documentation to dedicated page ([3fbca5c](https://github.com/iloveitaly/activemodel/commit/3fbca5ccaee14e75348f5453790099d9074b7b05))
+* update instructions regarding comment style and requirements ([5396e8d](https://github.com/iloveitaly/activemodel/commit/5396e8d6ac6f0664580dd7b08928048e19afac28))
+* update TypeID documentation with usage patterns ([1822126](https://github.com/iloveitaly/activemodel/commit/18221267c1ca1ea2cfa98f6d24ea8b9b0e060e32))
+
 ## [0.23.0](https://github.com/iloveitaly/activemodel/compare/v0.22.0...v0.23.0) (2026-05-07)
 
 ### Features
