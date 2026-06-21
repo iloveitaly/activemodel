@@ -24,7 +24,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: jdx/mise-action@v4
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv sync
@@ -39,7 +39,7 @@ jobs:
         python-version: ["3.14", "3.13", "3.12"]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: jdx/mise-action@v4
       - run: mise use python@${{ matrix.python-version }}
       - run: docker compose up -d --wait
@@ -60,7 +60,7 @@ jobs:
       # NOTE this permission requires configuration to be set on the repo, check `just github_repo_permissions_create`
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: googleapis/release-please-action@v5
         id: release
         with:
@@ -75,7 +75,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: jdx/mise-action@v4
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
       - run: uv sync
