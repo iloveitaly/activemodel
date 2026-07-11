@@ -273,6 +273,9 @@ Package Contents
 
       Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
 
+      :raises sqlalchemy.exc.NoResultFound: If no record is found.
+      :raises sqlalchemy.exc.MultipleResultsFound: If more than one record is found.
+
 
 
    .. py:method:: __process_filter_args__(*args: Any, **kwargs: Any)

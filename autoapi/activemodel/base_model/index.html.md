@@ -198,6 +198,10 @@ Returns None if no record is found. Throws an error if more than one record is f
 
 Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
 
+* **Raises:**
+  * [**sqlalchemy.exc.NoResultFound**](https://docs.sqlalchemy.org/en/20/core/exceptions.html#sqlalchemy.exc.NoResultFound) – If no record is found.
+  * [**sqlalchemy.exc.MultipleResultsFound**](https://docs.sqlalchemy.org/en/20/core/exceptions.html#sqlalchemy.exc.MultipleResultsFound) – If more than one record is found.
+
 #### *classmethod* \_\_process_filter_args_\_(\*args: Any, \*\*kwargs: Any)
 
 Helper method to process filter arguments and implement some nice DX for our devs.

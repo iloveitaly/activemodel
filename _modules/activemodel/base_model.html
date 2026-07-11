@@ -720,65 +720,69 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="487">    <span class="k">def</span><span class="w"> </span><span class="nf">one</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
 </span><span data-line="488"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="489"><span class="sd">        Gets a single record from the database. Pass an PK ID or a kwarg to filter by.</span>
-</span><span data-line="490"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="491">
-</span><span data-line="492">        <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__process_filter_args__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="493">        <span class="n">statement</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="494">
-</span><span data-line="495">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="496">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-</span><span data-line="497">            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
-
+</span><span data-line="490">
+</span><span data-line="491"><span class="sd">        Raises:</span>
+</span><span data-line="492"><span class="sd">            sqlalchemy.exc.NoResultFound: If no record is found.</span>
+</span><span data-line="493"><span class="sd">            sqlalchemy.exc.MultipleResultsFound: If more than one record is found.</span>
+</span><span data-line="494"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="495">
+</span><span data-line="496">        <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__process_filter_args__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="497">        <span class="n">statement</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span data-line="498">
-</span><span data-line="499">    <span class="nd">@classmethod</span>
+</span><span data-line="499">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="500">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+</span><span data-line="501">            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+</span><span data-line="502">
+</span><span data-line="503">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.__process_filter_args__">
 <a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.__process_filter_args__">[docs]</a>
-</span><span data-line="500">    <span class="k">def</span><span class="w"> </span><span class="nf">__process_filter_args__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
-</span><span data-line="501"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="502"><span class="sd">        Helper method to process filter arguments and implement some nice DX for our devs.</span>
-</span><span data-line="503"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="504">
-</span><span data-line="505">        <span class="n">id_field_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">primary_key_column</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
-</span><span data-line="506">
-</span><span data-line="507">        <span class="c1"># special case for getting by ID without having to specify the field name</span>
-</span><span data-line="508">        <span class="c1"># TODO should dynamically add new pk types based on column definition</span>
-</span><span data-line="509">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
-</span><span data-line="510">            <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">TypeID</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">uuid_utils</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span>
-</span><span data-line="511">        <span class="p">):</span>
-</span><span data-line="512">            <span class="n">kwargs</span><span class="p">[</span><span class="n">id_field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span data-line="513">            <span class="n">args</span> <span class="o">=</span> <span class="p">()</span>
-</span><span data-line="514">
-</span><span data-line="515">        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span></div>
+</span><span data-line="504">    <span class="k">def</span><span class="w"> </span><span class="nf">__process_filter_args__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
+</span><span data-line="505"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="506"><span class="sd">        Helper method to process filter arguments and implement some nice DX for our devs.</span>
+</span><span data-line="507"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="508">
+</span><span data-line="509">        <span class="n">id_field_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">primary_key_column</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+</span><span data-line="510">
+</span><span data-line="511">        <span class="c1"># special case for getting by ID without having to specify the field name</span>
+</span><span data-line="512">        <span class="c1"># TODO should dynamically add new pk types based on column definition</span>
+</span><span data-line="513">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+</span><span data-line="514">            <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">TypeID</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">uuid_utils</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span>
+</span><span data-line="515">        <span class="p">):</span>
+</span><span data-line="516">            <span class="n">kwargs</span><span class="p">[</span><span class="n">id_field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span data-line="517">            <span class="n">args</span> <span class="o">=</span> <span class="p">()</span>
+</span><span data-line="518">
+</span><span data-line="519">        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span></div>
 
-</span><span data-line="516">
-</span><span data-line="517">    <span class="nd">@classmethod</span>
+</span><span data-line="520">
+</span><span data-line="521">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.all">
 <a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.all">[docs]</a>
-</span><span data-line="518">    <span class="k">def</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-</span><span data-line="519">        <span class="s2">&quot;get a generator for all records in the database&quot;</span>
-</span><span data-line="520">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="521">            <span class="n">results</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">))</span>
-</span><span data-line="522">
-</span><span data-line="523">            <span class="c1"># TODO do we need this or can we just return results?</span>
-</span><span data-line="524">            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-</span><span data-line="525">                <span class="k">yield</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
-
+</span><span data-line="522">    <span class="k">def</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span><span data-line="523">        <span class="s2">&quot;get a generator for all records in the database&quot;</span>
+</span><span data-line="524">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="525">            <span class="n">results</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">))</span>
 </span><span data-line="526">
-</span><span data-line="527">    <span class="nd">@classmethod</span>
+</span><span data-line="527">            <span class="c1"># TODO do we need this or can we just return results?</span>
+</span><span data-line="528">            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+</span><span data-line="529">                <span class="k">yield</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+</span><span data-line="530">
+</span><span data-line="531">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.sample">
 <a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.sample">[docs]</a>
-</span><span data-line="528">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-</span><span data-line="529"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="530"><span class="sd">        Pick a random record from the database. Raises if none exist.</span>
-</span><span data-line="531">
-</span><span data-line="532"><span class="sd">        Helpful for testing and console debugging.</span>
-</span><span data-line="533"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="534">
-</span><span data-line="535">        <span class="n">query</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">random</span><span class="p">())</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span data-line="536">
-</span><span data-line="537">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-</span><span data-line="538">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-</span><span data-line="539">            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+</span><span data-line="532">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span><span data-line="533"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="534"><span class="sd">        Pick a random record from the database. Raises if none exist.</span>
+</span><span data-line="535">
+</span><span data-line="536"><span class="sd">        Helpful for testing and console debugging.</span>
+</span><span data-line="537"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="538">
+</span><span data-line="539">        <span class="n">query</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">random</span><span class="p">())</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="540">
+</span><span data-line="541">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="542">            <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">exec</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+</span><span data-line="543">            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_run_after_load_hooks</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 </div>
 
 </span></pre></div>
