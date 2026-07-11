@@ -497,6 +497,13 @@ class BaseModel(SQLModel):
             return cls._run_after_load_hooks(result)
 
     @classmethod
+    def sole(cls, *args: t.Any, **kwargs: t.Any):
+        """
+        Gets exactly one record from the database. Raises if no record or more than one record is found.
+        """
+        return cls.one(*args, **kwargs)
+
+    @classmethod
     def __process_filter_args__(cls, *args: t.Any, **kwargs: t.Any):
         """
         Helper method to process filter arguments and implement some nice DX for our devs.

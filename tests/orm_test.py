@@ -160,6 +160,25 @@ def test_one_multiple_results(create_and_wipe_database):
         ExampleRecord.one(something="hi")
 
 
+def test_sole_no_results(create_and_wipe_database):
+    with pytest.raises(sqlalchemy.exc.NoResultFound):
+        ExampleRecord.sole()
+
+
+def test_sole_single_result(create_and_wipe_database):
+    example = ExampleRecord().save()
+
+    assert ExampleRecord.sole(example.id) == example
+
+
+def test_sole_multiple_results(create_and_wipe_database):
+    ExampleRecord(something="hi").save()
+    ExampleRecord(something="hi").save()
+
+    with pytest.raises(sqlalchemy.exc.MultipleResultsFound):
+        ExampleRecord.sole(something="hi")
+
+
 def test_one_or_none_no_results(create_and_wipe_database):
     record = ExampleRecord()
     # do not save!
