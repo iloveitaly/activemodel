@@ -499,7 +499,11 @@ class BaseModel(SQLModel):
     @classmethod
     def sole(cls, *args: t.Any, **kwargs: t.Any) -> t.Self:
         """
-        Gets exactly one record from the database. Raises if no record or more than one record is found.
+        Gets exactly one record from the database.
+
+        Raises:
+            sqlalchemy.exc.NoResultFound: If no record is found.
+            sqlalchemy.exc.MultipleResultsFound: If more than one record is found.
         """
         return cls.one(*args, **kwargs)
 
