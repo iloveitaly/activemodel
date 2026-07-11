@@ -487,6 +487,10 @@ class BaseModel(SQLModel):
     def one(cls, *args: t.Any, **kwargs: t.Any):
         """
         Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+
+        Raises:
+            sqlalchemy.exc.NoResultFound: If no record is found.
+            sqlalchemy.exc.MultipleResultsFound: If more than one record is found.
         """
 
         args, kwargs = cls.__process_filter_args__(*args, **kwargs)
@@ -495,17 +499,6 @@ class BaseModel(SQLModel):
         with get_session() as session:
             result = session.exec(statement).one()
             return cls._run_after_load_hooks(result)
-
-    @classmethod
-    def sole(cls, *args: t.Any, **kwargs: t.Any) -> t.Self:
-        """
-        Gets exactly one record from the database.
-
-        Raises:
-            sqlalchemy.exc.NoResultFound: If no record is found.
-            sqlalchemy.exc.MultipleResultsFound: If more than one record is found.
-        """
-        return cls.one(*args, **kwargs)
 
     @classmethod
     def __process_filter_args__(cls, *args: t.Any, **kwargs: t.Any):

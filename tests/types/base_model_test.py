@@ -27,7 +27,6 @@ def test_classmethod_return_types_are_model_specific(create_and_wipe_database):
     assert_type(ExampleWithId.get(example.id), ExampleWithId | None)
     assert_type(ExampleWithId.one_or_none(example.id), ExampleWithId | None)
     assert_type(ExampleWithId.one(example.id), ExampleWithId)
-    assert_type(ExampleWithId.sole(example.id), ExampleWithId)
     assert_type(example.refresh(), ExampleWithId)
     assert_type(example.delete(), Literal[True])
 
