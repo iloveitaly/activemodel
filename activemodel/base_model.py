@@ -487,6 +487,10 @@ class BaseModel(SQLModel):
     def one(cls, *args: t.Any, **kwargs: t.Any):
         """
         Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
+
+        Raises:
+            sqlalchemy.exc.NoResultFound: If no record is found.
+            sqlalchemy.exc.MultipleResultsFound: If more than one record is found.
         """
 
         args, kwargs = cls.__process_filter_args__(*args, **kwargs)
