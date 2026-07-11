@@ -497,7 +497,7 @@ class BaseModel(SQLModel):
             return cls._run_after_load_hooks(result)
 
     @classmethod
-    def sole(cls, *args: t.Any, **kwargs: t.Any):
+    def sole(cls, *args: t.Any, **kwargs: t.Any) -> t.Self:
         """
         Gets exactly one record from the database. Raises if no record or more than one record is found.
         """
