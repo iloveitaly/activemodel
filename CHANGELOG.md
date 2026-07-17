@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.24.1](https://github.com/iloveitaly/activemodel/compare/v0.24.0...v0.24.1) (2026-07-17)
+
+
+### Bug Fixes
+
+* bump sqlmodel to 0.0.39 ([#127](https://github.com/iloveitaly/activemodel/issues/127)) ([57000b5](https://github.com/iloveitaly/activemodel/commit/57000b5b6c0d29c3af65511dc423943f0f347f6f))
+
+
+### Documentation
+
+* add `BaseModel.sole` finder ([#122](https://github.com/iloveitaly/activemodel/issues/122)) ([590b521](https://github.com/iloveitaly/activemodel/commit/590b5219dc66af79a6b55ea7dbd3ca1fba2524d9))
+
 ## [0.24.0](https://github.com/iloveitaly/activemodel/compare/v0.23.0...v0.24.0) (2026-06-18)
 
 
