@@ -55,7 +55,9 @@ def test_upsert_update_whenever_fields_on_conflict(create_and_wipe_database):
     assert fetched.last_active_at == second_active.round("microsecond", mode="floor")
 
 
-def test_upsert_partial_update_preserves_existing_whenever_fields(create_and_wipe_database):
+def test_upsert_partial_update_preserves_existing_whenever_fields(
+    create_and_wipe_database,
+):
     bday = Date(1990, 3, 15)
     alarm = Time(7, 30, 0)
     scheduled = ZonedDateTime(2025, 6, 1, 9, 0, tz="America/New_York")
