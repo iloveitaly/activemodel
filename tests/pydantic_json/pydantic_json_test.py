@@ -1,18 +1,21 @@
+from datetime import datetime
+
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm.base import instance_state
 from sqlmodel import Field, Session
+from typeid import TypeID
 
 from activemodel import BaseModel
 from activemodel.mixins import PydanticJSONMixin, TypeIDPrimaryKey
 from activemodel.session_manager import global_session
 from tests.models import ExampleRecord
-from typeid import TypeID
 
 
 class NestedPayload(PydanticBaseModel):
     external_id: str
     is_enabled: bool = False
+    enabled_at: datetime | None = None
 
 
 class RecordWithPayloads(BaseModel, PydanticJSONMixin, table=True):
@@ -152,3 +155,31 @@ def test_sibling_save_preserves_scalar_pydantic_model(create_and_wipe_database):
 
         assert isinstance(record.primary_payload, NestedPayload)
         assert record.primary_payload.external_id == "primary_123"
+
+
+def test_saves_and_loads_pydantic_models_with_datetime(create_and_wipe_database):
+    # save() will throw an error about an object of type datetime not being JSON serializable
+    # if the Pydantic model is serialized to a dict without using Pydantic's `mode=json` option,
+    # which converts datetimes to ISO strings. See the custom serializer in SessionManager for details.
+    record = RecordWithPayloads(
+        payloads=[
+            NestedPayload(
+                external_id="payload_123",
+                is_enabled=True,
+                enabled_at=datetime(2024, 1, 1, 12, 0, 0),
+            )
+        ],
+        primary_payload=NestedPayload(
+            external_id="primary_123",
+            is_enabled=True,
+            enabled_at=datetime(2024, 1, 2, 12, 0, 0),
+        ),
+    ).save()
+
+    fresh_record = RecordWithPayloads.get(record.id)
+
+    assert fresh_record is not None
+    assert isinstance(fresh_record.payloads[0], NestedPayload)
+    assert fresh_record.payloads[0].enabled_at == datetime(2024, 1, 1, 12, 0, 0)
+    assert isinstance(fresh_record.primary_payload, NestedPayload)
+    assert fresh_record.primary_payload.enabled_at == datetime(2024, 1, 2, 12, 0, 0)

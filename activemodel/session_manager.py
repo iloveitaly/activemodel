@@ -33,7 +33,7 @@ def _serialize_pydantic_model(model: BaseModel | list[BaseModel] | None) -> str 
         # not everything in a list is a pydantic model
         def dump_if_model(m):
             if isinstance(m, BaseModel):
-                return m.model_dump()
+                return m.model_dump(mode="json")
             return m
 
         return json.dumps([dump_if_model(m) for m in model])
