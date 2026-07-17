@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -209,7 +209,7 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="module-activemodel.jsonb_snapshot">
-<span id="activemodel-jsonb-snapshot"></span><h1>activemodel.jsonb_snapshot<a class="headerlink" href="#module-activemodel.jsonb_snapshot" title="Link to this heading">¶</a></h1>
+<span id="activemodel-jsonb-snapshot"></span><h1>activemodel.jsonb_snapshot<a class="headerlink" href="#module-activemodel.jsonb_snapshot" title="Link to this heading">#</a></h1>
 <p>Serialize-and-compare snapshot tracking for JSON-backed fields.</p>
 <p>After each ORM load/refresh, each tracked JSON field is serialized to a canonical JSON
 string and stored as a snapshot. Before commit, the current value is re-serialized and
@@ -219,7 +219,7 @@ column in the UPDATE.</p>
 serialized form of the current value against the serialized form of the original, rather
 than intercepting every mutation with proxy objects.</p>
 <section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -237,10 +237,10 @@ than intercepting every mutation with proxy objects.</p>
 </div>
 </section>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.jsonb_snapshot.snapshot_json_fields">
-<span class="sig-prename descclassname"><span class="pre">activemodel.jsonb_snapshot.</span></span><span class="sig-name descname"><span class="pre">snapshot_json_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jsonb_field_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/jsonb_snapshot.html#snapshot_json_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.jsonb_snapshot.snapshot_json_fields" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.jsonb_snapshot.</span></span><span class="sig-name descname"><span class="pre">snapshot_json_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jsonb_field_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/jsonb_snapshot.html#snapshot_json_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.jsonb_snapshot.snapshot_json_fields" title="Link to this definition">#</a></dt>
 <dd><p>Store a serialized snapshot of each tracked JSON field on the instance.</p>
 <p>Called after rehydration so the snapshot reflects the committed database state.
 When <cite>jsonb_field_names</cite> is provided (partial refresh), only those fields are
@@ -249,7 +249,7 @@ re-snapshotted; existing snapshots for other fields are preserved.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.jsonb_snapshot.detect_json_mutations">
-<span class="sig-prename descclassname"><span class="pre">activemodel.jsonb_snapshot.</span></span><span class="sig-name descname"><span class="pre">detect_json_mutations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/activemodel/jsonb_snapshot.html#detect_json_mutations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.jsonb_snapshot.detect_json_mutations" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.jsonb_snapshot.</span></span><span class="sig-name descname"><span class="pre">detect_json_mutations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/activemodel/jsonb_snapshot.html#detect_json_mutations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.jsonb_snapshot.detect_json_mutations" title="Link to this definition">#</a></dt>
 <dd><p>Compare current field values against snapshots, flagging any that changed.</p>
 <p>Returns a list of field names that were mutated since the last snapshot.
 Side effect: calls <cite>flag_modified</cite> on the SQLAlchemy instance for each changed field.</p>
@@ -257,7 +257,7 @@ Side effect: calls <cite>flag_modified</cite> on the SQLAlchemy instance for eac
 
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.jsonb_snapshot.register_before_commit_listener">
-<span class="sig-prename descclassname"><span class="pre">activemodel.jsonb_snapshot.</span></span><span class="sig-name descname"><span class="pre">register_before_commit_listener</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/jsonb_snapshot.html#register_before_commit_listener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.jsonb_snapshot.register_before_commit_listener" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.jsonb_snapshot.</span></span><span class="sig-name descname"><span class="pre">register_before_commit_listener</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/jsonb_snapshot.html#register_before_commit_listener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.jsonb_snapshot.register_before_commit_listener" title="Link to this definition">#</a></dt>
 <dd><p>Register a session-level before_commit handler to detect in-place JSON mutations.</p>
 <p>Uses before_commit (not before_flush) because SQLAlchemy skips the flush entirely
 when it sees no pending changes – meaning before_flush never fires for in-place
@@ -306,9 +306,9 @@ giving us the chance to call flag_modified before the flush decision is made.</p
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

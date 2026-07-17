@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
@@ -198,7 +198,7 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="whenever-integration">
-<h1>whenever Integration<a class="headerlink" href="#whenever-integration" title="Link to this heading">¶</a></h1>
+<h1>whenever Integration<a class="headerlink" href="#whenever-integration" title="Link to this heading">#</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> has built-in support for the <a class="reference external" href="https://github.com/ariebovenberg/whenever"><code class="docutils literal notranslate"><span class="pre">whenever</span></code></a> datetime library. Five types are supported:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -233,7 +233,7 @@ data-aria-dark="Switch to auto color mode">
 </table>
 </div>
 <section id="defining-fields-on-a-model">
-<h2>Defining fields on a model<a class="headerlink" href="#defining-fields-on-a-model" title="Link to this heading">¶</a></h2>
+<h2>Defining fields on a model<a class="headerlink" href="#defining-fields-on-a-model" title="Link to this heading">#</a></h2>
 <p>Import and annotate fields with the bare <code class="docutils literal notranslate"><span class="pre">whenever</span></code> type. The SQLAlchemy column type is resolved automatically via the <code class="docutils literal notranslate"><span class="pre">get_sqlalchemy_type</span></code> patch that <code class="docutils literal notranslate"><span class="pre">activemodel</span></code> applies on import.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">whenever</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instant</span><span class="p">,</span> <span class="n">PlainDateTime</span><span class="p">,</span> <span class="n">ZonedDateTime</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
@@ -250,7 +250,7 @@ data-aria-dark="Switch to auto color mode">
 <p><code class="docutils literal notranslate"><span class="pre">PlainDateTime</span></code> maps to <code class="docutils literal notranslate"><span class="pre">TIMESTAMP</span> <span class="pre">WITHOUT</span> <span class="pre">TIME</span> <span class="pre">ZONE</span></code> and has no timezone at all, matching the behavior of SQLite and Postgres naive datetimes.</p>
 </section>
 <section id="reading-and-writing">
-<h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Link to this heading">¶</a></h2>
+<h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Link to this heading">#</a></h2>
 <p>Values round-trip transparently through SQLAlchemy:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">whenever</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instant</span><span class="p">,</span> <span class="n">ZonedDateTime</span>
 </span><span data-line="2">
@@ -266,7 +266,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="factories">
-<h2>Factories<a class="headerlink" href="#factories" title="Link to this heading">¶</a></h2>
+<h2>Factories<a class="headerlink" href="#factories" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code> registers providers for all three types automatically, so any factory subclass generates valid values without extra configuration:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActiveModelFactory</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">my_app.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
@@ -292,7 +292,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="pydantic-json-schema">
-<h2>Pydantic JSON schema<a class="headerlink" href="#pydantic-json-schema" title="Link to this heading">¶</a></h2>
+<h2>Pydantic JSON schema<a class="headerlink" href="#pydantic-json-schema" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">Date</span></code> and <code class="docutils literal notranslate"><span class="pre">Time</span></code> validate and serialize correctly in Pydantic models but will not carry a <code class="docutils literal notranslate"><span class="pre">&quot;format&quot;</span></code> hint in the generated JSON schema — they produce <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;}</span></code> rather than <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;date&quot;}</span></code>. This is a limitation of <code class="docutils literal notranslate"><span class="pre">whenever.Date</span></code> and <code class="docutils literal notranslate"><span class="pre">whenever.Time</span></code> being Rust extension types; Python cannot add <code class="docutils literal notranslate"><span class="pre">__get_pydantic_json_schema__</span></code> to them.</p>
 </section>
 </section>
@@ -334,9 +334,9 @@ data-aria-dark="Switch to auto color mode">
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

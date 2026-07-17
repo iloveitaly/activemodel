@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
@@ -219,7 +219,7 @@ data-aria-dark="Switch to auto color mode">
 <img alt="GitHub CI Status" src="https://github.com/iloveitaly/activemodel/actions/workflows/build_and_publish.yml/badge.svg" />
 <a class="reference external" href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a></p>
 <section id="activemodel-orm-wrapper-for-sqlmodel">
-<h1>ActiveModel: ORM Wrapper for SQLModel<a class="headerlink" href="#activemodel-orm-wrapper-for-sqlmodel" title="Link to this heading">¶</a></h1>
+<h1>ActiveModel: ORM Wrapper for SQLModel<a class="headerlink" href="#activemodel-orm-wrapper-for-sqlmodel" title="Link to this heading">#</a></h1>
 <p align="center">
   <img src="docs/_static/logo.png" alt="ActiveModel Logo" width="600"/>
 </p>
@@ -243,13 +243,13 @@ data-aria-dark="Switch to auto color mode">
 This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this.</p>
 </div></blockquote>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>add<span class="w"> </span>activemodel
 </span></pre></div>
 </div>
 </section>
 <section id="getting-started">
-<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h2>
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h2>
 <p>First, setup your DB:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">activemodel</span>
 </span><span data-line="2"><span class="n">activemodel</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="s2">&quot;sqlite:///database.db&quot;</span><span class="p">)</span>
@@ -332,9 +332,9 @@ a single session object to be used for all DB operations. This is helpful for DB
 DB operations on each test.</span></a></p>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
 <section id="lifecycle-hooks">
-<h3>Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">¶</a></h3>
+<h3>Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">BaseModel</span></code> supports a small Rails-style lifecycle hook system.</p>
 <p>The implemented hooks today are:</p>
 <ul class="simple">
@@ -391,15 +391,15 @@ DB operations on each test.</span></a></p>
 <p>Also note that <code class="docutils literal notranslate"><span class="pre">after_find</span></code> / <code class="docutils literal notranslate"><span class="pre">after_initialize</span></code> only run for model instances. Lower-level query paths that return <code class="docutils literal notranslate"><span class="pre">None</span></code>, counts, scalars, or raw SQLAlchemy result objects are outside that contract.</p>
 </section>
 <section id="integrating-alembic">
-<h3>Integrating Alembic<a class="headerlink" href="#integrating-alembic" title="Link to this heading">¶</a></h3>
+<h3>Integrating Alembic<a class="headerlink" href="#integrating-alembic" title="Link to this heading">#</a></h3>
 <p>Detailed instructions on how to integrate Alembic into your project can be found in the <a class="reference external" href="https://iloveitaly.github.io/activemodel/alembic.html">Alembic Integration</a> documentation.</p>
 </section>
 <section id="query-wrapper">
-<h3>Query Wrapper<a class="headerlink" href="#query-wrapper" title="Link to this heading">¶</a></h3>
+<h3>Query Wrapper<a class="headerlink" href="#query-wrapper" title="Link to this heading">#</a></h3>
 <p>This tool is added to all <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code>s and makes it easy to write SQL queries. Some examples:</p>
 </section>
 <section id="easy-database-sessions">
-<h3>Easy Database Sessions<a class="headerlink" href="#easy-database-sessions" title="Link to this heading">¶</a></h3>
+<h3>Easy Database Sessions<a class="headerlink" href="#easy-database-sessions" title="Link to this heading">#</a></h3>
 <p>I hate the idea f</p>
 <ul class="simple">
 <li><p>Behavior should be intuitive and easy to understand. If you run <code class="docutils literal notranslate"><span class="pre">save()</span></code>, it should save, not stick the save in a transaction.</p></li>
@@ -413,7 +413,7 @@ DB operations on each test.</span></a></p>
 <p>https://github.com/tomwojcik/starlette-context</p>
 </section>
 <section id="example-sqlalchemy-queries">
-<h3>Example SQLAlchemy Queries<a class="headerlink" href="#example-sqlalchemy-queries" title="Link to this heading">¶</a></h3>
+<h3>Example SQLAlchemy Queries<a class="headerlink" href="#example-sqlalchemy-queries" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Conditional: <code class="docutils literal notranslate"><span class="pre">Scrape.select().where(Scrape.id</span> <span class="pre">&lt;</span> <span class="pre">last_scraped.id).all()</span></code></p></li>
 <li><p>Equality: <code class="docutils literal notranslate"><span class="pre">MenuItem.select().where(MenuItem.menu_id</span> <span class="pre">==</span> <span class="pre">menu.id).all()</span></code></p></li>
@@ -424,7 +424,7 @@ DB operations on each test.</span></a></p>
 </ul>
 </section>
 <section id="sqlmodel-internals">
-<h3>SQLModel Internals<a class="headerlink" href="#sqlmodel-internals" title="Link to this heading">¶</a></h3>
+<h3>SQLModel Internals<a class="headerlink" href="#sqlmodel-internals" title="Link to this heading">#</a></h3>
 <p>SQLModel &amp; SQLAlchemy are tricky. Here are some useful internal tricks:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">__sqlmodel_relationships__</span></code> is where any <code class="docutils literal notranslate"><span class="pre">RelationshipInfo</span></code> objects are stored. This is used to generate relationship fields on the object.</p></li>
@@ -438,7 +438,7 @@ DB operations on each test.</span></a></p>
 </ul>
 </section>
 <section id="whenever-datetime-types">
-<h3>whenever Datetime Types<a class="headerlink" href="#whenever-datetime-types" title="Link to this heading">¶</a></h3>
+<h3>whenever Datetime Types<a class="headerlink" href="#whenever-datetime-types" title="Link to this heading">#</a></h3>
 <p><a class="reference external" href="https://github.com/ariebovenberg/whenever">whenever</a> is a modern, type-safe datetime library for Python. Install the optional integration:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">uv<span class="w"> </span>add<span class="w"> </span>activemodel<span class="o">[</span>extras<span class="o">]</span>
 </span></pre></div>
@@ -469,7 +469,7 @@ DB operations on each test.</span></a></p>
 </div>
 </section>
 <section id="typeid">
-<h3>TypeID<a class="headerlink" href="#typeid" title="Link to this heading">¶</a></h3>
+<h3>TypeID<a class="headerlink" href="#typeid" title="Link to this heading">#</a></h3>
 <p>I’m a massive fan of Stripe-style prefixed UUIDs. <a class="reference external" href="https://github.com/jetify-com/typeid">There’s an excellent project</a>
 that defined a clear spec for these IDs. I’ve used the python implementation of this spec and developed a clean integration
 with SQLModel that plays well with fastapi as well.</p>
@@ -499,9 +499,9 @@ with SQLModel that plays well with fastapi as well.</p>
 </section>
 </section>
 <section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">¶</a></h2>
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
 <section id="validation">
-<h3>Validation<a class="headerlink" href="#validation" title="Link to this heading">¶</a></h3>
+<h3>Validation<a class="headerlink" href="#validation" title="Link to this heading">#</a></h3>
 <p>SQLModel does not currently support pydantic validations (when <code class="docutils literal notranslate"><span class="pre">table=True</span></code>). This is very surprising, but is actually the intended functionality:</p>
 <ul class="simple">
 <li><p>https://github.com/fastapi/sqlmodel/discussions/897</p></li>
@@ -529,7 +529,7 @@ https://github.com/DarylStark/my_data/blob/a17b8b3a8463b9953821b89fee895e272f94d
 </section>
 </section>
 <section id="development">
-<h2>Development<a class="headerlink" href="#development" title="Link to this heading">¶</a></h2>
+<h2>Development<a class="headerlink" href="#development" title="Link to this heading">#</a></h2>
 <p>Watch out for subtle differences across pydantic versions. There’s some sneaky type inspection stuff in <code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code>
 that will break in subtle ways if the python, pydantic, etc versions don’t match.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">pydantic</span>
@@ -540,7 +540,7 @@ that will break in subtle ways if the python, pydantic, etc versions don’t mat
 </div>
 </section>
 <section id="related-projects">
-<h2>Related Projects<a class="headerlink" href="#related-projects" title="Link to this heading">¶</a></h2>
+<h2>Related Projects<a class="headerlink" href="#related-projects" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>https://github.com/woofz/sqlmodel-basecrud</p></li>
 <li><p>https://github.com/0xthiagomartins/sqlmodel-controller</p></li>
@@ -549,7 +549,7 @@ that will break in subtle ways if the python, pydantic, etc versions don’t mat
 </ul>
 </section>
 <section id="inspiration">
-<h2>Inspiration<a class="headerlink" href="#inspiration" title="Link to this heading">¶</a></h2>
+<h2>Inspiration<a class="headerlink" href="#inspiration" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>https://github.com/peterdresslar/fastapi-sqlmodel-alembic-pg</p></li>
 <li><p><a class="reference external" href="https://github.com/fastapi/sqlmodel/pull/899/files">Albemic instructions</a></p></li>
@@ -560,7 +560,7 @@ that will break in subtle ways if the python, pydantic, etc versions don’t mat
 </ul>
 </section>
 <section id="upstream-changes">
-<h2>Upstream Changes<a class="headerlink" href="#upstream-changes" title="Link to this heading">¶</a></h2>
+<h2>Upstream Changes<a class="headerlink" href="#upstream-changes" title="Link to this heading">#</a></h2>
 <ul class="contains-task-list simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">https://github.com/fastapi/sqlmodel/pull/1293</p></li>
 </ul>
@@ -606,9 +606,9 @@ that will break in subtle ways if the python, pydantic, etc versions don’t mat
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

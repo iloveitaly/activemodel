@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
@@ -217,13 +217,13 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="examples">
-<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h1>
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h1>
 <p>This section provides practical examples of how to use <code class="docutils literal notranslate"><span class="pre">activemodel</span></code> in your projects, demonstrating common patterns for structured data, lifecycle management, testing, and complex schema definitions.</p>
 <section id="advanced-field-types-and-configuration">
-<h2>Advanced Field Types and Configuration<a class="headerlink" href="#advanced-field-types-and-configuration" title="Link to this heading">¶</a></h2>
+<h2>Advanced Field Types and Configuration<a class="headerlink" href="#advanced-field-types-and-configuration" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> leverages <code class="docutils literal notranslate"><span class="pre">SQLModel</span></code> and <code class="docutils literal notranslate"><span class="pre">SQLAlchemy</span></code> to support complex column types, constraints, and schema configurations.</p>
 <section id="custom-sqlalchemy-types-and-datetimes">
-<h3>Custom SQLAlchemy Types and Datetimes<a class="headerlink" href="#custom-sqlalchemy-types-and-datetimes" title="Link to this heading">¶</a></h3>
+<h3>Custom SQLAlchemy Types and Datetimes<a class="headerlink" href="#custom-sqlalchemy-types-and-datetimes" title="Link to this heading">#</a></h3>
 <p>You can map specific fields to underlying SQLAlchemy types using <code class="docutils literal notranslate"><span class="pre">sa_type</span></code>. This is especially useful for timezone-aware datetimes and advanced PostgreSQL types.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sa</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
@@ -247,7 +247,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="defaults-exclusions-and-constraints">
-<h3>Defaults, Exclusions, and Constraints<a class="headerlink" href="#defaults-exclusions-and-constraints" title="Link to this heading">¶</a></h3>
+<h3>Defaults, Exclusions, and Constraints<a class="headerlink" href="#defaults-exclusions-and-constraints" title="Link to this heading">#</a></h3>
 <p>Control schema visibility and enforce constraints directly within the <code class="docutils literal notranslate"><span class="pre">Field</span></code> definition.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
@@ -266,10 +266,10 @@ data-aria-dark="Switch to auto color mode">
 </section>
 </section>
 <section id="structured-json-with-pydantic-models">
-<h2>Structured JSON with Pydantic Models<a class="headerlink" href="#structured-json-with-pydantic-models" title="Link to this heading">¶</a></h2>
+<h2>Structured JSON with Pydantic Models<a class="headerlink" href="#structured-json-with-pydantic-models" title="Link to this heading">#</a></h2>
 <p>Using the <code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code>, you can store complex Pydantic models or lists of models in PostgreSQL <code class="docutils literal notranslate"><span class="pre">JSONB</span></code> columns. The mixin handles serialization and deserialization automatically.</p>
 <section id="single-model-column">
-<h3>Single Model Column<a class="headerlink" href="#single-model-column" title="Link to this heading">¶</a></h3>
+<h3>Single Model Column<a class="headerlink" href="#single-model-column" title="Link to this heading">#</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
@@ -294,7 +294,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="plain-json-array-with-server-default">
-<h3>Plain JSON Array with Server Default<a class="headerlink" href="#plain-json-array-with-server-default" title="Link to this heading">¶</a></h3>
+<h3>Plain JSON Array with Server Default<a class="headerlink" href="#plain-json-array-with-server-default" title="Link to this heading">#</a></h3>
 <p>For simple arrays of primitives, you can store them directly as JSONB without a Pydantic wrapper. Use <code class="docutils literal notranslate"><span class="pre">sa_column_kwargs</span></code> to set a server-side default so the column is initialized to <code class="docutils literal notranslate"><span class="pre">[]</span></code> at the database level even for rows inserted outside of Python.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sa</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
@@ -312,7 +312,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="list-of-models-column">
-<h3>List of Models Column<a class="headerlink" href="#list-of-models-column" title="Link to this heading">¶</a></h3>
+<h3>List of Models Column<a class="headerlink" href="#list-of-models-column" title="Link to this heading">#</a></h3>
 <p>You can also store a list of Pydantic models. This is useful for things like transcripts, audit logs, or line items.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
@@ -339,10 +339,10 @@ data-aria-dark="Switch to auto color mode">
 </section>
 </section>
 <section id="lifecycle-hooks">
-<h2>Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">¶</a></h2>
+<h2>Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> supports several lifecycle hooks that allow you to execute logic at specific points in a model’s lifecycle.</p>
 <section id="basic-validation-and-defaults">
-<h3>Basic Validation and Defaults<a class="headerlink" href="#basic-validation-and-defaults" title="Link to this heading">¶</a></h3>
+<h3>Basic Validation and Defaults<a class="headerlink" href="#basic-validation-and-defaults" title="Link to this heading">#</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span><span class="p">,</span> <span class="n">TimestampsMixin</span>
@@ -365,7 +365,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="advanced-hooks-immutable-fields">
-<h3>Advanced Hooks: Immutable Fields<a class="headerlink" href="#advanced-hooks-immutable-fields" title="Link to this heading">¶</a></h3>
+<h3>Advanced Hooks: Immutable Fields<a class="headerlink" href="#advanced-hooks-immutable-fields" title="Link to this heading">#</a></h3>
 <p>You can use <code class="docutils literal notranslate"><span class="pre">before_save</span></code> to enforce immutability or perform complex validations.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
@@ -392,10 +392,10 @@ data-aria-dark="Switch to auto color mode">
 </section>
 </section>
 <section id="factories-with-polyfactory">
-<h2>Factories with Polyfactory<a class="headerlink" href="#factories-with-polyfactory" title="Link to this heading">¶</a></h2>
+<h2>Factories with Polyfactory<a class="headerlink" href="#factories-with-polyfactory" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> integrates with <a class="reference external" href="https://polyfactory.litestar.dev/">polyfactory</a> via <code class="docutils literal notranslate"><span class="pre">ActiveModelFactory</span></code>. This is powerful for generating complex, related test data automatically.</p>
 <section id="complex-data-generation-and-datetimes">
-<h3>Complex Data Generation and Datetimes<a class="headerlink" href="#complex-data-generation-and-datetimes" title="Link to this heading">¶</a></h3>
+<h3>Complex Data Generation and Datetimes<a class="headerlink" href="#complex-data-generation-and-datetimes" title="Link to this heading">#</a></h3>
 <p>Factories can use <code class="docutils literal notranslate"><span class="pre">BaseFactory.__faker__</span></code> for generating rich mock data and dynamic values using <code class="docutils literal notranslate"><span class="pre">Use</span></code>. We also recommend utilizing robust datetime libraries like <code class="docutils literal notranslate"><span class="pre">whenever</span></code> for generating timestamps.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseFactory</span><span class="p">,</span> <span class="n">Use</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">whenever</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instant</span>
@@ -419,7 +419,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="recursive-factory-dependencies">
-<h3>Recursive Factory Dependencies<a class="headerlink" href="#recursive-factory-dependencies" title="Link to this heading">¶</a></h3>
+<h3>Recursive Factory Dependencies<a class="headerlink" href="#recursive-factory-dependencies" title="Link to this heading">#</a></h3>
 <p>You can use <code class="docutils literal notranslate"><span class="pre">post_build</span></code> to automatically create and associate related models if they aren’t provided.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.pytest.factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActiveModelFactory</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">app.models.order</span><span class="w"> </span><span class="kn">import</span> <span class="n">TicketReservationOrder</span>
@@ -455,7 +455,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="complex-post-save-logic">
-<h3>Complex Post-Save Logic<a class="headerlink" href="#complex-post-save-logic" title="Link to this heading">¶</a></h3>
+<h3>Complex Post-Save Logic<a class="headerlink" href="#complex-post-save-logic" title="Link to this heading">#</a></h3>
 <p>Use <code class="docutils literal notranslate"><span class="pre">post_save</span></code> for actions that require the record to already have an ID or for complex side effects.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">class</span><span class="w"> </span><span class="nc">FullyFundedScreeningFactory</span><span class="p">(</span><span class="n">ActiveModelFactory</span><span class="p">[</span><span class="n">Screening</span><span class="p">]):</span>
 </span><span data-line="2">    <span class="nd">@classmethod</span>
@@ -480,7 +480,7 @@ data-aria-dark="Switch to auto color mode">
 </section>
 </section>
 <section id="standard-model-example">
-<h2>Standard Model Example<a class="headerlink" href="#standard-model-example" title="Link to this heading">¶</a></h2>
+<h2>Standard Model Example<a class="headerlink" href="#standard-model-example" title="Link to this heading">#</a></h2>
 <p>A typical model combining common mixins:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -550,9 +550,9 @@ data-aria-dark="Switch to auto color mode">
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

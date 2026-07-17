@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -131,21 +131,21 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper"><code class="docutils literal notranslate"><span class="pre">QueryWrapper</span></code></a><ul>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.target"><code class="docutils literal notranslate">target</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.no_autoflush"><code class="docutils literal notranslate">no_autoflush()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.first"><code class="docutils literal notranslate">first()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.last"><code class="docutils literal notranslate">last()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.one"><code class="docutils literal notranslate">one()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.all"><code class="docutils literal notranslate">all()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.count"><code class="docutils literal notranslate">count()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.scalar"><code class="docutils literal notranslate">scalar()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.exec"><code class="docutils literal notranslate">exec()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.delete"><code class="docutils literal notranslate">delete()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.exists"><code class="docutils literal notranslate">exists()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.__getattr__"><code class="docutils literal notranslate">__getattr__()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.sql"><code class="docutils literal notranslate">sql()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.sample"><code class="docutils literal notranslate">sample()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.__repr__"><code class="docutils literal notranslate">__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.target"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.target</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.no_autoflush"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.no_autoflush()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.first"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.first()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.last"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.last()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.one"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.one()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.all"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.all()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.count"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.count()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.scalar"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.scalar()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.exec"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.exec()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.delete"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.delete()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.exists"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.exists()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.__getattr__"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.__getattr__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.sql"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.sql()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.sample"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.sample()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.__repr__"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.__repr__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -224,9 +224,9 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="module-activemodel.query_wrapper">
-<span id="activemodel-query-wrapper"></span><h1>activemodel.query_wrapper<a class="headerlink" href="#module-activemodel.query_wrapper" title="Link to this heading">¶</a></h1>
+<span id="activemodel-query-wrapper"></span><h1>activemodel.query_wrapper<a class="headerlink" href="#module-activemodel.query_wrapper" title="Link to this heading">#</a></h1>
 <section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -238,52 +238,52 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.query_wrapper.</span></span><span class="sig-name descname"><span class="pre">QueryWrapper</span></span><span class="sig-paren">[</span><em class="sig-param"><span class="n"><span class="pre">TModel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">sqlmodel.SQLModel</span></span></em><span class="sig-paren">]</span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">TModel</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.query_wrapper.</span></span><span class="sig-name descname"><span class="pre">QueryWrapper</span></span><span class="sig-paren">[</span><em class="sig-param"><span class="n"><span class="pre">TModel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">sqlmodel.SQLModel</span></span></em><span class="sig-paren">]</span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">TModel</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../types/sqlalchemy_protocol/index.html#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods" title="activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">TModel</span></code>]</p>
 <p>Make it easy to run queries on a model.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.target">
-<span class="sig-name descname"><span class="pre">target</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlmodel.sql.expression.SelectOfScalar</span><span class="p"><span class="pre">[</span></span><span class="pre">TModel</span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.target" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">target</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sqlmodel.sql.expression.SelectOfScalar</span><span class="p"><span class="pre">[</span></span><span class="pre">TModel</span><span class="p"><span class="pre">]</span></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.target" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.no_autoflush">
-<span class="sig-name descname"><span class="pre">no_autoflush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.no_autoflush"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.no_autoflush" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">no_autoflush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.no_autoflush"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.no_autoflush" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.first">
-<span class="sig-name descname"><span class="pre">first</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.first"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.first" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">first</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.first"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.first" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.last">
-<span class="sig-name descname"><span class="pre">last</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.last"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.last" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">last</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.last"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.last" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.one">
-<span class="sig-name descname"><span class="pre">one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.one" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.one" title="Link to this definition">#</a></dt>
 <dd><p>requires exactly one result in the dataset</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.all">
-<span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.all" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.all" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.count">
-<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.count" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.count" title="Link to this definition">#</a></dt>
 <dd><p>I did some basic tests</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.scalar">
-<span class="sig-name descname"><span class="pre">scalar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.scalar" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">scalar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.scalar" title="Link to this definition">#</a></dt>
 <dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt;</span>
 </span></pre></div>
 </div>
@@ -291,17 +291,17 @@ data-aria-dark="Switch to auto color mode">
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.exec">
-<span class="sig-name descname"><span class="pre">exec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.exec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.exec" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">exec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.exec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.exec" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.delete">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.delete" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.delete" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.exists">
-<span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.exists" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.exists" title="Link to this definition">#</a></dt>
 <dd><p>Return True if the current query yields at least one row.</p>
 <p>Uses the SQLAlchemy exists() construct against a LIMIT 1 version of
 the current target for efficiency. Keeps the original target intact.</p>
@@ -310,19 +310,19 @@ the current target for efficiency. Keeps the original target intact.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.__getattr__">
-<span class="sig-name descname"><span class="pre">__getattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.__getattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.__getattr__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__getattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.__getattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.__getattr__" title="Link to this definition">#</a></dt>
 <dd><p>This implements the magic that forwards function calls to sqlalchemy.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.sql">
-<span class="sig-name descname"><span class="pre">sql</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.sql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.sql" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sql</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.sql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.sql" title="Link to this definition">#</a></dt>
 <dd><p>Output the raw SQL of the query for debugging</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.sample" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TModel</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.sample" title="Link to this definition">#</a></dt>
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">TModel</span><span class="p"><span class="pre">]</span></span></span></span></dt>
 <dd><p>Return a random sample of rows from the current query.</p>
@@ -343,7 +343,7 @@ the current target for efficiency. Keeps the original target intact.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.__repr__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.__repr__" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -388,9 +388,9 @@ the current target for efficiency. Keeps the original target intact.</p>
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

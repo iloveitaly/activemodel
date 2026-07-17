@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -213,7 +213,7 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="module-activemodel.pytest.plugin">
-<span id="activemodel-pytest-plugin"></span><h1>activemodel.pytest.plugin<a class="headerlink" href="#module-activemodel.pytest.plugin" title="Link to this heading">¶</a></h1>
+<span id="activemodel-pytest-plugin"></span><h1>activemodel.pytest.plugin<a class="headerlink" href="#module-activemodel.pytest.plugin" title="Link to this heading">#</a></h1>
 <p>Pytest plugin integration for activemodel.</p>
 <p>Currently provides:</p>
 <ul class="simple">
@@ -238,7 +238,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 <p>The list always implicitly includes <code class="docutils literal notranslate"><span class="pre">alembic_version</span></code> even if not specified.</p>
 <section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -256,10 +256,10 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.pytest.plugin.pytest_addoption">
-<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.plugin.</span></span><span class="sig-name descname"><span class="pre">pytest_addoption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pytest.Parser</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/plugin.html#pytest_addoption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.plugin.pytest_addoption" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.plugin.</span></span><span class="sig-name descname"><span class="pre">pytest_addoption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pytest.Parser</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../../_modules/activemodel/pytest/plugin.html#pytest_addoption"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.plugin.pytest_addoption" title="Link to this definition">#</a></dt>
 <dd><p>Register custom ini options.</p>
 <p>We treat this as a <em>linelist</em> so pyproject.toml list syntax works. Comma separated works too because
 pytest splits lines first; users can still provide one line with commas.</p>
@@ -267,7 +267,7 @@ pytest splits lines first; users can still provide one line with commas.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.pytest.plugin.db_session">
-<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.plugin.</span></span><span class="sig-name descname"><span class="pre">db_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/plugin.html#db_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.plugin.db_session" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.plugin.</span></span><span class="sig-name descname"><span class="pre">db_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/plugin.html#db_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.plugin.db_session" title="Link to this definition">#</a></dt>
 <dd><p>Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you
 probably don’t need this because the router, job harness, etc should wrap the logic in a database session.</p>
 <p>If your unit test is simple (you are just creating a couple of models) you
@@ -281,7 +281,7 @@ for testing code that will run within a celery worker or something similar.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.pytest.plugin.db_truncate_session">
-<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.plugin.</span></span><span class="sig-name descname"><span class="pre">db_truncate_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/plugin.html#db_truncate_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.plugin.db_truncate_session" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.plugin.</span></span><span class="sig-name descname"><span class="pre">db_truncate_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/pytest/plugin.html#db_truncate_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.plugin.db_truncate_session" title="Link to this definition">#</a></dt>
 <dd><p>Provides a database session for testing when using a truncation cleaning strategy.</p>
 <p>When using a truncation cleaning strategy, no global test session is set. This means all models that are created
 are tied to a detached session, which makes it hard to mutate models after creation. This fixture fixes that problem
@@ -328,9 +328,9 @@ by setting the session used by all model factories to a global session.</p>
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

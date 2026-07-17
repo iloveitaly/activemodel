@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -132,15 +132,15 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType"><code class="docutils literal notranslate"><span class="pre">TypeIDType</span></code></a><ul>
-<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.impl"><code class="docutils literal notranslate">impl</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.cache_ok"><code class="docutils literal notranslate">cache_ok</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.prefix"><code class="docutils literal notranslate">prefix</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.raw"><code class="docutils literal notranslate">raw()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.__repr__"><code class="docutils literal notranslate">__repr__()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.process_bind_param"><code class="docutils literal notranslate">process_bind_param()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.process_result_value"><code class="docutils literal notranslate">process_result_value()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.__get_pydantic_core_schema__"><code class="docutils literal notranslate">__get_pydantic_core_schema__()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.__get_pydantic_json_schema__"><code class="docutils literal notranslate">__get_pydantic_json_schema__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.impl"><code class="docutils literal notranslate"><span class="pre">TypeIDType.impl</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.cache_ok"><code class="docutils literal notranslate"><span class="pre">TypeIDType.cache_ok</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.prefix"><code class="docutils literal notranslate"><span class="pre">TypeIDType.prefix</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.raw"><code class="docutils literal notranslate"><span class="pre">TypeIDType.raw()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.__repr__"><code class="docutils literal notranslate"><span class="pre">TypeIDType.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.process_bind_param"><code class="docutils literal notranslate"><span class="pre">TypeIDType.process_bind_param()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.process_result_value"><code class="docutils literal notranslate"><span class="pre">TypeIDType.process_result_value()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.__get_pydantic_core_schema__"><code class="docutils literal notranslate"><span class="pre">TypeIDType.__get_pydantic_core_schema__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.typeid.TypeIDType.__get_pydantic_json_schema__"><code class="docutils literal notranslate"><span class="pre">TypeIDType.__get_pydantic_json_schema__()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#activemodel.types.typeid.TypeIDPrimaryKey"><code class="docutils literal notranslate"><span class="pre">TypeIDPrimaryKey()</span></code></a></li>
@@ -224,12 +224,12 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="module-activemodel.types.typeid">
-<span id="activemodel-types-typeid"></span><h1>activemodel.types.typeid<a class="headerlink" href="#module-activemodel.types.typeid" title="Link to this heading">¶</a></h1>
+<span id="activemodel-types-typeid"></span><h1>activemodel.types.typeid<a class="headerlink" href="#module-activemodel.types.typeid" title="Link to this heading">#</a></h1>
 <p>A SQLAlchemy TypeDecorator for storing TypeIDs in the database as native UUID fields, with the prefix handled in Python.</p>
 <p>Adapted from:</p>
 <p><a class="reference external" href="https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py">https://github.com/akhundMurad/typeid-python/blob/main/examples/sqlalchemy.py</a></p>
 <section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -241,7 +241,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -253,10 +253,10 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.types.typeid.</span></span><span class="sig-name descname"><span class="pre">TypeIDType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.types.typeid.</span></span><span class="sig-name descname"><span class="pre">TypeIDType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator" title="(in SQLAlchemy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sqlalchemy.types.TypeDecorator</span></code></a></p>
 <p>A SQLAlchemy TypeDecorator that allows storing TypeIDs in the database.</p>
 <p>The prefix will not be persisted to the database, instead the database-native UUID field will be used.
@@ -274,12 +274,12 @@ value from the database.</p>
 to add a <cite>id</cite> pk field to your model with a specific prefix.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType.impl">
-<span class="sig-name descname"><span class="pre">impl</span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.impl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.impl" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">impl</span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.impl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType.cache_ok">
-<span class="sig-name descname"><span class="pre">cache_ok</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.cache_ok"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.cache_ok" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cache_ok</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.cache_ok"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.cache_ok" title="Link to this definition">#</a></dt>
 <dd><p>Indicate if statements using this <code class="xref py py-class docutils literal notranslate"><span class="pre">ExternalType</span></code> are “safe to
 cache”.</p>
 <p>The default value <code class="docutils literal notranslate"><span class="pre">None</span></code> will emit a warning and then not allow caching
@@ -413,34 +413,34 @@ and <code class="xref py py-class docutils literal notranslate"><span class="pre
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType.prefix">
-<span class="sig-name descname"><span class="pre">prefix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.prefix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.prefix" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">prefix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.prefix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.prefix" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType.raw">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">raw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.raw" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">raw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.raw" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.__repr__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.__repr__" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType.process_bind_param">
-<span class="sig-name descname"><span class="pre">process_bind_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.process_bind_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.process_bind_param" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">process_bind_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.process_bind_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.process_bind_param" title="Link to this definition">#</a></dt>
 <dd><p>This is run when a search query is built or …</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType.process_result_value">
-<span class="sig-name descname"><span class="pre">process_result_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.process_result_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.process_result_value" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">process_result_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.process_result_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.process_result_value" title="Link to this definition">#</a></dt>
 <dd><p>convert a raw UUID, without a prefix, to a TypeID with the correct prefix</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType.__get_pydantic_core_schema__">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_core_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_core_schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydantic_core.core_schema.CoreSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pydantic_core.CoreSchema</span></span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.__get_pydantic_core_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.__get_pydantic_core_schema__" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_core_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_core_schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydantic_core.core_schema.CoreSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pydantic_core.CoreSchema</span></span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.__get_pydantic_core_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.__get_pydantic_core_schema__" title="Link to this definition">#</a></dt>
 <dd><p>This fixes the following error: ‘Unable to serialize unknown type’ by telling pydantic how to serialize this field.</p>
 <p>Note that TypeIDType MUST be the type of the field in SQLModel otherwise you’ll get serialization errors.
 This is done automatically for the mixin but for any relationship fields you’ll need to specify the type explicitly.</p>
@@ -456,7 +456,7 @@ This is done automatically for the mixin but for any relationship fields you’l
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDType.__get_pydantic_json_schema__">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_json_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydantic_core.CoreSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.__get_pydantic_json_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.__get_pydantic_json_schema__" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_json_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydantic_core.CoreSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDType.__get_pydantic_json_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDType.__get_pydantic_json_schema__" title="Link to this definition">#</a></dt>
 <dd><p>Called when generating the openapi schema. This overrides the <cite>function-plain</cite> type which
 is generated by the <cite>no_info_plain_validator_function</cite>.</p>
 <p>This logic seems to be a hot part of the codebase, so I’d expect this to break as pydantic
@@ -477,7 +477,7 @@ fastapi continue to evolve.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.types.typeid.TypeIDPrimaryKey">
-<span class="sig-prename descclassname"><span class="pre">activemodel.types.typeid.</span></span><span class="sig-name descname"><span class="pre">TypeIDPrimaryKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDPrimaryKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDPrimaryKey" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.types.typeid.</span></span><span class="sig-name descname"><span class="pre">TypeIDPrimaryKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../../_modules/activemodel/types/typeid.html#TypeIDPrimaryKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.typeid.TypeIDPrimaryKey" title="Link to this definition">#</a></dt>
 <dd><p>Field factory for the declarative form:</p>
 <blockquote>
 <div><p>id: TypeIDField[Literal[“user”]] = TypeIDPrimaryKey(“user”)</p>
@@ -530,9 +530,9 @@ the annotation is required for field registration, so the return type cannot rep
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

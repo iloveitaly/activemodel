@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
@@ -200,10 +200,10 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="typeid">
-<h1>TypeID<a class="headerlink" href="#typeid" title="Link to this heading">¶</a></h1>
+<h1>TypeID<a class="headerlink" href="#typeid" title="Link to this heading">#</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> includes first-class support for <a class="reference external" href="https://github.com/jetpack-io/typeid">TypeIDs</a> — type-safe, globally unique identifiers with a human-readable prefix (e.g. <code class="docutils literal notranslate"><span class="pre">user_01h45ytscbebyvny4gc8cr8ma2</span></code>).</p>
 <section id="primary-key">
-<h2>Primary Key<a class="headerlink" href="#primary-key" title="Link to this heading">¶</a></h2>
+<h2>Primary Key<a class="headerlink" href="#primary-key" title="Link to this heading">#</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">TypeIDPrimaryKey</span></code> with a <code class="docutils literal notranslate"><span class="pre">TypeIDField</span></code> annotation to define a typed primary key:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
@@ -217,7 +217,7 @@ data-aria-dark="Switch to auto color mode">
 <p>The <code class="docutils literal notranslate"><span class="pre">Literal[&quot;user&quot;]</span></code> annotation gives static type-checking of the prefix. Each prefix must be unique within a process — defining two models with the same prefix raises an <code class="docutils literal notranslate"><span class="pre">AssertionError</span></code> at class definition time.</p>
 </section>
 <section id="foreign-keys">
-<h2>Foreign Keys<a class="headerlink" href="#foreign-keys" title="Link to this heading">¶</a></h2>
+<h2>Foreign Keys<a class="headerlink" href="#foreign-keys" title="Link to this heading">#</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">Model.foreign_key()</span></code> to wire up a FK column. Annotate with <code class="docutils literal notranslate"><span class="pre">TypeID</span></code> (not <code class="docutils literal notranslate"><span class="pre">TypeIDType</span></code>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
@@ -238,7 +238,7 @@ data-aria-dark="Switch to auto color mode">
 <p><code class="docutils literal notranslate"><span class="pre">foreign_key()</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">nullable=False</span></code> and accepts any <code class="docutils literal notranslate"><span class="pre">Field</span></code> kwargs (<code class="docutils literal notranslate"><span class="pre">index</span></code>, <code class="docutils literal notranslate"><span class="pre">nullable</span></code>, etc.).</p>
 </section>
 <section id="prefix-enforcement">
-<h2>Prefix Enforcement<a class="headerlink" href="#prefix-enforcement" title="Link to this heading">¶</a></h2>
+<h2>Prefix Enforcement<a class="headerlink" href="#prefix-enforcement" title="Link to this heading">#</a></h2>
 <p>For FK fields that must carry a specific prefix — such as self-referential foreign keys — use <code class="docutils literal notranslate"><span class="pre">sa_type=TypeIDType(prefix=&quot;...&quot;)</span></code>. The annotation stays as <code class="docutils literal notranslate"><span class="pre">TypeID</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">typeid</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeID</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
@@ -257,7 +257,7 @@ data-aria-dark="Switch to auto color mode">
 <p><code class="docutils literal notranslate"><span class="pre">TypeIDType</span></code> appears only in <code class="docutils literal notranslate"><span class="pre">sa_type=</span></code>, never as the field annotation. Assigning a TypeID with the wrong prefix raises <code class="docutils literal notranslate"><span class="pre">TypeIDValidationError</span></code>.</p>
 </section>
 <section id="raw-polymorphic-references">
-<h2>Raw Polymorphic References<a class="headerlink" href="#raw-polymorphic-references" title="Link to this heading">¶</a></h2>
+<h2>Raw Polymorphic References<a class="headerlink" href="#raw-polymorphic-references" title="Link to this heading">#</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">TypeIDType.raw()</span></code> when a field can reference objects of multiple different types (and thus different TypeID prefixes). The field accepts TypeIDs of any prefix on write, but only the underlying UUID is persisted — on read it returns a plain <code class="docutils literal notranslate"><span class="pre">UUID</span></code> with no prefix attached.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
@@ -283,7 +283,7 @@ data-aria-dark="Switch to auto color mode">
 <p>Raw fields emit <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;uuid&quot;}</span></code> in the OpenAPI schema (not <code class="docutils literal notranslate"><span class="pre">typeid</span></code>).</p>
 </section>
 <section id="looking-up-records">
-<h2>Looking Up Records<a class="headerlink" href="#looking-up-records" title="Link to this heading">¶</a></h2>
+<h2>Looking Up Records<a class="headerlink" href="#looking-up-records" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">Model.get()</span></code> accepts any of these equivalent forms:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">User</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>           <span class="c1"># TypeID instance</span>
 </span><span data-line="2"><span class="n">User</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">user_id</span><span class="p">))</span>      <span class="c1"># TypeID string, e.g. &quot;user_01h45y...&quot;</span>
@@ -294,7 +294,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="pydantic-openapi">
-<h2>Pydantic / OpenAPI<a class="headerlink" href="#pydantic-openapi" title="Link to this heading">¶</a></h2>
+<h2>Pydantic / OpenAPI<a class="headerlink" href="#pydantic-openapi" title="Link to this heading">#</a></h2>
 <p>Prefixed TypeID fields emit <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;typeid&quot;}</span></code> in the OpenAPI schema. Pydantic accepts both <code class="docutils literal notranslate"><span class="pre">TypeID</span></code> instances and plain strings (coerced via <code class="docutils literal notranslate"><span class="pre">TypeID.from_string</span></code>). In Python mode, <code class="docutils literal notranslate"><span class="pre">model_dump()</span></code> preserves <code class="docutils literal notranslate"><span class="pre">TypeID</span></code> objects; in JSON mode (<code class="docutils literal notranslate"><span class="pre">model_dump(mode=&quot;json&quot;)</span></code> or <code class="docutils literal notranslate"><span class="pre">model_dump_json()</span></code>), they serialize to their string representation.</p>
 </section>
 </section>
@@ -336,9 +336,9 @@ data-aria-dark="Switch to auto color mode">
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

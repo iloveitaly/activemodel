@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -210,9 +210,9 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="module-activemodel.pytest">
-<span id="activemodel-pytest"></span><h1>activemodel.pytest<a class="headerlink" href="#module-activemodel.pytest" title="Link to this heading">¶</a></h1>
+<span id="activemodel-pytest"></span><h1>activemodel.pytest<a class="headerlink" href="#module-activemodel.pytest" title="Link to this heading">#</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="factories/index.html">activemodel.pytest.factories</a></li>
@@ -223,7 +223,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -241,10 +241,10 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="package-contents">
-<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">¶</a></h2>
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.pytest.database_reset_transaction">
-<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.</span></span><span class="sig-name descname"><span class="pre">database_reset_transaction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/pytest/transaction.html#database_reset_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.database_reset_transaction" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.</span></span><span class="sig-name descname"><span class="pre">database_reset_transaction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/pytest/transaction.html#database_reset_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.database_reset_transaction" title="Link to this definition">#</a></dt>
 <dd><p>Wrap all database interactions for a given test in a nested transaction and roll it back after the test.</p>
 <p>This is provided as a function, not a fixture, since you’ll need to determine when a integration test is run. Here’s
 an example of how to build a fixture from this method:</p>
@@ -270,7 +270,7 @@ around this topic:</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.pytest.test_session">
-<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.</span></span><span class="sig-name descname"><span class="pre">test_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/pytest/transaction.html#test_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.test_session" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.</span></span><span class="sig-name descname"><span class="pre">test_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/pytest/transaction.html#test_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.test_session" title="Link to this definition">#</a></dt>
 <dd><p>Configures a session-global database session for a test.</p>
 <p>Use this as a fixture using <cite>db_session</cite>. This method is meant to be used as a context manager.</p>
 <p>This is useful for tests that need to interact with the database multiple times before calling application code
@@ -294,7 +294,7 @@ this approach will fail and give you detached object errors.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="activemodel.pytest.database_reset_truncate">
-<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.</span></span><span class="sig-name descname"><span class="pre">database_reset_truncate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preserve_tables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pytest_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pytest.Config</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/pytest/truncate.html#database_reset_truncate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.database_reset_truncate" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">activemodel.pytest.</span></span><span class="sig-name descname"><span class="pre">database_reset_truncate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preserve_tables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pytest_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pytest.Config</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/pytest/truncate.html#database_reset_truncate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.pytest.database_reset_truncate" title="Link to this definition">#</a></dt>
 <dd><p>Transaction is most likely the better way to go, but there are some scenarios where the session override
 logic does not work properly and you need to truncate tables back to their original state.</p>
 <p>Here’s how to do this once at the start of the test:</p>
@@ -355,9 +355,9 @@ logic does not work properly and you need to truncate tables back to their origi
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

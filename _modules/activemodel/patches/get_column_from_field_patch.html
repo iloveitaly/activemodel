@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -203,10 +203,10 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="40">    <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_core</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticUndefinedType</span> <span class="k">as</span> <span class="n">UndefinedType</span>
 </span><span data-line="41">
 </span><span data-line="42">
-</span><span data-line="43"><span class="c1"># https://github.com/fastapi/sqlmodel/blob/5c2dbe419edc2d15200eee5269c9508987944ed8/sqlmodel/main.py#L691</span>
+</span><span data-line="43"><span class="c1"># https://github.com/fastapi/sqlmodel/blob/0.0.39/sqlmodel/main.py#L740</span>
 </span><span data-line="44"><span class="k">assert</span> <span class="p">(</span>
 </span><span data-line="45">    <span class="n">hash_function_code</span><span class="p">(</span><span class="n">sqlmodel</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">get_column_from_field</span><span class="p">)</span>
-</span><span data-line="46">    <span class="o">==</span> <span class="s2">&quot;eaa5cd8a3a0119209154f04dfece6253c0d24b5bd365b16bbbd09704e1ffc57d&quot;</span>
+</span><span data-line="46">    <span class="o">==</span> <span class="s2">&quot;cddbf17b0ffec0615bf726962e62dfb3fb83ab1b81a175de72ec697b0fb21632&quot;</span>
 </span><span data-line="47"><span class="p">),</span> <span class="p">(</span>
 </span><span data-line="48">    <span class="sa">f</span><span class="s2">&quot;get_column_from_field has changed, please verify the patch is still valid: </span><span class="si">{</span><span class="n">hash_function_code</span><span class="p">(</span><span class="n">sqlmodel</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">get_column_from_field</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span data-line="49"><span class="p">)</span>
@@ -214,7 +214,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="51">
 <div class="viewcode-block" id="get_column_from_field">
 <a class="viewcode-back" href="../../../autoapi/activemodel/patches/get_column_from_field_patch/index.html#activemodel.patches.get_column_from_field_patch.get_column_from_field">[docs]</a>
-</span><span data-line="52"><span class="k">def</span><span class="w"> </span><span class="nf">get_column_from_field</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Column</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span data-line="52"><span class="k">def</span><span class="w"> </span><span class="nf">get_column_from_field</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Column</span><span class="p">:</span>
 </span><span data-line="53">    <span class="n">field_info</span> <span class="o">=</span> <span class="n">field</span>
 </span><span data-line="54">    <span class="n">sa_column</span> <span class="o">=</span> <span class="n">_get_sqlmodel_field_value</span><span class="p">(</span><span class="n">field_info</span><span class="p">,</span> <span class="s2">&quot;sa_column&quot;</span><span class="p">,</span> <span class="n">Undefined</span><span class="p">)</span>
 </span><span data-line="55">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sa_column</span><span class="p">,</span> <span class="n">Column</span><span class="p">):</span>
@@ -253,7 +253,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="88">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">foreign_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 </span><span data-line="89">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ondelete_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)))</span>  <span class="c1"># for typing</span>
 </span><span data-line="90">        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">foreign_key</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="n">ondelete_value</span><span class="p">))</span>
-</span><span data-line="91">    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="91">    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
 </span><span data-line="92">        <span class="s2">&quot;primary_key&quot;</span><span class="p">:</span> <span class="n">primary_key</span><span class="p">,</span>
 </span><span data-line="93">        <span class="s2">&quot;nullable&quot;</span><span class="p">:</span> <span class="n">nullable</span><span class="p">,</span>
 </span><span data-line="94">        <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">index</span><span class="p">,</span>
@@ -316,9 +316,9 @@ data-aria-dark="Switch to auto color mode">
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

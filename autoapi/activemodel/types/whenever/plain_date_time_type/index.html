@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -131,12 +131,12 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType"><code class="docutils literal notranslate"><span class="pre">PlainDateTimeType</span></code></a><ul>
-<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.impl"><code class="docutils literal notranslate">impl</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.cache_ok"><code class="docutils literal notranslate">cache_ok</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_bind_param"><code class="docutils literal notranslate">process_bind_param()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_result_value"><code class="docutils literal notranslate">process_result_value()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_core_schema__"><code class="docutils literal notranslate">__get_pydantic_core_schema__()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_json_schema__"><code class="docutils literal notranslate">__get_pydantic_json_schema__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.impl"><code class="docutils literal notranslate"><span class="pre">PlainDateTimeType.impl</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.cache_ok"><code class="docutils literal notranslate"><span class="pre">PlainDateTimeType.cache_ok</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_bind_param"><code class="docutils literal notranslate"><span class="pre">PlainDateTimeType.process_bind_param()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_result_value"><code class="docutils literal notranslate"><span class="pre">PlainDateTimeType.process_result_value()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_core_schema__"><code class="docutils literal notranslate"><span class="pre">PlainDateTimeType.__get_pydantic_core_schema__()</span></code></a></li>
+<li><a class="reference internal" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_json_schema__"><code class="docutils literal notranslate"><span class="pre">PlainDateTimeType.__get_pydantic_json_schema__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -223,9 +223,9 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="module-activemodel.types.whenever.plain_date_time_type">
-<span id="activemodel-types-whenever-plain-date-time-type"></span><h1>activemodel.types.whenever.plain_date_time_type<a class="headerlink" href="#module-activemodel.types.whenever.plain_date_time_type" title="Link to this heading">¶</a></h1>
+<span id="activemodel-types-whenever-plain-date-time-type"></span><h1>activemodel.types.whenever.plain_date_time_type<a class="headerlink" href="#module-activemodel.types.whenever.plain_date_time_type" title="Link to this heading">#</a></h1>
 <section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -237,10 +237,10 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="activemodel.types.whenever.plain_date_time_type.PlainDateTimeType">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.types.whenever.plain_date_time_type.</span></span><span class="sig-name descname"><span class="pre">PlainDateTimeType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.types.whenever.plain_date_time_type.</span></span><span class="sig-name descname"><span class="pre">PlainDateTimeType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator" title="(in SQLAlchemy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sqlalchemy.types.TypeDecorator</span></code></a></p>
 <p>SQLAlchemy TypeDecorator for whenever.PlainDateTime.</p>
 <p>Stores as a naive datetime in the database.
@@ -254,12 +254,12 @@ to represent a local wall-clock time without timezone information.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.impl">
-<span class="sig-name descname"><span class="pre">impl</span></span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.impl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.impl" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">impl</span></span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.impl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.impl" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.cache_ok">
-<span class="sig-name descname"><span class="pre">cache_ok</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.cache_ok"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.cache_ok" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cache_ok</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.cache_ok"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.cache_ok" title="Link to this definition">#</a></dt>
 <dd><p>Indicate if statements using this <code class="xref py py-class docutils literal notranslate"><span class="pre">ExternalType</span></code> are “safe to
 cache”.</p>
 <p>The default value <code class="docutils literal notranslate"><span class="pre">None</span></code> will emit a warning and then not allow caching
@@ -393,7 +393,7 @@ and <code class="xref py py-class docutils literal notranslate"><span class="pre
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_bind_param">
-<span class="sig-name descname"><span class="pre">process_bind_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.process_bind_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_bind_param" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">process_bind_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.process_bind_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_bind_param" title="Link to this definition">#</a></dt>
 <dd><p>Receive a bound parameter value to be converted.</p>
 <p>Custom subclasses of <code class="xref py py-class docutils literal notranslate"><span class="pre">_types.TypeDecorator</span></code> should override
 this method to provide custom behaviors for incoming data values.
@@ -421,7 +421,7 @@ this method in the subclass.  Can be <code class="docutils literal notranslate">
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_result_value">
-<span class="sig-name descname"><span class="pre">process_result_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.process_result_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_result_value" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">process_result_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.process_result_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.process_result_value" title="Link to this definition">#</a></dt>
 <dd><p>Receive a result-row column value to be converted.</p>
 <p>Custom subclasses of <code class="xref py py-class docutils literal notranslate"><span class="pre">_types.TypeDecorator</span></code> should override
 this method to provide custom behaviors for data values
@@ -449,12 +449,12 @@ this method in the subclass.  Can be <code class="docutils literal notranslate">
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_core_schema__">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_core_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_source_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pydantic_core.CoreSchema</span></span></span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.__get_pydantic_core_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_core_schema__" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_core_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_source_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pydantic_core.CoreSchema</span></span></span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.__get_pydantic_core_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_core_schema__" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_json_schema__">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_json_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydantic_core.CoreSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.__get_pydantic_json_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_json_schema__" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_json_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydantic_core.CoreSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/plain_date_time_type.html#PlainDateTimeType.__get_pydantic_json_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType.__get_pydantic_json_schema__" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -499,9 +499,9 @@ this method in the subclass.  Can be <code class="docutils literal notranslate">
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

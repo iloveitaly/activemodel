@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
@@ -201,7 +201,7 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="automatic-jsonb-mutation-tracking">
-<h1>Automatic JSONB Mutation Tracking<a class="headerlink" href="#automatic-jsonb-mutation-tracking" title="Link to this heading">¶</a></h1>
+<h1>Automatic JSONB Mutation Tracking<a class="headerlink" href="#automatic-jsonb-mutation-tracking" title="Link to this heading">#</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> uses a serialize-and-compare strategy to detect in-place JSON mutations.</p>
 <p>After SQLAlchemy loads or refreshes a model instance, each tracked JSON field is serialized
 to a canonical JSON string and stored as a snapshot. Right before commit, the current value
@@ -210,7 +210,7 @@ is serialized again and compared against that snapshot. If the serialized values
 <code class="docutils literal notranslate"><span class="pre">UPDATE</span></code>.</p>
 <p>This gives you ActiveRecord-style dirty tracking for complex JSON objects (either plain old py objects or Pydantic objects) without having to remember <code class="docutils literal notranslate"><span class="pre">flag_modified()</span></code> every time you mutate a nested attribute.</p>
 <section id="what-is-tracked">
-<h2>What Is Tracked<a class="headerlink" href="#what-is-tracked" title="Link to this heading">¶</a></h2>
+<h2>What Is Tracked<a class="headerlink" href="#what-is-tracked" title="Link to this heading">#</a></h2>
 <p>The tracking layer currently covers:</p>
 <ul class="simple">
 <li><p>Pydantic-backed JSON fields such as <code class="docutils literal notranslate"><span class="pre">SubModel</span></code>, <code class="docutils literal notranslate"><span class="pre">SubModel</span> <span class="pre">|</span> <span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">list[SubModel]</span></code>, and <code class="docutils literal notranslate"><span class="pre">list[SubModel]</span> <span class="pre">|</span> <span class="pre">None</span></code></p></li>
@@ -225,7 +225,7 @@ load and refresh. Raw <code class="docutils literal notranslate"><span class="pr
 containers, but they still participate in snapshot-based mutation tracking.</p>
 </section>
 <section id="how-it-works">
-<h2>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h2>
+<h2>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>a row is loaded or refreshed</p></li>
 <li><p>supported Pydantic fields are rehydrated back into Pydantic objects</p></li>
@@ -238,7 +238,7 @@ containers, but they still participate in snapshot-based mutation tracking.</p>
 those nested mutations.</p>
 </section>
 <section id="pydantic-example">
-<h2>Pydantic Example<a class="headerlink" href="#pydantic-example" title="Link to this heading">¶</a></h2>
+<h2>Pydantic Example<a class="headerlink" href="#pydantic-example" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
@@ -269,7 +269,7 @@ those nested mutations.</p>
 <p>The nested attribute mutation is detected automatically on commit.</p>
 </section>
 <section id="raw-dict-example">
-<h2>Raw Dict Example<a class="headerlink" href="#raw-dict-example" title="Link to this heading">¶</a></h2>
+<h2>Raw Dict Example<a class="headerlink" href="#raw-dict-example" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
 </span><span data-line="3">
@@ -294,7 +294,7 @@ those nested mutations.</p>
 <p><code class="docutils literal notranslate"><span class="pre">settings</span></code> stays a plain <code class="docutils literal notranslate"><span class="pre">dict</span></code>, but the in-place key mutation is still detected and persisted.</p>
 </section>
 <section id="list-of-dicts-example">
-<h2>List Of Dicts Example<a class="headerlink" href="#list-of-dicts-example" title="Link to this heading">¶</a></h2>
+<h2>List Of Dicts Example<a class="headerlink" href="#list-of-dicts-example" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
 </span><span data-line="3">
@@ -320,7 +320,7 @@ those nested mutations.</p>
 item updates.</p>
 </section>
 <section id="scope-limits">
-<h2>Scope Limits<a class="headerlink" href="#scope-limits" title="Link to this heading">¶</a></h2>
+<h2>Scope Limits<a class="headerlink" href="#scope-limits" title="Link to this heading">#</a></h2>
 <p>The current implementation intentionally does not try to support every possible JSON type shape.</p>
 <p>Notably out of scope:</p>
 <ul class="simple">
@@ -331,7 +331,7 @@ item updates.</p>
 <p>Those constraints keep rehydration rules predictable and avoid heuristic coercion.</p>
 </section>
 <section id="key-api-references">
-<h2>Key API References<a class="headerlink" href="#key-api-references" title="Link to this heading">¶</a></h2>
+<h2>Key API References<a class="headerlink" href="#key-api-references" title="Link to this heading">#</a></h2>
 <p>The best entry points are the methods and functions that explain the behavior directly in their
 docstrings:</p>
 <ul class="simple">
@@ -384,9 +384,9 @@ most direct place to read next.</p>
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

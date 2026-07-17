@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
@@ -197,11 +197,11 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </div><article class="yue" role="main">
           <section id="sql-logging">
-<h1>SQL Logging<a class="headerlink" href="#sql-logging" title="Link to this heading">¶</a></h1>
+<h1>SQL Logging<a class="headerlink" href="#sql-logging" title="Link to this heading">#</a></h1>
 <p>Configure SQL logging through <code class="docutils literal notranslate"><span class="pre">engine_options</span></code> when you initialize <code class="docutils literal notranslate"><span class="pre">activemodel</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> passes <code class="docutils literal notranslate"><span class="pre">engine_options</span></code> straight through to <code class="docutils literal notranslate"><span class="pre">sqlmodel.create_engine()</span></code>, so the standard SQLAlchemy logging flags work as expected.</p>
 <section id="log-sql-statements">
-<h2>Log SQL Statements<a class="headerlink" href="#log-sql-statements" title="Link to this heading">¶</a></h2>
+<h2>Log SQL Statements<a class="headerlink" href="#log-sql-statements" title="Link to this heading">#</a></h2>
 <p>Set <code class="docutils literal notranslate"><span class="pre">echo=True</span></code> to print SQL statements emitted by the engine.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">activemodel</span>
 </span><span data-line="2">
@@ -213,7 +213,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="log-pool-activity-too">
-<h2>Log Pool Activity Too<a class="headerlink" href="#log-pool-activity-too" title="Link to this heading">¶</a></h2>
+<h2>Log Pool Activity Too<a class="headerlink" href="#log-pool-activity-too" title="Link to this heading">#</a></h2>
 <p>Set both <code class="docutils literal notranslate"><span class="pre">echo</span></code> and <code class="docutils literal notranslate"><span class="pre">echo_pool</span></code> if you also want connection pool checkout and return activity in the logs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">activemodel</span>
 </span><span data-line="2">
@@ -228,7 +228,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="reuse-existing-engine-configuration">
-<h2>Reuse Existing Engine Configuration<a class="headerlink" href="#reuse-existing-engine-configuration" title="Link to this heading">¶</a></h2>
+<h2>Reuse Existing Engine Configuration<a class="headerlink" href="#reuse-existing-engine-configuration" title="Link to this heading">#</a></h2>
 <p>Because <code class="docutils literal notranslate"><span class="pre">engine_options</span></code> maps directly to SQLAlchemy engine keyword arguments, you can keep your logging settings alongside the rest of your engine configuration.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">activemodel</span>
 </span><span data-line="2">
@@ -285,9 +285,9 @@ data-aria-dark="Switch to auto color mode">
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>

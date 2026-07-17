@@ -7,7 +7,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=2ceb65ce" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -328,7 +328,9 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="135">
 </span><span data-line="136"><span class="n">ActiveModelFactory</span><span class="o">.</span><span class="n">add_provider</span><span class="p">(</span><span class="n">Instant</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">Instant</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
 </span><span data-line="137"><span class="n">ActiveModelFactory</span><span class="o">.</span><span class="n">add_provider</span><span class="p">(</span><span class="n">ZonedDateTime</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">ZonedDateTime</span><span class="o">.</span><span class="n">now_in_system_tz</span><span class="p">())</span>
-</span><span data-line="138"><span class="n">ActiveModelFactory</span><span class="o">.</span><span class="n">add_provider</span><span class="p">(</span><span class="n">PlainDateTime</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">ZonedDateTime</span><span class="o">.</span><span class="n">now_in_system_tz</span><span class="p">()</span><span class="o">.</span><span class="n">to_plain</span><span class="p">())</span>
+</span><span data-line="138"><span class="n">ActiveModelFactory</span><span class="o">.</span><span class="n">add_provider</span><span class="p">(</span>
+</span><span data-line="139">    <span class="n">PlainDateTime</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">ZonedDateTime</span><span class="o">.</span><span class="n">now_in_system_tz</span><span class="p">()</span><span class="o">.</span><span class="n">to_plain</span><span class="p">()</span>
+</span><span data-line="140"><span class="p">)</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -353,9 +355,9 @@ data-aria-dark="Switch to auto color mode">
   </p>
 </div>
       <div class="sy-foot-socials">
-<a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
-  <iconify-icon icon="simple-icons:github"></iconify-icon>
-</a></div>
+  <a href="https://github.com/iloveitaly/activemodel" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
     </div>
   </div>
 </footer>
