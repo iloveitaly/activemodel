@@ -40,16 +40,16 @@ if TYPE_CHECKING:
     from pydantic_core import PydanticUndefinedType as UndefinedType
 
 
-# https://github.com/fastapi/sqlmodel/blob/5c2dbe419edc2d15200eee5269c9508987944ed8/sqlmodel/main.py#L691
+# https://github.com/fastapi/sqlmodel/blob/0.0.39/sqlmodel/main.py#L740
 assert (
     hash_function_code(sqlmodel.main.get_column_from_field)
-    == "eaa5cd8a3a0119209154f04dfece6253c0d24b5bd365b16bbbd09704e1ffc57d"
+    == "cddbf17b0ffec0615bf726962e62dfb3fb83ab1b81a175de72ec697b0fb21632"
 ), (
     f"get_column_from_field has changed, please verify the patch is still valid: {hash_function_code(sqlmodel.main.get_column_from_field)}"
 )
 
 
-def get_column_from_field(field: Any) -> Column:  # type: ignore
+def get_column_from_field(field: Any) -> Column:
     field_info = field
     sa_column = _get_sqlmodel_field_value(field_info, "sa_column", Undefined)
     if isinstance(sa_column, Column):
@@ -88,7 +88,7 @@ def get_column_from_field(field: Any) -> Column:  # type: ignore
         assert isinstance(foreign_key, str)
         assert isinstance(ondelete_value, (str, type(None)))  # for typing
         args.append(ForeignKey(foreign_key, ondelete=ondelete_value))
-    kwargs = {
+    kwargs: dict[str, Any] = {
         "primary_key": primary_key,
         "nullable": nullable,
         "index": index,

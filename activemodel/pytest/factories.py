@@ -135,4 +135,6 @@ class ActiveModelFactory[T](SQLModelFactory[T]):
 
 ActiveModelFactory.add_provider(Instant, lambda: Instant.now())
 ActiveModelFactory.add_provider(ZonedDateTime, lambda: ZonedDateTime.now_in_system_tz())
-ActiveModelFactory.add_provider(PlainDateTime, lambda: ZonedDateTime.now_in_system_tz().to_plain())
+ActiveModelFactory.add_provider(
+    PlainDateTime, lambda: ZonedDateTime.now_in_system_tz().to_plain()
+)

@@ -68,3 +68,29 @@ Here's the writing style you should use:
 
 Update the `pyproject.toml` keywords (maximum of 4) and description based on the contents of this repo. Do not use `.` in a keyword.
 
+## Upgrade SQLModel
+
+Upgrade the pinned sqlmodel dependency to the latest PyPI release and make sure everything still works.
+
+Context:
+
+* sqlmodel is pinned exactly in `pyproject.toml` (e.g. `sqlmodel==X.Y.Z`)
+* `activemodel/patches/` monkey-patches private `sqlmodel.main` helpers:
+  * `get_column_from_field_patch.py` — field description → column comment
+  * `get_sqlalchemy_type_patch.py` — whenever datetime types
+* Each patch asserts `hash_function_code(...)` against the upstream function source. If the hash fails, the upstream body changed and the patch must be re-verified.
+* Patches mark our edits with `# <Change>` / `# </Change>` comments. Keep those changes; rebase them onto the new upstream body.
+
+Steps:
+
+1. Read the current pin from `pyproject.toml` and the latest version from PyPI. If already latest, stop.
+2. Bump with `uv add "sqlmodel==<latest>"` so `uv.lock` updates.
+3. For each patched function:
+   1. Diff the function between the old and new sqlmodel tags (`fastapi/sqlmodel` on GitHub, `sqlmodel/main.py`).
+   2. If the body is identical, only refresh the GitHub source link in the patch comment if needed.
+   3. If it changed, copy the new upstream body into the patch, re-apply our `# <Change>` blocks, and update the expected hash to `hash_function_code` of the *new* upstream function (the assert runs before the monkey-patch assignment).
+4. Start deps if needed (`just docker_up`), then run `just test` and `just lint`.
+5. Fix any failures caused by the upgrade. Do not commit.
+
+Report: old → new version, what changed in each patched function, and test/lint results.
+
