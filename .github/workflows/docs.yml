@@ -26,6 +26,10 @@ jobs:
       - name: Build
         run: just docs-build
 
+      # sphinx-llm runs a nested markdown Sphinx build after HTML. That subprocess can
+      # fail (e.g. a broken intersphinx inventory) while the primary HTML build still
+      # reports success and exits 0 — leaving llms.txt / llms-full.txt unpublished.
+      # Assert the artifacts exist so CI catches that silent miss.
       - name: Verify LLM artifacts
         run: |
           test -f docs/_build/html/llms.txt
