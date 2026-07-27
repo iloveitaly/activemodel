@@ -3,6 +3,7 @@ name: docs
 on:
   push:
     branches: [master]
+  pull_request:
 
 permissions:
   contents: write
@@ -11,22 +12,32 @@ env:
   MISE_ENV: ci
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      
+
       - uses: jdx/mise-action@v4
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
 
       - name: Install dependencies
-        run: uv sync --all-extras
+        run: uv sync --group docs
 
       - name: Build
         run: just docs-build
 
+      - name: Verify LLM artifacts
+        run: |
+          test -f docs/_build/html/llms.txt
+          test -f docs/_build/html/llms-full.txt
+          head -n 5 docs/_build/html/llms.txt
+
+      - name: Run examples
+        run: just examples
+
       - name: Deploy to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: docs/_build/html
-          branch: gh-pages # This creates/updates a branch for the website
+          branch: gh-pages

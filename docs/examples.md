@@ -1,6 +1,21 @@
 # Examples
 
-This section provides practical examples of how to use `activemodel` in your projects, demonstrating common patterns for structured data, lifecycle management, testing, and complex schema definitions.
+Canonical runnable examples live under [`examples/`](https://github.com/iloveitaly/activemodel/tree/master/examples) and are included here with `literalinclude` so the docs stay in sync with code that CI executes (`just examples`).
+
+## whenever + TypeID + SQLite
+
+End-to-end script: init SQLite, define a TypeID-backed model with a `whenever.PlainDateTime` field, create tables, save, and round-trip.
+
+```{literalinclude} ../examples/whenever_typeid_and_sqlite.py
+:language: python
+```
+
+Run it locally:
+
+```bash
+just examples
+# or: uv run python examples/whenever_typeid_and_sqlite.py
+```
 
 ## Advanced Field Types and Configuration
 
@@ -49,6 +64,7 @@ class Product(BaseModel, table=True):
     # Define max lengths and index the column
     status: str = Field(default="active", max_length=100, index=True)
 ```
+
 ## Structured JSON with Pydantic Models
 
 Using the `PydanticJSONMixin`, you can store complex Pydantic models or lists of models in PostgreSQL `JSONB` columns. The mixin handles serialization and deserialization automatically.
