@@ -3205,7 +3205,7 @@ class UserFactory(ActiveModelFactory[User]):
     # Using Use() to execute a function dynamically for each build
     # Combining with `whenever` for timezone-aware datetimes
     last_active_at = Use(
-        lambda: Instant.now().to_system_tz().add(days=-5).py_datetime()
+        lambda: Instant.now().to_system_tz().add(days=-5).to_stdlib()
     )
 ```
 

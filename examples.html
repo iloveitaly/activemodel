@@ -452,7 +452,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="14">    <span class="c1"># Using Use() to execute a function dynamically for each build</span>
 </span><span data-line="15">    <span class="c1"># Combining with `whenever` for timezone-aware datetimes</span>
 </span><span data-line="16">    <span class="n">last_active_at</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span>
-</span><span data-line="17">        <span class="k">lambda</span><span class="p">:</span> <span class="n">Instant</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">to_system_tz</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">py_datetime</span><span class="p">()</span>
+</span><span data-line="17">        <span class="k">lambda</span><span class="p">:</span> <span class="n">Instant</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">to_system_tz</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=-</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">to_stdlib</span><span class="p">()</span>
 </span><span data-line="18">    <span class="p">)</span>
 </span></pre></div>
 </div>
