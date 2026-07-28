@@ -83,7 +83,6 @@ html_theme_options = {
         {"title": "Getting Started", "url": "getting-started"},
         {"title": "API Reference", "url": "autoapi/index"},
         {"title": "Changelog", "url": "changelog"},
-        {"title": "llms.txt", "url": "llms.txt", "resource": True},
     ],
 }
 
