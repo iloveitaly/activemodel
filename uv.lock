@@ -51,7 +51,7 @@ docs = [
 requires-dist = [
     { name = "sqlmodel", specifier = "==0.0.39" },
     { name = "typeid-python", specifier = "==0.3.10" },
-    { name = "whenever", specifier = ">=0.10.0" },
+    { name = "whenever", specifier = ">=0.10.3" },
 ]
 
 [package.metadata.requires-dev]

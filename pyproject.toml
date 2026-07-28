@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "sqlmodel==0.0.39",
     "typeid-python==0.3.10",
-    "whenever>=0.10.0",
+    "whenever>=0.10.3",
 ]
 authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
 keywords = ["sqlmodel", "orm", "activerecord", "activemodel", "sqlalchemy"]
