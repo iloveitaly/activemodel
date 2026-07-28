@@ -13,20 +13,6 @@ authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
 keywords = ["sqlmodel", "orm", "activerecord", "activemodel", "sqlalchemy"]
 urls = { "Repository" = "https://github.com/iloveitaly/activemodel", "Documentation" = "https://iloveitaly.github.io/activemodel/" }
 
-[project.optional-dependencies]
-docs = [
-    "sphinx>=7.1.2",
-    "shibuya",
-    "myst-parser>=2.0.0",
-    "sphinx-design>=0.5.0",
-    "sphinx-copybutton>=0.5.2",
-    "sphinx-autobuild",
-    "sphinx-autoapi",
-    "sphinx-autodoc-typehints",
-    "sphinx-paramlinks",
-    "sphinx-llm",
-]
-
 [project.entry-points.pytest11]
 activemodel = "activemodel.pytest.plugin"
 
@@ -61,6 +47,17 @@ dev = [
     "pytest-cov>=7.0.0",
     "covdefaults>=2.3.0",
     "factory-boy>=3.3.3",
+]
+# Sphinx toolchain for local/CI docs builds — not a published package extra
+docs = [
+    "sphinx>=7.1.2",
+    "shibuya",
+    "myst-parser>=2.0.0",
+    "sphinx-design>=0.5.0",
+    "sphinx-copybutton>=0.5.2",
+    "sphinx-autobuild",
+    "sphinx-autoapi",
+    "sphinx-llm",
 ]
 
 [tool.pyright]

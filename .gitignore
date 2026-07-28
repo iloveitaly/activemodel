@@ -137,6 +137,8 @@ dmypy.json
 tmp/
 
 examples/*.db
+database.db
+*.db
 
 /tests/migrations/versions
 
