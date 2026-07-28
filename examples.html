@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx_paramlinks.css" />
     <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=168b0b94" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="getting-started.html">Getting Started</a></li><li class="link"><a href="autoapi/index.html">API Reference</a></li><li class="link"><a href="changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="getting-started.html">Getting Started</a></li><li class="link"><a href="autoapi/index.html">API Reference</a></li><li class="link"><a href="changelog.html">Changelog</a></li><li class="link"><a href="llms.txt">llms.txt</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -89,11 +88,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
-<li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/factories/index.html">activemodel.pytest.factories</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/activemodel/pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
@@ -128,6 +122,7 @@ data-aria-dark="Switch to auto color mode">
       <i class="i-lucide close"></i>
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#whenever-typeid-sqlite">whenever + TypeID + SQLite</a></li>
 <li><a class="reference internal" href="#advanced-field-types-and-configuration">Advanced Field Types and Configuration</a><ul>
 <li><a class="reference internal" href="#custom-sqlalchemy-types-and-datetimes">Custom SQLAlchemy Types and Datetimes</a></li>
 <li><a class="reference internal" href="#defaults-exclusions-and-constraints">Defaults, Exclusions, and Constraints</a></li>
@@ -218,7 +213,51 @@ data-aria-dark="Switch to auto color mode">
 </div><article class="yue" role="main">
           <section id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h1>
-<p>This section provides practical examples of how to use <code class="docutils literal notranslate"><span class="pre">activemodel</span></code> in your projects, demonstrating common patterns for structured data, lifecycle management, testing, and complex schema definitions.</p>
+<p>Canonical runnable examples live under <a class="reference external" href="https://github.com/iloveitaly/activemodel/tree/master/examples"><code class="docutils literal notranslate"><span class="pre">examples/</span></code></a> and are included here with <code class="docutils literal notranslate"><span class="pre">literalinclude</span></code> so the docs stay in sync with code that CI executes (<code class="docutils literal notranslate"><span class="pre">just</span> <span class="pre">examples</span></code>).</p>
+<section id="whenever-typeid-sqlite">
+<h2>whenever + TypeID + SQLite<a class="headerlink" href="#whenever-typeid-sqlite" title="Link to this heading">#</a></h2>
+<p>End-to-end script: init SQLite, define a TypeID-backed model with a <code class="docutils literal notranslate"><span class="pre">whenever.PlainDateTime</span></code> field, create tables, save, and round-trip.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLModel</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">whenever</span><span class="w"> </span><span class="kn">import</span> <span class="n">Instant</span><span class="p">,</span> <span class="n">PlainDateTime</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="kn">import</span><span class="w"> </span><span class="nn">activemodel</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDPrimaryKey</span>
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.session_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_engine</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="c1"># Although this looks like it&#39;s an absolute path, it is translated into a relative path based on the source location of this file</span>
+</span><span data-line="10"><span class="n">activemodel</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="s2">&quot;sqlite:///database.db&quot;</span><span class="p">)</span>
+</span><span data-line="11">
+</span><span data-line="12">
+</span><span data-line="13"><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span>
+</span><span data-line="14">    <span class="n">BaseModel</span><span class="p">,</span>
+</span><span data-line="15">    <span class="c1"># wire this model into the DB, without this alembic will not generate a migration</span>
+</span><span data-line="16">    <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="17"><span class="p">):</span>
+</span><span data-line="18">    <span class="c1"># you can use a different pk type, but why would you?</span>
+</span><span data-line="19">    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">TypeIDPrimaryKey</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+</span><span data-line="20">    <span class="c1"># PlainDateTime matches SQLite behavior: no timezone support</span>
+</span><span data-line="21">    <span class="n">booked_date</span><span class="p">:</span> <span class="n">PlainDateTime</span>
+</span><span data-line="22">
+</span><span data-line="23">
+</span><span data-line="24"><span class="c1"># This magic command enables you to avoid the need to run or manage migrations and just magically creates all the tables in the local database</span>
+</span><span data-line="25"><span class="n">SQLModel</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">get_engine</span><span class="p">())</span>
+</span><span data-line="26">
+</span><span data-line="27"><span class="c1"># SQLite/stdlib datetimes are microsecond-precision; truncate nanoseconds for a clean round-trip</span>
+</span><span data-line="28"><span class="n">now_in_sys_time</span> <span class="o">=</span> <span class="n">PlainDateTime</span><span class="p">(</span><span class="n">Instant</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">to_system_tz</span><span class="p">()</span><span class="o">.</span><span class="n">to_plain</span><span class="p">()</span><span class="o">.</span><span class="n">to_stdlib</span><span class="p">())</span>
+</span><span data-line="29">
+</span><span data-line="30"><span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">booked_date</span><span class="o">=</span><span class="n">now_in_sys_time</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span><span data-line="31"><span class="n">fresh_user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">one</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span><span data-line="32">
+</span><span data-line="33"><span class="k">assert</span> <span class="n">fresh_user</span><span class="o">.</span><span class="n">booked_date</span> <span class="o">==</span> <span class="n">now_in_sys_time</span>
+</span></pre></div>
+</div>
+<p>Run it locally:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">just<span class="w"> </span>examples
+</span><span data-line="2"><span class="c1"># or: uv run python examples/whenever_typeid_and_sqlite.py</span>
+</span></pre></div>
+</div>
+</section>
 <section id="advanced-field-types-and-configuration">
 <h2>Advanced Field Types and Configuration<a class="headerlink" href="#advanced-field-types-and-configuration" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> leverages <code class="docutils literal notranslate"><span class="pre">SQLModel</span></code> and <code class="docutils literal notranslate"><span class="pre">SQLAlchemy</span></code> to support complex column types, constraints, and schema configurations.</p>

@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_paramlinks.css" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=168b0b94" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li><li class="link"><a href="../../../llms.txt">llms.txt</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -87,11 +86,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
@@ -167,7 +161,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="4">
 </span><span data-line="5">
 <div class="viewcode-block" id="TimestampsMixin">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/timestamps/index.html#activemodel.mixins.TimestampsMixin">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/timestamps/index.html#activemodel.mixins.timestamps.TimestampsMixin">[docs]</a>
 </span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">TimestampsMixin</span><span class="p">:</span>
 </span><span data-line="7"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="8"><span class="sd">    Simple created at and updated at timestamps. Mix them into your model:</span>
@@ -182,7 +176,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="17"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="18">
 <div class="viewcode-block" id="TimestampsMixin.created_at">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/timestamps/index.html#activemodel.mixins.TimestampsMixin.created_at">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/timestamps/index.html#activemodel.mixins.timestamps.TimestampsMixin.created_at">[docs]</a>
 </span><span data-line="19">    <span class="n">created_at</span><span class="p">:</span> <span class="n">ZonedDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
 </span><span data-line="20">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span data-line="21">        <span class="n">sa_column_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;server_default&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">()},</span>
@@ -191,7 +185,7 @@ data-aria-dark="Switch to auto color mode">
 
 </span><span data-line="24">
 <div class="viewcode-block" id="TimestampsMixin.updated_at">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/timestamps/index.html#activemodel.mixins.TimestampsMixin.updated_at">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/timestamps/index.html#activemodel.mixins.timestamps.TimestampsMixin.updated_at">[docs]</a>
 </span><span data-line="25">    <span class="n">updated_at</span><span class="p">:</span> <span class="n">ZonedDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
 </span><span data-line="26">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 </span><span data-line="27">        <span class="n">sa_column_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;onupdate&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="s2">&quot;server_default&quot;</span><span class="p">:</span> <span class="n">sa</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">()},</span>

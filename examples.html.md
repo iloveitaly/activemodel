@@ -1,6 +1,53 @@
 # Examples
 
-This section provides practical examples of how to use `activemodel` in your projects, demonstrating common patterns for structured data, lifecycle management, testing, and complex schema definitions.
+Canonical runnable examples live under [`examples/`](https://github.com/iloveitaly/activemodel/tree/master/examples) and are included here with `literalinclude` so the docs stay in sync with code that CI executes (`just examples`).
+
+## whenever + TypeID + SQLite
+
+End-to-end script: init SQLite, define a TypeID-backed model with a `whenever.PlainDateTime` field, create tables, save, and round-trip.
+
+```python
+from sqlmodel import SQLModel
+from whenever import Instant, PlainDateTime
+
+import activemodel
+from activemodel import BaseModel
+from activemodel.mixins import TypeIDPrimaryKey
+from activemodel.session_manager import get_engine
+
+# Although this looks like it's an absolute path, it is translated into a relative path based on the source location of this file
+activemodel.init("sqlite:///database.db")
+
+
+class User(
+    BaseModel,
+    # wire this model into the DB, without this alembic will not generate a migration
+    table=True,
+):
+    # you can use a different pk type, but why would you?
+    id: str = TypeIDPrimaryKey("user")
+    # PlainDateTime matches SQLite behavior: no timezone support
+    booked_date: PlainDateTime
+
+
+# This magic command enables you to avoid the need to run or manage migrations and just magically creates all the tables in the local database
+SQLModel.metadata.create_all(get_engine())
+
+# SQLite/stdlib datetimes are microsecond-precision; truncate nanoseconds for a clean round-trip
+now_in_sys_time = PlainDateTime(Instant.now().to_system_tz().to_plain().to_stdlib())
+
+user = User(booked_date=now_in_sys_time).save()
+fresh_user = User.one(user.id)
+
+assert fresh_user.booked_date == now_in_sys_time
+```
+
+Run it locally:
+
+```bash
+just examples
+# or: uv run python examples/whenever_typeid_and_sqlite.py
+```
 
 ## Advanced Field Types and Configuration
 

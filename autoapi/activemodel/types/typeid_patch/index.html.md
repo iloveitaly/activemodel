@@ -17,9 +17,9 @@ Add pydantic v2 support for TypeID. Importing file mutates the TypeID class from
 
 ## Module Contents
 
-### *classmethod* activemodel.types.typeid_patch.get_pydantic_core_schema(source_type: Any, handler: [pydantic.GetCoreSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetCoreSchemaHandler)) → pydantic_core.CoreSchema
+### *classmethod* activemodel.types.typeid_patch.get_pydantic_core_schema(source_type: Any, handler: [pydantic.GetCoreSchemaHandler](https://docs.pydantic.dev/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetCoreSchemaHandler)) → pydantic_core.CoreSchema
 
-### *classmethod* activemodel.types.typeid_patch.get_pydantic_json_schema(core_schema_: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic.json_schema.JsonSchemaValue
+### *classmethod* activemodel.types.typeid_patch.get_pydantic_json_schema(core_schema_: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://docs.pydantic.dev/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic.json_schema.JsonSchemaValue
 
 ### activemodel.types.typeid_patch.existing_schema
 

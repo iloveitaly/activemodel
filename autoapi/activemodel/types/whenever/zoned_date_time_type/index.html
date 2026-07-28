@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx_paramlinks.css" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../../../_static/print.css?v=20ff2c19" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=168b0b94" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../../index.html">API Reference</a></li><li class="link"><a href="../../../../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../../index.html">API Reference</a></li><li class="link"><a href="../../../../../changelog.html">Changelog</a></li><li class="link"><a href="../../../../../llms.txt">llms.txt</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -89,11 +88,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../../../mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../../patches/index.html">activemodel.patches</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../pytest/index.html">activemodel.pytest</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../pytest/factories/index.html">activemodel.pytest.factories</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
@@ -135,8 +129,6 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType.cache_ok"><code class="docutils literal notranslate"><span class="pre">ZonedDateTimeType.cache_ok</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType.process_bind_param"><code class="docutils literal notranslate"><span class="pre">ZonedDateTimeType.process_bind_param()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType.process_result_value"><code class="docutils literal notranslate"><span class="pre">ZonedDateTimeType.process_result_value()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType.__get_pydantic_core_schema__"><code class="docutils literal notranslate"><span class="pre">ZonedDateTimeType.__get_pydantic_core_schema__()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType.__get_pydantic_json_schema__"><code class="docutils literal notranslate"><span class="pre">ZonedDateTimeType.__get_pydantic_json_schema__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -445,16 +437,6 @@ this method in the subclass.  Can be <code class="docutils literal notranslate">
 <p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_types.TypeDecorator.process_bind_param()</span></code></p>
 </div>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType.__get_pydantic_core_schema__">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_core_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_source_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pydantic_core.CoreSchema</span></span></span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/zoned_date_time_type.html#ZonedDateTimeType.__get_pydantic_core_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType.__get_pydantic_core_schema__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType.__get_pydantic_json_schema__">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__get_pydantic_json_schema__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pydantic_core.CoreSchema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler" title="(in Pydantic v0.0.0)"><span class="pre">pydantic.GetJsonSchemaHandler</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../_modules/activemodel/types/whenever/zoned_date_time_type.html#ZonedDateTimeType.__get_pydantic_json_schema__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType.__get_pydantic_json_schema__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 

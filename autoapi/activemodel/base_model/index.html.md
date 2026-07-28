@@ -53,57 +53,6 @@ Construction: Model(…) -> after_initialize
 
 # [https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a](https://claude.ai/share/f09e4f70-2ff7-4cd0-abff-44645134693a)
 
-#### \_\_table_args_\_ *= None*
-
-#### *classmethod* \_\_init_subclass_\_(\*\*kwargs)
-
-This signature is included purely to help type-checkers check arguments to class declaration, which
-provides a way to conveniently set model_config key/value pairs.
-
-```
-``
-```
-
-```
-`
-```
-
-python
-from pydantic import BaseModel
-
-class MyModel(BaseModel, extra=’allow’): …
-
-```
-``
-```
-
-```
-`
-```
-
-However, this may be deceiving, since the \_actual_ calls to \_\_init_subclass_\_ will not receive any
-of the config arguments, and will only receive any keyword arguments passed during class initialization
-that are \_not_ expected keys in ConfigDict. (This is due to the way ModelMetaclass._\_new_\_ works.)
-
-* **Parameters:**
-  **\*\*kwargs** – Keyword arguments passed to the class definition, which set model_config
-
-#### NOTE
-You may want to override \_\_pydantic_init_subclass_\_ instead, which behaves similarly but is called
-*after* the class is fully initialized.
-
-#### \_\_tablename_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
-
-Automatically generates the table name for the model by converting the model’s class name from PascalCase to snake_case.
-This is the recommended text case style for table names:
-
-[https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names](https://wiki.postgresql.org/wiki/Don%27t_Do_This#Don.27t_use_upper_case_table_or_column_names)
-
-By default, the model’s class name is lower cased which makes it harder to read.
-
-This implementation properly handles acronyms: e.g. LLMCache -> llm_cache.
-[https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case](https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case)
-
 #### *classmethod* foreign_key(\*\*kwargs) → Any
 
 Returns a Field object referencing the foreign key of the model.
@@ -198,13 +147,9 @@ Returns None if no record is found. Throws an error if more than one record is f
 
 Gets a single record from the database. Pass an PK ID or a kwarg to filter by.
 
-* **Raises:**
-  * [**sqlalchemy.exc.NoResultFound**](https://docs.sqlalchemy.org/en/20/core/exceptions.html#sqlalchemy.exc.NoResultFound) – If no record is found.
-  * [**sqlalchemy.exc.MultipleResultsFound**](https://docs.sqlalchemy.org/en/20/core/exceptions.html#sqlalchemy.exc.MultipleResultsFound) – If more than one record is found.
-
-#### *classmethod* \_\_process_filter_args_\_(\*args: Any, \*\*kwargs: Any)
-
-Helper method to process filter arguments and implement some nice DX for our devs.
+Raises:
+: sqlalchemy.exc.NoResultFound: If no record is found.
+  sqlalchemy.exc.MultipleResultsFound: If more than one record is found.
 
 #### *classmethod* all()
 

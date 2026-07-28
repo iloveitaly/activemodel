@@ -22,11 +22,6 @@ Base factory for SQLModel models:
 1. Ability to ignore all relationship fks
 2. Option to ignore all pks
 
-#### \_\_is_base_factory_\_ *= True*
-
-Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
-For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.
-
 #### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
 
 Determine whether to set a value for a given field_name.
@@ -46,13 +41,6 @@ Base factory for SQLModel models:
 
 1. Ability to ignore all relationship fks
 2. Option to ignore all pks
-
-#### \_\_is_base_factory_\_ *= True*
-
-Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
-For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.
-
-#### \_\_sqlalchemy_session_\_ *= None*
 
 #### *classmethod* save(\*args, \*\*kwargs) → [T](../truncate/index.md#activemodel.pytest.truncate.T)
 

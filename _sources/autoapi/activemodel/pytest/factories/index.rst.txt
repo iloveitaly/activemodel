@@ -35,14 +35,6 @@ Module Contents
    2. Option to ignore all pks
 
 
-   .. py:attribute:: __is_base_factory__
-      :value: True
-
-
-      Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
-      For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
-
-
    .. py:method:: should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, **kwargs: Any) -> bool
       :classmethod:
 
@@ -67,19 +59,6 @@ Module Contents
 
    1. Ability to ignore all relationship fks
    2. Option to ignore all pks
-
-
-   .. py:attribute:: __is_base_factory__
-      :value: True
-
-
-      Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
-      For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
-
-
-   .. py:attribute:: __sqlalchemy_session__
-      :value: None
-
 
 
    .. py:method:: save(*args, **kwargs) -> T

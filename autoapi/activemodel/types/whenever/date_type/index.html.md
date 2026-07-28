@@ -214,7 +214,3 @@ behavior, such as transforming or deserializing data.
 [Augmenting Existing Types](https://docs.sqlalchemy.org/en/20/core/custom_types.html#types-typedecorator)
 
 `_types.TypeDecorator.process_bind_param()`
-
-#### *classmethod* \_\_get_pydantic_core_schema_\_(\_source_type: [object](https://docs.python.org/3/library/functions.html#object), handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler)) → pydantic_core.CoreSchema
-
-#### *classmethod* \_\_get_pydantic_json_schema_\_(schema: pydantic_core.CoreSchema, handler: [pydantic.GetJsonSchemaHandler](https://pydantic.dev/docs/validation/latest/api/pydantic/annotated_handlers/#pydantic.annotated_handlers.GetJsonSchemaHandler))

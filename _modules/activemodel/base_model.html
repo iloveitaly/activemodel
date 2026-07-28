@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_paramlinks.css" />
     <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=168b0b94" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../changelog.html">Changelog</a></li><li class="link"><a href="../../llms.txt">llms.txt</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -87,11 +86,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../../autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
@@ -206,7 +200,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="40">
 </span><span data-line="41">
 <div class="viewcode-block" id="BaseModel">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel">[docs]</a>
 </span><span data-line="42"><span class="k">class</span><span class="w"> </span><span class="nc">BaseModel</span><span class="p">(</span><span class="n">SQLModel</span><span class="p">):</span>
 </span><span data-line="43"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="44"><span class="sd">    Base model class to inherit from so we can hate python less.</span>
@@ -238,18 +232,13 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="70">
 </span><span data-line="71"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="72">
-<div class="viewcode-block" id="BaseModel.__table_args__">
-<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.__table_args__">[docs]</a>
-</span><span data-line="73">    <span class="n">__table_args__</span> <span class="o">=</span> <span class="kc">None</span></div>
-
+</span><span data-line="73">    <span class="n">__table_args__</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span data-line="74">
 </span><span data-line="75">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="76">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span data-line="77">        <span class="bp">self</span><span class="o">.</span><span class="n">_call_hook</span><span class="p">(</span><span class="s2">&quot;after_initialize&quot;</span><span class="p">)</span>
 </span><span data-line="78">
 </span><span data-line="79">    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="BaseModel.__init_subclass__">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.__init_subclass__">[docs]</a>
 </span><span data-line="80">    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="81">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span data-line="82">
@@ -257,8 +246,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="84">        <span class="c1"># copy into table/column comments by patching SQLModel internals elsewhere.</span>
 </span><span data-line="85">        <span class="bp">cls</span><span class="o">.</span><span class="n">model_config</span><span class="p">[</span><span class="s2">&quot;use_attribute_docstrings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span data-line="86">
-</span><span data-line="87">        <span class="bp">cls</span><span class="o">.</span><span class="n">_apply_class_doc</span><span class="p">()</span></div>
-
+</span><span data-line="87">        <span class="bp">cls</span><span class="o">.</span><span class="n">_apply_class_doc</span><span class="p">()</span>
 </span><span data-line="88">
 </span><span data-line="89">    <span class="nd">@classmethod</span>
 </span><span data-line="90">    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_class_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -289,8 +277,6 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="115">
 </span><span data-line="116">    <span class="c1"># TODO no type check decorator here</span>
 </span><span data-line="117">    <span class="nd">@declared_attr</span>
-<div class="viewcode-block" id="BaseModel.__tablename__">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.__tablename__">[docs]</a>
 </span><span data-line="118">    <span class="k">def</span><span class="w"> </span><span class="nf">__tablename__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span data-line="119"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="120"><span class="sd">        Automatically generates the table name for the model by converting the model&#39;s class name from PascalCase to snake_case.</span>
@@ -303,12 +289,11 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="127"><span class="sd">        This implementation properly handles acronyms: e.g. `LLMCache` -&gt; `llm_cache`.</span>
 </span><span data-line="128"><span class="sd">        https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case</span>
 </span><span data-line="129"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="130">        <span class="k">return</span> <span class="n">to_snake_case</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
-
+</span><span data-line="130">        <span class="k">return</span> <span class="n">to_snake_case</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 </span><span data-line="131">
 </span><span data-line="132">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.foreign_key">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.foreign_key">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.foreign_key">[docs]</a>
 </span><span data-line="133">    <span class="k">def</span><span class="w"> </span><span class="nf">foreign_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
 </span><span data-line="134"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="135"><span class="sd">        Returns a `Field` object referencing the foreign key of the model.</span>
@@ -331,7 +316,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="151">
 </span><span data-line="152">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.select">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.select">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.select">[docs]</a>
 </span><span data-line="153">    <span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
 </span><span data-line="154">        <span class="s2">&quot;create a query wrapper to easily run sqlmodel queries on this model&quot;</span>
 </span><span data-line="155">        <span class="k">return</span> <span class="n">QueryWrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
@@ -339,7 +324,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="156">
 </span><span data-line="157">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.where">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.where">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.where">[docs]</a>
 </span><span data-line="158">    <span class="k">def</span><span class="w"> </span><span class="nf">where</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
 </span><span data-line="159">        <span class="s2">&quot;convenience method to avoid having to write .select().where() in order to add conditions&quot;</span>
 </span><span data-line="160">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
@@ -348,7 +333,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="162">    <span class="c1"># TODO we should add an instance method for this as well</span>
 </span><span data-line="163">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.upsert">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.upsert">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.upsert">[docs]</a>
 </span><span data-line="164">    <span class="k">def</span><span class="w"> </span><span class="nf">upsert</span><span class="p">(</span>
 </span><span data-line="165">        <span class="bp">cls</span><span class="p">,</span>
 </span><span data-line="166">        <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
@@ -386,7 +371,7 @@ data-aria-dark="Switch to auto color mode">
 
 </span><span data-line="198">
 <div class="viewcode-block" id="BaseModel.delete">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.delete">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.delete">[docs]</a>
 </span><span data-line="199">    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="200"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete instance running delete hooks and optional around_delete context manager.&quot;&quot;&quot;</span>
 </span><span data-line="201">
@@ -408,7 +393,7 @@ data-aria-dark="Switch to auto color mode">
 
 </span><span data-line="217">
 <div class="viewcode-block" id="BaseModel.save">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.save">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.save">[docs]</a>
 </span><span data-line="218">    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="219"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Persist instance running create/update hooks and optional around_save context manager.&quot;&quot;&quot;</span>
 </span><span data-line="220">
@@ -513,7 +498,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="318">        <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">ContextManager</span><span class="p">,</span> <span class="n">cm</span><span class="p">)</span>
 </span><span data-line="319">
 <div class="viewcode-block" id="BaseModel.refresh">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.refresh">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.refresh">[docs]</a>
 </span><span data-line="320">    <span class="k">def</span><span class="w"> </span><span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="321">        <span class="s2">&quot;Refreshes an object from the database&quot;</span>
 </span><span data-line="322">
@@ -537,7 +522,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="339">    <span class="c1"># TODO where is this actually used? shoudl prob remove this</span>
 </span><span data-line="340">    <span class="c1"># TODO should we even do this? Can we specify a better json rendering class?</span>
 <div class="viewcode-block" id="BaseModel.json">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.json">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.json">[docs]</a>
 </span><span data-line="341">    <span class="k">def</span><span class="w"> </span><span class="nf">json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="342">        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -545,7 +530,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="344">    <span class="c1"># TODO should move this to the wrapper</span>
 </span><span data-line="345">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.count">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.count">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.count">[docs]</a>
 </span><span data-line="346">    <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span data-line="347"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="348"><span class="sd">        Returns the number of records in the database.</span>
@@ -557,7 +542,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="353">    <span class="c1"># TODO got to be a better way to fwd these along...</span>
 </span><span data-line="354">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.first">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.first">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.first">[docs]</a>
 </span><span data-line="355">    <span class="k">def</span><span class="w"> </span><span class="nf">first</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 </span><span data-line="356">        <span class="c1"># TODO should use dynamic pk</span>
 </span><span data-line="357">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">desc</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span></div>
@@ -569,13 +554,13 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="362">
 </span><span data-line="363">    <span class="c1"># TODO throw an error if this field is set on the model</span>
 <div class="viewcode-block" id="BaseModel.is_new">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.is_new">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.is_new">[docs]</a>
 </span><span data-line="364">    <span class="k">def</span><span class="w"> </span><span class="nf">is_new</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span data-line="365">        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sa_instance_state</span><span class="o">.</span><span class="n">has_identity</span></div>
 
 </span><span data-line="366">
 <div class="viewcode-block" id="BaseModel.flag_modified">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.flag_modified">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.flag_modified">[docs]</a>
 </span><span data-line="367">    <span class="k">def</span><span class="w"> </span><span class="nf">flag_modified</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span data-line="368"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="369"><span class="sd">        Flag one or more fields as modified/mutated/dirty. Useful for marking a field containing sub-objects as modified.</span>
@@ -594,7 +579,7 @@ data-aria-dark="Switch to auto color mode">
 
 </span><span data-line="382">
 <div class="viewcode-block" id="BaseModel.modified_fields">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.modified_fields">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.modified_fields">[docs]</a>
 </span><span data-line="383">    <span class="k">def</span><span class="w"> </span><span class="nf">modified_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 </span><span data-line="384">        <span class="s2">&quot;set of fields that are modified&quot;</span>
 </span><span data-line="385">
@@ -606,7 +591,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="390">
 </span><span data-line="391">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.find_or_create_by">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.find_or_create_by">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.find_or_create_by">[docs]</a>
 </span><span data-line="392">    <span class="k">def</span><span class="w"> </span><span class="nf">find_or_create_by</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="393"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="394"><span class="sd">        Find record or create it with the passed args if it doesn&#39;t exist.</span>
@@ -625,7 +610,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="406">
 </span><span data-line="407">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.find_or_initialize_by">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.find_or_initialize_by">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.find_or_initialize_by">[docs]</a>
 </span><span data-line="408">    <span class="k">def</span><span class="w"> </span><span class="nf">find_or_initialize_by</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="409"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="410"><span class="sd">        Unfortunately, unlike ruby, python does not have a great lambda story. This makes writing convenience methods</span>
@@ -643,7 +628,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="421">
 </span><span data-line="422">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.primary_key_column">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.primary_key_column">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.primary_key_column">[docs]</a>
 </span><span data-line="423">    <span class="k">def</span><span class="w"> </span><span class="nf">primary_key_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Column</span><span class="p">:</span>
 </span><span data-line="424"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="425"><span class="sd">        Returns the primary key column of the model by inspecting SQLAlchemy field information.</span>
@@ -675,7 +660,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="450">    <span class="c1"># def get(cls, *args: sa.BinaryExpression, **kwargs: t.Any):</span>
 </span><span data-line="451">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.get">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.get">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.get">[docs]</a>
 </span><span data-line="452">    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
 </span><span data-line="453"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="454"><span class="sd">        Gets a single record (or None) from the database. Pass an PK ID or kwargs to filter by.</span>
@@ -699,7 +684,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="471">
 </span><span data-line="472">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.one_or_none">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.one_or_none">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.one_or_none">[docs]</a>
 </span><span data-line="473">    <span class="k">def</span><span class="w"> </span><span class="nf">one_or_none</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
 </span><span data-line="474"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="475"><span class="sd">        Gets a single record from the database. Pass an PK ID or a kwarg to filter by.</span>
@@ -716,7 +701,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="485">
 </span><span data-line="486">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.one">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.one">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.one">[docs]</a>
 </span><span data-line="487">    <span class="k">def</span><span class="w"> </span><span class="nf">one</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
 </span><span data-line="488"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="489"><span class="sd">        Gets a single record from the database. Pass an PK ID or a kwarg to filter by.</span>
@@ -735,8 +720,6 @@ data-aria-dark="Switch to auto color mode">
 
 </span><span data-line="502">
 </span><span data-line="503">    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="BaseModel.__process_filter_args__">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.__process_filter_args__">[docs]</a>
 </span><span data-line="504">    <span class="k">def</span><span class="w"> </span><span class="nf">__process_filter_args__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
 </span><span data-line="505"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="506"><span class="sd">        Helper method to process filter arguments and implement some nice DX for our devs.</span>
@@ -752,12 +735,11 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="516">            <span class="n">kwargs</span><span class="p">[</span><span class="n">id_field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span><span data-line="517">            <span class="n">args</span> <span class="o">=</span> <span class="p">()</span>
 </span><span data-line="518">
-</span><span data-line="519">        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span></div>
-
+</span><span data-line="519">        <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
 </span><span data-line="520">
 </span><span data-line="521">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.all">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.all">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.all">[docs]</a>
 </span><span data-line="522">    <span class="k">def</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 </span><span data-line="523">        <span class="s2">&quot;get a generator for all records in the database&quot;</span>
 </span><span data-line="524">        <span class="k">with</span> <span class="n">get_session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
@@ -770,7 +752,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="530">
 </span><span data-line="531">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.sample">
-<a class="viewcode-back" href="../../autoapi/activemodel/index.html#activemodel.base_model.BaseModel.sample">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/base_model/index.html#activemodel.base_model.BaseModel.sample">[docs]</a>
 </span><span data-line="532">    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 </span><span data-line="533"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="534"><span class="sd">        Pick a random record from the database. Raises if none exist.</span>

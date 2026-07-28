@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_paramlinks.css" />
     <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=168b0b94" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../changelog.html">Changelog</a></li><li class="link"><a href="../../llms.txt">llms.txt</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -87,11 +86,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../../autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
@@ -205,20 +199,20 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="42">
 </span><span data-line="43">
 <div class="viewcode-block" id="SessionManager">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.SessionManager">[docs]</a>
 </span><span data-line="44"><span class="k">class</span><span class="w"> </span><span class="nc">SessionManager</span><span class="p">:</span>
 </span><span data-line="45">    <span class="n">_instance</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">ClassVar</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;SessionManager&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span data-line="46">    <span class="s2">&quot;singleton instance of SessionManager&quot;</span>
 </span><span data-line="47">
 <div class="viewcode-block" id="SessionManager.session_connection">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager.session_connection">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.SessionManager.session_connection">[docs]</a>
 </span><span data-line="48">    <span class="n">session_connection</span><span class="p">:</span> <span class="n">Connection</span> <span class="o">|</span> <span class="kc">None</span></div>
 
 </span><span data-line="49">    <span class="s2">&quot;optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations&quot;</span>
 </span><span data-line="50">
 </span><span data-line="51">    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="SessionManager.get_instance">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager.get_instance">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.SessionManager.get_instance">[docs]</a>
 </span><span data-line="52">    <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span>
 </span><span data-line="53">        <span class="bp">cls</span><span class="p">,</span>
 </span><span data-line="54">        <span class="n">database_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -245,7 +239,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="74">
 </span><span data-line="75">    <span class="c1"># TODO why is this type not reimported?</span>
 <div class="viewcode-block" id="SessionManager.get_engine">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager.get_engine">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.SessionManager.get_engine">[docs]</a>
 </span><span data-line="76">    <span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Engine</span><span class="p">:</span>
 </span><span data-line="77">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="p">:</span>
 </span><span data-line="78">            <span class="n">engine_options</span> <span class="o">=</span> <span class="p">{</span>
@@ -266,7 +260,7 @@ data-aria-dark="Switch to auto color mode">
 
 </span><span data-line="93">
 <div class="viewcode-block" id="SessionManager.get_session">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.SessionManager.get_session">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.SessionManager.get_session">[docs]</a>
 </span><span data-line="94">    <span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="95">        <span class="s2">&quot;get a new database session, respecting any globally set sessions&quot;</span>
 </span><span data-line="96">
@@ -289,7 +283,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="111">
 </span><span data-line="112"><span class="c1"># TODO would be great one day to type engine_options as the SQLAlchemy EngineOptions</span>
 <div class="viewcode-block" id="init">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.init">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.init">[docs]</a>
 </span><span data-line="113"><span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="n">database_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">engine_options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 </span><span data-line="114">    <span class="s2">&quot;configure activemodel to connect to a specific database&quot;</span>
 </span><span data-line="115">    <span class="k">return</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">database_url</span><span class="p">,</span> <span class="n">engine_options</span><span class="o">=</span><span class="n">engine_options</span><span class="p">)</span></div>
@@ -297,7 +291,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="116">
 </span><span data-line="117">
 <div class="viewcode-block" id="table_exists">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.table_exists">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.table_exists">[docs]</a>
 </span><span data-line="118"><span class="k">def</span><span class="w"> </span><span class="nf">table_exists</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">SQLModel</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span data-line="119"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="120"><span class="sd">    Check if the table for the given model exists in the database.</span>
@@ -308,7 +302,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="124">
 </span><span data-line="125">
 <div class="viewcode-block" id="get_engine">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.get_engine">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.get_engine">[docs]</a>
 </span><span data-line="126"><span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">():</span>
 </span><span data-line="127">    <span class="s2">&quot;alias to get the database engine without importing SessionManager&quot;</span>
 </span><span data-line="128">    <span class="k">return</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_engine</span><span class="p">()</span></div>
@@ -316,7 +310,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="129">
 </span><span data-line="130">
 <div class="viewcode-block" id="get_session">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.get_session">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.get_session">[docs]</a>
 </span><span data-line="131"><span class="k">def</span><span class="w"> </span><span class="nf">get_session</span><span class="p">():</span>
 </span><span data-line="132">    <span class="s2">&quot;alias to get a database session without importing SessionManager&quot;</span>
 </span><span data-line="133">    <span class="k">return</span> <span class="n">SessionManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_session</span><span class="p">()</span></div>
@@ -338,7 +332,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="148">
 </span><span data-line="149"><span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
 <div class="viewcode-block" id="global_session">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.global_session">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.global_session">[docs]</a>
 </span><span data-line="150"><span class="k">def</span><span class="w"> </span><span class="nf">global_session</span><span class="p">(</span><span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 </span><span data-line="151"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="152"><span class="sd">    Generate a session and share it across all activemodel calls.</span>
@@ -395,7 +389,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="202">
 </span><span data-line="203">
 <div class="viewcode-block" id="aglobal_session">
-<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.aglobal_session">[docs]</a>
+<a class="viewcode-back" href="../../autoapi/activemodel/session_manager/index.html#activemodel.session_manager.aglobal_session">[docs]</a>
 </span><span data-line="204"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aglobal_session</span><span class="p">():</span>
 </span><span data-line="205"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="206"><span class="sd">    Use this as a fastapi dependency to get a session that is shared across the request:</span>

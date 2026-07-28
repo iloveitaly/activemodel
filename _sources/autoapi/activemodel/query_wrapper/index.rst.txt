@@ -74,12 +74,6 @@ Module Contents
 
 
 
-   .. py:method:: __getattr__(name)
-
-      This implements the magic that forwards function calls to sqlalchemy.
-
-
-
    .. py:method:: sql()
 
       Output the raw SQL of the query for debugging
@@ -91,17 +85,19 @@ Module Contents
 
       Return a random sample of rows from the current query.
 
-      :param n: Number of rows to return. Defaults to 1.
-      :type n: int
-      :param Behavior:
-      :param --------:
-      :param - Returns a single model instance when ``n == 1`` (or ``None`` if no rows):
-      :param - Returns a list[Model] when ``n > 1`` (possibly empty list when no rows):
-      :param - Sampling is performed by appending an ``ORDER BY RANDOM()`` / ``func.random()``: and ``LIMIT n`` clause to the existing query target.
-      :param - Keeps original query intact (does not mutate ``self.target``) so further: chaining works as expected.
+      Parameters
+      ----------
+      n: int
+          Number of rows to return. Defaults to 1.
 
+      Behavior
+      --------
+      - Returns a single model instance when ``n == 1`` (or ``None`` if no rows)
+      - Returns a list[Model] when ``n > 1`` (possibly empty list when no rows)
+      - Sampling is performed by appending an ``ORDER BY RANDOM()`` / ``func.random()``
+        and ``LIMIT n`` clause to the existing query target.
+      - Keeps original query intact (does not mutate ``self.target``) so further
+        chaining works as expected.
 
-
-   .. py:method:: __repr__() -> str
 
 

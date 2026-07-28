@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_paramlinks.css" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=168b0b94" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li><li class="link"><a href="../../../llms.txt">llms.txt</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -89,11 +88,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="typeid/index.html">activemodel.mixins.typeid</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../patches/index.html">activemodel.patches</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../pytest/index.html">activemodel.pytest</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../pytest/factories/index.html">activemodel.pytest.factories</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
@@ -129,29 +123,6 @@ data-aria-dark="Switch to auto color mode">
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
-<li><a class="reference internal" href="#activemodel.mixins.PydanticJSONMixin"><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code></a><ul>
-<li><a class="reference internal" href="#activemodel.mixins.PydanticJSONMixin.__init_subclass__"><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin.__init_subclass__()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.mixins.PydanticJSONMixin.__transform_dict_to_pydantic__"><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin.__transform_dict_to_pydantic__()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.mixins.PydanticJSONMixin.has_json_mutations"><code class="docutils literal notranslate"><span class="pre">PydanticJSONMixin.has_json_mutations()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin"><code class="docutils literal notranslate"><span class="pre">SoftDeletionMixin</span></code></a><ul>
-<li><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin.deleted_at"><code class="docutils literal notranslate"><span class="pre">SoftDeletionMixin.deleted_at</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin.soft_delete"><code class="docutils literal notranslate"><span class="pre">SoftDeletionMixin.soft_delete()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#activemodel.mixins.TimestampsMixin"><code class="docutils literal notranslate"><span class="pre">TimestampsMixin</span></code></a><ul>
-<li><a class="reference internal" href="#activemodel.mixins.TimestampsMixin.created_at"><code class="docutils literal notranslate"><span class="pre">TimestampsMixin.created_at</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.mixins.TimestampsMixin.updated_at"><code class="docutils literal notranslate"><span class="pre">TimestampsMixin.updated_at</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#activemodel.mixins.TypeIDMixin"><code class="docutils literal notranslate"><span class="pre">TypeIDMixin()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.mixins.TypeIDPrimaryKey"><code class="docutils literal notranslate"><span class="pre">TypeIDPrimaryKey()</span></code></a></li>
-</ul>
-</li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
@@ -237,170 +208,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="typeid/index.html">activemodel.mixins.typeid</a></li>
 </ul>
 </div>
-</section>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.mixins.PydanticJSONMixin" title="activemodel.mixins.PydanticJSONMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PydanticJSONMixin</span></code></a></p></td>
-<td><p>Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.mixins.SoftDeletionMixin" title="activemodel.mixins.SoftDeletionMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SoftDeletionMixin</span></code></a></p></td>
-<td><p>Soft delete records by setting <cite>deleted_at</cite> instead of removing the row.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.mixins.TimestampsMixin" title="activemodel.mixins.TimestampsMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimestampsMixin</span></code></a></p></td>
-<td><p>Simple created at and updated at timestamps. Mix them into your model:</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.mixins.TypeIDMixin" title="activemodel.mixins.TypeIDMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeIDMixin</span></code></a>(prefix)</p></td>
-<td><p>Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.mixins.TypeIDPrimaryKey" title="activemodel.mixins.TypeIDPrimaryKey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeIDPrimaryKey</span></code></a>(→ Any)</p></td>
-<td><p>Field factory for the declarative form:</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="package-contents">
-<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="activemodel.mixins.PydanticJSONMixin">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">PydanticJSONMixin</span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.PydanticJSONMixin" title="Link to this definition">#</a></dt>
-<dd><p>Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.</p>
-<p>This mixin is paired with the engine-level JSON serializer so the same field can:</p>
-<ol class="arabic simple">
-<li><p>Persist Pydantic models as JSON on write</p></li>
-<li><p>Automatically convert raw JSON to Pydantic models on load or refresh</p></li>
-</ol>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">ExampleWithJSON</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">PydanticJSONMixin</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span>   <span class="n">list_field</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SubObject</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">sa_type</span><span class="o">=</span><span class="n">JSONB</span><span class="p">())</span>
-</span></pre></div>
-</div>
-<p>Supported field annotations:</p>
-<ul class="simple">
-<li><p><cite>SubModel</cite></p></li>
-<li><p><cite>SubModel | None</cite></p></li>
-<li><p><cite>list[SubModel]</cite></p></li>
-<li><p><cite>list[SubModel] | None</cite></p></li>
-</ul>
-<p>These are the supported rehydration shapes. Raw <cite>dict</cite> and <cite>list[dict]</cite> fields
-stay as plain Python containers, but snapshot tracking can still detect mutations
-on them.</p>
-<p>Not supported:</p>
-<ul class="simple">
-<li><p>tuples of Pydantic models</p></li>
-<li><p>nested lists such as <cite>list[list[SubModel]]</cite></p></li>
-<li><p>ambiguous unions with multiple non-<cite>None</cite> JSON shapes</p></li>
-</ul>
-<dl class="py method">
-<dt class="sig sig-object py" id="activemodel.mixins.PydanticJSONMixin.__init_subclass__">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__init_subclass__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.__init_subclass__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.PydanticJSONMixin.__init_subclass__" title="Link to this definition">#</a></dt>
-<dd><p>Register per-model SQLAlchemy instance events when a mapped subclass is declared.</p>
-<p><cite>load</cite> fires after SQLAlchemy first constructs an instance from query results.
-<cite>refresh</cite> fires after SQLAlchemy reloads one or more attributes on an existing
-instance, including <cite>session.refresh(…)</cite> and expired-attribute reloads.</p>
-<p>The listeners are attached once per concrete model class so every mapped subclass
-gets the same rehydration behavior automatically.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="activemodel.mixins.PydanticJSONMixin.__transform_dict_to_pydantic__">
-<span class="sig-name descname"><span class="pre">__transform_dict_to_pydantic__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jsonb_field_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.__transform_dict_to_pydantic__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.PydanticJSONMixin.__transform_dict_to_pydantic__" title="Link to this definition">#</a></dt>
-<dd><p>Replace raw JSON payloads on the instance with annotated Pydantic objects.</p>
-<p><cite>&#64;reconstructor</cite> is SQLAlchemy’s class-decorator form of the <cite>load</cite> event, so
-this method runs automatically for the initial ORM load. The dedicated refresh
-listener above reuses the same logic for later reloads of an existing instance.</p>
-<p><cite>set_committed_value</cite> is used so the converted value becomes the instance’s
-committed state instead of looking like a user mutation.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="activemodel.mixins.PydanticJSONMixin.has_json_mutations">
-<span class="sig-name descname"><span class="pre">has_json_mutations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/pydantic_json.html#PydanticJSONMixin.has_json_mutations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.PydanticJSONMixin.has_json_mutations" title="Link to this definition">#</a></dt>
-<dd><p>Check whether any Pydantic JSON field has been mutated since the last snapshot.</p>
-<p>Eagerly detects mutations by comparing current field values against their
-serialized snapshots, and calls <cite>flag_modified</cite> for any that changed. Returns
-True if at least one field was mutated.</p>
-<p>This is an escape hatch for code that needs to know about pending JSON mutations
-before the automatic <cite>before_flush</cite> detection fires.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="activemodel.mixins.SoftDeletionMixin">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">SoftDeletionMixin</span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/soft_delete.html#SoftDeletionMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.SoftDeletionMixin" title="Link to this definition">#</a></dt>
-<dd><p>Soft delete records by setting <cite>deleted_at</cite> instead of removing the row.</p>
-<p>Call <cite>soft_delete()</cite> to timestamp the record and persist that change.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="activemodel.mixins.SoftDeletionMixin.deleted_at">
-<span class="sig-name descname"><span class="pre">deleted_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">whenever.ZonedDateTime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#activemodel.mixins.SoftDeletionMixin.deleted_at" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="activemodel.mixins.SoftDeletionMixin.soft_delete">
-<span class="sig-name descname"><span class="pre">soft_delete</span></span><span class="sig-paren">[</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="soft_delete/index.html#activemodel.mixins.soft_delete.SoftDeleteRecord" title="activemodel.mixins.soft_delete.SoftDeleteRecord"><span class="pre">SoftDeleteRecord</span></a></span></em><span class="sig-paren">]</span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../pytest/truncate/index.html#activemodel.pytest.truncate.T" title="activemodel.pytest.truncate.T"><span class="pre">T</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/soft_delete.html#SoftDeletionMixin.soft_delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.SoftDeletionMixin.soft_delete" title="Link to this definition">#</a></dt>
-<dd><p>Timestamp <cite>deleted_at</cite> and persist the record.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="activemodel.mixins.TimestampsMixin">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">TimestampsMixin</span></span><a class="reference internal" href="../../../_modules/activemodel/mixins/timestamps.html#TimestampsMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.TimestampsMixin" title="Link to this definition">#</a></dt>
-<dd><p>Simple created at and updated at timestamps. Mix them into your model:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">MyModel</span><span class="p">(</span><span class="n">TimestampsMixin</span><span class="p">,</span> <span class="n">SQLModel</span><span class="p">):</span>
-</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span>   <span class="k">pass</span>
-</span></pre></div>
-</div>
-<p>Notes:</p>
-<ul class="simple">
-<li><p>Originally pulled from: <a class="reference external" href="https://github.com/tiangolo/sqlmodel/issues/252">https://github.com/tiangolo/sqlmodel/issues/252</a></p></li>
-<li><p>Related issue: <a class="reference external" href="https://github.com/fastapi/sqlmodel/issues/539">https://github.com/fastapi/sqlmodel/issues/539</a></p></li>
-</ul>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="activemodel.mixins.TimestampsMixin.created_at">
-<span class="sig-name descname"><span class="pre">created_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">whenever.ZonedDateTime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#activemodel.mixins.TimestampsMixin.created_at" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="activemodel.mixins.TimestampsMixin.updated_at">
-<span class="sig-name descname"><span class="pre">updated_at</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">whenever.ZonedDateTime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#activemodel.mixins.TimestampsMixin.updated_at" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="activemodel.mixins.TypeIDMixin">
-<span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">TypeIDMixin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/mixins/typeid.html#TypeIDMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.TypeIDMixin" title="Link to this definition">#</a></dt>
-<dd><p>Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="activemodel.mixins.TypeIDPrimaryKey">
-<span class="sig-prename descclassname"><span class="pre">activemodel.mixins.</span></span><span class="sig-name descname"><span class="pre">TypeIDPrimaryKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/activemodel/types/typeid.html#TypeIDPrimaryKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.mixins.TypeIDPrimaryKey" title="Link to this definition">#</a></dt>
-<dd><p>Field factory for the declarative form:</p>
-<blockquote>
-<div><p>id: TypeIDField[Literal[“user”]] = TypeIDPrimaryKey(“user”)</p>
-</div></blockquote>
-<p>Use this when you want static type-checking of the prefix.</p>
-<p>Returns Any so that type checkers accept it as a default value for any
-annotation (e.g. TypeIDField[Literal[“user”]]), matching the same pattern
-used by pydantic’s own Field() factory.</p>
-<p>Returns Any (not TypeID) because Pydantic discovers fields via __annotations__ at class creation —
-the annotation is required for field registration, so the return type cannot replace it.</p>
-</dd></dl>
-
 </section>
 </section>
 

@@ -143,7 +143,7 @@ docstrings:
 * [`activemodel.jsonb_snapshot.snapshot_json_fields()`](autoapi/activemodel/jsonb_snapshot/index.md#activemodel.jsonb_snapshot.snapshot_json_fields)
 * [`activemodel.jsonb_snapshot.detect_json_mutations()`](autoapi/activemodel/jsonb_snapshot/index.md#activemodel.jsonb_snapshot.detect_json_mutations)
 * [`activemodel.jsonb_snapshot.register_before_commit_listener()`](autoapi/activemodel/jsonb_snapshot/index.md#activemodel.jsonb_snapshot.register_before_commit_listener)
-* [`activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__()`](autoapi/activemodel/mixins/pydantic_json/index.md#activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__)
+* `activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__()`
 * [`activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations()`](autoapi/activemodel/mixins/pydantic_json/index.md#activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations)
 
 If you want the exact implementation details, the module-level docs in

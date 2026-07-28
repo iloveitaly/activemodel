@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_paramlinks.css" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=168b0b94" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li><li class="link"><a href="../../../llms.txt">llms.txt</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -87,11 +86,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
@@ -168,22 +162,22 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="5">
 </span><span data-line="6">
 <div class="viewcode-block" id="SoftDeleteRecord">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeleteRecord">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.soft_delete.SoftDeleteRecord">[docs]</a>
 </span><span data-line="7"><span class="k">class</span><span class="w"> </span><span class="nc">SoftDeleteRecord</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <div class="viewcode-block" id="SoftDeleteRecord.deleted_at">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeleteRecord.deleted_at">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.soft_delete.SoftDeleteRecord.deleted_at">[docs]</a>
 </span><span data-line="8">    <span class="n">deleted_at</span><span class="p">:</span> <span class="n">ZonedDateTime</span> <span class="o">|</span> <span class="kc">None</span></div>
 
 </span><span data-line="9">
 <div class="viewcode-block" id="SoftDeleteRecord.save">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeleteRecord.save">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.soft_delete.SoftDeleteRecord.save">[docs]</a>
 </span><span data-line="10">    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span> <span class="o">...</span></div>
 </div>
 
 </span><span data-line="11">
 </span><span data-line="12">
 <div class="viewcode-block" id="SoftDeletionMixin">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeletionMixin">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.soft_delete.SoftDeletionMixin">[docs]</a>
 </span><span data-line="13"><span class="k">class</span><span class="w"> </span><span class="nc">SoftDeletionMixin</span><span class="p">:</span>
 </span><span data-line="14"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="15"><span class="sd">    Soft delete records by setting `deleted_at` instead of removing the row.</span>
@@ -192,12 +186,12 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="18"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="19">
 <div class="viewcode-block" id="SoftDeletionMixin.deleted_at">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeletionMixin.deleted_at">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.soft_delete.SoftDeletionMixin.deleted_at">[docs]</a>
 </span><span data-line="20">    <span class="n">deleted_at</span><span class="p">:</span> <span class="n">ZonedDateTime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 </span><span data-line="21">
 <div class="viewcode-block" id="SoftDeletionMixin.soft_delete">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.SoftDeletionMixin.soft_delete">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/soft_delete/index.html#activemodel.mixins.soft_delete.SoftDeletionMixin.soft_delete">[docs]</a>
 </span><span data-line="22">    <span class="k">def</span><span class="w"> </span><span class="nf">soft_delete</span><span class="p">[</span><span class="n">T</span><span class="p">:</span> <span class="n">SoftDeleteRecord</span><span class="p">](</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
 </span><span data-line="23"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Timestamp `deleted_at` and persist the record.&quot;&quot;&quot;</span>
 </span><span data-line="24">

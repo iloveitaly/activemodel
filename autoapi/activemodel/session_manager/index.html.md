@@ -68,8 +68,8 @@ In complex testing code, you’ll need to be careful here. For example:
 - The celery job (properly) calls with global_session()
 - However, since global_session() is already set with \_\_sqlalchemy_session_\_, this will raise an error
 
-* **Parameters:**
-  **session** – Use an existing session instead of creating a new one
+Args:
+: session: Use an existing session instead of creating a new one
 
 ### *async* activemodel.session_manager.aglobal_session()
 

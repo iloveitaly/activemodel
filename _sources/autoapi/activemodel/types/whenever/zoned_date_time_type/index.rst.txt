@@ -169,6 +169,8 @@ Module Contents
           :ref:`sql_caching`
 
 
+
+
    .. py:method:: process_bind_param(value, dialect)
 
       Receive a bound parameter value to be converted.
@@ -221,16 +223,6 @@ Module Contents
           :meth:`_types.TypeDecorator.process_bind_param`
 
 
-
-
-
-   .. py:method:: __get_pydantic_core_schema__(_source_type: object, handler: pydantic.GetJsonSchemaHandler) -> pydantic_core.CoreSchema
-      :classmethod:
-
-
-
-   .. py:method:: __get_pydantic_json_schema__(schema: pydantic_core.CoreSchema, handler: pydantic.GetJsonSchemaHandler)
-      :classmethod:
 
 
 

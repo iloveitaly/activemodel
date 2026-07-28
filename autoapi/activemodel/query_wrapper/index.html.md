@@ -50,10 +50,6 @@ the current target for efficiency. Keeps the original target intact.
 
 SQLAlchemy exists works differently and does not return a simple boolean.
 
-#### \_\_getattr_\_(name)
-
-This implements the magic that forwards function calls to sqlalchemy.
-
 #### sql()
 
 Output the raw SQL of the query for debugging
@@ -64,13 +60,16 @@ Output the raw SQL of the query for debugging
 
 Return a random sample of rows from the current query.
 
-* **Parameters:**
-  * **n** ([*int*](https://docs.python.org/3/library/functions.html#int)) – Number of rows to return. Defaults to 1.
-  * **Behavior**
-  * **--------**
-  * **rows****)** ( *- Returns a list* *[**Model* *]* *when n > 1* *(**possibly empty list when no*)
-  * **rows****)**
-  * **func.random****(****)** ( *- Sampling is performed by appending an ORDER BY RANDOM* *(* *)*  */*) – and `LIMIT n` clause to the existing query target.
-  * **further** ( *- Keeps original query intact* *(**does not mutate self.target* *)* *so*) – chaining works as expected.
+### Parameters
 
-#### \_\_repr_\_() → [str](https://docs.python.org/3/library/stdtypes.html#str)
+n: int
+: Number of rows to return. Defaults to 1.
+
+### Behavior
+
+- Returns a single model instance when `n == 1` (or `None` if no rows)
+- Returns a list[Model] when `n > 1` (possibly empty list when no rows)
+- Sampling is performed by appending an `ORDER BY RANDOM()` / `func.random()`
+  and `LIMIT n` clause to the existing query target.
+- Keeps original query intact (does not mutate `self.target`) so further
+  chaining works as expected.

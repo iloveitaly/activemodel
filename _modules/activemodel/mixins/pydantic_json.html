@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_paramlinks.css" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=168b0b94" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../../autoapi/index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li><li class="link"><a href="../../../llms.txt">llms.txt</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -87,11 +86,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/soft_delete/index.html">activemodel.mixins.soft_delete</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/timestamps/index.html">activemodel.mixins.timestamps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/patches/index.html">activemodel.patches</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/activemodel/patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../autoapi/activemodel/pytest/index.html">activemodel.pytest</a><ul>
@@ -203,7 +197,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="40">
 </span><span data-line="41">
 <div class="viewcode-block" id="PydanticJSONMixin">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.PydanticJSONMixin">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.pydantic_json.PydanticJSONMixin">[docs]</a>
 </span><span data-line="42"><span class="k">class</span><span class="w"> </span><span class="nc">PydanticJSONMixin</span><span class="p">:</span>
 </span><span data-line="43"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="44"><span class="sd">    Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.</span>
@@ -234,8 +228,6 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="69"><span class="sd">    - ambiguous unions with multiple non-`None` JSON shapes</span>
 </span><span data-line="70"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="71">
-<div class="viewcode-block" id="PydanticJSONMixin.__init_subclass__">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.PydanticJSONMixin.__init_subclass__">[docs]</a>
 </span><span data-line="72">    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="73"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Register per-model SQLAlchemy instance events when a mapped subclass is declared.</span>
 </span><span data-line="74">
@@ -277,8 +269,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="110">            <span class="n">restore_load_context</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span data-line="111">        <span class="p">)</span>
 </span><span data-line="112">
-</span><span data-line="113">        <span class="bp">cls</span><span class="o">.</span><span class="n">_pydantic_json_events_registered</span> <span class="o">=</span> <span class="kc">True</span></div>
-
+</span><span data-line="113">        <span class="bp">cls</span><span class="o">.</span><span class="n">_pydantic_json_events_registered</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span data-line="114">
 </span><span data-line="115">    <span class="nd">@classmethod</span>
 </span><span data-line="116">    <span class="k">def</span><span class="w"> </span><span class="nf">_warn_for_unsupported_json_fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">class_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -392,8 +383,6 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="224">        <span class="n">jsonb_field_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">attrs_to_refresh</span><span class="p">)</span> <span class="k">if</span> <span class="n">attrs_to_refresh</span> <span class="k">else</span> <span class="kc">None</span>
 </span><span data-line="225">        <span class="n">target</span><span class="o">.</span><span class="n">__transform_dict_to_pydantic__</span><span class="p">(</span><span class="n">jsonb_field_names</span><span class="o">=</span><span class="n">jsonb_field_names</span><span class="p">)</span>
 </span><span data-line="226">
-<div class="viewcode-block" id="PydanticJSONMixin.__transform_dict_to_pydantic__">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.PydanticJSONMixin.__transform_dict_to_pydantic__">[docs]</a>
 </span><span data-line="227">    <span class="k">def</span><span class="w"> </span><span class="nf">__transform_dict_to_pydantic__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsonb_field_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 </span><span data-line="228"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span data-line="229"><span class="sd">        Replace raw JSON payloads on the instance with annotated Pydantic objects.</span>
@@ -470,11 +459,10 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="300">                <span class="n">raw_value</span> <span class="o">=</span> <span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">raw_value</span><span class="p">)</span>
 </span><span data-line="301">                <span class="n">attributes</span><span class="o">.</span><span class="n">set_committed_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">raw_value</span><span class="p">)</span>
 </span><span data-line="302">
-</span><span data-line="303">        <span class="n">snapshot_json_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsonb_field_names</span><span class="o">=</span><span class="n">jsonb_field_names</span><span class="p">)</span></div>
-
+</span><span data-line="303">        <span class="n">snapshot_json_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsonb_field_names</span><span class="o">=</span><span class="n">jsonb_field_names</span><span class="p">)</span>
 </span><span data-line="304">
 <div class="viewcode-block" id="PydanticJSONMixin.has_json_mutations">
-<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.PydanticJSONMixin.has_json_mutations">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/activemodel/mixins/pydantic_json/index.html#activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations">[docs]</a>
 </span><span data-line="305">    <span class="k">def</span><span class="w"> </span><span class="nf">has_json_mutations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span data-line="306"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether any Pydantic JSON field has been mutated since the last snapshot.</span>
 </span><span data-line="307">

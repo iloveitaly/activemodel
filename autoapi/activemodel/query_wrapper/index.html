@@ -11,7 +11,6 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_paramlinks.css" />
     <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=168b0b94" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +37,7 @@
       <strong>activemodel</strong>
     </a>
     <div class="sy-head-nav" id="head-nav">
-      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li></ul></nav>
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../getting-started.html">Getting Started</a></li><li class="link"><a href="../../index.html">API Reference</a></li><li class="link"><a href="../../../changelog.html">Changelog</a></li><li class="link"><a href="../../../llms.txt">llms.txt</a></li></ul></nav>
       <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
@@ -89,11 +88,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l4"><a class="reference internal" href="../mixins/typeid/index.html">activemodel.mixins.typeid</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../patches/index.html">activemodel.patches</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../patches/get_column_from_field_patch/index.html">activemodel.patches.get_column_from_field_patch</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../patches/get_sqlalchemy_type_patch/index.html">activemodel.patches.get_sqlalchemy_type_patch</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../pytest/index.html">activemodel.pytest</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../pytest/factories/index.html">activemodel.pytest.factories</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../pytest/plugin/index.html">activemodel.pytest.plugin</a></li>
@@ -142,10 +136,8 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.exec"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.exec()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.delete"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.delete()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.exists"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.exists()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.__getattr__"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.__getattr__()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.sql"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.sql()</span></code></a></li>
 <li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.sample"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.sample()</span></code></a></li>
-<li><a class="reference internal" href="#activemodel.query_wrapper.QueryWrapper.__repr__"><code class="docutils literal notranslate"><span class="pre">QueryWrapper.__repr__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -309,12 +301,6 @@ the current target for efficiency. Keeps the original target intact.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.__getattr__">
-<span class="sig-name descname"><span class="pre">__getattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.__getattr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.__getattr__" title="Link to this definition">#</a></dt>
-<dd><p>This implements the magic that forwards function calls to sqlalchemy.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.sql">
 <span class="sig-name descname"><span class="pre">sql</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.sql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.sql" title="Link to this definition">#</a></dt>
 <dd><p>Output the raw SQL of the query for debugging</p>
@@ -326,25 +312,25 @@ the current target for efficiency. Keeps the original target intact.</p>
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">TModel</span><span class="p"><span class="pre">]</span></span></span></span></dt>
 <dd><p>Return a random sample of rows from the current query.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of rows to return. Defaults to 1.</p></li>
-<li><p><strong>Behavior</strong></p></li>
-<li><p><strong>--------</strong></p></li>
-<li><p><strong>rows</strong><strong>)</strong> (<em>- Returns a list</em><em>[</em><em>Model</em><em>] </em><em>when n &gt; 1</em><em> (</em><em>possibly empty list when no</em>)</p></li>
-<li><p><strong>rows</strong><strong>)</strong></p></li>
-<li><p><strong>func.random</strong><strong>(</strong><strong>)</strong> (<em>- Sampling is performed by appending an ORDER BY RANDOM</em><em>(</em><em>) </em><em>/</em>) – and <code class="docutils literal notranslate"><span class="pre">LIMIT</span> <span class="pre">n</span></code> clause to the existing query target.</p></li>
-<li><p><strong>further</strong> (<em>- Keeps original query intact</em><em> (</em><em>does not mutate self.target</em><em>) </em><em>so</em>) – chaining works as expected.</p></li>
-</ul>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>n: int</dt><dd><p>Number of rows to return. Defaults to 1.</p>
 </dd>
 </dl>
+</section>
+<section id="behavior">
+<h3>Behavior<a class="headerlink" href="#behavior" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Returns a single model instance when <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">==</span> <span class="pre">1</span></code> (or <code class="docutils literal notranslate"><span class="pre">None</span></code> if no rows)</p></li>
+<li><p>Returns a list[Model] when <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> (possibly empty list when no rows)</p></li>
+<li><p>Sampling is performed by appending an <code class="docutils literal notranslate"><span class="pre">ORDER</span> <span class="pre">BY</span> <span class="pre">RANDOM()</span></code> / <code class="docutils literal notranslate"><span class="pre">func.random()</span></code>
+and <code class="docutils literal notranslate"><span class="pre">LIMIT</span> <span class="pre">n</span></code> clause to the existing query target.</p></li>
+<li><p>Keeps original query intact (does not mutate <code class="docutils literal notranslate"><span class="pre">self.target</span></code>) so further
+chaining works as expected.</p></li>
+</ul>
+</section>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="activemodel.query_wrapper.QueryWrapper.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../../_modules/activemodel/query_wrapper.html#QueryWrapper.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#activemodel.query_wrapper.QueryWrapper.__repr__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
