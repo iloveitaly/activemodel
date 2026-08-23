@@ -14,7 +14,7 @@
 
 Import and annotate fields with the bare `whenever` type. The SQLAlchemy column type is resolved automatically via the `get_sqlalchemy_type` patch that `activemodel` applies on import.
 
-A full runnable SQLite example (TypeID + `PlainDateTime`) lives in [Examples](examples.md) and is included from `examples/whenever_typeid_and_sqlite.py`.
+A full runnable SQLite example (TypeID + `PlainDateTime`) lives in [Examples](examples.html.md) and is included from `examples/whenever_typeid_and_sqlite.py`.
 
 ```python
 from whenever import Instant, PlainDateTime, ZonedDateTime

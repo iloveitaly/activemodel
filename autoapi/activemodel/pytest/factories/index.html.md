@@ -7,8 +7,8 @@ Notes on polyfactory:
 
 ## Classes
 
-| [`SQLModelFactory`](#activemodel.pytest.factories.SQLModelFactory)       | Base factory for SQLModel models:   |
-|--------------------------------------------------------------------------|-------------------------------------|
+| [`SQLModelFactory`](#activemodel.pytest.factories.SQLModelFactory)    | Base factory for SQLModel models:   |
+|---------------------------------------------------------------------|-------------------------------------|
 | [`ActiveModelFactory`](#activemodel.pytest.factories.ActiveModelFactory) | Base factory for SQLModel models:   |
 
 ## Module Contents
@@ -42,7 +42,7 @@ Base factory for SQLModel models:
 1. Ability to ignore all relationship fks
 2. Option to ignore all pks
 
-#### *classmethod* save(\*args, \*\*kwargs) → [T](../truncate/index.md#activemodel.pytest.truncate.T)
+#### *classmethod* save(\*args, \*\*kwargs) → [T](../truncate/index.html.md#activemodel.pytest.truncate.T)
 
 Builds and persists a new model to the database.
 
@@ -52,7 +52,7 @@ if it’s not (in the case of a truncation DB strategy) you’ll run into issues
 
 In a truncation strategy, the \_\_sqlalchemy_session_\_ is set to None.
 
-#### *classmethod* post_save(model: [T](../truncate/index.md#activemodel.pytest.truncate.T)) → [T](../truncate/index.md#activemodel.pytest.truncate.T)
+#### *classmethod* post_save(model: [T](../truncate/index.html.md#activemodel.pytest.truncate.T)) → [T](../truncate/index.html.md#activemodel.pytest.truncate.T)
 
 Post-save hook for performing additional actions after the model has been saved to the database. This is useful
 for cases where you need to perform additional operations that require the model be persisted in the database.

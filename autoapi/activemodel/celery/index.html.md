@@ -7,7 +7,7 @@ In order for TypeID objects to be properly handled by celery, a custom encoder m
 ## Functions
 
 | [`register_celery_typeid_encoder`](#activemodel.celery.register_celery_typeid_encoder)()   | Ensures TypeID objects passed as arguments to a delayed function are properly serialized.   |
-|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+|-------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
 
 ## Module Contents
 

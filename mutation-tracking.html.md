@@ -140,12 +140,12 @@ Those constraints keep rehydration rules predictable and avoid heuristic coercio
 The best entry points are the methods and functions that explain the behavior directly in their
 docstrings:
 
-* [`activemodel.jsonb_snapshot.snapshot_json_fields()`](autoapi/activemodel/jsonb_snapshot/index.md#activemodel.jsonb_snapshot.snapshot_json_fields)
-* [`activemodel.jsonb_snapshot.detect_json_mutations()`](autoapi/activemodel/jsonb_snapshot/index.md#activemodel.jsonb_snapshot.detect_json_mutations)
-* [`activemodel.jsonb_snapshot.register_before_commit_listener()`](autoapi/activemodel/jsonb_snapshot/index.md#activemodel.jsonb_snapshot.register_before_commit_listener)
+* [`activemodel.jsonb_snapshot.snapshot_json_fields()`](autoapi/activemodel/jsonb_snapshot/index.html.md#activemodel.jsonb_snapshot.snapshot_json_fields)
+* [`activemodel.jsonb_snapshot.detect_json_mutations()`](autoapi/activemodel/jsonb_snapshot/index.html.md#activemodel.jsonb_snapshot.detect_json_mutations)
+* [`activemodel.jsonb_snapshot.register_before_commit_listener()`](autoapi/activemodel/jsonb_snapshot/index.html.md#activemodel.jsonb_snapshot.register_before_commit_listener)
 * `activemodel.mixins.pydantic_json.PydanticJSONMixin.__transform_dict_to_pydantic__()`
-* [`activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations()`](autoapi/activemodel/mixins/pydantic_json/index.md#activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations)
+* [`activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations()`](autoapi/activemodel/mixins/pydantic_json/index.html.md#activemodel.mixins.pydantic_json.PydanticJSONMixin.has_json_mutations)
 
 If you want the exact implementation details, the module-level docs in
-[`activemodel.jsonb_snapshot`](autoapi/activemodel/jsonb_snapshot/index.md#module-activemodel.jsonb_snapshot) and [`activemodel.mixins.pydantic_json`](autoapi/activemodel/mixins/pydantic_json/index.md#module-activemodel.mixins.pydantic_json) are the
+[`activemodel.jsonb_snapshot`](autoapi/activemodel/jsonb_snapshot/index.html.md#module-activemodel.jsonb_snapshot) and [`activemodel.mixins.pydantic_json`](autoapi/activemodel/mixins/pydantic_json/index.html.md#module-activemodel.mixins.pydantic_json) are the
 most direct place to read next.

@@ -3,7 +3,7 @@
 ## Classes
 
 | [`ZonedDateTimeType`](#activemodel.types.whenever.zoned_date_time_type.ZonedDateTimeType)   | SQLAlchemy TypeDecorator for whenever.ZonedDateTime.   |
-|---------------------------------------------------------------------------------------------|--------------------------------------------------------|
+|----------------------------------------------------------------------|--------------------------------------------------------|
 
 ## Module Contents
 

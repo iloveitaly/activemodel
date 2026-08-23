@@ -11,8 +11,8 @@ Add pydantic v2 support for TypeID. Importing file mutates the TypeID class from
 
 ## Attributes
 
-| [`existing_schema`](#activemodel.types.typeid_patch.existing_schema)           |    |
-|--------------------------------------------------------------------------------|----|
+| [`existing_schema`](#activemodel.types.typeid_patch.existing_schema)      |    |
+|-----------------------------------------------------------------------|----|
 | [`existing_json_schema`](#activemodel.types.typeid_patch.existing_json_schema) |    |
 
 ## Module Contents

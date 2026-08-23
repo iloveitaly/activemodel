@@ -11,12 +11,12 @@ database environment when testing.
 ## Functions
 
 | [`init`](#activemodel.session_manager.init)(database_url, \*[, engine_options])   | configure activemodel to connect to a specific database                              |
-|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| [`table_exists`](#activemodel.session_manager.table_exists)(→ bool)               | Check if the table for the given model exists in the database.                       |
-| [`get_engine`](#activemodel.session_manager.get_engine)()                         | alias to get the database engine without importing SessionManager                    |
-| [`get_session`](#activemodel.session_manager.get_session)()                       | alias to get a database session without importing SessionManager                     |
-| [`global_session`](#activemodel.session_manager.global_session)([session])        | Generate a session and share it across all activemodel calls.                        |
-| [`aglobal_session`](#activemodel.session_manager.aglobal_session)()               | Use this as a fastapi dependency to get a session that is shared across the request: |
+|---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| [`table_exists`](#activemodel.session_manager.table_exists)(→ bool)                       | Check if the table for the given model exists in the database.                       |
+| [`get_engine`](#activemodel.session_manager.get_engine)()                               | alias to get the database engine without importing SessionManager                    |
+| [`get_session`](#activemodel.session_manager.get_session)()                              | alias to get a database session without importing SessionManager                     |
+| [`global_session`](#activemodel.session_manager.global_session)([session])                  | Generate a session and share it across all activemodel calls.                        |
+| [`aglobal_session`](#activemodel.session_manager.aglobal_session)()                          | Use this as a fastapi dependency to get a session that is shared across the request: |
 
 ## Module Contents
 

@@ -128,7 +128,7 @@ User.one("user_123")
 
 Magically creating sessions for DB operations is one of the main problems this project tackles. Even better, you can set
 a single session object to be used for all DB operations. This is helpful for DB transactions, [specifically rolling back
-DB operations on each test.](pytest.md)
+DB operations on each test.](pytest.html.md)
 
 ## Usage
 

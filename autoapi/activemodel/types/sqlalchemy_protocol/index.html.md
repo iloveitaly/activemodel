@@ -13,7 +13,7 @@ files.
 ## Classes
 
 | [`SQLAlchemyQueryMethods`](#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)   | Runtime protocol placeholder for QueryWrapper's forwarded methods.   |
-|---------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+|---------------------------------------------------------------------------|----------------------------------------------------------------------|
 
 ## Module Contents
 

@@ -13,9 +13,9 @@ than intercepting every mutation with proxy objects.
 
 ## Functions
 
-| [`snapshot_json_fields`](#activemodel.jsonb_snapshot.snapshot_json_fields)(→ None)                       | Store a serialized snapshot of each tracked JSON field on the instance.           |
-|----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
-| [`detect_json_mutations`](#activemodel.jsonb_snapshot.detect_json_mutations)(→ list[str])                | Compare current field values against snapshots, flagging any that changed.        |
+| [`snapshot_json_fields`](#activemodel.jsonb_snapshot.snapshot_json_fields)(→ None)            | Store a serialized snapshot of each tracked JSON field on the instance.           |
+|------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| [`detect_json_mutations`](#activemodel.jsonb_snapshot.detect_json_mutations)(→ list[str])      | Compare current field values against snapshots, flagging any that changed.        |
 | [`register_before_commit_listener`](#activemodel.jsonb_snapshot.register_before_commit_listener)(→ None) | Register a session-level before_commit handler to detect in-place JSON mutations. |
 
 ## Module Contents

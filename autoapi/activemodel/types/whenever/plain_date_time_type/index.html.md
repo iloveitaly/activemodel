@@ -3,7 +3,7 @@
 ## Classes
 
 | [`PlainDateTimeType`](#activemodel.types.whenever.plain_date_time_type.PlainDateTimeType)   | SQLAlchemy TypeDecorator for whenever.PlainDateTime.   |
-|---------------------------------------------------------------------------------------------|--------------------------------------------------------|
+|----------------------------------------------------------------------|--------------------------------------------------------|
 
 ## Module Contents
 

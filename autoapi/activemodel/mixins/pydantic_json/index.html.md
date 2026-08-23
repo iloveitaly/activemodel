@@ -24,7 +24,7 @@ Background: [https://github.com/fastapi/sqlmodel/issues/63](https://github.com/f
 ## Classes
 
 | [`PydanticJSONMixin`](#activemodel.mixins.pydantic_json.PydanticJSONMixin)   | Restore JSON-backed fields to their annotated Pydantic shapes after ORM reloads.   |
-|------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+|----------------------------------------------------------------------|------------------------------------------------------------------------------------|
 
 ## Module Contents
 

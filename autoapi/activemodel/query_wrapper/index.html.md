@@ -3,13 +3,13 @@
 ## Classes
 
 | [`QueryWrapper`](#activemodel.query_wrapper.QueryWrapper)   | Make it easy to run queries on a model.   |
-|-------------------------------------------------------------|-------------------------------------------|
+|-----------------------------------------------------------------|-------------------------------------------|
 
 ## Module Contents
 
 ### *class* activemodel.query_wrapper.QueryWrapper(cls: [type](https://docs.python.org/3/library/functions.html#type)[TModel], \*args: Any)
 
-Bases: [`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`](../types/sqlalchemy_protocol/index.md#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)[`TModel`]
+Bases: [`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`](../types/sqlalchemy_protocol/index.html.md#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)[`TModel`]
 
 Make it easy to run queries on a model.
 

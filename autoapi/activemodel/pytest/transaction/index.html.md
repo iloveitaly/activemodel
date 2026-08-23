@@ -2,19 +2,19 @@
 
 ## Attributes
 
-| [`factory_exists`](#activemodel.pytest.transaction.factory_exists)         |    |
-|----------------------------------------------------------------------------|----|
+| [`factory_exists`](#activemodel.pytest.transaction.factory_exists)     |    |
+|---------------------------------------------------------------------|----|
 | [`polyfactory_exists`](#activemodel.pytest.transaction.polyfactory_exists) |    |
 
 ## Functions
 
-| [`set_factory_session`](#activemodel.pytest.transaction.set_factory_session)(session)         |                                                                                                          |
-|-----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| [`set_factory_session`](#activemodel.pytest.transaction.set_factory_session)(session)     |                                                                                                          |
+|-----------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
 | [`set_polyfactory_session`](#activemodel.pytest.transaction.set_polyfactory_session)(session) |                                                                                                          |
-| [`set_factory_sessions`](#activemodel.pytest.transaction.set_factory_sessions)(session)       | set all supported model factories to use the provided session                                            |
-| [`test_session`](#activemodel.pytest.transaction.test_session)()                              | Configures a session-global database session for a test.                                                 |
-| [`database_truncate_session`](#activemodel.pytest.transaction.database_truncate_session)()    | Provides a database session for testing when using a truncation cleaning strategy.                       |
-| [`database_reset_transaction`](#activemodel.pytest.transaction.database_reset_transaction)()  | Wrap all database interactions for a given test in a nested transaction and roll it back after the test. |
+| [`set_factory_sessions`](#activemodel.pytest.transaction.set_factory_sessions)(session)    | set all supported model factories to use the provided session                                            |
+| [`test_session`](#activemodel.pytest.transaction.test_session)()                   | Configures a session-global database session for a test.                                                 |
+| [`database_truncate_session`](#activemodel.pytest.transaction.database_truncate_session)()      | Provides a database session for testing when using a truncation cleaning strategy.                       |
+| [`database_reset_transaction`](#activemodel.pytest.transaction.database_reset_transaction)()     | Wrap all database interactions for a given test in a nested transaction and roll it back after the test. |
 
 ## Module Contents
 
