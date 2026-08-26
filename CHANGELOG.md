@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.24.2](https://github.com/iloveitaly/activemodel/compare/v0.24.1...v0.24.2) (2026-08-23)
+
+
+### Bug Fixes
+
+* lists of Pydantic models now correctly serialize using mode=json on model_dump, fixing support for datetime fields on Pydantic models and other fields that json.dumps doesn't handle, but Pydantic does ([#107](https://github.com/iloveitaly/activemodel/issues/107)) ([0e9704c](https://github.com/iloveitaly/activemodel/commit/0e9704c0ae889c2a0e079c519806abcc6c56e3b0))
+
+
+### Documentation
+
+* Improve docs tech architecture (Sphinx toolchain) ([#136](https://github.com/iloveitaly/activemodel/issues/136)) ([e1a43ed](https://github.com/iloveitaly/activemodel/commit/e1a43eda4c54bfec6458978fd2f9ae9232b6e648))
+
 ## [0.24.1](https://github.com/iloveitaly/activemodel/compare/v0.24.0...v0.24.1) (2026-07-17)
 
 
