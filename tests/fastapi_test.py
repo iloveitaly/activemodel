@@ -76,3 +76,5 @@ def test_computed_property(create_and_wipe_database):
 
     assert response.status_code == 200
     assert response.json()["special_note"] == "SPECIAL: hello"
+
+
