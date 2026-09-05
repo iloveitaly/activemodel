@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.24.3](https://github.com/iloveitaly/activemodel/compare/v0.24.2...v0.24.3) (2026-09-05)
+
+
+### Bug Fixes
+
+* bump sqlmodel to 0.0.42 ([1aa3bfa](https://github.com/iloveitaly/activemodel/commit/1aa3bfa61b778cbc23b71b3922751c88bfd6159d))
+
+
+### Documentation
+
+* add guidelines for package development and ActiveModel ([21be732](https://github.com/iloveitaly/activemodel/commit/21be732610caf61f2a004573009004495ecd0b23))
+
 ## [0.24.2](https://github.com/iloveitaly/activemodel/compare/v0.24.1...v0.24.2) (2026-08-23)
 
 
