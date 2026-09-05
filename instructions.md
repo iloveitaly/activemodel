@@ -120,3 +120,17 @@ params = f.compact({"city": city, "stateCode": stateCode})
 * Use the `whenever` library for datetime + time instead of the stdlib date library. `Instant.now().format_iso()`
 * DateTime mutation should explicitly opt in to a specific timezone `SystemDateTime.now().add(days=-7)`
 
+<!-- END CLONED INSTRUCTIONS -->
+
+## Python Package
+
+This is a python package, not a standalone application. Keep these important rules in mind:
+
+- always import logger from `logger.py`
+- if an example or bug is provided which looks like it's tied to application code, always abstract away a generic case
+
+## ActiveModel
+
+- Trade performance and concurrency safety for developer convenience.
+- This this is a package used within a larger application, avoid writing code that causes global side effects
+- If we patch any dependencies, be defensive and use `hash_function_code` to assert that the code hasn't changed
