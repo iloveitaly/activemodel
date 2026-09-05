@@ -143,28 +143,31 @@ database.db
 /tests/migrations/versions
 
 # START AI INSTRUCTION IGNORES
+/.agents/rules/python.md
+/.agents/rules/python.md
+/.agents/skills/standalone-python-scripts/SKILL.md
+/.agents/skills/standalone-python-scripts/SKILL.md
+/.agents/skills/upgrade-sqlmodel/SKILL.md
+/.agents/skills/upgrade-sqlmodel/SKILL.md
+/.agents/skills/write-or-update-readme/SKILL.md
+/.agents/skills/write-or-update-readme/SKILL.md
 /.claude/commands/standalone-python-scripts.md
+/.claude/commands/upgrade-sqlmodel.md
 /.claude/commands/write-or-update-readme.md
-/.claude/rules/activemodel.md
 /.claude/rules/general.md
-/.claude/rules/python-package.md
 /.claude/rules/python.md
 /.cursor/commands/standalone-python-scripts.md
+/.cursor/commands/upgrade-sqlmodel.md
 /.cursor/commands/write-or-update-readme.md
-/.cursor/rules/activemodel.mdc
 /.cursor/rules/general.mdc
-/.cursor/rules/python-package.mdc
 /.cursor/rules/python.mdc
-/.gemini/commands/standalone-python-scripts.toml
-/.gemini/commands/write-or-update-readme.toml
 /.github/copilot-instructions.md
-/.github/instructions/activemodel.instructions.md
-/.github/instructions/python-package.instructions.md
 /.github/instructions/python.instructions.md
 /.github/prompts/standalone-python-scripts.prompt.md
+/.github/prompts/upgrade-sqlmodel.prompt.md
 /.github/prompts/write-or-update-readme.prompt.md
 /.opencode/commands/standalone-python-scripts.md
+/.opencode/commands/upgrade-sqlmodel.md
 /.opencode/commands/write-or-update-readme.md
 /AGENTS.md
-/GEMINI.md
 # END AI INSTRUCTION IGNORES
