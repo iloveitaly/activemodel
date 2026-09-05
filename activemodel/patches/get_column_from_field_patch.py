@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     from pydantic_core import PydanticUndefinedType as UndefinedType
 
 
-# https://github.com/fastapi/sqlmodel/blob/0.0.39/sqlmodel/main.py#L740
+# https://github.com/fastapi/sqlmodel/blob/0.0.42/sqlmodel/main.py#L781
 assert (
     hash_function_code(sqlmodel.main.get_column_from_field)
     == "cddbf17b0ffec0615bf726962e62dfb3fb83ab1b81a175de72ec697b0fb21632"
