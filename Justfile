@@ -118,6 +118,14 @@ github_ruleset_protect_master_delete:
     ruleset_id=$(gh api repos/$repo/rulesets --jq ".[] | select(.name == \"$ruleset_name\") | .id") && \
     (([ -n "${ruleset_id}" ] || (echo "No ruleset found" && exit 0)) || gh api --method DELETE repos/$repo/rulesets/$ruleset_id)
 
+# allow squash merges only: disable merge commits and rebase merges
+github_enforce_squash_merge:
+  gh api --method PATCH repos/$(just _github_repo) \
+    -F allow_squash_merge=true \
+    -F allow_merge_commit=false \
+    -F allow_rebase_merge=false \
+    -F delete_branch_on_merge=true
+
 # adds github ruleset to prevent --force and other destructive actions on the github main branch
 github_ruleset_protect_master_create: github_ruleset_protect_master_delete
   gh api --method POST repos/$(just _github_repo)/rulesets --input - <<< '{{GITHUB_PROTECT_MASTER_RULESET}}'
