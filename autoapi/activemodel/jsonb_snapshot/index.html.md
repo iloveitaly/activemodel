@@ -20,7 +20,7 @@ than intercepting every mutation with proxy objects.
 
 ## Module Contents
 
-### activemodel.jsonb_snapshot.snapshot_json_fields(instance, jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [None](https://docs.python.org/3/library/constants.html#None)
+### activemodel.jsonb_snapshot.snapshot_json_fields(instance, jsonb_field_names: [set](https://docs.python.org/3/builtins/stdtypes.html#set)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)] | [None](https://docs.python.org/3/builtins/constants.html#None) = None) → [None](https://docs.python.org/3/builtins/constants.html#None)
 
 Store a serialized snapshot of each tracked JSON field on the instance.
 
@@ -28,14 +28,14 @@ Called after rehydration so the snapshot reflects the committed database state.
 When jsonb_field_names is provided (partial refresh), only those fields are
 re-snapshotted; existing snapshots for other fields are preserved.
 
-### activemodel.jsonb_snapshot.detect_json_mutations(instance) → [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
+### activemodel.jsonb_snapshot.detect_json_mutations(instance) → [list](https://docs.python.org/3/builtins/stdtypes.html#list)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 Compare current field values against snapshots, flagging any that changed.
 
 Returns a list of field names that were mutated since the last snapshot.
 Side effect: calls flag_modified on the SQLAlchemy instance for each changed field.
 
-### activemodel.jsonb_snapshot.register_before_commit_listener() → [None](https://docs.python.org/3/library/constants.html#None)
+### activemodel.jsonb_snapshot.register_before_commit_listener() → [None](https://docs.python.org/3/builtins/constants.html#None)
 
 Register a session-level before_commit handler to detect in-place JSON mutations.
 

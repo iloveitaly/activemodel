@@ -72,7 +72,7 @@ create a query wrapper to easily run sqlmodel queries on this model
 
 convenience method to avoid having to write .select().where() in order to add conditions
 
-#### *classmethod* upsert(data: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any], unique_by: [str](https://docs.python.org/3/library/stdtypes.html#str) | [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]) → Self
+#### *classmethod* upsert(data: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), Any], unique_by: [str](https://docs.python.org/3/builtins/stdtypes.html#str) | [list](https://docs.python.org/3/builtins/stdtypes.html#list)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)]) → Self
 
 This method will insert a new record if it doesn’t exist, or update the existing record if it does.
 
@@ -99,21 +99,21 @@ Refreshes an object from the database
 
 #### json(\*\*kwargs)
 
-#### *classmethod* count() → [int](https://docs.python.org/3/library/functions.html#int)
+#### *classmethod* count() → [int](https://docs.python.org/3/builtins/functions.html#int)
 
 Returns the number of records in the database.
 
 #### *classmethod* first()
 
-#### is_new() → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### is_new() → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
-#### flag_modified(\*args: [str](https://docs.python.org/3/library/stdtypes.html#str)) → [None](https://docs.python.org/3/library/constants.html#None)
+#### flag_modified(\*args: [str](https://docs.python.org/3/builtins/stdtypes.html#str)) → [None](https://docs.python.org/3/builtins/constants.html#None)
 
 Flag one or more fields as modified/mutated/dirty. Useful for marking a field containing sub-objects as modified.
 
 Will throw an error if an invalid field is passed.
 
-#### modified_fields() → [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
+#### modified_fields() → [set](https://docs.python.org/3/builtins/stdtypes.html#set)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 set of fields that are modified
 

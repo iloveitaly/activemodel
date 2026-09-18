@@ -20,13 +20,13 @@ database environment when testing.
 
 ## Module Contents
 
-### *class* activemodel.session_manager.SessionManager(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+### *class* activemodel.session_manager.SessionManager(database_url: [str](https://docs.python.org/3/builtins/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), Any] | [None](https://docs.python.org/3/builtins/constants.html#None) = None)
 
-#### session_connection *: sqlalchemy.Connection | [None](https://docs.python.org/3/library/constants.html#None)*
+#### session_connection *: sqlalchemy.Connection | [None](https://docs.python.org/3/builtins/constants.html#None)*
 
 optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations
 
-#### *classmethod* get_instance(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None) = None, , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [SessionManager](#activemodel.session_manager.SessionManager)
+#### *classmethod* get_instance(database_url: [str](https://docs.python.org/3/builtins/stdtypes.html#str) | [None](https://docs.python.org/3/builtins/constants.html#None) = None, , engine_options: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), Any] | [None](https://docs.python.org/3/builtins/constants.html#None) = None) → [SessionManager](#activemodel.session_manager.SessionManager)
 
 #### get_engine() → sqlalchemy.Engine
 
@@ -34,11 +34,11 @@ optionally specify a specific session connection to use for all get_session() ca
 
 get a new database session, respecting any globally set sessions
 
-### activemodel.session_manager.init(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+### activemodel.session_manager.init(database_url: [str](https://docs.python.org/3/builtins/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), Any] | [None](https://docs.python.org/3/builtins/constants.html#None) = None)
 
 configure activemodel to connect to a specific database
 
-### activemodel.session_manager.table_exists(model: [type](https://docs.python.org/3/library/functions.html#type)[sqlmodel.SQLModel]) → [bool](https://docs.python.org/3/library/functions.html#bool)
+### activemodel.session_manager.table_exists(model: [type](https://docs.python.org/3/builtins/functions.html#type)[sqlmodel.SQLModel]) → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Check if the table for the given model exists in the database.
 
@@ -50,7 +50,7 @@ alias to get the database engine without importing SessionManager
 
 alias to get a database session without importing SessionManager
 
-### activemodel.session_manager.global_session(session: sqlmodel.Session | [None](https://docs.python.org/3/library/constants.html#None) = None)
+### activemodel.session_manager.global_session(session: sqlmodel.Session | [None](https://docs.python.org/3/builtins/constants.html#None) = None)
 
 Generate a session and share it across all activemodel calls.
 

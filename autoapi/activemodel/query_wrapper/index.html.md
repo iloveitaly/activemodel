@@ -7,7 +7,7 @@
 
 ## Module Contents
 
-### *class* activemodel.query_wrapper.QueryWrapper(cls: [type](https://docs.python.org/3/library/functions.html#type)[TModel], \*args: Any)
+### *class* activemodel.query_wrapper.QueryWrapper(cls: [type](https://docs.python.org/3/builtins/functions.html#type)[TModel], \*args: Any)
 
 Bases: [`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`](../types/sqlalchemy_protocol/index.html.md#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)[`TModel`]
 
@@ -41,7 +41,7 @@ I did some basic tests
 
 #### delete()
 
-#### exists() → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### exists() → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Return True if the current query yields at least one row.
 
@@ -54,9 +54,9 @@ SQLAlchemy exists works differently and does not return a simple boolean.
 
 Output the raw SQL of the query for debugging
 
-#### sample() → TModel | [None](https://docs.python.org/3/library/constants.html#None)
+#### sample() → TModel | [None](https://docs.python.org/3/builtins/constants.html#None)
 
-#### sample(n: [int](https://docs.python.org/3/library/functions.html#int)) → [list](https://docs.python.org/3/library/stdtypes.html#list)[TModel]
+#### sample(n: [int](https://docs.python.org/3/builtins/functions.html#int)) → [list](https://docs.python.org/3/builtins/stdtypes.html#list)[TModel]
 
 Return a random sample of rows from the current query.
 

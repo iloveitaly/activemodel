@@ -22,7 +22,7 @@ Base factory for SQLModel models:
 1. Ability to ignore all relationship fks
 2. Option to ignore all pks
 
-#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Determine whether to set a value for a given field_name.
 This is an override of BaseFactory.should_set_field_value.
@@ -69,7 +69,7 @@ Return a random type id for the foreign key on this model.
 
 This is helpful for generating TypeIDs for testing 404s, parsing, manually settings, etc
 
-#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Determine whether to set a value for a given field_name.
 This is an override of BaseFactory.should_set_field_value.

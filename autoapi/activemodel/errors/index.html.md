@@ -9,6 +9,6 @@
 
 ### *exception* activemodel.errors.TypeIDValidationError
 
-Bases: [`ValueError`](https://docs.python.org/3/library/exceptions.html#ValueError)
+Bases: [`ValueError`](https://docs.python.org/3/builtins/exceptions.html#ValueError)
 
 Raised when a TypeID is invalid in some way

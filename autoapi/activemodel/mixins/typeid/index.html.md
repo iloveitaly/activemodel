@@ -7,6 +7,6 @@
 
 ## Module Contents
 
-### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
+### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/builtins/stdtypes.html#str))
 
 Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.

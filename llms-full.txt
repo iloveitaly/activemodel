@@ -177,7 +177,7 @@ create a query wrapper to easily run sqlmodel queries on this model
 
 convenience method to avoid having to write .select().where() in order to add conditions
 
-#### *classmethod* upsert(data: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any], unique_by: [str](https://docs.python.org/3/library/stdtypes.html#str) | [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]) → Self
+#### *classmethod* upsert(data: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), Any], unique_by: [str](https://docs.python.org/3/builtins/stdtypes.html#str) | [list](https://docs.python.org/3/builtins/stdtypes.html#list)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)]) → Self
 
 This method will insert a new record if it doesn’t exist, or update the existing record if it does.
 
@@ -204,21 +204,21 @@ Refreshes an object from the database
 
 #### json(\*\*kwargs)
 
-#### *classmethod* count() → [int](https://docs.python.org/3/library/functions.html#int)
+#### *classmethod* count() → [int](https://docs.python.org/3/builtins/functions.html#int)
 
 Returns the number of records in the database.
 
 #### *classmethod* first()
 
-#### is_new() → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### is_new() → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
-#### flag_modified(\*args: [str](https://docs.python.org/3/library/stdtypes.html#str)) → [None](https://docs.python.org/3/library/constants.html#None)
+#### flag_modified(\*args: [str](https://docs.python.org/3/builtins/stdtypes.html#str)) → [None](https://docs.python.org/3/builtins/constants.html#None)
 
 Flag one or more fields as modified/mutated/dirty. Useful for marking a field containing sub-objects as modified.
 
 Will throw an error if an invalid field is passed.
 
-#### modified_fields() → [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
+#### modified_fields() → [set](https://docs.python.org/3/builtins/stdtypes.html#set)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 set of fields that are modified
 
@@ -318,7 +318,7 @@ Run at the top of your celery initialization script.
 
 ### *exception* activemodel.errors.TypeIDValidationError
 
-Bases: [`ValueError`](https://docs.python.org/3/library/exceptions.html#ValueError)
+Bases: [`ValueError`](https://docs.python.org/3/builtins/exceptions.html#ValueError)
 
 Raised when a TypeID is invalid in some way
 
@@ -366,7 +366,7 @@ than intercepting every mutation with proxy objects.
 
 ## Module Contents
 
-### activemodel.jsonb_snapshot.snapshot_json_fields(instance, jsonb_field_names: [set](https://docs.python.org/3/library/stdtypes.html#set)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [None](https://docs.python.org/3/library/constants.html#None)
+### activemodel.jsonb_snapshot.snapshot_json_fields(instance, jsonb_field_names: [set](https://docs.python.org/3/builtins/stdtypes.html#set)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)] | [None](https://docs.python.org/3/builtins/constants.html#None) = None) → [None](https://docs.python.org/3/builtins/constants.html#None)
 
 Store a serialized snapshot of each tracked JSON field on the instance.
 
@@ -374,14 +374,14 @@ Called after rehydration so the snapshot reflects the committed database state.
 When jsonb_field_names is provided (partial refresh), only those fields are
 re-snapshotted; existing snapshots for other fields are preserved.
 
-### activemodel.jsonb_snapshot.detect_json_mutations(instance) → [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)]
+### activemodel.jsonb_snapshot.detect_json_mutations(instance) → [list](https://docs.python.org/3/builtins/stdtypes.html#list)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 Compare current field values against snapshots, flagging any that changed.
 
 Returns a list of field names that were mutated since the last snapshot.
 Side effect: calls flag_modified on the SQLAlchemy instance for each changed field.
 
-### activemodel.jsonb_snapshot.register_before_commit_listener() → [None](https://docs.python.org/3/library/constants.html#None)
+### activemodel.jsonb_snapshot.register_before_commit_listener() → [None](https://docs.python.org/3/builtins/constants.html#None)
 
 Register a session-level before_commit handler to detect in-place JSON mutations.
 
@@ -468,7 +468,7 @@ Not supported:
 - nested lists such as list[list[SubModel]]
 - ambiguous unions with multiple non-None JSON shapes
 
-#### has_json_mutations() → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### has_json_mutations() → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Check whether any Pydantic JSON field has been mutated since the last snapshot.
 
@@ -533,7 +533,7 @@ class GenProto[T](Protocol):
         ...
 ```
 
-#### deleted_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/library/constants.html#None)*
+#### deleted_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/builtins/constants.html#None)*
 
 #### save() → Self
 
@@ -543,7 +543,7 @@ Soft delete records by setting deleted_at instead of removing the row.
 
 Call soft_delete() to timestamp the record and persist that change.
 
-#### deleted_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+#### deleted_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/builtins/constants.html#None)* *= None*
 
 #### soft_delete() → [T](autoapi/activemodel/pytest/truncate/index.html.md#activemodel.pytest.truncate.T)
 
@@ -575,9 +575,9 @@ Notes:
 - Originally pulled from: [https://github.com/tiangolo/sqlmodel/issues/252](https://github.com/tiangolo/sqlmodel/issues/252)
 - Related issue: [https://github.com/fastapi/sqlmodel/issues/539](https://github.com/fastapi/sqlmodel/issues/539)
 
-#### created_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+#### created_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/builtins/constants.html#None)* *= None*
 
-#### updated_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/library/constants.html#None)* *= None*
+#### updated_at *: whenever.ZonedDateTime | [None](https://docs.python.org/3/builtins/constants.html#None)* *= None*
 
 
 # autoapi/activemodel/mixins/typeid/index.html.md
@@ -591,7 +591,7 @@ Notes:
 
 ## Module Contents
 
-### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str))
+### activemodel.mixins.typeid.TypeIDMixin(prefix: [str](https://docs.python.org/3/builtins/stdtypes.html#str))
 
 Mixin that adds a TypeID primary key field to a SQLModel. Specify the prefix to use for the TypeID.
 
@@ -622,7 +622,7 @@ Base factory for SQLModel models:
 1. Ability to ignore all relationship fks
 2. Option to ignore all pks
 
-#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Determine whether to set a value for a given field_name.
 This is an override of BaseFactory.should_set_field_value.
@@ -669,7 +669,7 @@ Return a random type id for the foreign key on this model.
 
 This is helpful for generating TypeIDs for testing 404s, parsing, manually settings, etc
 
-#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### *classmethod* should_set_field_value(field_meta: polyfactory.field_meta.FieldMeta, \*\*kwargs: Any) → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Determine whether to set a value for a given field_name.
 This is an override of BaseFactory.should_set_field_value.
@@ -736,7 +736,7 @@ The list always implicitly includes `alembic_version` even if not specified.
 
 ## Module Contents
 
-### activemodel.pytest.plugin.pytest_addoption(parser: pytest.Parser) → [None](https://docs.python.org/3/library/constants.html#None)
+### activemodel.pytest.plugin.pytest_addoption(parser: pytest.Parser) → [None](https://docs.python.org/3/builtins/constants.html#None)
 
 Register custom ini options.
 
@@ -883,7 +883,7 @@ Using a named SAVEPOINT does not give us anything extra, so we are not using it.
 
 ### activemodel.pytest.truncate.T
 
-### activemodel.pytest.truncate.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
+### activemodel.pytest.truncate.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/builtins/stdtypes.html#list)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)] | [None](https://docs.python.org/3/builtins/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/builtins/constants.html#None) = None)
 
 Transaction is most likely the better way to go, but there are some scenarios where the session override
 logic does not work properly and you need to truncate tables back to their original state.
@@ -920,7 +920,7 @@ This approach has a couple of problems:
 
 ## Module Contents
 
-### *class* activemodel.query_wrapper.QueryWrapper(cls: [type](https://docs.python.org/3/library/functions.html#type)[TModel], \*args: Any)
+### *class* activemodel.query_wrapper.QueryWrapper(cls: [type](https://docs.python.org/3/builtins/functions.html#type)[TModel], \*args: Any)
 
 Bases: [`activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods`](autoapi/activemodel/types/sqlalchemy_protocol/index.html.md#activemodel.types.sqlalchemy_protocol.SQLAlchemyQueryMethods)[`TModel`]
 
@@ -954,7 +954,7 @@ I did some basic tests
 
 #### delete()
 
-#### exists() → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### exists() → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Return True if the current query yields at least one row.
 
@@ -967,9 +967,9 @@ SQLAlchemy exists works differently and does not return a simple boolean.
 
 Output the raw SQL of the query for debugging
 
-#### sample() → TModel | [None](https://docs.python.org/3/library/constants.html#None)
+#### sample() → TModel | [None](https://docs.python.org/3/builtins/constants.html#None)
 
-#### sample(n: [int](https://docs.python.org/3/library/functions.html#int)) → [list](https://docs.python.org/3/library/stdtypes.html#list)[TModel]
+#### sample(n: [int](https://docs.python.org/3/builtins/functions.html#int)) → [list](https://docs.python.org/3/builtins/stdtypes.html#list)[TModel]
 
 Return a random sample of rows from the current query.
 
@@ -1012,13 +1012,13 @@ database environment when testing.
 
 ## Module Contents
 
-### *class* activemodel.session_manager.SessionManager(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+### *class* activemodel.session_manager.SessionManager(database_url: [str](https://docs.python.org/3/builtins/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), Any] | [None](https://docs.python.org/3/builtins/constants.html#None) = None)
 
-#### session_connection *: sqlalchemy.Connection | [None](https://docs.python.org/3/library/constants.html#None)*
+#### session_connection *: sqlalchemy.Connection | [None](https://docs.python.org/3/builtins/constants.html#None)*
 
 optionally specify a specific session connection to use for all get_session() calls, useful for testing and migrations
 
-#### *classmethod* get_instance(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None) = None, , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [SessionManager](autoapi/activemodel/session_manager/index.html.md#activemodel.session_manager.SessionManager)
+#### *classmethod* get_instance(database_url: [str](https://docs.python.org/3/builtins/stdtypes.html#str) | [None](https://docs.python.org/3/builtins/constants.html#None) = None, , engine_options: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), Any] | [None](https://docs.python.org/3/builtins/constants.html#None) = None) → [SessionManager](autoapi/activemodel/session_manager/index.html.md#activemodel.session_manager.SessionManager)
 
 #### get_engine() → sqlalchemy.Engine
 
@@ -1026,11 +1026,11 @@ optionally specify a specific session connection to use for all get_session() ca
 
 get a new database session, respecting any globally set sessions
 
-### activemodel.session_manager.init(database_url: [str](https://docs.python.org/3/library/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/library/stdtypes.html#dict)[[str](https://docs.python.org/3/library/stdtypes.html#str), Any] | [None](https://docs.python.org/3/library/constants.html#None) = None)
+### activemodel.session_manager.init(database_url: [str](https://docs.python.org/3/builtins/stdtypes.html#str), , engine_options: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), Any] | [None](https://docs.python.org/3/builtins/constants.html#None) = None)
 
 configure activemodel to connect to a specific database
 
-### activemodel.session_manager.table_exists(model: [type](https://docs.python.org/3/library/functions.html#type)[sqlmodel.SQLModel]) → [bool](https://docs.python.org/3/library/functions.html#bool)
+### activemodel.session_manager.table_exists(model: [type](https://docs.python.org/3/builtins/functions.html#type)[sqlmodel.SQLModel]) → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Check if the table for the given model exists in the database.
 
@@ -1042,7 +1042,7 @@ alias to get the database engine without importing SessionManager
 
 alias to get a database session without importing SessionManager
 
-### activemodel.session_manager.global_session(session: sqlmodel.Session | [None](https://docs.python.org/3/library/constants.html#None) = None)
+### activemodel.session_manager.global_session(session: sqlmodel.Session | [None](https://docs.python.org/3/builtins/constants.html#None) = None)
 
 Generate a session and share it across all activemodel calls.
 
@@ -1139,7 +1139,7 @@ Adapted from:
 
 ## Module Contents
 
-### *class* activemodel.types.typeid.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None), \*args, \_raw: [bool](https://docs.python.org/3/library/functions.html#bool) = False, \*\*kwargs)
+### *class* activemodel.types.typeid.TypeIDType(prefix: [str](https://docs.python.org/3/builtins/stdtypes.html#str) | [None](https://docs.python.org/3/builtins/constants.html#None), \*args, \_raw: [bool](https://docs.python.org/3/builtins/functions.html#bool) = False, \*\*kwargs)
 
 Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
 
@@ -1311,7 +1311,7 @@ and `UserDefinedType` classes.
 #### SEE ALSO
 [SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
 
-#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None)*
+#### prefix *: [str](https://docs.python.org/3/builtins/stdtypes.html#str) | [None](https://docs.python.org/3/builtins/constants.html#None)*
 
 #### *classmethod* raw() → Self
 
@@ -1323,7 +1323,7 @@ This is run when a search query is built or …
 
 convert a raw UUID, without a prefix, to a TypeID with the correct prefix
 
-### activemodel.types.typeid.TypeIDPrimaryKey(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str)) → Any
+### activemodel.types.typeid.TypeIDPrimaryKey(prefix: [str](https://docs.python.org/3/builtins/stdtypes.html#str)) → Any
 
 Field factory for the declarative form:
 
@@ -2507,18 +2507,18 @@ behavior, such as transforming or deserializing data.
 
 ## Module Contents
 
-### activemodel.utils.to_snake_case(name: [str](https://docs.python.org/3/library/stdtypes.html#str)) → [str](https://docs.python.org/3/library/stdtypes.html#str)
+### activemodel.utils.to_snake_case(name: [str](https://docs.python.org/3/builtins/stdtypes.html#str)) → [str](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 Converts a PascalCase or camelCase string to snake_case.
 Properly handles acronyms like ‘LLMCache’ -> ‘llm_cache’.
 
 Source: [https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case](https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case)
 
-### activemodel.utils.compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) → [str](https://docs.python.org/3/library/stdtypes.html#str)
+### activemodel.utils.compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) → [str](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
 
-### activemodel.utils.raw_sql_exec(raw_query: [str](https://docs.python.org/3/library/stdtypes.html#str))
+### activemodel.utils.raw_sql_exec(raw_query: [str](https://docs.python.org/3/builtins/stdtypes.html#str))
 
 [https://github.com/tiangolo/sqlmodel/discussions/772](https://github.com/tiangolo/sqlmodel/discussions/772)
 
@@ -2526,7 +2526,7 @@ convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
 
 get sha of a function to easily assert that it hasn’t changed
 
-### activemodel.utils.is_database_empty(exclude: [list](https://docs.python.org/3/library/stdtypes.html#list)[[type](https://docs.python.org/3/library/functions.html#type)] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [bool](https://docs.python.org/3/library/functions.html#bool)
+### activemodel.utils.is_database_empty(exclude: [list](https://docs.python.org/3/builtins/stdtypes.html#list)[[type](https://docs.python.org/3/builtins/functions.html#type)] | [None](https://docs.python.org/3/builtins/constants.html#None) = None) → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Check if any table in the database has records using Model.count().
 

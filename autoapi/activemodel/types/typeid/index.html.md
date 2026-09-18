@@ -18,7 +18,7 @@ Adapted from:
 
 ## Module Contents
 
-### *class* activemodel.types.typeid.TypeIDType(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None), \*args, \_raw: [bool](https://docs.python.org/3/library/functions.html#bool) = False, \*\*kwargs)
+### *class* activemodel.types.typeid.TypeIDType(prefix: [str](https://docs.python.org/3/builtins/stdtypes.html#str) | [None](https://docs.python.org/3/builtins/constants.html#None), \*args, \_raw: [bool](https://docs.python.org/3/builtins/functions.html#bool) = False, \*\*kwargs)
 
 Bases: [`sqlalchemy.types.TypeDecorator`](https://docs.sqlalchemy.org/en/20/core/custom_types.html#sqlalchemy.types.TypeDecorator)
 
@@ -190,7 +190,7 @@ and `UserDefinedType` classes.
 #### SEE ALSO
 [SQL Compilation Caching](https://docs.sqlalchemy.org/en/20/core/connections.html#sql-caching)
 
-#### prefix *: [str](https://docs.python.org/3/library/stdtypes.html#str) | [None](https://docs.python.org/3/library/constants.html#None)*
+#### prefix *: [str](https://docs.python.org/3/builtins/stdtypes.html#str) | [None](https://docs.python.org/3/builtins/constants.html#None)*
 
 #### *classmethod* raw() → Self
 
@@ -202,7 +202,7 @@ This is run when a search query is built or …
 
 convert a raw UUID, without a prefix, to a TypeID with the correct prefix
 
-### activemodel.types.typeid.TypeIDPrimaryKey(prefix: [str](https://docs.python.org/3/library/stdtypes.html#str)) → Any
+### activemodel.types.typeid.TypeIDPrimaryKey(prefix: [str](https://docs.python.org/3/builtins/stdtypes.html#str)) → Any
 
 Field factory for the declarative form:
 

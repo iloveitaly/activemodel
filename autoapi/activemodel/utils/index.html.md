@@ -11,18 +11,18 @@
 
 ## Module Contents
 
-### activemodel.utils.to_snake_case(name: [str](https://docs.python.org/3/library/stdtypes.html#str)) → [str](https://docs.python.org/3/library/stdtypes.html#str)
+### activemodel.utils.to_snake_case(name: [str](https://docs.python.org/3/builtins/stdtypes.html#str)) → [str](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 Converts a PascalCase or camelCase string to snake_case.
 Properly handles acronyms like ‘LLMCache’ -> ‘llm_cache’.
 
 Source: [https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case](https://stackoverflow.com/questions/1175208/elegant-python-function-to-convert-camelcase-to-snake-case)
 
-### activemodel.utils.compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) → [str](https://docs.python.org/3/library/stdtypes.html#str)
+### activemodel.utils.compile_sql(target: sqlmodel.sql.expression.SelectOfScalar) → [str](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
 
-### activemodel.utils.raw_sql_exec(raw_query: [str](https://docs.python.org/3/library/stdtypes.html#str))
+### activemodel.utils.raw_sql_exec(raw_query: [str](https://docs.python.org/3/builtins/stdtypes.html#str))
 
 [https://github.com/tiangolo/sqlmodel/discussions/772](https://github.com/tiangolo/sqlmodel/discussions/772)
 
@@ -30,7 +30,7 @@ convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries
 
 get sha of a function to easily assert that it hasn’t changed
 
-### activemodel.utils.is_database_empty(exclude: [list](https://docs.python.org/3/library/stdtypes.html#list)[[type](https://docs.python.org/3/library/functions.html#type)] | [None](https://docs.python.org/3/library/constants.html#None) = None) → [bool](https://docs.python.org/3/library/functions.html#bool)
+### activemodel.utils.is_database_empty(exclude: [list](https://docs.python.org/3/builtins/stdtypes.html#list)[[type](https://docs.python.org/3/builtins/functions.html#type)] | [None](https://docs.python.org/3/builtins/constants.html#None) = None) → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Check if any table in the database has records using Model.count().
 

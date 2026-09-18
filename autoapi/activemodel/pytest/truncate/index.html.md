@@ -14,7 +14,7 @@
 
 ### activemodel.pytest.truncate.T
 
-### activemodel.pytest.truncate.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/library/stdtypes.html#list)[[str](https://docs.python.org/3/library/stdtypes.html#str)] | [None](https://docs.python.org/3/library/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/library/constants.html#None) = None)
+### activemodel.pytest.truncate.database_reset_truncate(preserve_tables: [list](https://docs.python.org/3/builtins/stdtypes.html#list)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)] | [None](https://docs.python.org/3/builtins/constants.html#None) = None, pytest_config: pytest.Config | [None](https://docs.python.org/3/builtins/constants.html#None) = None)
 
 Transaction is most likely the better way to go, but there are some scenarios where the session override
 logic does not work properly and you need to truncate tables back to their original state.

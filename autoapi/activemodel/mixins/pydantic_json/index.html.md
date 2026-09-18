@@ -59,7 +59,7 @@ Not supported:
 - nested lists such as list[list[SubModel]]
 - ambiguous unions with multiple non-None JSON shapes
 
-#### has_json_mutations() → [bool](https://docs.python.org/3/library/functions.html#bool)
+#### has_json_mutations() → [bool](https://docs.python.org/3/builtins/functions.html#bool)
 
 Check whether any Pydantic JSON field has been mutated since the last snapshot.
 

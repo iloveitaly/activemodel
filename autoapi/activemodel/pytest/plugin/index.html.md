@@ -39,7 +39,7 @@ The list always implicitly includes `alembic_version` even if not specified.
 
 ## Module Contents
 
-### activemodel.pytest.plugin.pytest_addoption(parser: pytest.Parser) → [None](https://docs.python.org/3/library/constants.html#None)
+### activemodel.pytest.plugin.pytest_addoption(parser: pytest.Parser) → [None](https://docs.python.org/3/builtins/constants.html#None)
 
 Register custom ini options.
 
