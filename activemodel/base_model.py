@@ -7,7 +7,7 @@ import sqlalchemy as sa
 import sqlmodel as sm
 import uuid_utils
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
-from sqlalchemy.orm import declared_attr
+from sqlalchemy.orm import InstrumentedAttribute, declared_attr
 from sqlalchemy.orm.attributes import flag_modified as sa_flag_modified
 from sqlmodel import Column, Field, Session, SQLModel, inspect, select
 from typeid import TypeID
@@ -17,8 +17,8 @@ from activemodel.mixins.pydantic_json import PydanticJSONMixin
 # NOTE: this patches a core method in sqlmodel to support db comments
 from .patches import get_column_from_field_patch  # noqa: F401
 from .query_wrapper import QueryWrapper
-from .utils import to_snake_case
 from .session_manager import get_session
+from .utils import to_snake_case
 
 POSTGRES_INDEXES_NAMING_CONVENTION = {
     "ix": "%(column_0_label)s_idx",
@@ -380,8 +380,52 @@ class BaseModel(SQLModel):
             # check if the field exists
             sa_flag_modified(self, field_name)
 
+    def attribute_was[T](self, attr: InstrumentedAttribute[T]) -> T:
+        """Return a scalar attribute's value before its unflushed changes.
+
+        Pass a mapped class attribute, e.g. ``record.attribute_was(Record.name)``.
+        Unchanged attributes and attributes without a recorded old value return
+        their current value. History resets on flush, including autoflush.
+
+        This may load an unloaded attribute through the session. To retain the
+        old value when assigning to an expired attribute, load it first or
+        configure active_history on its mapper property before assignment.
+        In-place mutations of mutable values are not historical snapshots.
+        """
+        insp = inspect(self)
+        assert insp is not None
+
+        history = insp.attrs[attr.key].load_history()
+        if history.deleted:
+            return t.cast(T, history.deleted[0])
+        if history.unchanged:
+            return t.cast(T, history.unchanged[0])
+        return t.cast(T, getattr(self, attr.key))
+
+    def has_attribute_changed(self, attr: InstrumentedAttribute[t.Any]) -> bool:
+        """Whether a mapped attribute has unflushed changes.
+
+        Like Rails' ``attribute_changed?``, this checks pending changes, not the
+        previous save. Assigning the same loaded value or restoring the original
+        value is not a change. Changes to or from None are real changes.
+
+        Uses the same SQLAlchemy history as ``modified_fields()`` without loading
+        attributes or flushing. If an old value was not loaded before assignment,
+        SQLAlchemy treats the assignment as a change. History resets on flush.
+        """
+        insp = inspect(self)
+        assert insp is not None
+
+        return insp.attrs[attr.key].history.has_changes()
+
     def modified_fields(self) -> set[str]:
-        "set of fields that are modified"
+        """Names of attributes with unflushed changes, like Rails' ``changed``.
+
+        Uses the same history check as ``has_attribute_changed()``. Same-value
+        assignments and changes reverted to a loaded original value are excluded;
+        explicit ``flag_modified()`` calls are included. Does not load attributes
+        or flush. History resets on flush, including autoflush and ``save()``.
+        """
 
         insp = inspect(self)
         assert insp is not None
