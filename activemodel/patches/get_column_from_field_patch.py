@@ -40,10 +40,10 @@ if TYPE_CHECKING:
     from pydantic_core import PydanticUndefinedType as UndefinedType
 
 
-# https://github.com/fastapi/sqlmodel/blob/0.0.42/sqlmodel/main.py#L781
+# https://github.com/fastapi/sqlmodel/blob/0.0.46/sqlmodel/main.py#L779
 assert (
     hash_function_code(sqlmodel.main.get_column_from_field)
-    == "cddbf17b0ffec0615bf726962e62dfb3fb83ab1b81a175de72ec697b0fb21632"
+    == "fa21be4f8a085f8b65d7ac7f48db05b7577ac44b1a9e8f0bf797be7dfb0f0480"
 ), (
     f"get_column_from_field has changed, please verify the patch is still valid: {hash_function_code(sqlmodel.main.get_column_from_field)}"
 )
@@ -122,7 +122,7 @@ def get_column_from_field(field: Any) -> Column:
 
     if sa_column_kwargs is not Undefined:
         kwargs.update(cast(dict[Any, Any], sa_column_kwargs))
-    return Column(sa_type, *args, **kwargs)  # type: ignore
+    return Column(*args, type_=sa_type, **kwargs)  # type: ignore
 
 
 sqlmodel.main.get_column_from_field = get_column_from_field

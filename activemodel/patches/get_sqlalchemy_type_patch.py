@@ -24,10 +24,10 @@ from activemodel.types.whenever import (
 )
 from activemodel.utils import hash_function_code
 
-# https://github.com/fastapi/sqlmodel/blob/0.0.42/sqlmodel/main.py#L727
+# https://github.com/fastapi/sqlmodel/blob/0.0.46/sqlmodel/main.py#L723
 assert (
     hash_function_code(sqlmodel.main.get_sqlalchemy_type)
-    == "ac1225457303bb04a41d72382161914047b03891b76a427bdcc6668af5570933"
+    == "8c3e0912c0d507ca18b6db65494fb3e85f09b7eddd7fe91da9af95e2e41cfd31"
 ), (
     f"get_sqlalchemy_type has changed, please verify the patch is still valid: {hash_function_code(sqlmodel.main.get_sqlalchemy_type)}"
 )
