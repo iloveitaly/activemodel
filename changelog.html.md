@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.25.0](https://github.com/iloveitaly/activemodel/compare/v0.24.3...v0.25.0) (2026-09-25)
+
+### Features
+
+* add recipe to enforce squash merges on github ([448b3a7](https://github.com/iloveitaly/activemodel/commit/448b3a76483e937d1ab9a112ff370a168c26dd5c))
+
+### Bug Fixes
+
+* bump SQLModel to 0.0.46 ([#168](https://github.com/iloveitaly/activemodel/issues/168)) ([869a645](https://github.com/iloveitaly/activemodel/commit/869a6456544805c346a2f78e83068bc8092ce8cf))
+
 ## [0.24.3](https://github.com/iloveitaly/activemodel/compare/v0.24.2...v0.24.3) (2026-09-05)
 
 ### Bug Fixes
