@@ -382,7 +382,7 @@ data-aria-dark="Switch to auto color mode">
 <p><code class="docutils literal notranslate"><span class="pre">activemodel</span></code> supports several lifecycle hooks that allow you to execute logic at specific points in a model’s lifecycle.</p>
 <section id="basic-validation-and-defaults">
 <h3>Basic Validation and Defaults<a class="headerlink" href="#basic-validation-and-defaults" title="Link to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
 </span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">activemodel.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeIDMixin</span><span class="p">,</span> <span class="n">TimestampsMixin</span>
 </span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sqlmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
@@ -394,12 +394,13 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="10">    <span class="k">def</span><span class="w"> </span><span class="nf">before_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="11"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a default ending date only on creation.&quot;&quot;&quot;</span>
 </span><span data-line="12">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">funding_ending_at</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="13">            <span class="bp">self</span><span class="o">.</span><span class="n">funding_ending_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-</span><span data-line="14">
-</span><span data-line="15">    <span class="k">def</span><span class="w"> </span><span class="nf">before_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="16"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Prevent saving invalid data.&quot;&quot;&quot;</span>
-</span><span data-line="17">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">funding_goal</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="18">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Funding goal must be non-negative.&quot;</span><span class="p">)</span>
+</span><span data-line="13">            <span class="c1"># plain datetime columns are UTC and reject naive values</span>
+</span><span data-line="14">            <span class="bp">self</span><span class="o">.</span><span class="n">funding_ending_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</span><span data-line="15">
+</span><span data-line="16">    <span class="k">def</span><span class="w"> </span><span class="nf">before_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="17"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Prevent saving invalid data.&quot;&quot;&quot;</span>
+</span><span data-line="18">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">funding_goal</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="19">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Funding goal must be non-negative.&quot;</span><span class="p">)</span>
 </span></pre></div>
 </div>
 </section>

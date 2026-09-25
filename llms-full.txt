@@ -3153,7 +3153,7 @@ class AIVisitTranscript(
 ### Basic Validation and Defaults
 
 ```python
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from activemodel import BaseModel
 from activemodel.mixins import TypeIDMixin, TimestampsMixin
 from sqlmodel import Field
@@ -3165,7 +3165,8 @@ class Screening(BaseModel, TimestampsMixin, TypeIDMixin("scr"), table=True):
     def before_create(self):
         """Set a default ending date only on creation."""
         if self.funding_ending_at is None:
-            self.funding_ending_at = datetime.now() + timedelta(days=30)
+            # plain datetime columns are UTC and reject naive values
+            self.funding_ending_at = datetime.now(timezone.utc) + timedelta(days=30)
 
     def before_save(self):
         """Prevent saving invalid data."""
