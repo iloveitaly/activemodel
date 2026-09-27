@@ -1,0 +1,19 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.types.whenever](index.html.md): &#42; activemodel.types.whenever.date_type
+- [activemodel.types.whenever.date_type](date_type/index.html.md): | &#96;DateType&#96;   | SQLAlchemy TypeDecorator for whenever.Date.   |
+- [activemodel.types.whenever.instant_type](instant_type/index.html.md): | &#96;InstantType&#96;   | SQLAlchemy TypeDecorator for whenever.Instant.   |
+- [activemodel.types.whenever.plain_date_time_type](plain_date_time_type/index.html.md): | &#96;PlainDateTimeType&#96;   | SQLAlchemy TypeDecorator for whenever.PlainDateTime.   |
+- [activemodel.types.whenever.time_type](time_type/index.html.md): | &#96;TimeType&#96;   | SQLAlchemy TypeDecorator for whenever.Time.   |
+- [activemodel.types.whenever.zoned_date_time_type](zoned_date_time_type/index.html.md): | &#96;ZonedDateTimeType&#96;   | SQLAlchemy TypeDecorator for whenever.ZonedDateTime.   |
+
+## Optional
+
+- [Top-level llms.txt](../../../../llms.txt): Complete documentation index.

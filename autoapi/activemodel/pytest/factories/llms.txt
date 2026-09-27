@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.pytest.factories](index.html.md): Notes on polyfactory:
+
+## Optional
+
+- [Top-level llms.txt](../../../../llms.txt): Complete documentation index.

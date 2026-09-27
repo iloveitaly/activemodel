@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.mixins.typeid](index.html.md): | &#96;TypeIDMixin&#96;(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the pr...
+
+## Optional
+
+- [Top-level llms.txt](../../../../llms.txt): Complete documentation index.

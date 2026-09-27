@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.errors](index.html.md): | &#96;TypeIDValidationError&#96;   | Raised when a TypeID is invalid in some way   |
+
+## Optional
+
+- [Top-level llms.txt](../../../llms.txt): Complete documentation index.

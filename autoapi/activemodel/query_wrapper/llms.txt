@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.query_wrapper](index.html.md): | &#96;QueryWrapper&#96;   | Make it easy to run queries on a model.   |
+
+## Optional
+
+- [Top-level llms.txt](../../../llms.txt): Complete documentation index.

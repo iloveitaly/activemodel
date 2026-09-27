@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.types.typeid_patch](index.html.md): Add pydantic v2 support for TypeID. Importing file mutates the TypeID class from another package.
+
+## Optional
+
+- [Top-level llms.txt](../../../../llms.txt): Complete documentation index.

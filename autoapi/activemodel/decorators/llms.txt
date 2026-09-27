@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.decorators](index.html.md): | &#96;property_field&#96;(&#91;func&#93;)   | @property enables attribute-style access; @computed_field includes th...
+
+## Optional
+
+- [Top-level llms.txt](../../../llms.txt): Complete documentation index.

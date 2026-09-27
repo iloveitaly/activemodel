@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.session_manager](index.html.md): Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it ea...
+
+## Optional
+
+- [Top-level llms.txt](../../../llms.txt): Complete documentation index.

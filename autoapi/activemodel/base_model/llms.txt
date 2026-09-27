@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.base_model](index.html.md): | &#96;POSTGRES_INDEXES_NAMING_CONVENTION&#96;   | By default, the foreign key naming convention in sqlalche...
+
+## Optional
+
+- [Top-level llms.txt](../../../llms.txt): Complete documentation index.

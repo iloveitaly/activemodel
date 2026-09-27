@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.types.sqlalchemy_protocol](index.html.md): Auto-generated runtime companion for sqlalchemy_protocol.pyi.
+
+## Optional
+
+- [Top-level llms.txt](../../../../llms.txt): Complete documentation index.

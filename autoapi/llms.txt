@@ -1,0 +1,43 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [API Reference](index.html.md): This page contains auto-generated API reference documentation &lt;sup&gt;1&lt;/sup&gt;.
+- [activemodel](activemodel/index.html.md): &#42; activemodel.base_model
+- [activemodel.base_model](activemodel/base_model/index.html.md): | &#96;POSTGRES_INDEXES_NAMING_CONVENTION&#96;   | By default, the foreign key naming convention in sqlalche...
+- [activemodel.celery](activemodel/celery/index.html.md): Do not import unless you have Celery/Kombu installed.
+- [activemodel.decorators](activemodel/decorators/index.html.md): | &#96;property_field&#96;(&#91;func&#93;)   | @property enables attribute-style access; @computed_field includes th...
+- [activemodel.errors](activemodel/errors/index.html.md): | &#96;TypeIDValidationError&#96;   | Raised when a TypeID is invalid in some way   |
+- [activemodel.jsonb_snapshot](activemodel/jsonb_snapshot/index.html.md): Serialize-and-compare snapshot tracking for JSON-backed fields.
+- [activemodel.mixins](activemodel/mixins/index.html.md): &#42; activemodel.mixins.pydantic_json
+- [activemodel.mixins.pydantic_json](activemodel/mixins/pydantic_json/index.html.md): Rehydrate JSON-backed SQLModel fields into Pydantic objects after ORM loads.
+- [activemodel.mixins.soft_delete](activemodel/mixins/soft_delete/index.html.md): | &#96;SoftDeleteRecord&#96;   | Base class for protocol classes.                                       |
+- [activemodel.mixins.timestamps](activemodel/mixins/timestamps/index.html.md): | &#96;TimestampsMixin&#96;   | Simple created at and updated at timestamps. Mix them into your model:   |
+- [activemodel.mixins.typeid](activemodel/mixins/typeid/index.html.md): | &#96;TypeIDMixin&#96;(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the pr...
+- [activemodel.pytest](activemodel/pytest/index.html.md): &#42; activemodel.pytest.factories
+- [activemodel.pytest.factories](activemodel/pytest/factories/index.html.md): Notes on polyfactory:
+- [activemodel.pytest.plugin](activemodel/pytest/plugin/index.html.md): Pytest plugin integration for activemodel.
+- [activemodel.pytest.transaction](activemodel/pytest/transaction/index.html.md): | &#96;factory_exists&#96;     |    |
+- [activemodel.pytest.truncate](activemodel/pytest/truncate/index.html.md): | &#96;T&#96;   |    |
+- [activemodel.query_wrapper](activemodel/query_wrapper/index.html.md): | &#96;QueryWrapper&#96;   | Make it easy to run queries on a model.   |
+- [activemodel.session_manager](activemodel/session_manager/index.html.md): Class to make managing sessions with SQL Model easy. Also provides a common entrypoint to make it ea...
+- [activemodel.types](activemodel/types/index.html.md): &#42; activemodel.types.sqlalchemy_protocol
+- [activemodel.types.sqlalchemy_protocol](activemodel/types/sqlalchemy_protocol/index.html.md): Auto-generated runtime companion for sqlalchemy_protocol.pyi.
+- [activemodel.types.typeid](activemodel/types/typeid/index.html.md): A SQLAlchemy TypeDecorator for storing TypeIDs in the database as native UUID fields, with the prefi...
+- [activemodel.types.typeid_patch](activemodel/types/typeid_patch/index.html.md): Add pydantic v2 support for TypeID. Importing file mutates the TypeID class from another package.
+- [activemodel.types.whenever](activemodel/types/whenever/index.html.md): &#42; activemodel.types.whenever.date_type
+- [activemodel.types.whenever.date_type](activemodel/types/whenever/date_type/index.html.md): | &#96;DateType&#96;   | SQLAlchemy TypeDecorator for whenever.Date.   |
+- [activemodel.types.whenever.instant_type](activemodel/types/whenever/instant_type/index.html.md): | &#96;InstantType&#96;   | SQLAlchemy TypeDecorator for whenever.Instant.   |
+- [activemodel.types.whenever.plain_date_time_type](activemodel/types/whenever/plain_date_time_type/index.html.md): | &#96;PlainDateTimeType&#96;   | SQLAlchemy TypeDecorator for whenever.PlainDateTime.   |
+- [activemodel.types.whenever.time_type](activemodel/types/whenever/time_type/index.html.md): | &#96;TimeType&#96;   | SQLAlchemy TypeDecorator for whenever.Time.   |
+- [activemodel.types.whenever.zoned_date_time_type](activemodel/types/whenever/zoned_date_time_type/index.html.md): | &#96;ZonedDateTimeType&#96;   | SQLAlchemy TypeDecorator for whenever.ZonedDateTime.   |
+- [activemodel.utils](activemodel/utils/index.html.md): | &#96;to_snake_case&#96;(→ str)      | Converts a PascalCase or camelCase string to snake_case.            ...
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

@@ -1,0 +1,23 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.types](index.html.md): &#42; activemodel.types.sqlalchemy_protocol
+- [activemodel.types.sqlalchemy_protocol](sqlalchemy_protocol/index.html.md): Auto-generated runtime companion for sqlalchemy_protocol.pyi.
+- [activemodel.types.typeid](typeid/index.html.md): A SQLAlchemy TypeDecorator for storing TypeIDs in the database as native UUID fields, with the prefi...
+- [activemodel.types.typeid_patch](typeid_patch/index.html.md): Add pydantic v2 support for TypeID. Importing file mutates the TypeID class from another package.
+- [activemodel.types.whenever](whenever/index.html.md): &#42; activemodel.types.whenever.date_type
+- [activemodel.types.whenever.date_type](whenever/date_type/index.html.md): | &#96;DateType&#96;   | SQLAlchemy TypeDecorator for whenever.Date.   |
+- [activemodel.types.whenever.instant_type](whenever/instant_type/index.html.md): | &#96;InstantType&#96;   | SQLAlchemy TypeDecorator for whenever.Instant.   |
+- [activemodel.types.whenever.plain_date_time_type](whenever/plain_date_time_type/index.html.md): | &#96;PlainDateTimeType&#96;   | SQLAlchemy TypeDecorator for whenever.PlainDateTime.   |
+- [activemodel.types.whenever.time_type](whenever/time_type/index.html.md): | &#96;TimeType&#96;   | SQLAlchemy TypeDecorator for whenever.Time.   |
+- [activemodel.types.whenever.zoned_date_time_type](whenever/zoned_date_time_type/index.html.md): | &#96;ZonedDateTimeType&#96;   | SQLAlchemy TypeDecorator for whenever.ZonedDateTime.   |
+
+## Optional
+
+- [Top-level llms.txt](../../../llms.txt): Complete documentation index.

@@ -1,0 +1,18 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.mixins](index.html.md): &#42; activemodel.mixins.pydantic_json
+- [activemodel.mixins.pydantic_json](pydantic_json/index.html.md): Rehydrate JSON-backed SQLModel fields into Pydantic objects after ORM loads.
+- [activemodel.mixins.soft_delete](soft_delete/index.html.md): | &#96;SoftDeleteRecord&#96;   | Base class for protocol classes.                                       |
+- [activemodel.mixins.timestamps](timestamps/index.html.md): | &#96;TimestampsMixin&#96;   | Simple created at and updated at timestamps. Mix them into your model:   |
+- [activemodel.mixins.typeid](typeid/index.html.md): | &#96;TypeIDMixin&#96;(prefix)   | Mixin that adds a TypeID primary key field to a SQLModel. Specify the pr...
+
+## Optional
+
+- [Top-level llms.txt](../../../llms.txt): Complete documentation index.

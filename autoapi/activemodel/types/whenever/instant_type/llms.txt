@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.types.whenever.instant_type](index.html.md): | &#96;InstantType&#96;   | SQLAlchemy TypeDecorator for whenever.Instant.   |
+
+## Optional
+
+- [Top-level llms.txt](../../../../../llms.txt): Complete documentation index.

@@ -1,0 +1,14 @@
+# activemodel
+
+> ActiveModel: SQLModel with ActiveRecord-style developer ergonomics. ORM helpers, TypeID/whenever integrations, pytest fixtures, and JSONB mutation tracking.
+
+
+2026, Michael Bianco
+
+## Pages in this subsection
+
+- [activemodel.utils](index.html.md): | &#96;to_snake_case&#96;(→ str)      | Converts a PascalCase or camelCase string to snake_case.            ...
+
+## Optional
+
+- [Top-level llms.txt](../../../llms.txt): Complete documentation index.
