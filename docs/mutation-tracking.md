@@ -135,6 +135,90 @@ Notably out of scope:
 
 Those constraints keep rehydration rules predictable and avoid heuristic coercion.
 
+## Previous Scalar Values
+
+`BaseModel.attribute_was()` accepts a mapped class attribute and returns its value
+before the current unflushed changes:
+
+```python
+from sqlmodel import Field
+from activemodel import BaseModel
+
+
+class Contact(BaseModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str
+
+
+record = Contact(name="Original name").save()
+record.name = "New name"
+previous_name = record.attribute_was(Contact.name)  # "Original name"
+```
+
+For static typing, SQLModel declares fields as their value types, so a type checker
+may require an explicit cast of the class attribute:
+
+```python
+from typing import cast
+from sqlalchemy.orm import InstrumentedAttribute
+
+name_attr = cast(InstrumentedAttribute[str], Contact.name)
+previous_name = record.attribute_was(name_attr)  # str
+```
+
+Use the actual field type in the cast, including `None` for nullable fields.
+Unchanged fields return their current value. New instances and assignments without
+a recorded old value also return the current value. SQLAlchemy history resets on
+flush (including autoflush), so call this before `save()` or in a `before_update`
+or `before_save` hook.
+
+The method may load an unloaded attribute using its session. If an attribute is
+expired, load it before assignment or configure `active_history` on its mapper
+property beforehand to retain the old value. Calling `load_history()` after an
+untracked overwrite cannot recover that value. This API reads scalar SQLAlchemy
+history; it does not reconstruct previous contents of in-place JSON mutations.
+
+See [SQLAlchemy attribute history](https://docs.sqlalchemy.org/en/20/orm/session_api.html#sqlalchemy.orm.attributes.get_history)
+for the underlying history semantics.
+
+## Checking Pending Changes
+
+Use `has_attribute_changed()` to distinguish a change from an unchanged nullable
+value. Pass the mapped class attribute, just as with `attribute_was()`:
+
+```python
+record = Contact(name="Original name").save()
+record.has_attribute_changed(Contact.name)  # False
+record.modified_fields()  # set()
+
+record.name = "New name"
+record.has_attribute_changed(Contact.name)  # True
+record.modified_fields()  # {"name"}
+record.attribute_was(Contact.name)  # "Original name"
+
+record.name = "Original name"
+record.has_attribute_changed(Contact.name)  # False
+record.modified_fields()  # set()
+```
+
+These correspond to Rails' [`attribute_changed?` and `changed`](https://api.rubyonrails.org/classes/ActiveModel/Dirty.html):
+they report pending changes, not changes from the previous save. `modified_fields()`
+returns a Python `set[str]`. Assigning the same loaded value is not a change;
+changing a nullable field to or from `None` is. An explicit `flag_modified()` counts
+as a change even when the value is equal, like Rails' `attribute_will_change!`.
+
+Both methods inspect existing SQLAlchemy history without loading attributes or
+triggering autoflush. The same SQLModel typing cast shown above can be used for
+`has_attribute_changed()`.
+
+SQLAlchemy's history boundaries still apply: flush (including autoflush and
+`save()`) clears pending changes. New instances report assigned values, including
+defaults, as additions. Assigning to an expired or unloaded attribute counts as a
+change when its original value was not retained; load it first or configure
+`active_history` to compare values. In-place JSON mutations appear in these checks
+once flagged by the mutation tracker or `flag_modified()`; these helpers do not
+run the JSON snapshot comparison themselves.
+
 ## Key API References
 
 The best entry points are the methods and functions that explain the behavior directly in their
