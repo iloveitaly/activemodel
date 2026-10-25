@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: jdx/mise-action@v5.1.2
+      - uses: jdx/mise-action@v5.2.2
       - uses: iloveitaly/github-action-direnv-load-and-mask@master
 
       - name: Install dependencies
