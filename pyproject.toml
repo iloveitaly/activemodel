@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "sqlmodel==0.0.48",
-    "typeid-python==0.3.10",
+    "typeid-python==0.3.11",
     "whenever>=0.10.3",
 ]
 authors = [{ name = "Michael Bianco", email = "iloveitaly@gmail.com" }]
