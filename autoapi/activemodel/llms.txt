@@ -35,7 +35,7 @@
 - [activemodel.types.whenever.plain_date_time_type](types/whenever/plain_date_time_type/index.html.md): | &#96;PlainDateTimeType&#96;   | SQLAlchemy TypeDecorator for whenever.PlainDateTime.   |
 - [activemodel.types.whenever.time_type](types/whenever/time_type/index.html.md): | &#96;TimeType&#96;   | SQLAlchemy TypeDecorator for whenever.Time.   |
 - [activemodel.types.whenever.zoned_date_time_type](types/whenever/zoned_date_time_type/index.html.md): | &#96;ZonedDateTimeType&#96;   | SQLAlchemy TypeDecorator for whenever.ZonedDateTime.   |
-- [activemodel.utils](utils/index.html.md): | &#96;to_snake_case&#96;(→ str)      | Converts a PascalCase or camelCase string to snake_case.            ...
+- [activemodel.utils](utils/index.html.md): | &#96;to_snake_case&#96;(name) → str           | Converts a PascalCase or camelCase string to snake_case.  ...
 
 ## Optional
 

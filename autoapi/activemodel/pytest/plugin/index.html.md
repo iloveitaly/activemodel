@@ -32,10 +32,10 @@ The list always implicitly includes `alembic_version` even if not specified.
 
 ## Functions
 
-| [`pytest_addoption`](#activemodel.pytest.plugin.pytest_addoption)(→ None)   | Register custom ini options.                                                                      |
-|-----------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| [`db_session`](#activemodel.pytest.plugin.db_session)()               | Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you |
-| [`db_truncate_session`](#activemodel.pytest.plugin.db_truncate_session)()      | Provides a database session for testing when using a truncation cleaning strategy.                |
+| [`pytest_addoption`](#activemodel.pytest.plugin.pytest_addoption)(parser) → None   | Register custom ini options.                                                                      |
+|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| [`db_session`](#activemodel.pytest.plugin.db_session)()                      | Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you |
+| [`db_truncate_session`](#activemodel.pytest.plugin.db_truncate_session)()             | Provides a database session for testing when using a truncation cleaning strategy.                |
 
 ## Module Contents
 

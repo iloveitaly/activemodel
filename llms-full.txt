@@ -359,10 +359,10 @@ than intercepting every mutation with proxy objects.
 
 ## Functions
 
-| [`snapshot_json_fields`](autoapi/activemodel/jsonb_snapshot/index.html.md#activemodel.jsonb_snapshot.snapshot_json_fields)(→ None)            | Store a serialized snapshot of each tracked JSON field on the instance.           |
-|------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
-| [`detect_json_mutations`](autoapi/activemodel/jsonb_snapshot/index.html.md#activemodel.jsonb_snapshot.detect_json_mutations)(→ list[str])      | Compare current field values against snapshots, flagging any that changed.        |
-| [`register_before_commit_listener`](autoapi/activemodel/jsonb_snapshot/index.html.md#activemodel.jsonb_snapshot.register_before_commit_listener)(→ None) | Register a session-level before_commit handler to detect in-place JSON mutations. |
+| [`snapshot_json_fields`](autoapi/activemodel/jsonb_snapshot/index.html.md#activemodel.jsonb_snapshot.snapshot_json_fields)(instance[, jsonb_field_names]) → None   | Store a serialized snapshot of each tracked JSON field on the instance.           |
+|---------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| [`detect_json_mutations`](autoapi/activemodel/jsonb_snapshot/index.html.md#activemodel.jsonb_snapshot.detect_json_mutations)(instance) → list[str]                  | Compare current field values against snapshots, flagging any that changed.        |
+| [`register_before_commit_listener`](autoapi/activemodel/jsonb_snapshot/index.html.md#activemodel.jsonb_snapshot.register_before_commit_listener)() → None                     | Register a session-level before_commit handler to detect in-place JSON mutations. |
 
 ## Module Contents
 
@@ -729,10 +729,10 @@ The list always implicitly includes `alembic_version` even if not specified.
 
 ## Functions
 
-| [`pytest_addoption`](autoapi/activemodel/pytest/plugin/index.html.md#activemodel.pytest.plugin.pytest_addoption)(→ None)   | Register custom ini options.                                                                      |
-|-----------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| [`db_session`](autoapi/activemodel/pytest/plugin/index.html.md#activemodel.pytest.plugin.db_session)()               | Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you |
-| [`db_truncate_session`](autoapi/activemodel/pytest/plugin/index.html.md#activemodel.pytest.plugin.db_truncate_session)()      | Provides a database session for testing when using a truncation cleaning strategy.                |
+| [`pytest_addoption`](autoapi/activemodel/pytest/plugin/index.html.md#activemodel.pytest.plugin.pytest_addoption)(parser) → None   | Register custom ini options.                                                                      |
+|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| [`db_session`](autoapi/activemodel/pytest/plugin/index.html.md#activemodel.pytest.plugin.db_session)()                      | Helpful for tests that are similar to unit tests. If you doing a routing or integration test, you |
+| [`db_truncate_session`](autoapi/activemodel/pytest/plugin/index.html.md#activemodel.pytest.plugin.db_truncate_session)()             | Provides a database session for testing when using a truncation cleaning strategy.                |
 
 ## Module Contents
 
@@ -1004,7 +1004,7 @@ database environment when testing.
 
 | [`init`](autoapi/activemodel/session_manager/index.html.md#activemodel.session_manager.init)(database_url, \*[, engine_options])   | configure activemodel to connect to a specific database                              |
 |---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| [`table_exists`](autoapi/activemodel/session_manager/index.html.md#activemodel.session_manager.table_exists)(→ bool)                       | Check if the table for the given model exists in the database.                       |
+| [`table_exists`](autoapi/activemodel/session_manager/index.html.md#activemodel.session_manager.table_exists)(model) → bool                 | Check if the table for the given model exists in the database.                       |
 | [`get_engine`](autoapi/activemodel/session_manager/index.html.md#activemodel.session_manager.get_engine)()                               | alias to get the database engine without importing SessionManager                    |
 | [`get_session`](autoapi/activemodel/session_manager/index.html.md#activemodel.session_manager.get_session)()                              | alias to get a database session without importing SessionManager                     |
 | [`global_session`](autoapi/activemodel/session_manager/index.html.md#activemodel.session_manager.global_session)([session])                  | Generate a session and share it across all activemodel calls.                        |
@@ -1134,8 +1134,8 @@ Adapted from:
 
 ## Functions
 
-| [`TypeIDPrimaryKey`](autoapi/activemodel/types/typeid/index.html.md#activemodel.types.typeid.TypeIDPrimaryKey)(→ Any)   | Field factory for the declarative form:   |
-|----------------------------------------------------------------------------|-------------------------------------------|
+| [`TypeIDPrimaryKey`](autoapi/activemodel/types/typeid/index.html.md#activemodel.types.typeid.TypeIDPrimaryKey)(prefix) → Any   | Field factory for the declarative form:   |
+|-----------------------------------------------------------------------------------|-------------------------------------------|
 
 ## Module Contents
 
@@ -2498,12 +2498,12 @@ behavior, such as transforming or deserializing data.
 
 ## Functions
 
-| [`to_snake_case`](autoapi/activemodel/utils/index.html.md#activemodel.utils.to_snake_case)(→ str)      | Converts a PascalCase or camelCase string to snake_case.                                                     |
-|----------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| [`compile_sql`](autoapi/activemodel/utils/index.html.md#activemodel.utils.compile_sql)(→ str)        | convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries                                  |
-| [`raw_sql_exec`](autoapi/activemodel/utils/index.html.md#activemodel.utils.raw_sql_exec)(raw_query)   | [https://github.com/tiangolo/sqlmodel/discussions/772](https://github.com/tiangolo/sqlmodel/discussions/772) |
-| [`hash_function_code`](autoapi/activemodel/utils/index.html.md#activemodel.utils.hash_function_code)(func)  | get sha of a function to easily assert that it hasn't changed                                                |
-| [`is_database_empty`](autoapi/activemodel/utils/index.html.md#activemodel.utils.is_database_empty)(→ bool) | Check if any table in the database has records using Model.count().                                          |
+| [`to_snake_case`](autoapi/activemodel/utils/index.html.md#activemodel.utils.to_snake_case)(name) → str           | Converts a PascalCase or camelCase string to snake_case.                                                     |
+|--------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| [`compile_sql`](autoapi/activemodel/utils/index.html.md#activemodel.utils.compile_sql)(target) → str           | convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries                                  |
+| [`raw_sql_exec`](autoapi/activemodel/utils/index.html.md#activemodel.utils.raw_sql_exec)(raw_query)             | [https://github.com/tiangolo/sqlmodel/discussions/772](https://github.com/tiangolo/sqlmodel/discussions/772) |
+| [`hash_function_code`](autoapi/activemodel/utils/index.html.md#activemodel.utils.hash_function_code)(func)            | get sha of a function to easily assert that it hasn't changed                                                |
+| [`is_database_empty`](autoapi/activemodel/utils/index.html.md#activemodel.utils.is_database_empty)([exclude]) → bool | Check if any table in the database has records using Model.count().                                          |
 
 ## Module Contents
 

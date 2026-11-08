@@ -211,10 +211,10 @@ data-aria-dark="Switch to auto color mode">
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.to_snake_case" title="activemodel.utils.to_snake_case"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_snake_case</span></code></a>(→ str)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.to_snake_case" title="activemodel.utils.to_snake_case"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_snake_case</span></code></a>(name) → str</p></td>
 <td><p>Converts a PascalCase or camelCase string to snake_case.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.utils.compile_sql" title="activemodel.utils.compile_sql"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compile_sql</span></code></a>(→ str)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.utils.compile_sql" title="activemodel.utils.compile_sql"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compile_sql</span></code></a>(target) → str</p></td>
 <td><p>convert a query into SQL, helpful for debugging sqlalchemy/sqlmodel queries</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.raw_sql_exec" title="activemodel.utils.raw_sql_exec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">raw_sql_exec</span></code></a>(raw_query)</p></td>
@@ -223,7 +223,7 @@ data-aria-dark="Switch to auto color mode">
 <tr class="row-even"><td><p><a class="reference internal" href="#activemodel.utils.hash_function_code" title="activemodel.utils.hash_function_code"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash_function_code</span></code></a>(func)</p></td>
 <td><p>get sha of a function to easily assert that it hasn't changed</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.is_database_empty" title="activemodel.utils.is_database_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_database_empty</span></code></a>(→ bool)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.utils.is_database_empty" title="activemodel.utils.is_database_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_database_empty</span></code></a>([exclude]) → bool</p></td>
 <td><p>Check if any table in the database has records using Model.count().</p></td>
 </tr>
 </tbody>

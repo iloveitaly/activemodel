@@ -13,8 +13,8 @@ Adapted from:
 
 ## Functions
 
-| [`TypeIDPrimaryKey`](#activemodel.types.typeid.TypeIDPrimaryKey)(→ Any)   | Field factory for the declarative form:   |
-|----------------------------------------------------------------------------|-------------------------------------------|
+| [`TypeIDPrimaryKey`](#activemodel.types.typeid.TypeIDPrimaryKey)(prefix) → Any   | Field factory for the declarative form:   |
+|-----------------------------------------------------------------------------------|-------------------------------------------|
 
 ## Module Contents
 

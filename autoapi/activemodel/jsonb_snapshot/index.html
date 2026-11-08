@@ -217,13 +217,13 @@ than intercepting every mutation with proxy objects.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.jsonb_snapshot.snapshot_json_fields" title="activemodel.jsonb_snapshot.snapshot_json_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">snapshot_json_fields</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.jsonb_snapshot.snapshot_json_fields" title="activemodel.jsonb_snapshot.snapshot_json_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">snapshot_json_fields</span></code></a>(instance[, jsonb_field_names]) → None</p></td>
 <td><p>Store a serialized snapshot of each tracked JSON field on the instance.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.jsonb_snapshot.detect_json_mutations" title="activemodel.jsonb_snapshot.detect_json_mutations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_json_mutations</span></code></a>(→ list[str])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#activemodel.jsonb_snapshot.detect_json_mutations" title="activemodel.jsonb_snapshot.detect_json_mutations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_json_mutations</span></code></a>(instance) → list[str]</p></td>
 <td><p>Compare current field values against snapshots, flagging any that changed.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.jsonb_snapshot.register_before_commit_listener" title="activemodel.jsonb_snapshot.register_before_commit_listener"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_before_commit_listener</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#activemodel.jsonb_snapshot.register_before_commit_listener" title="activemodel.jsonb_snapshot.register_before_commit_listener"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_before_commit_listener</span></code></a>() → None</p></td>
 <td><p>Register a session-level before_commit handler to detect in-place JSON mutations.</p></td>
 </tr>
 </tbody>
