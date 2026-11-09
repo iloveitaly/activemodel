@@ -1,9 +1,11 @@
 set unstable := true
 
-# Set up the Python environment, done automatically for you when using direnv
+# Set up the Python environment, done automatically for you when using direnv.
+# Use `uv sync` only: mise `python.uv_venv_auto` may already create `.venv`, and
+# bare `uv venv` fails when that directory exists (breaks Cursor Cloud builds).
 setup:
     [ -f .env ] || cp .env-example .env
-    uv venv && uv sync
+    uv sync
     @echo "activate: source ./.venv/bin/activate"
 
 # Start docker services
