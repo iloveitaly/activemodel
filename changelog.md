@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.25.1](https://github.com/iloveitaly/activemodel/compare/v0.25.0...v0.25.1) (2026-11-09)
+
+### Bug Fixes
+
+* ship sqlmodel 0.0.48 and typeid-python 0.3.11 ([91b2754](https://github.com/iloveitaly/activemodel/commit/91b27543d15e7a70e1e11a728efa8c357ece55e6))
+
 ## [0.25.0](https://github.com/iloveitaly/activemodel/compare/v0.24.3...v0.25.0) (2026-09-25)
 
 ### Features
