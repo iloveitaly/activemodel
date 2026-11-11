@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.2](https://github.com/iloveitaly/activemodel/compare/v0.25.1...v0.25.2) (2026-11-11)
+
+
+### Documentation
+
+* Update README.md ([ebe5126](https://github.com/iloveitaly/activemodel/commit/ebe5126a014d931c6cc3d2716bb5ee42a5673516))
+
 ## [0.25.1](https://github.com/iloveitaly/activemodel/compare/v0.25.0...v0.25.1) (2026-11-09)
 
 
