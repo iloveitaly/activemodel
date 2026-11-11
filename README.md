@@ -22,9 +22,6 @@ This package provides a thin wrapper around SQLModel that provides a more Active
 * **Smart Table & Constraint Naming**: Consistent snake_case table names and standardized naming conventions for indexes and constraints.
 * **Pytest Integration**: Built-in fixtures, database cleanup strategies, and factory integration for robust testing.
 
-> [!TIP]
-> This documentation is pretty bad. The tests and docstrs on code are the best way to learn how to use this. 
-
 ## Installation
 
 ```bash
