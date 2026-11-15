@@ -288,7 +288,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="pydantic-openapi">
-<h2>Pydantic / OpenAPI<a class="headerlink" href="#pydantic-openapi" title="Link to this heading">#</a></h2>
+<span id="pydantic--openapi"></span><h2>Pydantic / OpenAPI<a class="headerlink" href="#pydantic-openapi" title="Link to this heading">#</a></h2>
 <p>Prefixed TypeID fields emit <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;typeid&quot;}</span></code> in the OpenAPI schema. Pydantic accepts both <code class="docutils literal notranslate"><span class="pre">TypeID</span></code> instances and plain strings (coerced via <code class="docutils literal notranslate"><span class="pre">TypeID.from_string</span></code>). In Python mode, <code class="docutils literal notranslate"><span class="pre">model_dump()</span></code> preserves <code class="docutils literal notranslate"><span class="pre">TypeID</span></code> objects; in JSON mode (<code class="docutils literal notranslate"><span class="pre">model_dump(mode=&quot;json&quot;)</span></code> or <code class="docutils literal notranslate"><span class="pre">model_dump_json()</span></code>), they serialize to their string representation.</p>
 </section>
 </section>

@@ -219,7 +219,7 @@ data-aria-dark="Switch to auto color mode">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
 <p>You can configure which tables are preserved (not truncated) when using the truncation reset strategy.</p>
 <section id="activemodel-preserve-tables">
-<h3><code class="docutils literal notranslate"><span class="pre">activemodel_preserve_tables</span></code><a class="headerlink" href="#activemodel-preserve-tables" title="Link to this heading">#</a></h3>
+<span id="activemodel_preserve_tables"></span><h3><code class="docutils literal notranslate"><span class="pre">activemodel_preserve_tables</span></code><a class="headerlink" href="#activemodel-preserve-tables" title="Link to this heading">#</a></h3>
 <p>This option specifies a list of tables to keep during database truncation. The <code class="docutils literal notranslate"><span class="pre">alembic_version</span></code> table is always preserved by default.</p>
 <p><strong>pytest.ini</strong>:</p>
 <div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">[pytest]</span>
@@ -267,7 +267,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="hybrid-strategy-integration-unit">
-<h3>Hybrid Strategy (Integration + Unit)<a class="headerlink" href="#hybrid-strategy-integration-unit" title="Link to this heading">#</a></h3>
+<span id="hybrid-strategy-integration--unit"></span><h3>Hybrid Strategy (Integration + Unit)<a class="headerlink" href="#hybrid-strategy-integration-unit" title="Link to this heading">#</a></h3>
 <p>For complex projects, you may want to use transactions for speed in unit tests but truncation for reliability in integration tests. Here is a recommended pattern:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 </span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
@@ -291,7 +291,7 @@ data-aria-dark="Switch to auto color mode">
 <h2>Fixtures<a class="headerlink" href="#fixtures" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">activemodel</span></code> plugin provides several fixtures out of the box.</p>
 <section id="db-session">
-<h3><code class="docutils literal notranslate"><span class="pre">db_session</span></code><a class="headerlink" href="#db-session" title="Link to this heading">#</a></h3>
+<span id="db_session"></span><h3><code class="docutils literal notranslate"><span class="pre">db_session</span></code><a class="headerlink" href="#db-session" title="Link to this heading">#</a></h3>
 <p>Provides a database session for the duration of a test. While models and factories use the global session automatically, <code class="docutils literal notranslate"><span class="pre">db_session</span></code> is useful for manual queries or assertions.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">def</span><span class="w"> </span><span class="nf">test_user_creation</span><span class="p">(</span><span class="n">db_session</span><span class="p">):</span>
 </span><span data-line="2">    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -302,7 +302,7 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </section>
 <section id="db-truncate-session">
-<h3><code class="docutils literal notranslate"><span class="pre">db_truncate_session</span></code><a class="headerlink" href="#db-truncate-session" title="Link to this heading">#</a></h3>
+<span id="db_truncate_session"></span><h3><code class="docutils literal notranslate"><span class="pre">db_truncate_session</span></code><a class="headerlink" href="#db-truncate-session" title="Link to this heading">#</a></h3>
 <p>When using the truncation strategy, models created by factories are often detached from any active session. <code class="docutils literal notranslate"><span class="pre">db_truncate_session</span></code> fixes this by setting a global session that factories will use, keeping objects attached and navigable.</p>
 </section>
 </section>
