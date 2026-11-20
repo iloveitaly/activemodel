@@ -31,7 +31,7 @@ def test_classmethod_return_types_are_model_specific(create_and_wipe_database):
     assert_type(example.delete(), Literal[True])
 
     assert_type(
-        UpsertTestModel.upsert(
+        UpsertTestModel._upsert(
             {"name": "typed-upsert", "category": "type-tests", "value": 1},
             unique_by="name",
         ),
