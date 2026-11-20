@@ -39,6 +39,29 @@ foreign keys in a table. This naming convention is a workaround to fix this issu
 SQLModel.metadata.naming_convention = POSTGRES_INDEXES_NAMING_CONVENTION
 
 
+class _UpsertMethod:
+    """
+    Descriptor for class and instance upsert call sites:
+
+    - `Model.upsert(data={...}, unique_by=...)`
+    - `Model(field=...).upsert(unique_by=...)` — uses `model_dump(exclude_unset=True)`
+    """
+
+    def __get__(self, instance: "BaseModel | None", owner: type["BaseModel"]):
+        if instance is None:
+            return owner._upsert
+
+        def upsert_from_instance(
+            unique_by: str | list[str] | None = None,
+        ) -> "BaseModel":
+            return owner._upsert(
+                instance.model_dump(exclude_unset=True),
+                unique_by=unique_by,
+            )
+
+        return upsert_from_instance
+
+
 class BaseModel(SQLModel):
     """
     Base model class to inherit from so we can hate python less.
@@ -159,15 +182,74 @@ class BaseModel(SQLModel):
         "convenience method to avoid having to write .select().where() in order to add conditions"
         return cls.select().where(*args)
 
-    # TODO we should add an instance method for this as well
     @classmethod
-    def upsert(
+    def unique_constraints(cls) -> list[list[str]]:
+        """
+        Unique column groups on this model: `UniqueConstraint`s and unique indexes.
+
+        Primary keys are excluded. `Field(unique=True)` becomes a `UniqueConstraint`;
+        `Field(unique=True, index=True)` becomes a unique index — both are returned.
+        """
+        seen: set[tuple[str, ...]] = set()
+        groups: list[list[str]] = []
+
+        for constraint in cls.__table__.constraints:
+            if not isinstance(constraint, sa.UniqueConstraint):
+                continue
+
+            columns = [column.name for column in constraint.columns]
+            key = tuple(columns)
+            if key in seen:
+                continue
+
+            seen.add(key)
+            groups.append(columns)
+
+        # Field(unique=True, index=True) is a unique Index, not a UniqueConstraint
+        for index in cls.__table__.indexes:
+            if not index.unique:
+                continue
+
+            columns = [column.name for column in index.columns]
+            key = tuple(columns)
+            if key in seen:
+                continue
+
+            seen.add(key)
+            groups.append(columns)
+
+        # Stable order so callers and error messages are deterministic
+        groups.sort(key=lambda cols: (len(cols), cols))
+        return groups
+
+    @classmethod
+    def _resolve_unique_by(cls) -> list[str]:
+        constraints = cls.unique_constraints()
+
+        assert constraints, (
+            f"{cls.__name__}.upsert() requires unique_by; no unique constraints found"
+        )
+        assert len(constraints) == 1, (
+            f"{cls.__name__}.upsert() requires unique_by; "
+            f"multiple unique constraints found: {constraints}"
+        )
+
+        return constraints[0]
+
+    @classmethod
+    def _upsert(
         cls,
         data: dict[str, t.Any],
-        unique_by: str | list[str],
+        unique_by: str | list[str] | None = None,
     ) -> t.Self:
         """
-        This method will insert a new record if it doesn't exist, or update the existing record if it does.
+        Insert a new record if it doesn't exist, or update the existing record if it does.
+
+        Prefer `upsert` (descriptor): `Model.upsert(data=...)` or `Model(...).upsert()`.
+
+        When `unique_by` is omitted, the conflict target is inferred from the model's
+        single unique constraint (or unique index). If the model has zero or multiple
+        unique constraints, pass `unique_by` explicitly.
 
         It uses SQLAlchemy's `on_conflict_do_update` and does not yet support MySQL. Some implementation details below.
 
@@ -178,6 +260,9 @@ class BaseModel(SQLModel):
 
         The `set_` parameter (e.g., `set_=dict(value=123)`) then dictates what gets updated on conflict, overriding matching fields in `values` if specified.
         """
+        if unique_by is None:
+            unique_by = cls._resolve_unique_by()
+
         index_elements = [unique_by] if isinstance(unique_by, str) else unique_by
 
         stmt = (
@@ -195,6 +280,9 @@ class BaseModel(SQLModel):
             result = result.one()[0]
 
         return result
+
+    # Class: Model.upsert(data=..., unique_by=...); instance: Model(...).upsert()
+    upsert: t.ClassVar[_UpsertMethod] = _UpsertMethod()
 
     def delete(self):
         """Delete instance running delete hooks and optional around_delete context manager."""

@@ -61,6 +61,17 @@ class UpsertTestModel(BaseModel, table=True):
     __table_args__ = (UniqueConstraint("name", "category", name="compound_constraint"),)
 
 
+class CompoundUniqueUpsertModel(BaseModel, table=True):
+    """Single compound unique constraint — mirrors ProductionGreenlight-style upserts"""
+
+    id: TypeID = TypeIDPrimaryKey("compound_upsert")
+    film_id: str
+    email: str
+    note: str | None = None
+
+    __table_args__ = (UniqueConstraint("film_id", "email"),)
+
+
 class ExampleWithWheneverFields(BaseModel, table=True):
     id: TypeID = TypeIDPrimaryKey("whenever_example")
     instant_field: Instant | None = None
