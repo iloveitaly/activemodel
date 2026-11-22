@@ -1,4 +1,92 @@
-from tests.models import UpsertTestModel
+import pytest
+
+from tests.models import (
+    CompoundUniqueUpsertModel,
+    ExampleRecord,
+    UpsertTestModel,
+    WheneverUpsertModel,
+)
+
+
+def test_unique_constraints_lists_unique_indexes_and_constraints(
+    create_and_wipe_database,
+):
+    assert WheneverUpsertModel.unique_constraints() == [["external_id"]]
+    assert CompoundUniqueUpsertModel.unique_constraints() == [["film_id", "email"]]
+    assert ExampleRecord.unique_constraints() == [["another_with_index"]]
+
+    # Field(unique=True) plus a compound UniqueConstraint — both listed
+    assert UpsertTestModel.unique_constraints() == [
+        ["name"],
+        ["name", "category"],
+    ]
+
+
+def test_upsert_infers_unique_by_from_single_constraint(create_and_wipe_database):
+    result = CompoundUniqueUpsertModel.upsert(
+        data={"film_id": "film_1", "email": "a@example.com", "note": "first"},
+    )
+
+    assert result.note == "first"
+    assert CompoundUniqueUpsertModel.count() == 1
+
+    updated = CompoundUniqueUpsertModel.upsert(
+        data={"film_id": "film_1", "email": "a@example.com", "note": "greenlit"},
+    )
+
+    assert updated.id == result.id
+    assert updated.note == "greenlit"
+    assert CompoundUniqueUpsertModel.count() == 1
+
+
+def test_upsert_infers_unique_by_from_unique_index(create_and_wipe_database):
+    result = ExampleRecord.upsert(
+        data={"something": "a", "another_with_index": "unique-key"},
+    )
+    updated = ExampleRecord.upsert(
+        data={"something": "b", "another_with_index": "unique-key"},
+    )
+
+    assert updated.id == result.id
+    assert updated.something == "b"
+    assert ExampleRecord.count() == 1
+
+
+def test_upsert_requires_unique_by_when_multiple_constraints(
+    create_and_wipe_database,
+):
+    with pytest.raises(AssertionError, match="multiple unique constraints"):
+        UpsertTestModel.upsert(
+            data={"name": "x", "category": "y", "value": 1},
+        )
+
+    # Explicit unique_by still works when inference is ambiguous
+    result = UpsertTestModel.upsert(
+        data={"name": "x", "category": "y", "value": 1},
+        unique_by="name",
+    )
+    assert result.name == "x"
+
+
+def test_upsert_instance_uses_exclude_unset_fields(create_and_wipe_database):
+    created = CompoundUniqueUpsertModel(
+        film_id="film_2",
+        email="b@example.com",
+        note="initial",
+    ).upsert()
+
+    assert created.note == "initial"
+    assert CompoundUniqueUpsertModel.count() == 1
+
+    updated = CompoundUniqueUpsertModel(
+        film_id="film_2",
+        email="b@example.com",
+        note="updated",
+    ).upsert()
+
+    assert updated.id == created.id
+    assert updated.note == "updated"
+    assert CompoundUniqueUpsertModel.count() == 1
 
 
 def test_upsert_single_unique_field(create_and_wipe_database):
