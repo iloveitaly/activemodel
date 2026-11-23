@@ -24,7 +24,7 @@ from activemodel.types.whenever import (
 )
 from activemodel.utils import hash_function_code
 
-# https://github.com/fastapi/sqlmodel/blob/0.0.46/sqlmodel/main.py#L723
+# https://github.com/fastapi/sqlmodel/blob/0.0.50/sqlmodel/main.py#L724
 assert (
     hash_function_code(sqlmodel.main.get_sqlalchemy_type)
     == "8c3e0912c0d507ca18b6db65494fb3e85f09b7eddd7fe91da9af95e2e41cfd31"
